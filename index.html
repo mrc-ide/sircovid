@@ -30,6 +30,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,18 +44,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -63,7 +59,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/mrc-ide/sircovid/">
+  <a href="https://github.com/mrc-ide/sircovid/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -80,34 +76,33 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="sircovid-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#sircovid-" class="anchor"></a>sircovid <img src="reference/figures/logo.png" align="right" height="138.5">
+<div class="section level1">
+<div class="page-header"><h1 id="sircovid-">sircovid <img src="reference/figures/logo.png" align="right" height="138.5"><a class="anchor" aria-label="anchor" href="#sircovid-"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p><code>sircovid</code> implements a series of mechanistic models to help modelling the transmission of the SARS-Cov-2 virus using stochastic compartmental models. <code>sircovid</code> also provides some tools to perfom Bayesian evidence synthesis from several surveillance data streams through the estimation of transmission parameters.</p>
 <p><img src="reference/figures/sircovid_diagram.png" align="center" style="border: none; float: center;" width="800px"></p>
-<div id="important-information-for-users" class="section level2">
-<h2 class="hasAnchor">
-<a href="#important-information-for-users" class="anchor"></a>Important information for users</h2>
+<div class="section level2">
+<h2 id="important-information-for-users">Important information for users<a class="anchor" aria-label="anchor" href="#important-information-for-users"></a>
+</h2>
 <p>Please note that whilst this code is free to use and adapt, Imperial College London does not endorse the outputs, results, or conclusions drawn from the implementation of this model to other settings. While we encourage the use and modification of our model for research and scientific purposes please do not refer to such results as the “Imperial model” or similar unless referring to specific use in publications by Imperial College researchers.</p>
-<p>The model is constantly in flux and we make no effort to keep things backward compatible, nor do we have the capacity to provide support (including installation support). This package is being closely developed with <a href="https://mrc-ide.github.io/dust/">dust</a> and <a href="https://mrc-ide.github.io/mcstate/">mcstate</a> often requiring simultaneous upgrades. The minimum version number noted in the <code>DESCRIPTION</code> is a good starting place - be sure that versions match or sircovid will likely not compile.</p>
+<p>The model is constantly in flux and we make no effort to keep things backward compatible, nor do we have the capacity to provide support (including installation support). This package is being closely developed with <a href="https://mrc-ide.github.io/dust/" class="external-link">dust</a> and <a href="https://mrc-ide.github.io/mcstate/" class="external-link">mcstate</a> often requiring simultaneous upgrades. The minimum version number noted in the <code>DESCRIPTION</code> is a good starting place - be sure that versions match or sircovid will likely not compile.</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>Install from the ncov drat:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"sircovid"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"sircovid"</span><span class="op">)</span></code></pre></div>
 <p>or install directly from GitHub with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mrc-ide/sircovid"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p>You will need the most recent version of <a href="https://mrc-ide.github.io/dust"><code>dust</code></a> and <a href="https://mrc-ide.github.io/mcstate"><code>mcstate</code></a> to use the package. These will be installed automatically if you install <code>sircovid</code> from drat, or manually with:</p>
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mrc-ide/sircovid"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p>You will need the most recent version of <a href="https://mrc-ide.github.io/dust" class="external-link"><code>dust</code></a> and <a href="https://mrc-ide.github.io/mcstate" class="external-link"><code>mcstate</code></a> to use the package. These will be installed automatically if you install <code>sircovid</code> from drat, or manually with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dust"</span>, <span class="st">"mcstate"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dust"</span>, <span class="st">"mcstate"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>We use OpenMP for parallelism, and this may not be available on your system. If not then compilation will fail with an error like:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>clang<span class="op">:</span><span class="st"> </span>error<span class="op">:</span><span class="st"> </span>unsupported option <span class="st">'-fopenmp'</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a>make[<span class="dv">1</span>]<span class="op">:</span><span class="st"> </span><span class="er">***</span><span class="st"> </span>[basic.o] Error <span class="dv">1</span></span>
@@ -120,13 +115,13 @@
 <span id="cb6-2"><a href="#cb6-2"></a>SHLIB_OPENMP_CXXFLAGS=</span></code></pre></div>
 <p>after which compilation will succeed, but the model will only run on one core.</p>
 </div>
-<div id="development" class="section level2">
-<h2 class="hasAnchor">
-<a href="#development" class="anchor"></a>Development</h2>
-<p>In addition to the above you need to install <a href="https://mrc-ide.github.io/odin"><code>odin</code></a> and <a href="https://mrc-ide.github.io/odin.dust/"><code>odin.dust</code></a></p>
+<div class="section level2">
+<h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
+</h2>
+<p>In addition to the above you need to install <a href="https://mrc-ide.github.io/odin" class="external-link"><code>odin</code></a> and <a href="https://mrc-ide.github.io/odin.dust/" class="external-link"><code>odin.dust</code></a></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"odin"</span>, <span class="st">"odin.dust"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"odin"</span>, <span class="st">"odin.dust"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <ul>
 <li>Make changes to the models in <code>inst/odin</code>
 </li>
@@ -135,9 +130,9 @@
 </ul>
 <p>Alternatively, run <code>./scripts/generate_odin</code></p>
 </div>
-<div id="license" class="section level2">
-<h2 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h2>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
 <p>MIT © Imperial College of Science, Technology and Medicine</p>
 </div>
 </div>
@@ -145,24 +140,32 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/mrc-ide/sircovid/">https://​github.com/​mrc-ide/​sircovid/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/mrc-ide/sircovid/issues">https://​github.com/​mrc-ide/​sircovid/​issues</a>
-</li>
+<li><a href="https://github.com/mrc-ide/sircovid/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/mrc-ide/sircovid/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing sircovid</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Marc Baguelin <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Edward Knock <br><small class="roles"> Author </small>  </li>
@@ -173,30 +176,33 @@
 <li>Pablo Perez-Guzman <br><small class="roles"> Author </small>  </li>
 <li>Raphael Sonabend <br><small class="roles"> Author </small>  </li>
 <li>Yasin Elmaci <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a></li>
-<li><a href="https://github.com/mrc-ide/sircovid/actions"><img src="https://github.com/mrc-ide/sircovid/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://www.codefactor.io/repository/github/mrc-ide/sircovid"><img src="https://www.codefactor.io/repository/github/mrc-ide/sircovid/badge" alt="CodeFactor"></a></li>
-<li><a href="https://codecov.io/gh/mrc-ide/sircovid?branch=master"><img src="https://codecov.io/gh/mrc-ide/sircovid/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://buildkite.com/mrc-ide/sircovid"><img src="https://badge.buildkite.com/8b8c5742874fc1dc137e5c085f107a1e4346e9cdf65d72934b.svg?branch=master" alt="Docker build status"></a></li>
+<li><a href="https://www.repostatus.org/#wip" class="external-link"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a></li>
+<li><a href="https://github.com/mrc-ide/sircovid/actions" class="external-link"><img src="https://github.com/mrc-ide/sircovid/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://www.codefactor.io/repository/github/mrc-ide/sircovid" class="external-link"><img src="https://www.codefactor.io/repository/github/mrc-ide/sircovid/badge" alt="CodeFactor"></a></li>
+<li><a href="https://codecov.io/gh/mrc-ide/sircovid?branch=master" class="external-link"><img src="https://codecov.io/gh/mrc-ide/sircovid/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://buildkite.com/mrc-ide/sircovid" class="external-link"><img src="https://badge.buildkite.com/8b8c5742874fc1dc137e5c085f107a1e4346e9cdf65d72934b.svg?branch=master" alt="Docker build status"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Marc Baguelin, Edward Knock, Lilith Whittles, Rich FitzJohn, John Lees, Anne Cori, Pablo Perez-Guzman, Raphael Sonabend, Yasin Elmaci.</p>
+  <p></p>
+<p>Developed by Marc Baguelin, Edward Knock, Lilith Whittles, Rich FitzJohn, John Lees, Anne Cori, Pablo Perez-Guzman, Raphael Sonabend, Yasin Elmaci.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
 </div>
 
       </footer>
@@ -204,6 +210,8 @@
 
   
 
+
+  
 
   </body>
 </html>
