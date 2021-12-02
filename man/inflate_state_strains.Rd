@@ -9,9 +9,9 @@ inflate_state_strains(state1, info1, info2)
 \arguments{
 \item{state1}{The state matrix with one strain}
 
-\item{info1}{The model info with one strain}
+\item{info1}{The model info with one strain (or a \code{dust} model object)}
 
-\item{info2}{The model info with two strains}
+\item{info2}{The model info with two strains (or a \code{dust} model object)}
 }
 \value{
 An expanded model state with two strains
