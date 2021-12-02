@@ -946,11 +946,6 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           es <- if (n_strain == 1 || s %in% c(1, 4)) efficacy else
             efficacy_strain_2
           new_prob <- es[[rel]][g, v_s] * mod
-          ## FIXME - Temporary fixes for when p > 1
-          if (new_prob > 1) {
-            ## Cap at 1
-            new_prob <- 1
-          }
           rel_list[[rel]][g, s, v_s] <- new_prob
         }
       }
