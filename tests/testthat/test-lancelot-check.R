@@ -1025,3 +1025,44 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
   helper("ICU_transmission", "ICU_W_R_unconf", "gamma_ICU_W_R_step")
   helper("ICU_transmission", "ICU_W_R_conf", "gamma_ICU_W_R_step")
 })
+
+
+test_that("Severity probabilities correctly capped at 1", {
+  ## We're going to try a number of very similar tests here, so a
+  ## helper function will help run a model with a severity probability set to
+  ## 1 and then also set to 1.5. Due to capping at 1 in the model, we
+  ## expect these to produce the same results with the same seed
+  helper <- function(prob_name) {
+    ## waning_rate default is 0, setting to a non-zero value so that this test
+    ## passes with waning immunity
+
+    p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+    ## First set value to 1
+    p[[paste0(prob_name, "_step")]][, ] <- 1
+
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
+    mod$update_state(state = lancelot_initial(info, 1, p)$state)
+    y <- mod$simulate(seq(0, 400, by = 4))
+
+    ## Now set value to 1.5
+    p[[paste0(prob_name, "_step")]][,] <- 1.5
+
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
+    mod$update_state(state = lancelot_initial(info, 1, p)$state)
+    y2 <- mod$simulate(seq(0, 400, by = 4))
+
+    expect_true(all(y == y2))
+  }
+
+  helper("p_C")
+  helper("p_H")
+  helper("p_ICU")
+  helper("p_ICU_D")
+  helper("p_H_D")
+  helper("p_W_D")
+  helper("p_G_D")
+  helper("p_R")
+
+})
