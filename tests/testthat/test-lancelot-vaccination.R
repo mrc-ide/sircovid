@@ -2937,8 +2937,6 @@ test_that("modify_severity works as expected", {
   # age x strain x vacc
   expect_equal(rowMeans(vapply(out, dim, numeric(3))), c(19, 4, 3))
 
-  expect_vector_lte(unlist(out), 1)
-
   tol <- 1e-15
   lapply(out, function(x) expect_vector_equal(x[, 1, ], 0.2, tol))
   lapply(out, function(x) expect_vector_equal(x[, 2, ], 0.6, tol))
