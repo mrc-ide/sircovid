@@ -646,7 +646,10 @@ combine_steps_groups <- function(step, n_groups, n_time_steps, n_strains,
     array(0, c(n_time_steps, n_strains, n_vacc_classes))
   )
 
+  ret <- pmin(ret, 1)
   ret <- aperm(ret, c(4, 2, 3, 1))
+
+  ret
 }
 
 

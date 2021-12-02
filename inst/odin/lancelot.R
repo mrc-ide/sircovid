@@ -259,36 +259,38 @@ dim(p_W_D_progress) <- n_strains
 
 ## Work out time-varying probabilities
 p_C[, , ] <- if (as.integer(step) >= n_p_C_steps)
-  p_C_step[n_p_C_steps, i] * rel_p_sympt[i, j, k] else
-    p_C_step[step + 1, i] * rel_p_sympt[i, j, k]
+  min(p_C_step[n_p_C_steps, i] * rel_p_sympt[i, j, k], as.numeric(1)) else
+    min(p_C_step[step + 1, i] * rel_p_sympt[i, j, k], as.numeric(1))
 
 p_H[, , ] <- if (as.integer(step) >= n_p_H_steps)
-  p_H_step[n_p_H_steps, i] * rel_p_hosp_if_sympt[i, j, k] else
-    p_H_step[step + 1, i] * rel_p_hosp_if_sympt[i, j, k]
+  min(p_H_step[n_p_H_steps, i] * rel_p_hosp_if_sympt[i, j, k],
+      as.numeric(1)) else
+        min(p_H_step[step + 1, i] * rel_p_hosp_if_sympt[i, j, k], as.numeric(1))
 
 p_ICU[, , ] <- if (as.integer(step) >= n_p_ICU_steps)
-  p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k] else
-    p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k]
+  min(p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k], as.numeric(1)) else
+    min(p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k], as.numeric(1))
 
 p_ICU_D[, , ] <- if (as.integer(step) >= n_p_ICU_D_steps)
-  p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k] else
-    p_ICU_D_step[step + 1, i] * rel_p_ICU_D[i, j, k]
+  min(p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k],
+      as.numeric(1)) else
+    min(p_ICU_D_step[step + 1, i] * rel_p_ICU_D[i, j, k], as.numeric(1))
 
 p_H_D[, , ] <- if (as.integer(step) >= n_p_H_D_steps)
-  p_H_D_step[n_p_H_D_steps, i] * rel_p_H_D[i, j, k] else
-    p_H_D_step[step + 1, i] * rel_p_H_D[i, j, k]
+  min(p_H_D_step[n_p_H_D_steps, i] * rel_p_H_D[i, j, k], as.numeric(1)) else
+    min(p_H_D_step[step + 1, i] * rel_p_H_D[i, j, k], as.numeric(1))
 
 p_W_D[, , ] <- if (as.integer(step) >= n_p_W_D_steps)
-  p_W_D_step[n_p_W_D_steps, i] * rel_p_W_D[i, j, k] else
-    p_W_D_step[step + 1, i] * rel_p_W_D[i, j, k]
+  min(p_W_D_step[n_p_W_D_steps, i] * rel_p_W_D[i, j, k], as.numeric(1)) else
+    min(p_W_D_step[step + 1, i] * rel_p_W_D[i, j, k], as.numeric(1))
 
 p_G_D[, , ] <- if (as.integer(step) >= n_p_G_D_steps)
-  p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k] else
-    p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k]
+  min(p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k], as.numeric(1)) else
+    min(p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k], as.numeric(1))
 
 p_R[, , ] <- if (as.integer(step) >= n_p_R_steps)
-  p_R_step[n_p_R_steps, i] * rel_p_R[i, j, k] else
-    p_R_step[step + 1, i] * rel_p_R[i, j, k]
+  min(p_R_step[n_p_R_steps, i] * rel_p_R[i, j, k], as.numeric(1)) else
+    min(p_R_step[step + 1, i] * rel_p_R[i, j, k], as.numeric(1))
 
 p_star[] <- if (as.integer(step) >= n_p_star_steps)
   p_star_step[n_p_star_steps, i] else p_star_step[step + 1, i]
