@@ -1046,7 +1046,7 @@ test_that("Severity probabilities correctly capped at 1", {
     y <- mod$simulate(seq(0, 400, by = 4))
 
     ## Now set value to 1.5
-    p[[paste0(prob_name, "_step")]][,] <- 1.5
+    p[[paste0(prob_name, "_step")]][, ] <- 1.5
 
     mod <- lancelot$new(p, 0, 1, seed = 1L)
     info <- mod$info()

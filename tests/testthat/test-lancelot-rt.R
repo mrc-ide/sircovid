@@ -328,6 +328,41 @@ test_that("Parameters affect Rt as expected", {
   helper("k_C_2", 1, 2)
 })
 
+test_that("p_C capped correctly at 1 in Rt calculation", {
+  ## p_C is the only severity probability that impacts the Rt calculation
+
+  ## Note that m_CHW and m_CHR have been changed from defaults to avoid
+  ## having all care home residents infected
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           m_CHW = 3e-6, m_CHR = 3e-6)
+
+  np <- 1L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial$state, step = initial$step)
+  mod$set_index(integer(0))
+  index <- mod$info()$index$S
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(index)
+  y <- mod$simulate(steps)
+
+  p$p_C_step[, ] <- 1
+  rt1 <- lancelot_Rt(steps, y[, 1, ], p)
+
+  p$p_C_step[, ] <- 1.5
+  rt2 <- lancelot_Rt(steps, y[, 1, ], p)
+
+  expect_equal(rt1$Rt_all, rt2$Rt_all)
+  expect_equal(rt1$eff_Rt_all, rt2$eff_Rt_all)
+  expect_equal(rt1$Rt_general, rt2$Rt_general)
+  expect_equal(rt1$eff_Rt_general, rt2$eff_Rt_general)
+
+})
 
 test_that("Cannot calculate Rt for non-zero transmissions", {
   d <- reference_data_lancelot_rt()
