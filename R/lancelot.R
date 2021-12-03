@@ -2217,10 +2217,9 @@ lancelot_check_severity <- function(pars) {
         }
 
         ## simple but crude checks
-        max_p <- max(pars[[rel_p]][i, , ]) * max(pars[[p_step]][, i])
         min_p <- min(pars[[rel_p]][i, , ]) * min(pars[[p_step]][, i])
 
-        if (any(min_p < 0 | max_p > 1)) {
+        if (any(min_p < 0)) {
           stop(sprintf("%s * %s is not in [0, 1] for group %d",
                        rel_p, p_step, i))
         } else {
