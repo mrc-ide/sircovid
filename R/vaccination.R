@@ -80,7 +80,6 @@ build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param) {
       array(rep(rel_param, each = n_groups * n_strains),
             dim = c(n_groups, n_strains, n_vacc_classes))
   }
-  check_rel_param(mat_rel_param, name_param)
   mat_rel_param
 }
 
