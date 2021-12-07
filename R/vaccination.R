@@ -80,7 +80,6 @@ build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param) {
       array(rep(rel_param, each = n_groups * n_strains),
             dim = c(n_groups, n_strains, n_vacc_classes))
   }
-  check_rel_param(mat_rel_param, name_param)
   mat_rel_param
 }
 
@@ -946,11 +945,6 @@ modify_severity <- function(efficacy, efficacy_strain_2,
           es <- if (n_strain == 1 || s %in% c(1, 4)) efficacy else
             efficacy_strain_2
           new_prob <- es[[rel]][g, v_s] * mod
-          ## FIXME - Temporary fixes for when p > 1
-          if (new_prob > 1) {
-            ## Cap at 1
-            new_prob <- 1
-          }
           rel_list[[rel]][g, s, v_s] <- new_prob
         }
       }

@@ -3074,7 +3074,7 @@ public:
     for (int i = 1; i <= shared->dim_p_C_1; ++i) {
       for (int j = 1; j <= shared->dim_p_C_2; ++j) {
         for (int k = 1; k <= shared->dim_p_C_3; ++k) {
-          internal.p_C[i - 1 + shared->dim_p_C_1 * (j - 1) + shared->dim_p_C_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_C_steps ? shared->p_C_step[shared->dim_p_C_step_1 * (i - 1) + shared->n_p_C_steps - 1] * shared->rel_p_sympt[shared->dim_rel_p_sympt_12 * (k - 1) + shared->dim_rel_p_sympt_1 * (j - 1) + i - 1] : shared->p_C_step[shared->dim_p_C_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_sympt[shared->dim_rel_p_sympt_12 * (k - 1) + shared->dim_rel_p_sympt_1 * (j - 1) + i - 1]);
+          internal.p_C[i - 1 + shared->dim_p_C_1 * (j - 1) + shared->dim_p_C_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_C_steps ? std::min(shared->p_C_step[shared->dim_p_C_step_1 * (i - 1) + shared->n_p_C_steps - 1] * shared->rel_p_sympt[shared->dim_rel_p_sympt_12 * (k - 1) + shared->dim_rel_p_sympt_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_C_step[shared->dim_p_C_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_sympt[shared->dim_rel_p_sympt_12 * (k - 1) + shared->dim_rel_p_sympt_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3084,7 +3084,7 @@ public:
     for (int i = 1; i <= shared->dim_p_G_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_G_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_G_D_3; ++k) {
-          internal.p_G_D[i - 1 + shared->dim_p_G_D_1 * (j - 1) + shared->dim_p_G_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_G_D_steps ? shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + shared->n_p_G_D_steps - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1] : shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1]);
+          internal.p_G_D[i - 1 + shared->dim_p_G_D_1 * (j - 1) + shared->dim_p_G_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_G_D_steps ? std::min(shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + shared->n_p_G_D_steps - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3094,14 +3094,14 @@ public:
     for (int i = 1; i <= shared->dim_p_H_1; ++i) {
       for (int j = 1; j <= shared->dim_p_H_2; ++j) {
         for (int k = 1; k <= shared->dim_p_H_3; ++k) {
-          internal.p_H[i - 1 + shared->dim_p_H_1 * (j - 1) + shared->dim_p_H_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_H_steps ? shared->p_H_step[shared->dim_p_H_step_1 * (i - 1) + shared->n_p_H_steps - 1] * shared->rel_p_hosp_if_sympt[shared->dim_rel_p_hosp_if_sympt_12 * (k - 1) + shared->dim_rel_p_hosp_if_sympt_1 * (j - 1) + i - 1] : shared->p_H_step[shared->dim_p_H_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_hosp_if_sympt[shared->dim_rel_p_hosp_if_sympt_12 * (k - 1) + shared->dim_rel_p_hosp_if_sympt_1 * (j - 1) + i - 1]);
+          internal.p_H[i - 1 + shared->dim_p_H_1 * (j - 1) + shared->dim_p_H_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_H_steps ? std::min(shared->p_H_step[shared->dim_p_H_step_1 * (i - 1) + shared->n_p_H_steps - 1] * shared->rel_p_hosp_if_sympt[shared->dim_rel_p_hosp_if_sympt_12 * (k - 1) + shared->dim_rel_p_hosp_if_sympt_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_H_step[shared->dim_p_H_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_hosp_if_sympt[shared->dim_rel_p_hosp_if_sympt_12 * (k - 1) + shared->dim_rel_p_hosp_if_sympt_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
     for (int i = 1; i <= shared->dim_p_H_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_H_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_H_D_3; ++k) {
-          internal.p_H_D[i - 1 + shared->dim_p_H_D_1 * (j - 1) + shared->dim_p_H_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_H_D_steps ? shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + shared->n_p_H_D_steps - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1] : shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1]);
+          internal.p_H_D[i - 1 + shared->dim_p_H_D_1 * (j - 1) + shared->dim_p_H_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_H_D_steps ? std::min(shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + shared->n_p_H_D_steps - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3114,14 +3114,14 @@ public:
     for (int i = 1; i <= shared->dim_p_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_p_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_p_ICU_3; ++k) {
-          internal.p_ICU[i - 1 + shared->dim_p_ICU_1 * (j - 1) + shared->dim_p_ICU_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_steps ? shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + shared->n_p_ICU_steps - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1] : shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1]);
+          internal.p_ICU[i - 1 + shared->dim_p_ICU_1 * (j - 1) + shared->dim_p_ICU_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_steps ? std::min(shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + shared->n_p_ICU_steps - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
     for (int i = 1; i <= shared->dim_p_ICU_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_ICU_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_ICU_D_3; ++k) {
-          internal.p_ICU_D[i - 1 + shared->dim_p_ICU_D_1 * (j - 1) + shared->dim_p_ICU_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_D_steps ? shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + shared->n_p_ICU_D_steps - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1] : shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1]);
+          internal.p_ICU_D[i - 1 + shared->dim_p_ICU_D_1 * (j - 1) + shared->dim_p_ICU_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_D_steps ? std::min(shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + shared->n_p_ICU_D_steps - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3152,14 +3152,14 @@ public:
     for (int i = 1; i <= shared->dim_p_R_1; ++i) {
       for (int j = 1; j <= shared->dim_p_R_2; ++j) {
         for (int k = 1; k <= shared->dim_p_R_3; ++k) {
-          internal.p_R[i - 1 + shared->dim_p_R_1 * (j - 1) + shared->dim_p_R_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_R_steps ? shared->p_R_step[shared->dim_p_R_step_1 * (i - 1) + shared->n_p_R_steps - 1] * shared->rel_p_R[shared->dim_rel_p_R_12 * (k - 1) + shared->dim_rel_p_R_1 * (j - 1) + i - 1] : shared->p_R_step[shared->dim_p_R_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_R[shared->dim_rel_p_R_12 * (k - 1) + shared->dim_rel_p_R_1 * (j - 1) + i - 1]);
+          internal.p_R[i - 1 + shared->dim_p_R_1 * (j - 1) + shared->dim_p_R_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_R_steps ? std::min(shared->p_R_step[shared->dim_p_R_step_1 * (i - 1) + shared->n_p_R_steps - 1] * shared->rel_p_R[shared->dim_rel_p_R_12 * (k - 1) + shared->dim_rel_p_R_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_R_step[shared->dim_p_R_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_R[shared->dim_rel_p_R_12 * (k - 1) + shared->dim_rel_p_R_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }
     for (int i = 1; i <= shared->dim_p_W_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_W_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_W_D_3; ++k) {
-          internal.p_W_D[i - 1 + shared->dim_p_W_D_1 * (j - 1) + shared->dim_p_W_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_W_D_steps ? shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + shared->n_p_W_D_steps - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1] : shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1]);
+          internal.p_W_D[i - 1 + shared->dim_p_W_D_1 * (j - 1) + shared->dim_p_W_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_W_D_steps ? std::min(shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + shared->n_p_W_D_steps - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
     }

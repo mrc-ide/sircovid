@@ -1088,7 +1088,7 @@ test_that("lancelot check severity works as expected", {
 
   ## rel_p_sympt Inf
   for (i in seq_along(steps)) {
-    p[[rels[[i]]]][] <- Inf
+    p[[rels[[i]]]][] <- -1
     expect_error(
       lancelot_check_severity(p),
       sprintf("%s * %s is not in [0, 1] for group 1", rels[[i]], steps[[i]]),

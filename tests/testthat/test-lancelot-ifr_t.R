@@ -272,3 +272,52 @@ test_that("Parameters affect IFR/IHR/ALOS as expected", {
   helper("ALOS", "k_W_D", 1, 2)
   helper("ALOS", "k_W_R", 1, 2)
 })
+
+
+test_that("Severity probabilities correctly capped at 1 for IFR/IHR/ALOS", {
+
+  ## Note that m_CHW and m_CHR have been changed from defaults to avoid
+  ## having all care home residents infected
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           m_CHW = 3e-6, m_CHR = 3e-6)
+
+  np <- 1L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial$state, step = initial$step)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(initial$step, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+
+  helper <- function(prob_name) {
+
+    p[[paste0(prob_name, "_step")]][, ] <- 1
+
+    ifr1 <- lancelot_ifr_t(steps, S, I, p)
+
+    p[[paste0(prob_name, "_step")]][, ] <- 1.5
+    ifr2 <- lancelot_ifr_t(steps, S, I, p)
+
+    expect_equal(ifr1[["IFR_t_all"]], ifr2[["IFR_t_all"]])
+    expect_equal(ifr1[["IHR_t_all"]], ifr2[["IHR_t_all"]])
+    expect_equal(ifr1[["ALOS"]], ifr2[["ALOS"]])
+  }
+
+  helper("p_C")
+  helper("p_H")
+  helper("p_G_D")
+  helper("p_H_D")
+  helper("p_ICU")
+  helper("p_ICU_D")
+  helper("p_W_D")
+
+})
