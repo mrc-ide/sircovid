@@ -22,7 +22,7 @@ The "basic" sircovid model. This is a dust model.'><meta property="og:image" con
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.18</span>
       </span>
     </div>
 
@@ -60,7 +60,6 @@ The "basic" sircovid model. This is a dust model.</h1>
 <p>The "basic" sircovid model. This is a dust model.</p>
     </div>
 
-    <div id="ref-usage">Usage,NULL</div>
 
 
     <div id="ref-examples">
@@ -82,25 +81,25 @@ The "basic" sircovid model. This is a dust model.</h1>
 <span class="r-in"><span class="co"># The filtered state is returned at the end of the run</span></span>
 <span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="va">step_end</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> icu         227  118  114  220  211  154  146   98  187   230</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deaths      644  330  334  548  645  381  485  389  542   568</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deaths_inc  104   56   64   88  111   59   85   59   97    96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> icu         187  154  139  166  190  166  175  192   88   137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deaths      537  555  361  537  618  490  511  581  236   396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deaths_inc   89   90   67   80  106   72   86  108   35    72</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># More state can be retrieved using the "state" method</span></span>
 <span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       91.0       91.0       91.0       91.0       91.0       91.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      227.0      118.0      114.0      220.0      211.0      154.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      644.0      330.0      334.0      548.0      645.0      381.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]      104.0       56.0       64.0       88.0      111.0       59.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      187.0      154.0      139.0      166.0      190.0      166.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      537.0      555.0      361.0      537.0      618.0      490.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       89.0       90.0       67.0       80.0      106.0       72.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]        0.1        0.1        0.1        0.1        0.1        0.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,7]       [,8]       [,9]      [,10]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       91.0       91.0       91.0       91.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 56550138.0 56550138.0 56550138.0 56550138.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      146.0       98.0      187.0      230.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      485.0      389.0      542.0      568.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       85.0       59.0       97.0       96.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      175.0      192.0       88.0      137.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      511.0      581.0      236.0      396.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       86.0      108.0       35.0       72.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]        0.1        0.1        0.1        0.1</span>
 </code></pre></div>
     </div>
@@ -116,7 +115,7 @@ The "basic" sircovid model. This is a dust model.</h1>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer></div>
