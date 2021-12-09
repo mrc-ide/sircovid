@@ -182,3 +182,99 @@ check_sircovid_model <- function(sircovid_model) {
          call. = FALSE)
   }
 }
+
+
+rotate_strains <- function(state, info) {
+  if (is.null(dim(state))) {
+    stop("Expected a matrix or array for 'state'")
+  }
+  if (nrow(state) != info$len) {
+    stop(sprintf("Expected a matrix with %d rows for 'state'",
+                 info$len))
+  }
+
+  ## Push all state down into a common rank to avoid lots of boring
+  ## dimension arithmetic (e.g., we might have this structured by
+  ## region, or a single particle's state etc, but what matters is the
+  ## structure by particle only).
+  dim_orig <- dim(state)
+  if (is.null(dim(state))) {
+    state <- matrix(state, length(state), 1)
+  } else if (length(dim(state)) > 2) {
+    state <- matrix(state, nrow(state))
+  }
+
+  ## Currently we only support one sort of move: Anyone who has been
+  ## infected in the past is moved to now be indexed by strain 1 (no
+  ## matter whether they had multiple infections before), and strain 2
+  ## will be completely empty.
+  strain_from_idx <- c(2, 3, 4)
+  strain_to_idx <- 1
+
+  ## TODO: someone please check this with the odin code. How would we
+  ## know if additional compartments are added that should be put
+  ## here?  In contrast with inflate_state which works by detecting
+  ## which states have changed size, we can't easily do that here.
+  ##
+  ## It's possible that something could be derived from the odin code
+  ## by looking for the expression that underpins each *variable* and
+  ## seeing if it contains n_strains. Rich can do this.
+  compartments <- c(
+    ## those with dimension c(n_groups, n_strains, k_XXX, n_vacc_classes):
+    "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D",
+    "ICU_pre_unconf", "H_R_unconf", "H_D_unconf", "ICU_W_R_unconf",
+    "ICU_W_D_unconf", "ICU_D_unconf", "W_R_unconf", "W_D_unconf",
+    "ICU_pre_conf", "H_R_conf", "H_D_conf", "ICU_W_R_conf",
+    "ICU_W_D_conf", "ICU_D_conf", "W_R_conf", "W_D_conf",
+    "T_sero_pre_1", "T_sero_pos_1",
+    "T_sero_pre_2", "T_sero_pos_2",
+    "T_PCR_pre", "T_PCR_pos",
+    ## those with dimension c(n_groups, n_strains, n_vacc_classes):
+    "R", "T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg", "I_weighted",
+    ## those with dimension n_strains:
+    "cum_infections_per_strain",
+    ## those with dimension n_real_strains:
+    "prob_strain")
+
+
+  n_particle <- ncol(state)
+  for (i in seq_along(compartments)) {
+    name <- compartments[[i]]
+    dim <- info$dim[[name]]
+    state_i <- array(state[info$index[[name]], ], c(dim, n_particle))
+
+    if (length(dim) == 4) {
+      for (j in strain_from_idx) {
+        tomove <- state_i[, j, , , , drop = FALSE]
+        state_i[, strain_to_idx, , , ] <-
+          state_i[, strain_to_idx, , , , drop = FALSE] + tomove
+        state_i[, j, , , ] <- 0
+      }
+    } else if (length(dim) == 3) {
+      for (j in strain_from_idx) {
+        tomove <- state_i[, j, , , drop = FALSE]
+        state_i[, strain_to_idx, , ] <-
+          state_i[, strain_to_idx, , , drop = FALSE] + tomove
+        state_i[, j, , ] <- 0
+      }
+    } else if (length(dim) == 1) {
+      ## this loop range ensures that the move can still happen when
+      ## the object has dimension n_real_strains not n_strains
+      ## e.g. for prob_strain
+      stopifnot(dim %in% c(2, 4))
+      for (j in strain_from_idx[strain_from_idx <= dim]) {
+        tomove <- state_i[j, , drop = FALSE]
+        state_i[strain_to_idx, ] <-
+          state_i[strain_to_idx, , drop = FALSE] + tomove
+        state_i[j, ] <- 0
+      }
+    } else {
+      stop(sprintf("Unexpected dimensions (%d) in move_strain_compartment",
+                   length(dim)))
+    }
+    state[info$index[[name]], ] <- state_i
+  }
+
+  dim(state) <- dim_orig
+  state
+}

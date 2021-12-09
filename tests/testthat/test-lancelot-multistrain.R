@@ -2798,3 +2798,70 @@ test_that("wtmean_Rt works as expected with interpolation", {
   expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
   expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
 })
+
+
+## TODO: do this with vaccination in too, as that is a slightly
+## different shape
+
+## TODO:
+## check structured case (e.g., multiple regions)
+## check that if there is nothing in strain 2 nothing changes
+## check that if there is nothing in strain 1 everything changes
+## check that the movement from strains 3 and 4 is correct (requires
+## some careful setting up so that we have sequential infection, and
+## that is not super obvious to me)
+test_that("Can rotate strains", {
+  np <- 6
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-02-07")
+  date_seeding <- start_date # seed both strains on same day
+  p <- lancelot_parameters(start_date, "england",
+                           strain_transmission = c(1, 10),
+                           strain_seed_date = date_seeding,
+                           strain_seed_size = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  invisible(mod$run(200))
+
+  state1 <- mod$state()
+  state2 <- rotate_strains(state1, mod$info())
+
+  expect_equal(dim(state2), dim(state1))
+  expect_equal(colSums(state2), colSums(state1))
+
+  y1 <- mod$transform_variables(state1)
+  y2 <- mod$transform_variables(state2)
+
+  ## Next, check one of each rank of transformed variable to make sure
+  ## that all are appropriately transformed.
+
+  ## This one is doable analytically :)
+  expect_equal(y2$prob_strain, matrix(1:0, 2, np))
+
+  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
+  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
+
+  expect_true(all(y2$R[, 2:4, , ] == 0))
+  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
+
+  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
+  expect_equal(y2$cum_infections_per_strain[1, ],
+               colSums(y1$cum_infections_per_strain))
+
+  ## Single case
+  expect_error(rotate_strains(state1[, 1], mod$info()),
+               "Expected a matrix or array for 'state'")
+  expect_error(rotate_strains(state1[-1, ], mod$info()),
+               "Expected a matrix with [0-9]+ rows for 'state'")
+
+  ## Structured case; show that it does not matter in what order we
+  ## structure the particle dimensions.
+  state3 <- rotate_strains(mcstate::array_reshape(state1, 2, 2:3), mod$info())
+  expect_equal(dim(state3), c(nrow(state1), 2, 3))
+  expect_equal(state3[, 1, 1], state2[, 1])
+  expect_equal(state3, mcstate::array_reshape(state2, 2, 2:3))
+})
