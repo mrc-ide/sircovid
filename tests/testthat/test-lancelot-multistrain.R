@@ -2903,7 +2903,8 @@ test_that("Can rotate strains with vaccination", {
                            rel_p_hosp_if_sympt = c(0.5, 0.5),
                            waning_rate = 0.1,
                            cross_immunity = 0)
-  mod <- lancelot$new(p, 0, 3, seed = 42L)
+  np <- 3
+  mod <- lancelot$new(p, 0, np, seed = 42L)
   info <- mod$info()
 
   state <- lancelot_initial(info, 1, p)$state
@@ -2919,13 +2920,16 @@ test_that("Can rotate strains with vaccination", {
   expect_equal(dim(state2), dim(state1))
   expect_equal(colSums(state2), colSums(state1))
 
+  y1 <- mod$transform_variables(state1)
+  y2 <- mod$transform_variables(state2)
+
   ## Next, check one of each rank of transformed variable to make sure
   ## that all are appropriately transformed; see above.
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
   expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
+  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 4, 5), sum))
   expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
+  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 3, 4), sum))
   expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
   expect_equal(y2$cum_infections_per_strain[1, ],
                colSums(y1$cum_infections_per_strain))
