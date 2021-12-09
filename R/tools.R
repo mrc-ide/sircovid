@@ -208,9 +208,7 @@ rotate_strains <- function(state, info) {
   ## region, or a single particle's state etc, but what matters is the
   ## structure by particle only).
   dim_orig <- dim(state)
-  if (is.null(dim(state))) {
-    state <- matrix(state, length(state), 1)
-  } else if (length(dim(state)) > 2) {
+  if (length(dim(state)) > 2) {
     state <- matrix(state, nrow(state))
   }
 
@@ -279,8 +277,10 @@ rotate_strains <- function(state, info) {
         state_i[j, ] <- 0
       }
     } else {
-      stop(sprintf("Unexpected dimensions (%d) in move_strain_compartment",
-                   length(dim)))
+      ## This is unreachable unless the model changes to include
+      ## something that has a rank-2 variable that needs transforming.
+      stop(sprintf("Unexpected dimensions (%d) in rotate_strain", # nocov
+                   length(dim)))                                  # nocov
     }
     state[info$index[[name]], ] <- state_i
   }
