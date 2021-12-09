@@ -2798,3 +2798,139 @@ test_that("wtmean_Rt works as expected with interpolation", {
   expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
   expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
 })
+
+
+test_that("Can rotate strains", {
+  np <- 6
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-02-07")
+  date_seeding <- start_date # seed both strains on same day
+  p <- lancelot_parameters(start_date, "england",
+                           strain_transmission = c(1, 10),
+                           strain_seed_date = date_seeding,
+                           strain_seed_size = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)$state
+  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  invisible(mod$run(200))
+
+  state1 <- mod$state()
+  state2 <- rotate_strains(state1, mod$info())
+
+  expect_equal(dim(state2), dim(state1))
+  expect_equal(colSums(state2), colSums(state1))
+
+  y1 <- mod$transform_variables(state1)
+  y2 <- mod$transform_variables(state2)
+
+  ## Next, check one of each rank of transformed variable to make sure
+  ## that all are appropriately transformed.
+
+  ## This one is doable analytically :)
+  expect_equal(y2$prob_strain, matrix(1:0, 2, np))
+
+  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
+  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
+
+  expect_true(all(y2$R[, 2:4, , ] == 0))
+  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
+
+  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
+  expect_equal(y2$cum_infections_per_strain[1, ],
+               colSums(y1$cum_infections_per_strain))
+
+  expect_error(rotate_strains(state1[, 1], mod$info()),
+               "Expected a matrix or array for 'state'")
+  expect_error(rotate_strains(state1[-1, ], mod$info()),
+               "Expected a matrix with [0-9]+ rows for 'state'")
+
+  ## Structured case; show that it does not matter in what order we
+  ## structure the particle dimensions.
+  state3 <- rotate_strains(mcstate::array_reshape(state1, 2, 2:3), mod$info())
+  expect_equal(dim(state3), c(nrow(state1), 2, 3))
+  expect_equal(state3[, 1, 1], state2[, 1])
+  expect_equal(state3, mcstate::array_reshape(state2, 2, 2:3))
+})
+
+
+test_that("Can rotate strains with cross-infection", {
+  np <- 2L
+
+  ## no cross-immnunity
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+  mod <- lancelot$new(p, 0, np)
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial$state, step = initial$step)
+  end <- sircovid_date("2020-05-01") / p$dt
+  set.seed(1)
+  invisible(mod$run(end))
+
+  state1 <- mod$state()
+  state2 <- rotate_strains(state1, mod$info())
+
+  expect_equal(dim(state2), dim(state1))
+  expect_equal(colSums(state2), colSums(state1))
+
+  y1 <- mod$transform_variables(state1)
+  y2 <- mod$transform_variables(state2)
+
+  ## Next, check one of each rank of transformed variable to make sure
+  ## that all are appropriately transformed; see above.
+  expect_equal(y2$prob_strain, matrix(1:0, 2, np))
+  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
+  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
+  expect_true(all(y2$R[, 2:4, , ] == 0))
+  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
+  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
+  expect_equal(y2$cum_infections_per_strain[1, ],
+               colSums(y1$cum_infections_per_strain))
+})
+
+
+test_that("Can rotate strains with vaccination", {
+  p <- lancelot_parameters(0, "england",
+                           strain_transmission = c(1, 1),
+                           rel_susceptibility = c(0.5, 0.5),
+                           rel_p_sympt = c(0.5, 0.5),
+                           rel_p_hosp_if_sympt = c(0.5, 0.5),
+                           waning_rate = 0.1,
+                           cross_immunity = 0)
+  np <- 3
+  mod <- lancelot$new(p, 0, np, seed = 42L)
+  info <- mod$info()
+
+  state <- lancelot_initial(info, 1, p)$state
+  index_E <- array(info$index$E, info$dim$E)
+  state[index_E[4, , 1, 1]] <- 100
+
+  mod$update_state(state = state)
+  invisible(mod$run(200))
+
+  state1 <- mod$state()
+  state2 <- rotate_strains(state1, mod$info())
+
+  expect_equal(dim(state2), dim(state1))
+  expect_equal(colSums(state2), colSums(state1))
+
+  y1 <- mod$transform_variables(state1)
+  y2 <- mod$transform_variables(state2)
+
+  ## Next, check one of each rank of transformed variable to make sure
+  ## that all are appropriately transformed; see above.
+  expect_equal(y2$prob_strain, matrix(1:0, 2, np))
+  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
+  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 4, 5), sum))
+  expect_true(all(y2$R[, 2:4, , ] == 0))
+  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 3, 4), sum))
+  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
+  expect_equal(y2$cum_infections_per_strain[1, ],
+               colSums(y1$cum_infections_per_strain))
+})
