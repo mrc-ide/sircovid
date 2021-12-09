@@ -1,3 +1,7 @@
+# sircovid 0.12.20
+
+* New function `rotate_strains` to allow cycling of strains
+
 # sircovid 0.12.17
 
 * `modify_severity` now caps at 1 for all vaccine strata
