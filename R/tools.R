@@ -184,6 +184,16 @@ check_sircovid_model <- function(sircovid_model) {
 }
 
 
+##' Rotate strains, so that strain 1 becomes the sum of strains 1 and
+##' 2 and strain 2 is empty. Use this to allow sequential replacement
+##' of strains.
+##'
+##' @title Rotate strains
+##'
+##' @param state Model state
+##'
+##' @param info Model info
+##' @export
 rotate_strains <- function(state, info) {
   if (is.null(dim(state))) {
     stop("Expected a matrix or array for 'state'")
