@@ -219,35 +219,9 @@ rotate_strains <- function(state, info) {
   strain_from_idx <- c(2, 3, 4)
   strain_to_idx <- 1
 
-  ## TODO: someone please check this with the odin code. How would we
-  ## know if additional compartments are added that should be put
-  ## here?  In contrast with inflate_state which works by detecting
-  ## which states have changed size, we can't easily do that here.
-  ##
-  ## It's possible that something could be derived from the odin code
-  ## by looking for the expression that underpins each *variable* and
-  ## seeing if it contains n_strains. Rich can do this.
-  compartments <- c(
-    ## those with dimension c(n_groups, n_strains, k_XXX, n_vacc_classes):
-    "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D",
-    "ICU_pre_unconf", "H_R_unconf", "H_D_unconf", "ICU_W_R_unconf",
-    "ICU_W_D_unconf", "ICU_D_unconf", "W_R_unconf", "W_D_unconf",
-    "ICU_pre_conf", "H_R_conf", "H_D_conf", "ICU_W_R_conf",
-    "ICU_W_D_conf", "ICU_D_conf", "W_R_conf", "W_D_conf",
-    "T_sero_pre_1", "T_sero_pos_1",
-    "T_sero_pre_2", "T_sero_pos_2",
-    "T_PCR_pre", "T_PCR_pos",
-    ## those with dimension c(n_groups, n_strains, n_vacc_classes):
-    "R", "T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg", "I_weighted",
-    ## those with dimension n_strains:
-    "cum_infections_per_strain",
-    ## those with dimension n_real_strains:
-    "prob_strain")
-
-
   n_particle <- ncol(state)
-  for (i in seq_along(compartments)) {
-    name <- compartments[[i]]
+  for (i in seq_along(rotate_strain_compartments)) {
+    name <- rotate_strain_compartments[[i]]
     dim <- info$dim[[name]]
     state_i <- array(state[info$index[[name]], ], c(dim, n_particle))
 
@@ -288,3 +262,21 @@ rotate_strains <- function(state, info) {
   dim(state) <- dim_orig
   state
 }
+
+
+rotate_strain_compartments <- c(
+  ## those with dimension c(n_groups, n_strains, k_XXX, n_vacc_classes):
+  "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D",
+  "ICU_pre_unconf", "H_R_unconf", "H_D_unconf", "ICU_W_R_unconf",
+  "ICU_W_D_unconf", "ICU_D_unconf", "W_R_unconf", "W_D_unconf",
+  "ICU_pre_conf", "H_R_conf", "H_D_conf", "ICU_W_R_conf",
+  "ICU_W_D_conf", "ICU_D_conf", "W_R_conf", "W_D_conf",
+  "T_sero_pre_1", "T_sero_pos_1",
+  "T_sero_pre_2", "T_sero_pos_2",
+  "T_PCR_pre", "T_PCR_pos",
+  ## those with dimension c(n_groups, n_strains, n_vacc_classes):
+  "R", "T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg", "I_weighted",
+  ## those with dimension n_strains:
+  "cum_infections_per_strain",
+  ## those with dimension n_real_strains:
+  "prob_strain")
