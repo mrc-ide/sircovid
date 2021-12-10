@@ -2934,3 +2934,27 @@ test_that("Can rotate strains with vaccination", {
   expect_equal(y2$cum_infections_per_strain[1, ],
                colSums(y1$cum_infections_per_strain))
 })
+
+
+test_that("rotate strain uses correct variables", {
+  path <- sircovid_file("odin/lancelot.R")
+  json <- odin::odin_parse_(path, options = odin.dust::odin_dust_options())
+  ir <- odin::odin_ir_deserialise(json)
+
+  check1 <- function(v) {
+    any(vlapply(unlist(c(v$dimnames$length, v$dimnames$dim)), function(x)
+      any(c("n_strains", "n_real_strains") %in% ir$equations[[x]]$rhs$value)))
+  }
+
+  vars <- ir$data$elements[names(ir$data$variable$contents)]
+  n_strain_dim <- vlapply(vars, check1)
+
+  ## Descriptive names to get good test failures:
+  variables_missing_from_rotate <-
+    setdiff(names(which(n_strain_dim)), rotate_strain_compartments)
+  expect_length(variables_missing_from_rotate, 0)
+
+  variables_rotated_but_no_strain <-
+    setdiff(rotate_strain_compartments, names(which(n_strain_dim)))
+  expect_length(variables_rotated_but_no_strain, 0)
+})
