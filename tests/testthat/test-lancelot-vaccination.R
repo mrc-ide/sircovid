@@ -3510,3 +3510,19 @@ test_that("Equal vaccine skip weighting leads to equal distribution", {
                       / colSums(y$cum_n_R_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
 })
+
+
+test_that("Can create vaccine eligibility vector", {
+  expect_equal(
+    vaccine_eligibility(12),
+    c(rep(0, 2), 3 / 5, rep(1, 16)))
+  expect_equal(
+    vaccine_eligibility(10),
+    c(rep(0, 2), rep(1, 17)))
+  expect_equal(
+    vaccine_eligibility(-5),
+    rep(1, 19))
+  expect_equal(
+    vaccine_eligibility(500),
+    rep(c(0, 1), c(17, 2)))
+})
