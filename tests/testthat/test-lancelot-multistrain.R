@@ -2474,8 +2474,8 @@ test_that("can inflate the number of strains after running with 1", {
 
   expect_equal(z2$time, z1$time)
 
-  expect_error(inflate_state_strains(1), "Expected a matrix")
-  expect_error(inflate_state_strains(matrix(1), list(len = 2), 2),
+  expect_error(inflate_state_strains(1, info1, info2), "Expected a matrix")
+  expect_error(inflate_state_strains(matrix(1), list(len = 2), info2),
                "Expected a matrix with 2 rows")
   expect_error(
     inflate_state_strains(matrix(1, 2, 2),
