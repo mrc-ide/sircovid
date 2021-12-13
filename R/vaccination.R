@@ -953,3 +953,26 @@ modify_severity <- function(efficacy, efficacy_strain_2,
 
   rel_list
 }
+
+
+##' Create a vector of vaccine eligibility, based on a minimum
+##' age. The assumption is that everyone below that age is ineligible
+##' and everyone including and above is eligibility.  This will
+##' practically be modified further by assumptions of uptake.  Note
+##' that carehome residents and workers are **always** eligible for
+##' vaccination, regardless of the minimum age.
+##'
+##' @title Create vaccine eligibility vector
+##'
+##' @param min_age Minimum age to be eligible for vaccination
+##'   (includes this age).
+##'
+##' @return A vector of length 19
+##' @export
+vaccine_eligibility <- function(min_age) {
+  ## This is a bit of a dirty way to do it, but it works.  I tried
+  ## computing this directly with offsets but this way is less error
+  ## prone with the boundaries.  See the tests for details.
+  stopifnot(all(sircovid_age_bins()$start == seq(0, 80, by = 5)))
+  c(colMeans(matrix(seq_len(max(85)) > min_age, 5)), 1, 1)
+}

@@ -1,3 +1,7 @@
+# sircovid 0.12.23
+
+* Add new function `vaccine_eligibility` for computing `lancelot`-compatible vaccine eligibility vectors based on a minimum age.
+
 # sircovid 0.12.22
 
 * Support for the multistage particle filter added
