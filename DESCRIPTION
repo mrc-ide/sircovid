@@ -79,6 +79,6 @@ SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
     mrc-ide/eigen1,
-    mrc-ide/mcstate@i159-multistage,
+    mrc-ide/mcstate,
     mrc-ide/odin,
     mrc-ide/odin.dust
