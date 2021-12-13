@@ -1,3 +1,7 @@
+# sircovid 0.12.22
+
+* Support for the multistage particle filter added
+
 # sircovid 0.12.20
 
 * New function `rotate_strains` to allow cycling of strains
