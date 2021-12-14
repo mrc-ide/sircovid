@@ -130,9 +130,8 @@ residents or workers}
 \item{m_CHR}{Contact rate between carehome residents}
 
 \item{strain_transmission}{Vector of length two for relative
-transmissibility of each strain modelled. First element should be 1.
-Length will define the number of strains used in the model, either 1 or
-2.}
+transmissibility of each strain modelled. Length will define the number of
+strains used in the model, either 1 or 2.}
 
 \item{strain_seed_date}{Either \code{NULL} (no seeding) or a
 \link{sircovid_date} corresponding to the date the seeding of strain

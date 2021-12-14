@@ -12,14 +12,6 @@ test_that("lancelot_parameters_strain works as expected", {
   expect_error(
     lancelot_parameters_strain(c(1, 1, 1), NULL, NULL, NULL, 1),
     "Only 1 or 2")
-  expect_error(
-    lancelot_parameters_strain(rep(0.5, 2), NULL, NULL, NULL, 1),
-    "'strain_transmission[[1]]' must be 1",
-    fixed = TRUE)
-  expect_error(
-    lancelot_parameters_strain(rep(0.5, 1), NULL, NULL, NULL, 1),
-    "'strain_transmission[[1]]' must be 1",
-    fixed = TRUE)
   expect_equal(
     lancelot_parameters_strain(1, NULL, NULL, NULL, 1),
     list(n_strains = 1,
