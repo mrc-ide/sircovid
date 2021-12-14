@@ -1528,6 +1528,8 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
       "See 'n_S_progress' in the odin code to fix this"))
   }
 
+  assert_non_negative(strain_transmission)
+
   if (is.null(strain_seed_date)) {
     if (!is.null(strain_seed_size)) {
       stop(paste("As 'strain_seed_date' is NULL, expected 'strain_seed_size'",
