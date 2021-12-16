@@ -742,7 +742,7 @@ test_that("lancelot_index returns S compartments", {
 })
 
 
-test_that("lancelot_particle_filter_data requires consistent deaths", {
+test_that("lancelot_prepare_data requires consistent deaths", {
   data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
                         1, 0.25)
   ## Add additional columns
@@ -804,7 +804,7 @@ test_that("lancelot_particle_filter_data requires consistent deaths", {
 })
 
 
-test_that("lancelot_particle_filter_data does not allow more than one pillar 2,
+test_that("lancelot_prepare_data does not allow more than one pillar 2,
           strain data stream or pillar 2 double fitting", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
@@ -913,7 +913,7 @@ test_that("the lancelot sircovid model has 19 groups", {
 })
 
 
-test_that("lancelot_particle_filter_data does not allow more than one pillar 2
+test_that("lancelot_prepare_data does not allow more than one pillar 2
           or strain data stream (II)", {
             data <- sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)

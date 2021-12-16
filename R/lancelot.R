@@ -1987,7 +1987,7 @@ lancelot_particle_filter <- function(data, n_particles,
                                      n_threads = 1L, seed = NULL,
                                      compiled_compare = FALSE) {
   mcstate::particle_filter$new(
-    lancelot_particle_filter_data(data),
+    lancelot_prepare_data(data),
     lancelot,
     n_particles,
     if (compiled_compare) NULL else lancelot_compare,
@@ -1998,7 +1998,15 @@ lancelot_particle_filter <- function(data, n_particles,
 }
 
 
-lancelot_particle_filter_data <- function(data) {
+##' Prepare data for the particle filter
+##'
+##' @title Prepare data for particle filter
+##' @param data A data.frame of data
+##' @return A data frame
+##' @export
+lancelot_prepare_data <- function(data) {
+  ## NOTE: see also data.R for a similar bit of code that builds a
+  ## suitable data set.
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
                 "diagnoses", "all_admission", "sero_pos_15_64_1",
@@ -2171,6 +2179,8 @@ lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
 }
 
 
+## This one looks like it's just used for testing now? The
+## sircovid_data function that it calls also outdated.
 lancelot_data <- function(data, start_date, dt) {
   expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
                 deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
@@ -2196,7 +2206,7 @@ lancelot_data <- function(data, start_date, dt) {
                 strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
                 strain_over25_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
-  lancelot_particle_filter_data(data)
+  lancelot_prepare_data(data)
 }
 
 
