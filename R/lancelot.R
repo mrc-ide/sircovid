@@ -49,9 +49,8 @@ NULL
 ##' @param m_CHR Contact rate between carehome residents
 ##'
 ##' @param strain_transmission Vector of length two for relative
-##'   transmissibility of each strain modelled. First element should be 1.
-##'   Length will define the number of strains used in the model, either 1 or
-##'   2.
+##'   transmissibility of each strain modelled. Length will define the number of
+##'   strains used in the model, either 1 or 2.
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a
 ##'   [sircovid::sircovid_date] corresponding to the date the seeding of strain
@@ -1536,7 +1535,7 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
       "See 'n_S_progress' in the odin code to fix this"))
   }
 
-  assert_relatives(strain_transmission)
+  assert_non_negative(strain_transmission)
 
   if (is.null(strain_seed_date)) {
     if (!is.null(strain_seed_size)) {
