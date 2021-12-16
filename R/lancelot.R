@@ -99,6 +99,20 @@ NULL
 ##'   same length as `strain_transmission`, with entries that determines the
 ##'   relative scaling of the defaults for each strain.
 ##'
+##' @param strain_rel_p_hosp_if_sympt Vector of relative probabilities of
+##'   hospitalisation given symptoms for
+##'   each strain modelled. If `1` all strains have same
+##'   probabilities of death. Otherwise vector of same length as
+##'   `strain_transmission`, where the first value should be 1 (for the first
+##'   strain) and subsequent values between 0 and 1. In this case parameters
+##'   will be "mirrored" for pseudostrains i.e. the relative probability of
+##'   hospitalisation will be assume the same irrespective of previous infection
+##'   with another strain. Alternatively, a vector of twice the length of
+##'   `strain_transmission` can be provided to allow specifying directly
+##'   relative probability of hospitalisation for each pseudostrain
+##'   (with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
+##'   probabilities, p_hosp_if_sympt is upper-truncated at 1 after scaling.
+##'
 ##' @param strain_rel_p_death Vector of relative probabilities of death for
 ##'   each strain modelled. If `1` all strains have same
 ##'   probabilities of death. Otherwise vector of same length as
@@ -409,7 +423,7 @@ lancelot_parameters <- function(start_date, region,
                                 strain_rel_gamma_C_1 = 1,
                                 strain_rel_gamma_C_2 = 1,
                                 #strain_rel_p_sympt = 1,
-                                #strain_rel_p_hosp_if_sympt = 1,
+                                strain_rel_p_hosp_if_sympt = 1,
                                 strain_rel_p_death = 1,
                                 rel_susceptibility = 1,
                                 rel_p_sympt = 1,
@@ -584,6 +598,12 @@ lancelot_parameters <- function(start_date, region,
   ret$strain_rel_p_H_D <- strain_rel_p_death
   ret$strain_rel_p_W_D <- strain_rel_p_death
   ret$strain_rel_p_G_D <- strain_rel_p_death
+
+  strain_rel_p_hosp_if_sympt <- process_strain_rel_p(strain_rel_p_hosp_if_sympt,
+                                                     strain$n_strains,
+                                                     n_real_strains)
+
+  ret$strain_rel_p_hosp_if_sympt <- strain_rel_p_hosp_if_sympt
 
   # combine strain-specific relative severity with vaccination reduction in
   # probability of death
