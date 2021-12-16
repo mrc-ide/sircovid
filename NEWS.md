@@ -9,8 +9,7 @@ parameter can be changed more easily without going through the `lancelot_paramet
 
 # sircovid 0.12.23
 
-* Add new function `vaccine_eligibility` for computing `lancelot`-compatible 
-vaccine eligibility vectors based on a minimum age.
+* Add new function `vaccine_eligibility` for computing `lancelot`-compatible vaccine eligibility vectors based on a minimum age.
 
 # sircovid 0.12.22
 
