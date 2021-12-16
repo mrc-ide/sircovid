@@ -69,6 +69,12 @@ NULL
 ##'   weight over an additional step and adjust the weights according to how far
 ##'   the `strain_seed_date` is from the previous full step.
 ##'
+##' @param strain_rel_gamma_E Vector of relative rates of progression out of
+##' E (gamma_E) for each
+##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
+##'   same length as `strain_transmission`, with entries that determines the
+##'   relative scaling of the defaults for each strain.
+##'
 ##' @param strain_rel_gamma_A Vector of relative rates of progression out of
 ##' I_A (gamma_A) for each
 ##'   strain modelled. If `1` all strains have same rates. Otherwise vector of
@@ -391,6 +397,7 @@ lancelot_parameters <- function(start_date, region,
                                 strain_seed_date = NULL,
                                 strain_seed_size = NULL,
                                 strain_seed_pattern = NULL,
+                                strain_rel_gamma_E = 1,
                                 strain_rel_gamma_A = 1,
                                 strain_rel_gamma_P = 1,
                                 strain_rel_gamma_C_1 = 1,
@@ -586,7 +593,7 @@ lancelot_parameters <- function(start_date, region,
   ret$rel_p_W_D <- rel_severity
   ret$rel_p_G_D <- rel_severity
 
-  strain_rel_gammas <- list(E = NULL,
+  strain_rel_gammas <- list(E = strain_rel_gamma_E,
                             A = strain_rel_gamma_A,
                             P = strain_rel_gamma_P,
                             C_1 = strain_rel_gamma_C_1,
