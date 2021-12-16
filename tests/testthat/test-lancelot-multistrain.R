@@ -2792,8 +2792,6 @@ test_that("Can calculate ihr_t with a second less severe variant", {
   expect_vector_lte(ifr_t_all$IHR_t_general,
                     ifr_t_all_empty_strain2$IHR_t_general, tol = tol)
 
-  ## TODO: the above works but the test is bad as we expect IHR to be smaller
-  ## but actually it's the same
 })
 
 
@@ -2851,9 +2849,6 @@ test_that("Can calculate ifr_t with a second less lethal variant", {
                     tol = tol)
   expect_vector_lte(ifr_t_all$IFR_t_general,
                     ifr_t_all_empty_strain2$IFR_t_general, tol = tol)
-
-  ## TODO: the above works but the test is bad as we expect IFR to be smaller
-  ## but actually it's the same
 })
 
 
