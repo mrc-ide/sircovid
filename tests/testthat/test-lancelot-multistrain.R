@@ -1131,7 +1131,7 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1159,7 +1159,7 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
@@ -1201,7 +1201,7 @@ test_that("Can calculate Rt with a second less severe variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
   index_prob_strain <- mod$info()$index$prob_strain
@@ -1227,7 +1227,7 @@ test_that("Can calculate Rt with a second less severe variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_R <- mod$info()$index$R
 
