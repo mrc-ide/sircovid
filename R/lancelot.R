@@ -103,8 +103,14 @@ NULL
 ##'   each strain modelled. If `1` all strains have same
 ##'   probabilities of death. Otherwise vector of same length as
 ##'   `strain_transmission`, where the first value should be 1 (for the first
-##'   strain) and subsequent values between 0 and 1. To ensure valid
-##'   probabilities, severity is upper-truncated at 1 after scaling.
+##'   strain) and subsequent values between 0 and 1. In this case parameters
+##'   will be "mirrored" for pseudostrains i.e. the relative probability of
+##'   death will be assume the same irrespective of previous infection with
+##'   another strain. Alternatively, a vector of twice the length of
+##'   `strain_transmission` can be provided to allow specifying directly
+##'   relative probability of death for each pseudostrain (with strain 3 - 1.2
+##'   and strain 4 = 2.1). To ensure valid
+##'   probabilities, p_death is upper-truncated at 1 after scaling.
 ##'
 ##' @param rel_susceptibility A vector or array of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
@@ -424,6 +430,8 @@ lancelot_parameters <- function(start_date, region,
                                 exp_noise = 1e6,
                                 cross_immunity = 1) {
 
+  n_real_strains <- length(strain_transmission)
+
   if (!is.null(population)) {
     if (!is.null(dim(population)) || length(population) != 17L) {
       stop("If population is specified it must be a vector of length 17")
@@ -454,7 +462,7 @@ lancelot_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  if (length(strain_transmission) > 2) {
+  if (n_real_strains > 2) {
     stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
   }
 
@@ -473,7 +481,7 @@ lancelot_parameters <- function(start_date, region,
 
   ## control cross-immunity
   ret$cross_immunity <- assert_proportion(
-    recycle(cross_immunity, length(strain_transmission))
+    recycle(cross_immunity, n_real_strains)
   )
 
   ## This is used to normalise the serology counts (converting them
@@ -568,12 +576,10 @@ lancelot_parameters <- function(start_date, region,
     ret$vacc_skip_dose <- vaccination$index_dose_inverse[vacc_skip_to - 1]
   }
 
+  strain_rel_p_death <- process_strain_rel_p(strain_rel_p_death,
+                                             strain$n_strains,
+                                             n_real_strains)
 
-  strain_rel_p_death <- recycle(assert_relatives(strain_rel_p_death),
-                                 length(strain_transmission))
-  if (length(strain_transmission) > 1) {
-    strain_rel_p_death <- mirror_strain(strain_rel_p_death)
-  }
   ret$strain_rel_p_ICU_D <- strain_rel_p_death
   ret$strain_rel_p_H_D <- strain_rel_p_death
   ret$strain_rel_p_W_D <- strain_rel_p_death
@@ -617,7 +623,7 @@ lancelot_parameters <- function(start_date, region,
       ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
     } else {
       rel_gamma <- recycle(assert_relatives(rel_gamma),
-                           length(strain_transmission))
+                           n_real_strains)
       if (length(rel_gamma) == 2) {
         ret[[rel_gamma_name]] <- mirror_strain(rel_gamma)
       } else {
@@ -632,6 +638,19 @@ lancelot_parameters <- function(start_date, region,
   lancelot_check_severity(out)
 }
 
+process_strain_rel_p <- function(p, n_strains, n_real_strains) {
+  if (length(p) < n_strains) {
+    p <- recycle(assert_relatives(p),
+                 n_real_strains)
+    if (n_real_strains > 1) {
+      p <- mirror_strain(p)
+    }
+  } else
+  {
+    p <- assert_relatives(p)
+  }
+  p
+}
 
 ##' Index of "interesting" elements for the lancelot model. This function
 ##' conforms to the mcstate interface.
