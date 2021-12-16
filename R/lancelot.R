@@ -684,8 +684,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
     if (n_real_strains > 1) {
       p <- mirror_strain(p)
     }
-  } else
-  {
+  } else {
     p <- assert_relatives(p)
   }
   p
