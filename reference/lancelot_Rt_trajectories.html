@@ -20,7 +20,7 @@ parameters.'><meta property="og:image" content="/logo.png"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.26</span>
       </span>
     </div>
 
@@ -94,7 +94,9 @@ specified if there is more than one strain.</p></dd>
 <dt>initial_step_from_parameters</dt>
 <dd><p>If <code>TRUE</code>, then <code>step[[1]]</code> is
 replaced by the value of <code>initial_step</code> from the parameters.
-This is usually what you want.</p></dd>
+This is usually what you want. (From sircovid 0.12.13 this
+parameter means "initial step is zero" and will probably be
+updated in a future version).</p></dd>
 <dt>shared_parameters</dt>
 <dd><p>Should <code>pars</code> be treated as a single
 shared list? Leave as <code>NULL</code> to detect automatically, set to
