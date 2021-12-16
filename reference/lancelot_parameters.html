@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.24</span>
       </span>
     </div>
 
@@ -74,6 +74,7 @@
   strain_seed_date <span class="op">=</span> <span class="cn">NULL</span>,
   strain_seed_size <span class="op">=</span> <span class="cn">NULL</span>,
   strain_seed_pattern <span class="op">=</span> <span class="cn">NULL</span>,
+  strain_rel_gamma_E <span class="op">=</span> <span class="fl">1</span>,
   strain_rel_gamma_A <span class="op">=</span> <span class="fl">1</span>,
   strain_rel_gamma_P <span class="op">=</span> <span class="fl">1</span>,
   strain_rel_gamma_C_1 <span class="op">=</span> <span class="fl">1</span>,
@@ -201,6 +202,12 @@ over these steps according to those weights. If <code>start_seed_date</code> is 
 multiple of the step size (and thus falls between two steps) then we
 weight over an additional step and adjust the weights according to how far
 the <code>strain_seed_date</code> is from the previous full step.</p></dd>
+<dt>strain_rel_gamma_E</dt>
+<dd><p>Vector of relative rates of progression out of
+E (gamma_E) for each
+strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
+same length as <code>strain_transmission</code>, with entries that determines the
+relative scaling of the defaults for each strain.</p></dd>
 <dt>strain_rel_gamma_A</dt>
 <dd><p>Vector of relative rates of progression out of
 I_A (gamma_A) for each
