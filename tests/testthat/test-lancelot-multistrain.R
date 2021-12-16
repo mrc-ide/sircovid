@@ -2697,12 +2697,11 @@ test_that("Can calculate Rt with asymmetric cross immunity", {
   tol <- 1e-5
   expect_equal(rt1$Rt_all, rt$Rt_all)
   expect_equal(rt1$Rt_general, rt$Rt_general)
-  ## eff_Rt should be unaffected for strain 1,
-  ## decreased for strain 2 as protection from previous strain 1 infection
-  expect_equal(rt1$eff_Rt_all[, 1], rt$eff_Rt_all[, 1], tol = tol)
-  expect_equal(rt1$eff_Rt_general[, 1], rt$eff_Rt_general[, 1], tol = tol)
-  expect_vector_gt(rt1$eff_Rt_all[, 2], rt$eff_Rt_all[, 2], tol = tol)
-  expect_vector_gt(rt1$eff_Rt_general[, 2], rt$eff_Rt_general[, 2], tol = tol)
+  ## eff_Rt should be unaffected for strain 2, increased for strain 1
+  expect_equal(rt1$eff_Rt_all[, 2], rt$eff_Rt_all[, 2], tol = tol)
+  expect_equal(rt1$eff_Rt_general[, 2], rt$eff_Rt_general[, 2], tol = tol)
+  expect_vector_gt(rt1$eff_Rt_all[, 1], rt$eff_Rt_all[, 1], tol = tol)
+  expect_vector_gt(rt1$eff_Rt_general[, 1], rt$eff_Rt_general[, 1], tol = tol)
 
 
   ## Now calculate the other way round; where strain 2 gives perfect immunity
@@ -2724,10 +2723,10 @@ test_that("Can calculate Rt with asymmetric cross immunity", {
   expect_equal(rt2$Rt_all, rt$Rt_all)
   expect_equal(rt2$Rt_general, rt$Rt_general)
   ## eff_Rt should be unaffected for strain 1, increased for strain 2
-  expect_equal(rt2$eff_Rt_all[, 2], rt$eff_Rt_all[, 2], tol = tol)
-  expect_equal(rt2$eff_Rt_general[, 2], rt$eff_Rt_general[, 2], tol = tol)
-  expect_vector_gt(rt2$eff_Rt_all[, 1], rt$eff_Rt_all[, 1], tol = tol)
-  expect_vector_gt(rt2$eff_Rt_general[, 1], rt$eff_Rt_general[, 1], tol = tol)
+  expect_equal(rt2$eff_Rt_all[, 1], rt$eff_Rt_all[, 1], tol = tol)
+  expect_equal(rt2$eff_Rt_general[, 1], rt$eff_Rt_general[, 1], tol = tol)
+  expect_vector_gt(rt2$eff_Rt_all[, 2], rt$eff_Rt_all[, 2], tol = tol)
+  expect_vector_gt(rt2$eff_Rt_general[, 2], rt$eff_Rt_general[, 2], tol = tol)
 
 })
 
