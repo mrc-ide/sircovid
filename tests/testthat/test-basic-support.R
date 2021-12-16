@@ -104,13 +104,11 @@ test_that("can compute initial conditions", {
   info <- mod$info()
 
   initial <- basic_initial(info, 10, p)
-  expect_setequal(names(initial), c("state", "step"))
-  expect_equal(initial$step, p$initial_step)
 
-  initial_y <- mod$transform_variables(initial$state)
+  initial_y <- mod$transform_variables(initial)
   expect_equal(initial_y$N_tot, sum(p$population))
   expect_equal(initial_y$S, p$population)
 
-  remaining <- initial$state[-c(info$index$N_tot, info$index$S)]
+  remaining <- initial[-c(info$index$N_tot, info$index$S)]
   expect_vector_equal(remaining, 0)
 })

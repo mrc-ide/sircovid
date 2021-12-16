@@ -1,7 +1,14 @@
-# sircovid 0.12.25
 
-* Retain rel_strain_severity as a separate parameter in odin code so this 
-parameter can be changed more easily without going through the `lancelot_parameters` function
+# sircovid 0.12.27
+
+* Have strain_rel_p_death, strain_rel_p_hosp_if_sympt and strain_rel_p_sympt
+as separate parameters in odin code to clarify effects of strains and vaccines
+on severity and so these parameters can be changed more easily without 
+necessarily going through the `lancelot_parameters` function
+
+# sircovid 0.12.26
+
+* Remove vestiges of "initial step" control, now we do this directly from the particle filter data
 
 # sircovid 0.12.24
 

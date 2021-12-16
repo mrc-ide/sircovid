@@ -90,7 +90,7 @@ test_that("Basic simulation", {
   p <- basic_parameters(sircovid_date("2020-02-07"), "london")
   np <- 10
   info <- basic$new(p, 0, np)$info()
-  state <- matrix(rep(basic_initial(info, np, p)$state, np), ncol = np)
+  state <- matrix(rep(basic_initial(info, np, p), np), ncol = np)
 
   ## This is not how we'd normally model beta, but it will do here:
   events <- sircovid_simulate_events(
@@ -126,7 +126,7 @@ test_that("validate base parameters", {
   p <- basic_parameters(sircovid_date("2020-02-07"), "london")
   np <- 10
   info <- basic$new(p, 0, np)$info()
-  state <- matrix(rep(basic_initial(info, np, p)$state, np), ncol = np)
+  state <- matrix(rep(basic_initial(info, np, p), np), ncol = np)
   ## This is not how we'd normally model beta, but it will do here:
   events <- sircovid_simulate_events(
     "2020-02-07", "2020-06-01",

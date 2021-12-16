@@ -210,13 +210,13 @@ test_that("Parameters affect IFR/IHR/ALOS as expected", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
 
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- mod$simulate(steps)
@@ -285,13 +285,13 @@ test_that("Severity probabilities correctly capped at 1 for IFR/IHR/ALOS", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
 
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- mod$simulate(steps)

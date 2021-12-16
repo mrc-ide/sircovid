@@ -49,9 +49,8 @@ NULL
 ##' @param m_CHR Contact rate between carehome residents
 ##'
 ##' @param strain_transmission Vector of length two for relative
-##'   transmissibility of each strain modelled. First element should be 1.
-##'   Length will define the number of strains used in the model, either 1 or
-##'   2.
+##'   transmissibility of each strain modelled. Length will define the number of
+##'   strains used in the model, either 1 or 2.
 ##'
 ##' @param strain_seed_date Either `NULL` (no seeding) or a
 ##'   [sircovid::sircovid_date] corresponding to the date the seeding of strain
@@ -1482,8 +1481,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
   state[index_I_weighted] <- 1
 
-  list(state = state,
-       step = pars$initial_step)
+  state
 }
 
 
@@ -1598,7 +1596,7 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
       "See 'n_S_progress' in the odin code to fix this"))
   }
 
-  assert_relatives(strain_transmission)
+  assert_non_negative(strain_transmission)
 
   if (is.null(strain_seed_date)) {
     if (!is.null(strain_seed_size)) {
@@ -2051,7 +2049,7 @@ lancelot_particle_filter <- function(data, n_particles,
                                      n_threads = 1L, seed = NULL,
                                      compiled_compare = FALSE) {
   mcstate::particle_filter$new(
-    lancelot_particle_filter_data(data),
+    lancelot_prepare_data(data),
     lancelot,
     n_particles,
     if (compiled_compare) NULL else lancelot_compare,
@@ -2062,7 +2060,15 @@ lancelot_particle_filter <- function(data, n_particles,
 }
 
 
-lancelot_particle_filter_data <- function(data) {
+##' Prepare data for the particle filter
+##'
+##' @title Prepare data for particle filter
+##' @param data A data.frame of data
+##' @return A data frame
+##' @export
+lancelot_prepare_data <- function(data) {
+  ## NOTE: see also data.R for a similar bit of code that builds a
+  ## suitable data set.
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
                 "diagnoses", "all_admission", "sero_pos_15_64_1",
@@ -2235,6 +2241,8 @@ lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
 }
 
 
+## This one looks like it's just used for testing now? The
+## sircovid_data function that it calls also outdated.
 lancelot_data <- function(data, start_date, dt) {
   expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
                 deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
@@ -2260,7 +2268,7 @@ lancelot_data <- function(data, start_date, dt) {
                 strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
                 strain_over25_tot = NA_real_)
   data <- sircovid_data(data, start_date, dt, expected)
-  lancelot_particle_filter_data(data)
+  lancelot_prepare_data(data)
 }
 
 

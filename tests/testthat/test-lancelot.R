@@ -8,7 +8,7 @@ test_that("can run the lancelot model", {
 
   info <- mod$info()
   initial <- lancelot_initial(info, 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
 
   index <- c(lancelot_index(info)$run,
              deaths_carehomes = info$index[["D_carehomes_tot"]],
@@ -81,7 +81,7 @@ test_that("initial seeding in one big lump", {
   end <- sircovid_date("2020-02-28") / p$dt
 
   initial <- lancelot_initial(mod$info(), n_particles, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
 
   t <- seq(4, end)
   res <- mod$simulate(t)
@@ -116,7 +116,7 @@ test_that("initial seeding spread out", {
   end <- sircovid_date("2020-02-28") / p$dt
 
   initial <- lancelot_initial(mod$info(), n_particles, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
 
   t <- seq(4, end)
   res <- mod$simulate(t)
@@ -148,7 +148,7 @@ test_that("incidence calculation is correct", {
   mod <- lancelot$new(pars, 0, 10, n_threads = 10)
   info <- mod$info()
   initial <- lancelot_initial(info, 10, pars)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
 
   ## We have interesting values by time 60, step 240
   ## There are 10 incidence variables, so we want to pull 20 variables
@@ -180,7 +180,7 @@ test_that("incidence calculation is correct", {
              infections_inc = info$index$infections_inc)
   expect_length(index, 22) # guard against name changes
 
-  steps <- seq(initial$step, length.out = 60 * 4 + 1)
+  steps <- seq(0, length.out = 60 * 4 + 1)
   mod$set_index(index)
   y <- mod$simulate(steps)
 
@@ -204,7 +204,7 @@ test_that("compiled compare function is correct", {
   np <- 1
   mod <- lancelot$new(pars, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, pars)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   mod$set_index(lancelot_index(mod$info())$run)
 
   mod$set_data(dust::dust_data(data, "step_end"))
@@ -227,7 +227,7 @@ test_that("Test compiled lancelot components", {
   np <- 10
   mod <- lancelot$new(pars, 0, np, seed = 1L)
   initial <- lancelot_initial(mod$info(), np, pars)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   mod$set_index(lancelot_index(mod$info())$run)
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]

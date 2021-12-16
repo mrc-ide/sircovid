@@ -120,7 +120,7 @@ test_that("Can vary beta over time", {
 
   p <- d$inputs$p
   dt <- p$dt
-  initial_date <- p$initial_step * dt
+  initial_date <- 0
   beta_date <- initial_date + c(0, 21, 62)
   beta_value <- p$beta_step * c(1, 0.5, 0.8)
   p$beta_step <- sircovid_parameters_piecewise_linear(beta_date,
@@ -287,12 +287,12 @@ test_that("Parameters affect Rt as expected", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -340,12 +340,12 @@ test_that("p_C capped correctly at 1 in Rt calculation", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
