@@ -6,14 +6,14 @@ reference_data_lancelot_ifr_t <- function() {
     mod <- lancelot$new(p, 0, np, seed = 1L)
 
     initial <- lancelot_initial(mod$info(), 10, p)
-    mod$update_state(state = initial$state, step = initial$step)
+    mod$update_state(state = initial)
     mod$set_index(integer(0))
     index_S <- mod$info()$index$S
     index_I_weighted <- mod$info()$index$I_weighted
     index <- c(index_S, index_I_weighted)
 
     end <- sircovid_date("2020-05-01") / p$dt
-    steps <- seq(initial$step, end, by = 1 / p$dt)
+    steps <- seq(0, end, by = 1 / p$dt)
 
     set.seed(1)
     mod$set_index(index)

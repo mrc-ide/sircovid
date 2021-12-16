@@ -15,8 +15,7 @@ only uniform initial seeding is implemented so this has no
 effect}
 
 \item{pars}{A parameter list created by \code{\link[=basic_parameters]{basic_parameters()}}; from
-this list we will use the \code{population} and \code{initial_step}
-elements.}
+this list we will use the \code{population} element.}
 }
 \value{
 A numeric vector of initial conditions

@@ -1,3 +1,7 @@
+# sircovid 0.12.26
+
+* Remove vestiges of "initial step" control, now we do this directly from the particle filter data
+
 # sircovid 0.12.24
 
 * Add ability to change duration of latency period (E) for strain 2 in `lancelot_parameters`
