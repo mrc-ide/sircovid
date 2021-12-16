@@ -1137,7 +1137,7 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- mod$simulate(steps)
@@ -1164,7 +1164,7 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
   index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(c(index_S, index_R))
@@ -1207,7 +1207,7 @@ test_that("Can calculate Rt with a second less severe variant", {
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- mod$simulate(steps)
@@ -1232,7 +1232,7 @@ test_that("Can calculate Rt with a second less severe variant", {
   index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(c(index_S, index_R))
@@ -2356,10 +2356,10 @@ test_that("H strain 2 empty when p_hosp = c(1, 0)", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial$state, step = 0)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -2420,10 +2420,10 @@ test_that("I_P strain 2 empty when p_sympt = c(1, 0)", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial$state, step = 0)
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -2786,13 +2786,13 @@ test_that("Can calculate ihr_t with a second less symptomatic variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial$state, step = 0)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- mod$simulate(steps)
@@ -2843,13 +2843,13 @@ test_that("Can calculate ihr_t with a second less severe variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial$state, step = 0)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   y <- mod$simulate(steps)
