@@ -211,8 +211,7 @@ basic_compare <- function(state, observed, pars) {
 ##'   effect
 ##'
 ##' @param pars A parameter list created by [basic_parameters()]; from
-##'   this list we will use the `population` and `initial_step`
-##'   elements.
+##'   this list we will use the `population` element.
 ##'
 ##' @return A numeric vector of initial conditions
 ##' @export
@@ -230,8 +229,7 @@ basic_initial <- function(info, n_particles, pars) {
   state[index_S] <- pars$population
   state[index_N_tot] <- sum(pars$population)
 
-  list(state = state,
-       step = pars$initial_step)
+  state
 }
 
 
