@@ -1,3 +1,7 @@
+# sircovid 0.12.24
+
+* Add ability to change duration of latency period (E) for strain 2 in `lancelot_parameters`
+
 # sircovid 0.12.23
 
 * Add new function `vaccine_eligibility` for computing `lancelot`-compatible vaccine eligibility vectors based on a minimum age.

@@ -299,7 +299,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
         ## We are calculating the NGM for strain i, so we need the cross
         ## immunity of strain 3 - i (2 if i = 1, 1 if i = 2) against strain i
         compute_ngm(md, x, p$rel_susceptibility[, i, ], RR,
-                    1 - p$cross_immunity[3 - i])
+                    1 - p$cross_immunity[i]) #p$cross_immunity[3 - i])
       }
     }, array(0, c(n_groups * n_vacc_classes, n_groups * n_vacc_classes,
                   n_time)))
