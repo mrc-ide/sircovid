@@ -283,7 +283,9 @@ lancelot_ifr_t <- function(step, S, I_weighted, p, type = NULL, R = NULL) {
 ##'
 ##' @param initial_step_from_parameters If `TRUE`, then `step[[1]]` is
 ##'   replaced by the value of `initial_step` from the parameters.
-##'   This is usually what you want.
+##'   This is usually what you want. (From sircovid 0.12.13 this
+##'   parameter means "initial step is zero" and will probably be
+##'   updated in a future version).
 ##'
 ##' @param shared_parameters Should `pars` be treated as a single
 ##'   shared list? Leave as `NULL` to detect automatically, set to
@@ -440,7 +442,13 @@ calculate_ifr_t_trajectories <- function(calculate_ifr_t, step, S, I_weighted,
 
   calculate_ifr_t_one_trajectory <- function(i) {
     if (initial_step_from_parameters) {
-      step[[1L]] <- pars[[i]]$initial_step
+      ## TODO: Ed (or someone else) this has been probably not ideal
+      ## since we moved to seeding as this is *always* zero now!
+      ## Similar problem in the rt calculation.
+      ##
+      ## The current formulation will be backward compatible and leave
+      ## tests passing until we fix this properly.
+      step[[1L]] <- pars[[i]]$initial_step %||% 0
     }
     if (is.null(R)) {
       ifr_t_1 <- calculate_ifr_t(step, S[, i, ], I_weighted[, i, ], pars[[i]],

@@ -36,7 +36,9 @@ specified if there is more than one strain.}
 
 \item{initial_step_from_parameters}{If \code{TRUE}, then \code{step[[1]]} is
 replaced by the value of \code{initial_step} from the parameters.
-This is usually what you want.}
+This is usually what you want. (From sircovid 0.12.13 this
+parameter means "initial step is zero" and will probably be
+updated in a future version).}
 
 \item{shared_parameters}{Should \code{pars} be treated as a single
 shared list? Leave as \code{NULL} to detect automatically, set to
