@@ -99,7 +99,7 @@ NULL
 ##'   same length as `strain_transmission`, with entries that determines the
 ##'   relative scaling of the defaults for each strain.
 ##'
-##' @param strain_rel_severity Vector of relative probabilities of death for
+##' @param strain_rel_p_death Vector of relative probabilities of death for
 ##'   each strain modelled. If `1` all strains have same
 ##'   probabilities of death. Otherwise vector of same length as
 ##'   `strain_transmission`, where the first value should be 1 (for the first
@@ -402,7 +402,9 @@ lancelot_parameters <- function(start_date, region,
                                 strain_rel_gamma_P = 1,
                                 strain_rel_gamma_C_1 = 1,
                                 strain_rel_gamma_C_2 = 1,
-                                strain_rel_severity = 1,
+                                #strain_rel_p_sympt = 1,
+                                #strain_rel_p_hosp_if_sympt = 1,
+                                strain_rel_p_death = 1,
                                 rel_susceptibility = 1,
                                 rel_p_sympt = 1,
                                 rel_p_hosp_if_sympt = 1,
@@ -567,12 +569,15 @@ lancelot_parameters <- function(start_date, region,
   }
 
 
-  strain_rel_severity <- recycle(assert_relatives(strain_rel_severity),
+  strain_rel_p_death <- recycle(assert_relatives(strain_rel_p_death),
                                  length(strain_transmission))
   if (length(strain_transmission) > 1) {
-    strain_rel_severity <- mirror_strain(strain_rel_severity)
+    strain_rel_p_death <- mirror_strain(strain_rel_p_death)
   }
-  ret$strain_rel_severity <- strain_rel_severity
+  ret$strain_rel_p_ICU_D <- strain_rel_p_death
+  ret$strain_rel_p_H_D <- strain_rel_p_death
+  ret$strain_rel_p_W_D <- strain_rel_p_death
+  ret$strain_rel_p_G_D <- strain_rel_p_death
 
   # combine strain-specific relative severity with vaccination reduction in
   # probability of death

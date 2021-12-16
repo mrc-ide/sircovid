@@ -273,28 +273,28 @@ p_ICU[, , ] <- if (as.integer(step) >= n_p_ICU_steps)
 
 p_ICU_D[, , ] <- if (as.integer(step) >= n_p_ICU_D_steps)
   min(p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k] *
-        strain_rel_severity[j],
+        strain_rel_p_ICU_D[j],
       as.numeric(1)) else
     min(p_ICU_D_step[step + 1, i] * rel_p_ICU_D[i, j, k] *
-          strain_rel_severity[j], as.numeric(1))
+          strain_rel_p_ICU_D[j], as.numeric(1))
 
 p_H_D[, , ] <- if (as.integer(step) >= n_p_H_D_steps)
   min(p_H_D_step[n_p_H_D_steps, i] * rel_p_H_D[i, j, k] *
-        strain_rel_severity[j], as.numeric(1)) else
+        strain_rel_p_H_D[j], as.numeric(1)) else
     min(p_H_D_step[step + 1, i] * rel_p_H_D[i, j, k] *
-          strain_rel_severity[j], as.numeric(1))
+          strain_rel_p_H_D[j], as.numeric(1))
 
 p_W_D[, , ] <- if (as.integer(step) >= n_p_W_D_steps)
   min(p_W_D_step[n_p_W_D_steps, i] * rel_p_W_D[i, j, k] *
-        strain_rel_severity[j], as.numeric(1)) else
+        strain_rel_p_W_D[j], as.numeric(1)) else
     min(p_W_D_step[step + 1, i] * rel_p_W_D[i, j, k] *
-          strain_rel_severity[j], as.numeric(1))
+          strain_rel_p_W_D[j], as.numeric(1))
 
 p_G_D[, , ] <- if (as.integer(step) >= n_p_G_D_steps)
   min(p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k] *
-        strain_rel_severity[j], as.numeric(1)) else
+        strain_rel_p_G_D[j], as.numeric(1)) else
     min(p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k] *
-          strain_rel_severity[j], as.numeric(1))
+          strain_rel_p_G_D[j], as.numeric(1))
 
 p_R[, , ] <- if (as.integer(step) >= n_p_R_steps)
   min(p_R_step[n_p_R_steps, i] * rel_p_R[i, j, k], as.numeric(1)) else
@@ -1049,8 +1049,6 @@ rel_p_hosp_if_sympt[, , ] <- user()
 dim(rel_p_hosp_if_sympt) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_ICU[, , ] <- user()
 dim(rel_p_ICU) <- c(n_groups, n_strains, n_vacc_classes)
-strain_rel_severity[] <- user()
-dim(strain_rel_severity) <- n_strains
 rel_p_ICU_D[, , ] <- user()
 dim(rel_p_ICU_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_H_D[, , ] <- user()
@@ -1059,6 +1057,14 @@ rel_p_W_D[, , ] <- user()
 dim(rel_p_W_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_G_D[, , ] <- user()
 dim(rel_p_G_D) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_ICU_D[] <- user()
+dim(strain_rel_p_ICU_D) <- n_strains
+strain_rel_p_H_D[] <- user()
+dim(strain_rel_p_H_D) <- n_strains
+strain_rel_p_W_D[] <- user()
+dim(strain_rel_p_W_D) <- n_strains
+strain_rel_p_G_D[] <- user()
+dim(strain_rel_p_G_D) <- n_strains
 rel_p_R[, , ] <- user()
 dim(rel_p_R) <- c(n_groups, n_strains, n_vacc_classes)
 rel_infectivity[, , ] <- user()

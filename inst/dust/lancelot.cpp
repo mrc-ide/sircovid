@@ -676,7 +676,10 @@ compare(const typename T::real_type * state,
 // [[dust::param(sero_specificity_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(sero_specificity_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(steps_per_day, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(strain_rel_severity, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(strain_rel_p_G_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(strain_rel_p_H_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(strain_rel_p_ICU_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(strain_rel_p_W_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step_start, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_value, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2155,7 +2158,10 @@ public:
     int dim_s_ij_2;
     int dim_s_ij_3;
     int dim_seed_value;
-    int dim_strain_rel_severity;
+    int dim_strain_rel_p_G_D;
+    int dim_strain_rel_p_H_D;
+    int dim_strain_rel_p_ICU_D;
+    int dim_strain_rel_p_W_D;
     int dim_strain_seed_value;
     int dim_strain_transmission;
     int dim_tmp_vaccine_n_candidates;
@@ -2532,7 +2538,10 @@ public:
     real_type sero_specificity_1;
     real_type sero_specificity_2;
     int steps_per_day;
-    std::vector<real_type> strain_rel_severity;
+    std::vector<real_type> strain_rel_p_G_D;
+    std::vector<real_type> strain_rel_p_H_D;
+    std::vector<real_type> strain_rel_p_ICU_D;
+    std::vector<real_type> strain_rel_p_W_D;
     real_type strain_seed_step_end;
     real_type strain_seed_step_start;
     std::vector<real_type> strain_seed_value;
@@ -3087,7 +3096,7 @@ public:
     for (int i = 1; i <= shared->dim_p_G_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_G_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_G_D_3; ++k) {
-          internal.p_G_D[i - 1 + shared->dim_p_G_D_1 * (j - 1) + shared->dim_p_G_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_G_D_steps ? std::min(shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + shared->n_p_G_D_steps - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)) : std::min(shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)));
+          internal.p_G_D[i - 1 + shared->dim_p_G_D_1 * (j - 1) + shared->dim_p_G_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_G_D_steps ? std::min(shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + shared->n_p_G_D_steps - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_G_D[j - 1], static_cast<real_type>(1)) : std::min(shared->p_G_D_step[shared->dim_p_G_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_G_D[shared->dim_rel_p_G_D_12 * (k - 1) + shared->dim_rel_p_G_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_G_D[j - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3104,7 +3113,7 @@ public:
     for (int i = 1; i <= shared->dim_p_H_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_H_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_H_D_3; ++k) {
-          internal.p_H_D[i - 1 + shared->dim_p_H_D_1 * (j - 1) + shared->dim_p_H_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_H_D_steps ? std::min(shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + shared->n_p_H_D_steps - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)) : std::min(shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)));
+          internal.p_H_D[i - 1 + shared->dim_p_H_D_1 * (j - 1) + shared->dim_p_H_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_H_D_steps ? std::min(shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + shared->n_p_H_D_steps - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_H_D[j - 1], static_cast<real_type>(1)) : std::min(shared->p_H_D_step[shared->dim_p_H_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_H_D[shared->dim_rel_p_H_D_12 * (k - 1) + shared->dim_rel_p_H_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_H_D[j - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3124,7 +3133,7 @@ public:
     for (int i = 1; i <= shared->dim_p_ICU_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_ICU_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_ICU_D_3; ++k) {
-          internal.p_ICU_D[i - 1 + shared->dim_p_ICU_D_1 * (j - 1) + shared->dim_p_ICU_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_D_steps ? std::min(shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + shared->n_p_ICU_D_steps - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)) : std::min(shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)));
+          internal.p_ICU_D[i - 1 + shared->dim_p_ICU_D_1 * (j - 1) + shared->dim_p_ICU_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_D_steps ? std::min(shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + shared->n_p_ICU_D_steps - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_ICU_D[j - 1], static_cast<real_type>(1)) : std::min(shared->p_ICU_D_step[shared->dim_p_ICU_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU_D[shared->dim_rel_p_ICU_D_12 * (k - 1) + shared->dim_rel_p_ICU_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_ICU_D[j - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -3162,7 +3171,7 @@ public:
     for (int i = 1; i <= shared->dim_p_W_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_W_D_2; ++j) {
         for (int k = 1; k <= shared->dim_p_W_D_3; ++k) {
-          internal.p_W_D[i - 1 + shared->dim_p_W_D_1 * (j - 1) + shared->dim_p_W_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_W_D_steps ? std::min(shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + shared->n_p_W_D_steps - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)) : std::min(shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1] * shared->strain_rel_severity[j - 1], static_cast<real_type>(1)));
+          internal.p_W_D[i - 1 + shared->dim_p_W_D_1 * (j - 1) + shared->dim_p_W_D_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_W_D_steps ? std::min(shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + shared->n_p_W_D_steps - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_W_D[j - 1], static_cast<real_type>(1)) : std::min(shared->p_W_D_step[shared->dim_p_W_D_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_W_D[shared->dim_rel_p_W_D_12 * (k - 1) + shared->dim_rel_p_W_D_1 * (j - 1) + i - 1] * shared->strain_rel_p_W_D[j - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -6328,7 +6337,10 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_s_ij_1 = shared->n_groups;
   shared->dim_s_ij_2 = shared->n_groups;
   shared->dim_s_ij_3 = shared->n_strains;
-  shared->dim_strain_rel_severity = shared->n_strains;
+  shared->dim_strain_rel_p_G_D = shared->n_strains;
+  shared->dim_strain_rel_p_H_D = shared->n_strains;
+  shared->dim_strain_rel_p_ICU_D = shared->n_strains;
+  shared->dim_strain_rel_p_W_D = shared->n_strains;
   shared->dim_strain_transmission = shared->n_strains;
   shared->dim_tmp_vaccine_n_candidates_1 = shared->n_groups;
   shared->dim_tmp_vaccine_n_candidates_2 = shared->n_doses;
@@ -7043,7 +7055,10 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->rel_gamma_W_D = user_get_array_fixed<real_type, 1>(user, "rel_gamma_W_D", shared->rel_gamma_W_D, {shared->dim_rel_gamma_W_D}, NA_REAL, NA_REAL);
   shared->rel_gamma_W_R = user_get_array_fixed<real_type, 1>(user, "rel_gamma_W_R", shared->rel_gamma_W_R, {shared->dim_rel_gamma_W_R}, NA_REAL, NA_REAL);
   shared->seed_step_end = shared->seed_step_start + shared->dim_seed_value;
-  shared->strain_rel_severity = user_get_array_fixed<real_type, 1>(user, "strain_rel_severity", shared->strain_rel_severity, {shared->dim_strain_rel_severity}, NA_REAL, NA_REAL);
+  shared->strain_rel_p_G_D = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_G_D", shared->strain_rel_p_G_D, {shared->dim_strain_rel_p_G_D}, NA_REAL, NA_REAL);
+  shared->strain_rel_p_H_D = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_H_D", shared->strain_rel_p_H_D, {shared->dim_strain_rel_p_H_D}, NA_REAL, NA_REAL);
+  shared->strain_rel_p_ICU_D = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_ICU_D", shared->strain_rel_p_ICU_D, {shared->dim_strain_rel_p_ICU_D}, NA_REAL, NA_REAL);
+  shared->strain_rel_p_W_D = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_W_D", shared->strain_rel_p_W_D, {shared->dim_strain_rel_p_W_D}, NA_REAL, NA_REAL);
   shared->strain_seed_step_end = shared->strain_seed_step_start + shared->dim_strain_seed_value;
   shared->strain_transmission = user_get_array_fixed<real_type, 1>(user, "strain_transmission", shared->strain_transmission, {shared->dim_strain_transmission}, NA_REAL, NA_REAL);
   shared->vacc_skip_progression_rate_base = user_get_array_fixed<real_type, 1>(user, "vacc_skip_progression_rate_base", shared->vacc_skip_progression_rate_base, {shared->dim_vacc_skip_progression_rate_base}, NA_REAL, NA_REAL);

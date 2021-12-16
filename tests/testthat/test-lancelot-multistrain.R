@@ -1130,7 +1130,7 @@ test_that("Can calculate Rt with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = c(1, 0),
+                           strain_rel_p_death = c(1, 0),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
@@ -1669,15 +1669,15 @@ test_that("calculate Rt with both second variant and vaccination", {
 
 })
 
-test_that("strain_rel_severity works as expected in lancelot_parameters", {
-  strain_rel_severity <- c(1, 0.5)
+test_that("strain_rel_p_death works as expected in lancelot_parameters", {
+  strain_rel_p_death <- c(1, 0.5)
   rel_p_death <- c(1, 0.6, 0.7)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = strain_rel_severity,
+                           strain_rel_p_death = strain_rel_p_death,
                            rel_p_death = rel_p_death)
   # check strains are mirrored
-  expect_equal(p$strain_rel_severity[1:2], p$strain_rel_severity[4:3])
+  expect_equal(p$strain_rel_p_death[1:2], p$strain_rel_p_death[4:3])
 })
 
 test_that("strain_rel_gamma works as expected in lancelot_parameters", {
@@ -2117,7 +2117,7 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = c(1, 0),
+                           strain_rel_p_death = c(1, 0),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
@@ -2483,7 +2483,7 @@ test_that("Can calculate ifr_t with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = c(1, 0.5),
+                           strain_rel_p_death = c(1, 0.5),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
