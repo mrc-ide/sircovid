@@ -259,8 +259,10 @@ dim(p_W_D_progress) <- n_strains
 
 ## Work out time-varying probabilities
 p_C[, , ] <- if (as.integer(step) >= n_p_C_steps)
-  min(p_C_step[n_p_C_steps, i] * rel_p_sympt[i, j, k], as.numeric(1)) else
-    min(p_C_step[step + 1, i] * rel_p_sympt[i, j, k], as.numeric(1))
+  min(p_C_step[n_p_C_steps, i] * rel_p_sympt[i, j, k] *
+        strain_rel_p_sympt[j], as.numeric(1)) else
+    min(p_C_step[step + 1, i] * rel_p_sympt[i, j, k] *
+          strain_rel_p_sympt[j], as.numeric(1))
 
 p_H[, , ] <- if (as.integer(step) >= n_p_H_steps)
   min(p_H_step[n_p_H_steps, i] * rel_p_hosp_if_sympt[i, j, k] *
@@ -1048,6 +1050,8 @@ rel_susceptibility[, , ] <- user()
 dim(rel_susceptibility) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_sympt[, , ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_sympt[] <- user()
+dim(strain_rel_p_sympt) <- n_strains
 rel_p_hosp_if_sympt[, , ] <- user()
 dim(rel_p_hosp_if_sympt) <- c(n_groups, n_strains, n_vacc_classes)
 strain_rel_p_hosp_if_sympt[] <- user()
