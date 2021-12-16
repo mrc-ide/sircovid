@@ -228,11 +228,12 @@ test_that("N_tots stay constant with second strain and no waning immunity - no
             set.seed(1)
             n_seeded_new_strain_inf <- 100
             date_seeding <- "2020-03-07"
-            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     strain_transmission = c(1, 1),
-                                     strain_seed_date = sircovid_date(date_seeding),
-                                     strain_seed_size = n_seeded_new_strain_inf,
-                                     strain_seed_pattern = rep(1, 4))
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4))
 
             mod <- lancelot$new(p, 0, 1, seed = 1L)
             info <- mod$info()
@@ -246,7 +247,8 @@ test_that("N_tots stay constant with second strain and no waning immunity - no
                               mod$transform_variables(y0)$N_tot_sero_1 == 0))
             expect_true(all(y$N_tot_sero_2 -
                               mod$transform_variables(y0)$N_tot_sero_2 == 0))
-            expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+            expect_true(
+              all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
             expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
             expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
             expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
@@ -259,13 +261,14 @@ test_that("N_tot is constant with second strain and waning immunity, while
             set.seed(1)
             n_seeded_new_strain_inf <- 100
             date_seeding <- "2020-03-07"
-            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     waning_rate = 1 / 20,
-                                     strain_transmission = c(1, 1),
-                                     strain_seed_date = sircovid_date(date_seeding),
-                                     strain_seed_size = n_seeded_new_strain_inf,
-                                     strain_seed_pattern = rep(1, 4),
-                                     cross_immunity = 0)
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              waning_rate = 1 / 20,
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4),
+              cross_immunity = 0)
 
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
@@ -289,12 +292,13 @@ test_that("N_tot is constant with second strain and waning immunity, while
             set.seed(1)
             n_seeded_new_strain_inf <- 100
             date_seeding <- "2020-03-07"
-            p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                     waning_rate = 1 / 20,
-                                     strain_transmission = c(1, 1),
-                                     strain_seed_date = sircovid_date(date_seeding),
-                                     strain_seed_size = n_seeded_new_strain_inf,
-                                     strain_seed_pattern = rep(1, 4))
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              waning_rate = 1 / 20,
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4))
 
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
@@ -1824,15 +1828,17 @@ test_that("strain_rel_p_sympt works as expected in lancelot_parameters", {
 })
 
 
-test_that("strain_rel_p_hosp_if_sympt works as expected in lancelot_parameters", {
+test_that("strain_rel_p_hosp works as expected in lancelot_parameters", {
   strain_rel_p_hosp_if_sympt <- c(1, 0.5)
   rel_p_hosp_if_sympt <- c(1, 0.6, 0.7)
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           strain_transmission = c(1, 1),
-                           strain_rel_p_hosp_if_sympt = strain_rel_p_hosp_if_sympt,
-                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_hosp_if_sympt = strain_rel_p_hosp_if_sympt,
+    rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
   # check strains are mirrored
-  expect_equal(p$strain_rel_p_hosp_if_sympt[1:2], p$strain_rel_p_hosp_if_sympt[4:3])
+  expect_equal(p$strain_rel_p_hosp_if_sympt[1:2],
+               p$strain_rel_p_hosp_if_sympt[4:3])
 
   ## same but where strain_rel_p_death is specified for each pseudostrain:
 
@@ -1840,14 +1846,16 @@ test_that("strain_rel_p_hosp_if_sympt works as expected in lancelot_parameters",
   # and previous infection reduces probability of hospitalisation by 10%
   strain_rel_p_hosp_if_sympt <- c(1, 0.5, 0.45, 0.9)
   rel_p_hosp_if_sympt <- c(1, 0.6, 0.7)
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           strain_transmission = c(1, 1),
-                           strain_rel_p_hosp_if_sympt = strain_rel_p_hosp_if_sympt,
-                           rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_hosp_if_sympt = strain_rel_p_hosp_if_sympt,
+    rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
   # relative probability of hospitalisation is as set
   expect_equal(p$strain_rel_p_hosp_if_sympt, strain_rel_p_hosp_if_sympt)
   # check strains are NOT mirrored this time
-  expect_false(any(p$strain_rel_p_hosp_if_sympt[1:2] == p$strain_rel_p_hosp_if_sympt[4:3]))
+  expect_false(any(
+    p$strain_rel_p_hosp_if_sympt[1:2] == p$strain_rel_p_hosp_if_sympt[4:3]))
 })
 
 
@@ -2356,7 +2364,7 @@ test_that("H strain 2 empty when p_hosp = c(1, 0)", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$update_state(state = initial$state, step = 0)
+  mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
@@ -2420,7 +2428,7 @@ test_that("I_P strain 2 empty when p_sympt = c(1, 0)", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), np, p)
-  mod$update_state(state = initial$state, step = 0)
+  mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
@@ -2601,12 +2609,13 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
              np <- 1L
 
              ## no cross-immnunity
-             p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                      strain_transmission = c(1, 1),
-                                      strain_seed_date = sircovid_date("2020-02-07"),
-                                      strain_seed_size = 10,
-                                      strain_seed_pattern = rep(1, 4),
-                                      cross_immunity = 0)
+             p <- lancelot_parameters(
+               sircovid_date("2020-02-07"), "england",
+               strain_transmission = c(1, 1),
+               strain_seed_date = sircovid_date("2020-02-07"),
+               strain_seed_size = 10,
+               strain_seed_pattern = rep(1, 4),
+               cross_immunity = 0)
              mod <- lancelot$new(p, 0, np)
              initial <- lancelot_initial(mod$info(), np, p)
              mod$update_state(state = initial)
@@ -2618,12 +2627,13 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
              infect_no_cross <- y$cum_infections_per_strain[3:4, 123]
 
              ## some cross-immunity
-             p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                                      strain_transmission = c(1, 1),
-                                      strain_seed_date = sircovid_date("2020-02-07"),
-                                      strain_seed_size = 10,
-                                      strain_seed_pattern = rep(1, 4),
-                                      cross_immunity = 0.5)
+             p <- lancelot_parameters(
+               sircovid_date("2020-02-07"), "england",
+               strain_transmission = c(1, 1),
+               strain_seed_date = sircovid_date("2020-02-07"),
+               strain_seed_size = 10,
+               strain_seed_pattern = rep(1, 4),
+               cross_immunity = 0.5)
              mod <- lancelot$new(p, 0, np)
              initial <- lancelot_initial(mod$info(), np, p)
              mod$update_state(state = initial)
@@ -2786,7 +2796,7 @@ test_that("Can calculate ihr_t with a second less symptomatic variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = 0)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
@@ -2843,7 +2853,7 @@ test_that("Can calculate ihr_t with a second less severe variant", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = 0)
+  mod$update_state(state = initial)
   index_S <- mod$info()$index$S
   index_I <- mod$info()$index$I_weighted
   index_R <- mod$info()$index$R
