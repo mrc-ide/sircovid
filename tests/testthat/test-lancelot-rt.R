@@ -287,12 +287,12 @@ test_that("Parameters affect Rt as expected", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)
@@ -340,12 +340,12 @@ test_that("p_C capped correctly at 1 in Rt calculation", {
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
   initial <- lancelot_initial(mod$info(), 10, p)
-  mod$update_state(state = initial$state, step = initial$step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index <- mod$info()$index$S
 
   end <- sircovid_date("2020-05-01") / p$dt
-  steps <- seq(initial$step, end, by = 1 / p$dt)
+  steps <- seq(0, end, by = 1 / p$dt)
 
   set.seed(1)
   mod$set_index(index)

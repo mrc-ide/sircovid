@@ -5,8 +5,8 @@ test_that("N_tots stay constant without waning immunity", {
   p <- lancelot_parameters(0, "uk")
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -26,8 +26,8 @@ test_that("N_tot stays constant with waning immuity, while sero and PCR N_tots
             p <- lancelot_parameters(0, "uk", waning_rate = 1 / 20)
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$update_state(state = lancelot_initial(info, 1, p)$state)
+            y0 <- lancelot_initial(info, 1, p)
+            mod$update_state(state = lancelot_initial(info, 1, p))
             y <- mod$transform_variables(
               drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -46,8 +46,8 @@ test_that("N_tot stays constant when p_R < 1, while
             p$p_R_step[, ] <- 0.5
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)$state
-            mod$update_state(state = lancelot_initial(info, 1, p)$state)
+            y0 <- lancelot_initial(info, 1, p)
+            mod$update_state(state = lancelot_initial(info, 1, p))
             y <- mod$transform_variables(
               drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -71,7 +71,7 @@ test_that("there are no infections when beta is 0", {
                            waning_rate = waning_rate)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   mod$set_index(info$index$S)
   s <- mod$simulate(seq(0, 400, by = 4))
 
@@ -85,7 +85,7 @@ test_that("everyone is infected when beta is large", {
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
 
-  state <- lancelot_initial(info, 1, p)$state
+  state <- lancelot_initial(info, 1, p)
 
   ## seed directly into I_A
   index_I_A <- array(info$index$I_A, info$dim$I_A)
@@ -110,7 +110,7 @@ test_that("noone stays in R if waning rate is very
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
 
-  state <- lancelot_initial(info, 1, p)$state
+  state <- lancelot_initial(info, 1, p)
 
   # move everyone to R
   index_S <- array(info$index$S, info$dim$S)
@@ -133,7 +133,7 @@ test_that("R is non-decreasing and S is non-increasing if waning rate is 0", {
                            waning_rate = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(drop(
     mod$simulate(seq(0, 400, by = 4))))
 
@@ -150,7 +150,7 @@ test_that("No one is infected if there is no seeding", {
                            initial_seed_size = 0)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y <- lancelot_initial(info, 1, p)$state
+  y <- lancelot_initial(info, 1, p)
   y[info$index$I_A] <- 0
   y[info$index$T_sero_pre_1] <- 0
   y[info$index$T_sero_pre_2] <- 0
@@ -173,7 +173,7 @@ test_that("No one is hospitalised, no-one dies if p_C is 0", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -212,7 +212,7 @@ test_that("No one is hospitalised, no-one dies if p_H is 0", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -256,7 +256,7 @@ test_that("No one is hospitalised, no-one recovers in edge case", {
   info <- mod$info()
 
   ## Move initial infectives to 2nd stage sympt
-  y0 <- lancelot_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
@@ -298,7 +298,7 @@ test_that("No one is hospitalised, no-one recovers in edge case 2", {
   info <- mod$info()
 
   ## Move initial infectives to 2nd stage sympt
-  y0 <- lancelot_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)
   y0[info$index$I_C_2] <- y0[info$index$I_A]
   y0[info$index$I_A] <- 0
 
@@ -337,7 +337,7 @@ test_that("No-one recovers if p_R = 0", {
   info <- mod$info()
 
   ## Add initial individuals into compartments that feed into R
-  y0 <- lancelot_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)
   y0[info$index$I_A] <- 50
   y0[info$index$I_C_2] <- 50
   y0[info$index$H_R_unconf] <- 50
@@ -371,7 +371,7 @@ test_that("Everyone recovers in edge case", {
   info <- mod$info()
 
   ## Add initial individuals into compartments that feed into R
-  y0 <- lancelot_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)
   y0[info$index$I_A] <- 50
   y0[info$index$I_C_2] <- 50
   y0[info$index$H_R_unconf] <- 50
@@ -410,7 +410,7 @@ test_that("No one dies in the community if p_G_D is 0", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -437,7 +437,7 @@ test_that("forcing hospital route results in correct path", {
 
     mod <- lancelot$new(p, 0, 1, seed = 1L)
     info <- mod$info()
-    mod$update_state(state = lancelot_initial(info, 1, p)$state)
+    mod$update_state(state = lancelot_initial(info, 1, p))
     y <- mod$transform_variables(
       drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -498,7 +498,7 @@ test_that("No one seroconverts if p_sero_pos is 0", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -523,7 +523,7 @@ test_that("No one does not seroconvert and no one seroreverts
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -546,7 +546,7 @@ test_that("setting a gamma to Inf results immediate progression", {
     mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    state <- lancelot_initial(info, 1, p)$state
+    state <- lancelot_initial(info, 1, p)
 
     # add individuals into the compartment
     if (hosp_compartment) {
@@ -616,7 +616,7 @@ test_that("setting a gamma to 0 results in no progression", {
     mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    state <- lancelot_initial(info, 1, p)$state
+    state <- lancelot_initial(info, 1, p)
 
     # add individuals into the compartment (only the first progression stage)
     if (hosp_compartment) {
@@ -701,7 +701,7 @@ test_that("No one is unconfirmed, if p_star = 1", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state, step = 0)
+  mod$update_state(state = lancelot_initial(info, 1, p), step = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(all(y$H_R_unconf == 0))
@@ -742,7 +742,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p)$state, step = 0)
+  mod$update_state(state = lancelot_initial(info, 1, p), step = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$H_R_unconf > 0))
@@ -784,7 +784,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
+  y0 <- lancelot_initial(info, 1, p)
 
   ## We want to set ICU_W_R_unconf[, 1, ], ICU_W_D_unconf[, 1, ] and
   ## ICU_D_unconf[, 1, ] to 50
@@ -855,8 +855,8 @@ test_that("tots all summed correctly ", {
   p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
   expect_true(all(y$general_tot == apply(y$ICU_pre_conf, 5, sum) +
@@ -886,8 +886,8 @@ test_that("Symptomatic cases by age add up correctly", {
   p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)$state
-  mod$update_state(state = lancelot_initial(info, 1, p)$state)
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
@@ -927,7 +927,7 @@ test_that("Individuals cannot infect in compartment with zero transmission", {
     mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    y0 <- lancelot_initial(info, 1, p)$state
+    y0 <- lancelot_initial(info, 1, p)
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
@@ -988,7 +988,7 @@ test_that("Individuals can infect in compartment with non-zero transmission", {
     mod <- lancelot$new(p, 0, 1)
 
     info <- mod$info()
-    y0 <- lancelot_initial(info, 1, p)$state
+    y0 <- lancelot_initial(info, 1, p)
 
     ## put individuals in compartment being tested
     index <- info$index[[compartment_name]]
@@ -1042,7 +1042,7 @@ test_that("Severity probabilities correctly capped at 1", {
 
     mod <- lancelot$new(p, 0, 1, seed = 1L)
     info <- mod$info()
-    mod$update_state(state = lancelot_initial(info, 1, p)$state)
+    mod$update_state(state = lancelot_initial(info, 1, p))
     y <- mod$simulate(seq(0, 400, by = 4))
 
     ## Now set value to 1.5
@@ -1050,7 +1050,7 @@ test_that("Severity probabilities correctly capped at 1", {
 
     mod <- lancelot$new(p, 0, 1, seed = 1L)
     info <- mod$info()
-    mod$update_state(state = lancelot_initial(info, 1, p)$state)
+    mod$update_state(state = lancelot_initial(info, 1, p))
     y2 <- mod$simulate(seq(0, 400, by = 4))
 
     expect_true(all(y == y2))

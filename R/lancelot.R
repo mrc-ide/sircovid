@@ -1419,8 +1419,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
   state[index_I_weighted] <- 1
 
-  list(state = state,
-       step = pars$initial_step)
+  state
 }
 
 

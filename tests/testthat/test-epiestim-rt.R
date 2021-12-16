@@ -9,7 +9,7 @@ test_that("Can calculate EpiEstim Rt (I)", {
 
   initial <- lancelot_initial(mod$info(), 10, p)
   initial_step <- start_date / p$dt
-  mod$update_state(state = initial$state, step = initial_step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -58,7 +58,7 @@ test_that("Can calculate EpiEstim Rt (II)", {
 
   initial <- lancelot_initial(mod$info(), 10, p)
   initial_step <- start_date / p$dt
-  mod$update_state(state = initial$state, step = initial_step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -104,7 +104,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (I)", {
 
   initial <- lancelot_initial(mod$info(), 10, p)
   initial_step <- start_date / p$dt
-  mod$update_state(state = initial$state, step = initial_step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -155,7 +155,7 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
 
   initial <- lancelot_initial(mod$info(), 10, p)
   initial_step <- start_date / p$dt
-  mod$update_state(state = initial$state, step = initial_step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -203,7 +203,7 @@ test_that("lancelot_rt_trajectories_epiestim rejects invalid input", {
 
   initial <- lancelot_initial(mod$info(), 10, p)
   initial_step <- start_date / p$dt
-  mod$update_state(state = initial$state, step = initial_step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S
@@ -265,7 +265,7 @@ test_that("Can calculate EpiEstim Rt when no transmission in carehomes", {
 
   initial <- lancelot_initial(mod$info(), 10, p)
   initial_step <- start_date / p$dt
-  mod$update_state(state = initial$state, step = initial_step)
+  mod$update_state(state = initial)
   mod$set_index(integer(0))
   index_cum_inf <- mod$info()$index$cum_infections
   index_S <- mod$info()$index$S

@@ -473,10 +473,7 @@ test_that("Can compute initial conditions", {
   info <- mod$info()
 
   initial <- lancelot_initial(info, 10, p)
-  expect_setequal(names(initial), c("state", "step"))
-  expect_equal(initial$step, p$initial_step)
-
-  initial_y <- mod$transform_variables(initial$state)
+  initial_y <- mod$transform_variables(initial)
 
   expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
   expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
@@ -490,7 +487,7 @@ test_that("Can compute initial conditions", {
   ## * 38 (S + N_tot)
   ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial$state != 0), 43)
+  expect_equal(sum(initial != 0), 43)
 })
 
 
@@ -503,10 +500,8 @@ test_that("Can control the seeding", {
   info <- mod$info()
 
   initial <- lancelot_initial(info, 10, p)
-  expect_setequal(names(initial), c("state", "step"))
-  expect_equal(initial$step, p$initial_step)
 
-  initial_y <- mod$transform_variables(initial$state)
+  initial_y <- mod$transform_variables(initial)
 
   expect_equal(initial_y$N_tot_sero_1, sum(p$N_tot))
   expect_equal(initial_y$N_tot_sero_2, sum(p$N_tot))
@@ -520,7 +515,7 @@ test_that("Can control the seeding", {
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial$state != 0), 43)
+  expect_equal(sum(initial != 0), 43)
 })
 
 ## TODO: Ed - you had said that you had ideas for some more systematic
