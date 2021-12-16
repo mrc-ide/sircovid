@@ -666,7 +666,8 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
   out <- list()
   out$p_C <- combine_steps_groups(
     step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
-    pars$p_C_step, pars$rel_p_sympt[, i, , drop = FALSE])
+    pars$p_C_step, pars$rel_p_sympt[, i, , drop = FALSE],
+    pars$strain_rel_p_sympt)
   out$p_H <- combine_steps_groups(
     step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_H_step, pars$rel_p_hosp_if_sympt[, i, , drop = FALSE],
