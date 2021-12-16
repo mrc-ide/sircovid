@@ -572,15 +572,13 @@ lancelot_parameters <- function(start_date, region,
   if (length(strain_transmission) > 1) {
     strain_rel_severity <- mirror_strain(strain_rel_severity)
   }
+  ret$strain_rel_severity <- strain_rel_severity
 
   # combine strain-specific relative severity with vaccination reduction in
   # probability of death
 
   rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
                                  vaccination$n_vacc_classes, "rel_p_death")
-  rel_severity <- sweep(rel_p_death, 2, strain_rel_severity, "*")
-
-
 
   ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
                               vaccination$n_vacc_classes))
@@ -588,10 +586,10 @@ lancelot_parameters <- function(start_date, region,
   ret$rel_p_R <- array(1, c(ret$n_groups, strain$n_strains,
                             vaccination$n_vacc_classes))
 
-  ret$rel_p_ICU_D <- rel_severity
-  ret$rel_p_H_D <- rel_severity
-  ret$rel_p_W_D <- rel_severity
-  ret$rel_p_G_D <- rel_severity
+  ret$rel_p_ICU_D <- rel_p_death
+  ret$rel_p_H_D <- rel_p_death
+  ret$rel_p_W_D <- rel_p_death
+  ret$rel_p_G_D <- rel_p_death
 
   strain_rel_gammas <- list(E = strain_rel_gamma_E,
                             A = strain_rel_gamma_A,

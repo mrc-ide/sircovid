@@ -1677,14 +1677,7 @@ test_that("strain_rel_severity works as expected in lancelot_parameters", {
                            strain_rel_severity = strain_rel_severity,
                            rel_p_death = rel_p_death)
   # check strains are mirrored
-  expect_equal(p$rel_p_ICU_D[, 1:2, ], p$rel_p_ICU_D[, 4:3, ])
-  expect_equal(p$rel_p_ICU_D[, 2, ],
-               p$rel_p_ICU_D[, 1, ] * strain_rel_severity[2])
-  expect_equal(p$rel_p_ICU_D[, , 2],
-               p$rel_p_ICU_D[, , 1] * rel_p_death[2])
-  expect_equal(p$rel_p_ICU_D[, , 3],
-               p$rel_p_ICU_D[, , 1] * rel_p_death[3])
-
+  expect_equal(p$strain_rel_severity[1:2], p$strain_rel_severity[4:3])
 })
 
 test_that("strain_rel_gamma works as expected in lancelot_parameters", {
