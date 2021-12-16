@@ -454,7 +454,8 @@ lancelot_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   p_C <- combine_steps_groups(
     step, pars$n_groups, n_time_steps,
     n_strains = length(pars$strain_transmission),
-    n_vacc_classes = pars$n_vacc_classes, pars$p_C_step, pars$rel_p_sympt
+    n_vacc_classes = pars$n_vacc_classes, pars$p_C_step, pars$rel_p_sympt,
+    pars$strain_rel_p_sympt
   )
 
   ## Compute mean duration (in time steps) of each stage of infection,

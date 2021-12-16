@@ -1136,6 +1136,9 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
 
+  # make asymptomatics more infectious to see more of a difference
+  p$I_A_transmission <- 5
+
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
@@ -1161,6 +1164,8 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
 
   ## Run model with one strain only
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+  # make asymptomatics more infectious to see more of a difference
+  p$I_A_transmission <- 5
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1191,7 +1196,6 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
   expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
                     tol = tol)
 
-  ## TODO: check why the above is equal and not lower?
 })
 
 
@@ -1273,7 +1277,6 @@ test_that("Can calculate Rt with a second less lethal variant", {
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
-
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2828,7 +2831,7 @@ test_that("Can calculate ihr_t with a second less symptomatic variant", {
     lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
 
   ## IHRt should be lower (or equal) for the two variant version
-  ## because less stymptomatic and henve less severe
+  ## because less stymptomatic and hence less severe
   tol <- 1e-5
   expect_vector_lte(ifr_t_1$IHR_t_all, ifr_t_1_empty_strain2$IHR_t_all,
                     tol = tol)
@@ -2838,8 +2841,6 @@ test_that("Can calculate ihr_t with a second less symptomatic variant", {
                     tol = tol)
   expect_vector_lte(ifr_t_all$IHR_t_general,
                     ifr_t_all_empty_strain2$IHR_t_general, tol = tol)
-
-  ## TODO: I'd expect a bit more difference above?
 
 })
 
