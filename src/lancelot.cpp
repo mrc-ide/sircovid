@@ -743,6 +743,7 @@ compare(const typename T::real_type * state,
 // [[dust::param(strain_rel_p_ICU_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_rel_p_W_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_rel_p_hosp_if_sympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(strain_rel_p_icu, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_rel_p_sympt, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_step_start, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(strain_seed_value, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2227,6 +2228,7 @@ public:
     int dim_strain_rel_p_ICU_D;
     int dim_strain_rel_p_W_D;
     int dim_strain_rel_p_hosp_if_sympt;
+    int dim_strain_rel_p_icu;
     int dim_strain_rel_p_sympt;
     int dim_strain_seed_value;
     int dim_strain_transmission;
@@ -2609,6 +2611,7 @@ public:
     std::vector<real_type> strain_rel_p_ICU_D;
     std::vector<real_type> strain_rel_p_W_D;
     std::vector<real_type> strain_rel_p_hosp_if_sympt;
+    std::vector<real_type> strain_rel_p_icu;
     std::vector<real_type> strain_rel_p_sympt;
     real_type strain_seed_step_end;
     real_type strain_seed_step_start;
@@ -3194,7 +3197,7 @@ public:
     for (int i = 1; i <= shared->dim_p_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_p_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_p_ICU_3; ++k) {
-          internal.p_ICU[i - 1 + shared->dim_p_ICU_1 * (j - 1) + shared->dim_p_ICU_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_steps ? std::min(shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + shared->n_p_ICU_steps - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
+          internal.p_ICU[i - 1 + shared->dim_p_ICU_1 * (j - 1) + shared->dim_p_ICU_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_ICU_steps ? std::min(shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + shared->n_p_ICU_steps - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1] * shared->strain_rel_p_icu[j - 1], static_cast<real_type>(1)) : std::min(shared->p_ICU_step[shared->dim_p_ICU_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_ICU[shared->dim_rel_p_ICU_12 * (k - 1) + shared->dim_rel_p_ICU_1 * (j - 1) + i - 1] * shared->strain_rel_p_icu[j - 1], static_cast<real_type>(1)));
         }
       }
     }
@@ -6410,6 +6413,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_strain_rel_p_ICU_D = shared->n_strains;
   shared->dim_strain_rel_p_W_D = shared->n_strains;
   shared->dim_strain_rel_p_hosp_if_sympt = shared->n_strains;
+  shared->dim_strain_rel_p_icu = shared->n_strains;
   shared->dim_strain_rel_p_sympt = shared->n_strains;
   shared->dim_strain_transmission = shared->n_strains;
   shared->dim_tmp_vaccine_n_candidates_1 = shared->n_groups;
@@ -7130,6 +7134,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->strain_rel_p_ICU_D = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_ICU_D", shared->strain_rel_p_ICU_D, {shared->dim_strain_rel_p_ICU_D}, NA_REAL, NA_REAL);
   shared->strain_rel_p_W_D = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_W_D", shared->strain_rel_p_W_D, {shared->dim_strain_rel_p_W_D}, NA_REAL, NA_REAL);
   shared->strain_rel_p_hosp_if_sympt = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_hosp_if_sympt", shared->strain_rel_p_hosp_if_sympt, {shared->dim_strain_rel_p_hosp_if_sympt}, NA_REAL, NA_REAL);
+  shared->strain_rel_p_icu = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_icu", shared->strain_rel_p_icu, {shared->dim_strain_rel_p_icu}, NA_REAL, NA_REAL);
   shared->strain_rel_p_sympt = user_get_array_fixed<real_type, 1>(user, "strain_rel_p_sympt", shared->strain_rel_p_sympt, {shared->dim_strain_rel_p_sympt}, NA_REAL, NA_REAL);
   shared->strain_seed_step_end = shared->strain_seed_step_start + shared->dim_strain_seed_value;
   shared->strain_transmission = user_get_array_fixed<real_type, 1>(user, "strain_transmission", shared->strain_transmission, {shared->dim_strain_transmission}, NA_REAL, NA_REAL);

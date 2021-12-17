@@ -273,8 +273,10 @@ p_H[, , ] <- if (as.integer(step) >= n_p_H_steps)
             as.numeric(1))
 
 p_ICU[, , ] <- if (as.integer(step) >= n_p_ICU_steps)
-  min(p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k], as.numeric(1)) else
-    min(p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k], as.numeric(1))
+  min(p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k] *
+        strain_rel_p_icu[j] , as.numeric(1)) else
+    min(p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k] *
+          strain_rel_p_icu[j] , as.numeric(1))
 
 p_ICU_D[, , ] <- if (as.integer(step) >= n_p_ICU_D_steps)
   min(p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k] *
@@ -1058,6 +1060,8 @@ strain_rel_p_hosp_if_sympt[] <- user()
 dim(strain_rel_p_hosp_if_sympt) <- n_strains
 rel_p_ICU[, , ] <- user()
 dim(rel_p_ICU) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_icu[] <- user()
+dim(strain_rel_p_icu) <- n_strains
 rel_p_ICU_D[, , ] <- user()
 dim(rel_p_ICU_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_H_D[, , ] <- user()
