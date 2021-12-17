@@ -674,7 +674,8 @@ compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
     pars$strain_rel_p_hosp_if_sympt)
   out$p_ICU <- combine_steps_groups(
     step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
-    pars$p_ICU_step, pars$rel_p_ICU[, i, , drop = FALSE])
+    pars$p_ICU_step, pars$rel_p_ICU[, i, , drop = FALSE],
+    pars$strain_rel_p_icu)
   out$p_ICU_D <- combine_steps_groups(
     step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_ICU_D_step, pars$rel_p_ICU_D[, i, , drop = FALSE],

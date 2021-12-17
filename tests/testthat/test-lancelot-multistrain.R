@@ -3030,6 +3030,63 @@ test_that("Can calculate ihr_t with a second less severe variant", {
 })
 
 
+test_that("Can calculate ifr_t with a second less severe (icu) variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_icu = c(1, 0.5),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 1)
+
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## move everyone into first strain
+  I[1:19, , ] <- I[1:19, , ] + I[20:38, , ] + I[39:57, , ] + I[58:76, , ]
+  I[20:76, , ] <- 0
+  R[1:19, , ] <- R[1:19, , ] + R[20:38, , ] + R[39:57, , ] + R[58:76, , ]
+  R[20:76, , ] <- 0
+
+  ifr_t_1_empty_strain2 <-
+    lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_empty_strain2 <-
+    lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## Rt should be lower (or equal) for the two variant version
+  ## because less lethal
+  tol <- 1e-5
+  expect_vector_lte(ifr_t_1$IFR_t_all, ifr_t_1_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_1$IFR_t_general, ifr_t_1_empty_strain2$IFR_t_general,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_all, ifr_t_all_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_general,
+                    ifr_t_all_empty_strain2$IFR_t_general, tol = tol)
+})
+
+
 test_that("Can calculate ifr_t with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
