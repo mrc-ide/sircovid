@@ -1260,6 +1260,75 @@ test_that("Can calculate Rt with a second less severe variant", {
 })
 
 
+test_that("Can calculate Rt with a second less severe (p_icu) variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_icu = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                      weight_Rt = TRUE)
+  rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                     weight_Rt = TRUE)
+
+  ## Run model with one strain only
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(c(index_S, index_R))
+  y <- mod$simulate(steps)
+
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- lancelot_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- lancelot_Rt_trajectories(steps, S, p, R = R)
+
+  ## Rt should be  equal for the two variant version
+  ## because no matter what fraction get into icu,
+  ## they stop being infectious after I_C_2 so this should not affect Rt
+  tol <- 1e-5
+  expect_vector_equal(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_equal(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_equal(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_equal(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                      tol = tol)
+})
+
+
 test_that("Can calculate Rt with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
@@ -1856,6 +1925,33 @@ test_that("strain_rel_p_hosp works as expected in lancelot_parameters", {
   # check strains are NOT mirrored this time
   expect_false(any(
     p$strain_rel_p_hosp_if_sympt[1:2] == p$strain_rel_p_hosp_if_sympt[4:3]))
+})
+
+
+test_that("strain_rel_p_icu works as expected in lancelot_parameters", {
+  strain_rel_p_icu <- c(1, 0.5)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_icu = strain_rel_p_icu)
+  # check strains are mirrored
+  expect_equal(p$strain_rel_p_icu[1:2],
+               p$strain_rel_p_icu[4:3])
+
+  ## same but where strain_rel_p_death is specified for each pseudostrain:
+
+  # second strain half as severe
+  # and previous infection reduces probability of admission to icu by 10%
+  strain_rel_p_icu <- c(1, 0.5, 0.45, 0.9)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_icu = strain_rel_p_icu)
+  # relative probability of admission to icu is as set
+  expect_equal(p$strain_rel_p_icu, strain_rel_p_icu)
+  # check strains are NOT mirrored this time
+  expect_false(any(
+    p$strain_rel_p_icu[1:2] == p$strain_rel_p_icu[4:3]))
 })
 
 
