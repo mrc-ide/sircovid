@@ -2447,6 +2447,207 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
 })
 
 
+
+test_that("can alter p_death (strain 2) in different pathways independently", {
+  np <- 3L
+  p_base <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  ####################################################
+  # no death in ICU for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_ICU_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in ICU for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+
+  ## But people outside ICU can still die for all strains
+  ## testing just one example here: death in stepdown care after ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_W_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_W_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_unconf[, 3, , , , ] == 0))
+
+  ####################################################
+  # no death in stepdown after ICU for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_W_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in stepdown after ICU for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_W_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_W_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_W_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_W_D_unconf[, 3, , , , ] == 0))
+
+  ## But people outside stepdown after ICU can still die for all strains
+  ## testing just one example here: death in ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+
+  ####################################################
+  # no death in community for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_G_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in community for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$G_D[, 1, , , , ] == 0))
+  expect_false(all(y$G_D[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$G_D[, 2, , , , ] == 0))
+  expect_true(all(y$G_D[, 3, , , , ] == 0))
+
+  ## But people outside community can still die for all strains
+  ## testing just one example here: death in ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+
+  ####################################################
+  # no death in regular hospital wards for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_H_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in hospital wards for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$H_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$H_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$H_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$H_D_unconf[, 3, , , , ] == 0))
+
+  ## But people outside hospital wards can still die for all strains
+  ## testing just one example here: death in ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+})
+
+
 test_that("ICU strain 2 empty when p_icu = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
