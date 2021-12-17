@@ -2447,6 +2447,44 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
 })
 
 
+test_that("ICU strain 2 empty when p_icu = c(1, 0)", {
+  np <- 3L
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_icu = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_pre_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_pre_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_pre_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_pre_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_pre_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_pre_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_pre_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_pre_unconf[, 3, , , , ] == 0))
+
+})
+
+
 test_that("H strain 2 empty when p_hosp = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
