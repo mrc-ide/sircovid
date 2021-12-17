@@ -259,34 +259,49 @@ dim(p_W_D_progress) <- n_strains
 
 ## Work out time-varying probabilities
 p_C[, , ] <- if (as.integer(step) >= n_p_C_steps)
-  min(p_C_step[n_p_C_steps, i] * rel_p_sympt[i, j, k], as.numeric(1)) else
-    min(p_C_step[step + 1, i] * rel_p_sympt[i, j, k], as.numeric(1))
+  min(p_C_step[n_p_C_steps, i] * rel_p_sympt[i, j, k] *
+        strain_rel_p_sympt[j], as.numeric(1)) else
+    min(p_C_step[step + 1, i] * rel_p_sympt[i, j, k] *
+          strain_rel_p_sympt[j], as.numeric(1))
 
 p_H[, , ] <- if (as.integer(step) >= n_p_H_steps)
-  min(p_H_step[n_p_H_steps, i] * rel_p_hosp_if_sympt[i, j, k],
+  min(p_H_step[n_p_H_steps, i] * rel_p_hosp_if_sympt[i, j, k] *
+        strain_rel_p_hosp_if_sympt[j],
       as.numeric(1)) else
-        min(p_H_step[step + 1, i] * rel_p_hosp_if_sympt[i, j, k], as.numeric(1))
+        min(p_H_step[step + 1, i] * rel_p_hosp_if_sympt[i, j, k] *
+              strain_rel_p_hosp_if_sympt[j],
+            as.numeric(1))
 
 p_ICU[, , ] <- if (as.integer(step) >= n_p_ICU_steps)
-  min(p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k], as.numeric(1)) else
-    min(p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k], as.numeric(1))
+  min(p_ICU_step[n_p_ICU_steps, i] * rel_p_ICU[i, j, k] *
+        strain_rel_p_icu[j], as.numeric(1)) else
+    min(p_ICU_step[step + 1, i] * rel_p_ICU[i, j, k] *
+          strain_rel_p_icu[j], as.numeric(1))
 
 p_ICU_D[, , ] <- if (as.integer(step) >= n_p_ICU_D_steps)
-  min(p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k],
+  min(p_ICU_D_step[n_p_ICU_D_steps, i] * rel_p_ICU_D[i, j, k] *
+        strain_rel_p_ICU_D[j],
       as.numeric(1)) else
-    min(p_ICU_D_step[step + 1, i] * rel_p_ICU_D[i, j, k], as.numeric(1))
+        min(p_ICU_D_step[step + 1, i] * rel_p_ICU_D[i, j, k] *
+              strain_rel_p_ICU_D[j], as.numeric(1))
 
 p_H_D[, , ] <- if (as.integer(step) >= n_p_H_D_steps)
-  min(p_H_D_step[n_p_H_D_steps, i] * rel_p_H_D[i, j, k], as.numeric(1)) else
-    min(p_H_D_step[step + 1, i] * rel_p_H_D[i, j, k], as.numeric(1))
+  min(p_H_D_step[n_p_H_D_steps, i] * rel_p_H_D[i, j, k] *
+        strain_rel_p_H_D[j], as.numeric(1)) else
+          min(p_H_D_step[step + 1, i] * rel_p_H_D[i, j, k] *
+                strain_rel_p_H_D[j], as.numeric(1))
 
 p_W_D[, , ] <- if (as.integer(step) >= n_p_W_D_steps)
-  min(p_W_D_step[n_p_W_D_steps, i] * rel_p_W_D[i, j, k], as.numeric(1)) else
-    min(p_W_D_step[step + 1, i] * rel_p_W_D[i, j, k], as.numeric(1))
+  min(p_W_D_step[n_p_W_D_steps, i] * rel_p_W_D[i, j, k] *
+        strain_rel_p_W_D[j], as.numeric(1)) else
+          min(p_W_D_step[step + 1, i] * rel_p_W_D[i, j, k] *
+                strain_rel_p_W_D[j], as.numeric(1))
 
 p_G_D[, , ] <- if (as.integer(step) >= n_p_G_D_steps)
-  min(p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k], as.numeric(1)) else
-    min(p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k], as.numeric(1))
+  min(p_G_D_step[n_p_G_D_steps, i] * rel_p_G_D[i, j, k] *
+        strain_rel_p_G_D[j], as.numeric(1)) else
+          min(p_G_D_step[step + 1, i] * rel_p_G_D[i, j, k] *
+                strain_rel_p_G_D[j], as.numeric(1))
 
 p_R[, , ] <- if (as.integer(step) >= n_p_R_steps)
   min(p_R_step[n_p_R_steps, i] * rel_p_R[i, j, k], as.numeric(1)) else
@@ -484,8 +499,8 @@ n_I_P_vacc_skip[, , ] <-
 ## cross_immunity[1] is the cross immunity of strain 1 against strain 2
 ## cross_immunity[2] is the cross immunity of strain 2 against strain 1
 rate_R_progress[, , ] <- waning_rate[i] +
-            if (n_strains == 1 || j > 2) 0 else
-              lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
+  if (n_strains == 1 || j > 2) 0 else
+    lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
 
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
@@ -586,7 +601,7 @@ update(cum_infections_per_strain[]) <-
   (if (i > 2)
     (sum(n_RE[, i - 2, ]))
    else
-      0)
+     0)
 dim(cum_infections_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
@@ -594,7 +609,7 @@ new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) + sum(n_infected_to_S[i, , j]) -
   sum(n_S_progress[i, , j]) - n_S_next_vacc_class[i, j]
 new_S[, ] <- new_S[i, j] +
   (if (j == 1) n_S_next_vacc_class[i, n_vacc_classes] else
-       n_S_next_vacc_class[i, j - 1]) -
+    n_S_next_vacc_class[i, j - 1]) -
   (if (j == vacc_skip_from) n_S_vacc_skip[i] else 0) +
   (if (j == vacc_skip_to) n_S_vacc_skip[i] else 0)
 
@@ -645,7 +660,7 @@ new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
 
 ## Work out the I_C_1->I_C_1 transitions
 aux_I_C_1[, , , ] <- (if (k == 1) n_I_P_progress[i, j, k_P, l] else
-         n_I_C_1_progress[i, j, k - 1, l]) - n_I_C_1_progress[i, j, k, l]
+  n_I_C_1_progress[i, j, k - 1, l]) - n_I_C_1_progress[i, j, k, l]
 
 new_I_C_1[, , , ] <- I_C_1[i, j, k, l] + aux_I_C_1[i, j, k, l]
 
@@ -934,7 +949,7 @@ new_R[, , ] <- R[i, j, k] -
   n_R_next_vacc_class[i, j, k] +
   n_infected_to_R[i, j, k] +
   (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
-     n_R_next_vacc_class[i, j, k - 1])  -
+    n_R_next_vacc_class[i, j, k - 1])  -
   (if (k == vacc_skip_from) n_R_vacc_skip[i, j] else 0) +
   (if (k == vacc_skip_to) n_R_vacc_skip[i, j] else 0)
 
@@ -947,8 +962,8 @@ new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
   n_T_PCR_pos_progress[i, j, k, l] +
   (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] +
-               n_RE[i, j, l] else
-    n_T_PCR_pos_progress[i, j, k - 1, l])
+     n_RE[i, j, l] else
+       n_T_PCR_pos_progress[i, j, k - 1, l])
 
 new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
   n_T_PCR_pos_progress[i, j, k_PCR_pos, k]
@@ -984,8 +999,8 @@ s_ij[1:n_age_groups, 1:n_groups, ] <- beta * s_ij[i, j, k]
 s_ij[(n_age_groups + 1):n_groups, 1:n_age_groups, ] <- beta * s_ij[i, j, k]
 ## P(Strain = 1) := P(Strain = Only 1) + P(Strain = 2->1), same for Strain = 2
 lambda[, ] <- if (n_real_strains == 1) sum(s_ij[i, , 1]) else
-                (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
-                  sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]))
+  (if (j == 1) sum(s_ij[i, , 1]) + sum(s_ij[i, , 4]) else
+    sum(s_ij[i, , 2]) + sum(s_ij[i, , 3]))
 lambda_susc[, , ] <- lambda[i, j] * rel_susceptibility[i, j, k]
 
 ## Initial states are all zerod as we will provide a state vector
@@ -1037,10 +1052,16 @@ rel_susceptibility[, , ] <- user()
 dim(rel_susceptibility) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_sympt[, , ] <- user()
 dim(rel_p_sympt) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_sympt[] <- user()
+dim(strain_rel_p_sympt) <- n_strains
 rel_p_hosp_if_sympt[, , ] <- user()
 dim(rel_p_hosp_if_sympt) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_hosp_if_sympt[] <- user()
+dim(strain_rel_p_hosp_if_sympt) <- n_strains
 rel_p_ICU[, , ] <- user()
 dim(rel_p_ICU) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_icu[] <- user()
+dim(strain_rel_p_icu) <- n_strains
 rel_p_ICU_D[, , ] <- user()
 dim(rel_p_ICU_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_H_D[, , ] <- user()
@@ -1049,6 +1070,14 @@ rel_p_W_D[, , ] <- user()
 dim(rel_p_W_D) <- c(n_groups, n_strains, n_vacc_classes)
 rel_p_G_D[, , ] <- user()
 dim(rel_p_G_D) <- c(n_groups, n_strains, n_vacc_classes)
+strain_rel_p_ICU_D[] <- user()
+dim(strain_rel_p_ICU_D) <- n_strains
+strain_rel_p_H_D[] <- user()
+dim(strain_rel_p_H_D) <- n_strains
+strain_rel_p_W_D[] <- user()
+dim(strain_rel_p_W_D) <- n_strains
+strain_rel_p_G_D[] <- user()
+dim(strain_rel_p_G_D) <- n_strains
 rel_p_R[, , ] <- user()
 dim(rel_p_R) <- c(n_groups, n_strains, n_vacc_classes)
 rel_infectivity[, , ] <- user()
@@ -1812,8 +1841,8 @@ update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 rel_foi_strain[, , ] <-
   (if (sum(lambda_susc[i, , k]) == 0)
     (if (j == 1) 1 else 0) else
-    min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
-        as.numeric(1)))
+      min(lambda_susc[i, j, k] / sum(lambda_susc[i, , k]),
+          as.numeric(1)))
 dim(rel_foi_strain) <- c(n_groups, n_real_strains, n_vacc_classes)
 
 ## I_weighted used in IFR calculation
@@ -1920,7 +1949,7 @@ vaccine_attempted_doses[, ] <-
                 vacc_skip_weight * vacc_skip_n_candidates[i])
            * total_attempted_doses[i, j],
            vaccine_n_candidates[i, j]))
-    else total_attempted_doses[i, j])
+   else total_attempted_doses[i, j])
 dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 
 vacc_skip_attempted_doses[] <-

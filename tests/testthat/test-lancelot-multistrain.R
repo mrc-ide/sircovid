@@ -224,93 +224,97 @@ test_that("Second less virulent strain does not take over", {
 
 test_that("N_tots stay constant with second strain and no waning immunity - no
           superinfection", {
-  ## Default for waning_rate is 0
-  set.seed(1)
-  n_seeded_new_strain_inf <- 100
-  date_seeding <- "2020-03-07"
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           strain_transmission = c(1, 1),
-                           strain_seed_date = sircovid_date(date_seeding),
-                           strain_seed_size = n_seeded_new_strain_inf,
-                           strain_seed_pattern = rep(1, 4))
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4))
 
-  mod <- lancelot$new(p, 0, 1, seed = 1L)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)
-  mod$update_state(state = y0)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1, seed = 1L)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)
+            mod$update_state(state = y0)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(y$N_tot_sero_1 -
-                    mod$transform_variables(y0)$N_tot_sero_1 == 0))
-  expect_true(all(y$N_tot_sero_2 -
-                    mod$transform_variables(y0)$N_tot_sero_2 == 0))
-  expect_true(all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
-  expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(y$N_tot_sero_1 -
+                              mod$transform_variables(y0)$N_tot_sero_1 == 0))
+            expect_true(all(y$N_tot_sero_2 -
+                              mod$transform_variables(y0)$N_tot_sero_2 == 0))
+            expect_true(
+              all(y$N_tot_PCR - mod$transform_variables(y0)$N_tot_PCR == 0))
+            expect_true(all(colSums(y$N_tot) - y$N_tot_sero_1 == 0))
+            expect_true(all(colSums(y$N_tot) - y$N_tot_sero_2 == 0))
+            expect_true(all(colSums(y$N_tot) - y$N_tot_PCR == 0))
+          })
 
 
 test_that("N_tot is constant with second strain and waning immunity, while
           sero N_tots are non-decreasing - superinfection", {
-  ## Default for waning_rate is 0
-  set.seed(1)
-  n_seeded_new_strain_inf <- 100
-  date_seeding <- "2020-03-07"
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           waning_rate = 1 / 20,
-                           strain_transmission = c(1, 1),
-                           strain_seed_date = sircovid_date(date_seeding),
-                           strain_seed_size = n_seeded_new_strain_inf,
-                           strain_seed_pattern = rep(1, 4),
-                           cross_immunity = 0)
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              waning_rate = 1 / 20,
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4),
+              cross_immunity = 0)
 
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)
-  mod$update_state(state = y0)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)
+            mod$update_state(state = y0)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(diff(y$N_tot_sero_2) >= 0))
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 test_that("N_tot is constant with second strain and waning immunity, while
           sero and PCR N_tots are non-decreasing - no superinfection", {
             ## Default for waning_rate is 0
-  set.seed(1)
-  n_seeded_new_strain_inf <- 100
-  date_seeding <- "2020-03-07"
-  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                           waning_rate = 1 / 20,
-                           strain_transmission = c(1, 1),
-                           strain_seed_date = sircovid_date(date_seeding),
-                           strain_seed_size = n_seeded_new_strain_inf,
-                           strain_seed_pattern = rep(1, 4))
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              waning_rate = 1 / 20,
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4))
 
-  mod <- lancelot$new(p, 0, 1)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)
-  mod$update_state(state = y0)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, 1, p)
+            mod$update_state(state = y0)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
-  expect_true(all(diff(y$N_tot_sero_1) >= 0))
-  expect_true(all(diff(y$N_tot_sero_2) >= 0))
-  expect_true(all(diff(y$N_tot_PCR) >= 0))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
-  expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
-})
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 
 test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
@@ -1114,16 +1118,226 @@ test_that("Can calculate Rt with a second more infectious variant", {
 })
 
 
-test_that("Can calculate Rt with a second less lethal variant", {
+test_that("Can calculate Rt with a second less symptomatic variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = c(1, 0),
+                           strain_rel_p_sympt = c(1, 0),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
 
+  # make asymptomatics more infectious to see more of a difference
+  p$I_A_transmission <- 5
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                      weight_Rt = TRUE)
+  rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                     weight_Rt = TRUE)
+
+  ## Run model with one strain only
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+  # make asymptomatics more infectious to see more of a difference
+  p$I_A_transmission <- 5
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(c(index_S, index_R))
+  y <- mod$simulate(steps)
+
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- lancelot_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- lancelot_Rt_trajectories(steps, S, p, R = R)
+
+  ## Rt should be higher (or equal) for the two variant version
+  tol <- 1e-5
+  expect_vector_gte(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_gte(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                    tol = tol)
+
+})
+
+
+test_that("Can calculate Rt with a second less severe variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_hosp_if_sympt = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                      weight_Rt = TRUE)
+  rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                     weight_Rt = TRUE)
+
+  ## Run model with one strain only
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(c(index_S, index_R))
+  y <- mod$simulate(steps)
+
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- lancelot_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- lancelot_Rt_trajectories(steps, S, p, R = R)
+
+  ## Rt should be  equal for the two variant version
+  ## because no matter what fraction get into hospital,
+  ## they stop being infectious after I_C_2 so this should not affect Rt
+  tol <- 1e-5
+  expect_vector_equal(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_equal(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_equal(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_equal(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                      tol = tol)
+})
+
+
+test_that("Can calculate Rt with a second less severe (p_icu) variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_icu = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+  index_prob_strain <- mod$info()$index$prob_strain
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  R <- y[index_R, , ]
+  prob_strain <- y[index_prob_strain, , ]
+
+  rt_1 <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, ],
+                      weight_Rt = TRUE)
+  rt_all <- lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                                     weight_Rt = TRUE)
+
+  ## Run model with one strain only
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  mod$set_index(c(index_S, index_R))
+  y <- mod$simulate(steps)
+
+  S <- y[1:19, , ]
+  R <- y[20:38, , ]
+
+  rt_1_single_class <- lancelot_Rt(steps, S[, 1, ], p, R = R[, 1, ])
+  rt_all_single_class <- lancelot_Rt_trajectories(steps, S, p, R = R)
+
+  ## Rt should be  equal for the two variant version
+  ## because no matter what fraction get into icu,
+  ## they stop being infectious after I_C_2 so this should not affect Rt
+  tol <- 1e-5
+  expect_vector_equal(rt_1$Rt_all, rt_1_single_class$Rt_all, tol = tol)
+  expect_vector_equal(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
+  expect_vector_equal(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
+  expect_vector_equal(rt_all$Rt_general, rt_all_single_class$Rt_general,
+                      tol = tol)
+})
+
+
+test_that("Can calculate Rt with a second less lethal variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_death = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -1182,7 +1396,6 @@ test_that("Can calculate Rt with a second less lethal variant", {
   expect_vector_gte(rt_all$Rt_general, rt_all_single_class$Rt_general,
                     tol = tol)
 })
-
 
 test_that("Can calculate Rt with a second variant with longer I_E", {
   ## Seed with 10 cases on same day as other variant
@@ -1250,7 +1463,7 @@ test_that("Can calculate Rt with a second variant with longer I_E", {
   expect_vector_equal(rt_1$Rt_general, rt_1_single_class$Rt_general, tol = tol)
   expect_vector_equal(rt_all$Rt_all, rt_all_single_class$Rt_all, tol = tol)
   expect_vector_equal(rt_all$Rt_general, rt_all_single_class$Rt_general,
-                    tol = tol)
+                      tol = tol)
 })
 
 
@@ -1657,22 +1870,122 @@ test_that("calculate Rt with both second variant and vaccination", {
 
 })
 
-test_that("strain_rel_severity works as expected in lancelot_parameters", {
-  strain_rel_severity <- c(1, 0.5)
+test_that("strain_rel_p_sympt works as expected in lancelot_parameters", {
+  strain_rel_p_sympt <- c(1, 0.5)
+  rel_p_sympt <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_sympt = strain_rel_p_sympt,
+                           rel_p_sympt = rel_p_sympt)
+  # check strains are mirrored
+  expect_equal(p$strain_rel_p_sympt[1:2], p$strain_rel_p_sympt[4:3])
+
+  ## same but where strain_rel_p_death is specified for each pseudostrain:
+
+  # second strain half as severe
+  # and previous infection reduces probability of symptoms by 10%
+  strain_rel_p_sympt <- c(1, 0.5, 0.45, 0.9)
+  rel_p_sympt <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_sympt = strain_rel_p_sympt,
+                           rel_p_sympt = rel_p_sympt)
+  # relative probability of symptoms is as set
+  expect_equal(p$strain_rel_p_sympt, strain_rel_p_sympt)
+  # check strains are NOT mirrored this time
+  expect_false(any(p$strain_rel_p_sympt[1:2] == p$strain_rel_p_sympt[4:3]))
+})
+
+
+test_that("strain_rel_p_hosp works as expected in lancelot_parameters", {
+  strain_rel_p_hosp_if_sympt <- c(1, 0.5)
+  rel_p_hosp_if_sympt <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_hosp_if_sympt = strain_rel_p_hosp_if_sympt,
+    rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+  # check strains are mirrored
+  expect_equal(p$strain_rel_p_hosp_if_sympt[1:2],
+               p$strain_rel_p_hosp_if_sympt[4:3])
+
+  ## same but where strain_rel_p_death is specified for each pseudostrain:
+
+  # second strain half as severe
+  # and previous infection reduces probability of hospitalisation by 10%
+  strain_rel_p_hosp_if_sympt <- c(1, 0.5, 0.45, 0.9)
+  rel_p_hosp_if_sympt <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_hosp_if_sympt = strain_rel_p_hosp_if_sympt,
+    rel_p_hosp_if_sympt = rel_p_hosp_if_sympt)
+  # relative probability of hospitalisation is as set
+  expect_equal(p$strain_rel_p_hosp_if_sympt, strain_rel_p_hosp_if_sympt)
+  # check strains are NOT mirrored this time
+  expect_false(any(
+    p$strain_rel_p_hosp_if_sympt[1:2] == p$strain_rel_p_hosp_if_sympt[4:3]))
+})
+
+
+test_that("strain_rel_p_icu works as expected in lancelot_parameters", {
+  strain_rel_p_icu <- c(1, 0.5)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_icu = strain_rel_p_icu)
+  # check strains are mirrored
+  expect_equal(p$strain_rel_p_icu[1:2],
+               p$strain_rel_p_icu[4:3])
+
+  ## same but where strain_rel_p_death is specified for each pseudostrain:
+
+  # second strain half as severe
+  # and previous infection reduces probability of admission to icu by 10%
+  strain_rel_p_icu <- c(1, 0.5, 0.45, 0.9)
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    strain_rel_p_icu = strain_rel_p_icu)
+  # relative probability of admission to icu is as set
+  expect_equal(p$strain_rel_p_icu, strain_rel_p_icu)
+  # check strains are NOT mirrored this time
+  expect_false(any(
+    p$strain_rel_p_icu[1:2] == p$strain_rel_p_icu[4:3]))
+})
+
+
+test_that("strain_rel_p_death works as expected in lancelot_parameters", {
+  strain_rel_p_death <- c(1, 0.5)
   rel_p_death <- c(1, 0.6, 0.7)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = strain_rel_severity,
+                           strain_rel_p_death = strain_rel_p_death,
                            rel_p_death = rel_p_death)
+  # relative probability of death applied to all death pathways
+  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_H_D)
+  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_W_D)
+  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_G_D)
   # check strains are mirrored
-  expect_equal(p$rel_p_ICU_D[, 1:2, ], p$rel_p_ICU_D[, 4:3, ])
-  expect_equal(p$rel_p_ICU_D[, 2, ],
-               p$rel_p_ICU_D[, 1, ] * strain_rel_severity[2])
-  expect_equal(p$rel_p_ICU_D[, , 2],
-               p$rel_p_ICU_D[, , 1] * rel_p_death[2])
-  expect_equal(p$rel_p_ICU_D[, , 3],
-               p$rel_p_ICU_D[, , 1] * rel_p_death[3])
+  expect_equal(p$strain_rel_p_ICU_D[1:2], p$strain_rel_p_ICU_D[4:3])
 
+  ## same but where strain_rel_p_death is specified for each pseudostrain:
+
+  # second strain half as severe
+  # and previous infection reduces probability of death by 10%
+  strain_rel_p_death <- c(1, 0.5, 0.45, 0.9)
+  rel_p_death <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_death = strain_rel_p_death,
+                           rel_p_death = rel_p_death)
+  # relative probability of death applied to all death pathways
+  expect_equal(p$strain_rel_p_ICU_D, strain_rel_p_death)
+  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_H_D)
+  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_W_D)
+  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_G_D)
+  # check strains are NOT mirrored this time
+  expect_false(any(p$strain_rel_p_ICU_D[1:2] == p$strain_rel_p_ICU_D[4:3]))
 })
 
 test_that("strain_rel_gamma works as expected in lancelot_parameters", {
@@ -2108,7 +2421,7 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = c(1, 0),
+                           strain_rel_p_death = c(1, 0),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
@@ -2133,6 +2446,338 @@ test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
   expect_true(all(y$G_D[, 3, , , , ] == 0))
 })
 
+
+
+test_that("can alter p_death (strain 2) in different pathways independently", {
+  np <- 3L
+  p_base <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  ####################################################
+  # no death in ICU for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_ICU_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in ICU for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+
+  ## But people outside ICU can still die for all strains
+  ## testing just one example here: death in stepdown care after ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_W_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_W_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_unconf[, 3, , , , ] == 0))
+
+  ####################################################
+  # no death in stepdown after ICU for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_W_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in stepdown after ICU for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_W_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_W_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_W_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_W_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_W_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_W_D_unconf[, 3, , , , ] == 0))
+
+  ## But people outside stepdown after ICU can still die for all strains
+  ## testing just one example here: death in ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+
+  ####################################################
+  # no death in community for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_G_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in community for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$G_D[, 1, , , , ] == 0))
+  expect_false(all(y$G_D[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$G_D[, 2, , , , ] == 0))
+  expect_true(all(y$G_D[, 3, , , , ] == 0))
+
+  ## But people outside community can still die for all strains
+  ## testing just one example here: death in ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+
+  ####################################################
+  # no death in regular hospital wards for strain 2 (and 3 i.e. 1.2)
+  p <- p_base
+  p$strain_rel_p_H_D[2:3] <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  ## Some deaths in hospital wards for strains 1, 4 but not strains 2, 3
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$H_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$H_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$H_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$H_D_unconf[, 3, , , , ] == 0))
+
+  ## But people outside hospital wards can still die for all strains
+  ## testing just one example here: death in ICU
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
+  expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
+})
+
+
+test_that("ICU strain 2 empty when p_icu = c(1, 0)", {
+  np <- 3L
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_icu = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_pre_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_pre_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_pre_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_pre_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_pre_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_pre_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_pre_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_pre_unconf[, 3, , , , ] == 0))
+
+})
+
+
+test_that("H strain 2 empty when p_hosp = c(1, 0)", {
+  np <- 3L
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_hosp_if_sympt = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_D_conf[, 1, , , , ] == 0))
+  expect_false(all(y$H_D_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_D_conf[, 2, , , , ] == 0))
+  expect_true(all(y$H_D_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_D_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$H_D_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_D_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$H_D_unconf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_R_conf[, 1, , , , ] == 0))
+  expect_false(all(y$H_R_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_R_conf[, 2, , , , ] == 0))
+  expect_true(all(y$H_R_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$H_R_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$H_R_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$H_R_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$H_R_unconf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_pre_conf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_pre_conf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_pre_conf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_pre_conf[, 3, , , , ] == 0))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$ICU_pre_unconf[, 1, , , , ] == 0))
+  expect_false(all(y$ICU_pre_unconf[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$ICU_pre_unconf[, 2, , , , ] == 0))
+  expect_true(all(y$ICU_pre_unconf[, 3, , , , ] == 0))
+})
+
+test_that("I_P strain 2 empty when p_sympt = c(1, 0)", {
+  np <- 3L
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_sympt = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), np, p)
+  mod$update_state(state = initial)
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+  set.seed(1)
+  y <- mod$transform_variables(
+    drop(mod$simulate(steps)))
+
+  # Strain 1 and 4 (2 -> 1)
+  expect_false(all(y$I_P[, 1, , , , ] == 0))
+  expect_false(all(y$I_P[, 4, , , , ] == 0))
+  # Strain 2 and 3 (1 -> 2)
+  expect_true(all(y$I_P[, 2, , , , ] == 0))
+  expect_true(all(y$I_P[, 3, , , , ] == 0))
+})
 
 test_that("Can't move from S to E3/4", {
   np <- 3L
@@ -2295,45 +2940,47 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
 
 test_that("some cross-immunity means less Strain 3 or 4 infections than none
            and > 0", {
- skip_on_windows_gha() # see #356
- np <- 1L
+             skip_on_windows_gha() # see #356
+             np <- 1L
 
- ## no cross-immnunity
- p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                          strain_transmission = c(1, 1),
-                          strain_seed_date = sircovid_date("2020-02-07"),
-                          strain_seed_size = 10,
-                          strain_seed_pattern = rep(1, 4),
-                          cross_immunity = 0)
- mod <- lancelot$new(p, 0, np)
- initial <- lancelot_initial(mod$info(), np, p)
- mod$update_state(state = initial)
- end <- sircovid_date("2020-05-01") / p$dt
- steps <- seq(0, end, by = 1 / p$dt)
- set.seed(1)
- y <- mod$transform_variables(
-   drop(mod$simulate(steps)))
- infect_no_cross <- y$cum_infections_per_strain[3:4, 123]
+             ## no cross-immnunity
+             p <- lancelot_parameters(
+               sircovid_date("2020-02-07"), "england",
+               strain_transmission = c(1, 1),
+               strain_seed_date = sircovid_date("2020-02-07"),
+               strain_seed_size = 10,
+               strain_seed_pattern = rep(1, 4),
+               cross_immunity = 0)
+             mod <- lancelot$new(p, 0, np)
+             initial <- lancelot_initial(mod$info(), np, p)
+             mod$update_state(state = initial)
+             end <- sircovid_date("2020-05-01") / p$dt
+             steps <- seq(0, end, by = 1 / p$dt)
+             set.seed(1)
+             y <- mod$transform_variables(
+               drop(mod$simulate(steps)))
+             infect_no_cross <- y$cum_infections_per_strain[3:4, 123]
 
- ## some cross-immunity
- p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
-                          strain_transmission = c(1, 1),
-                          strain_seed_date = sircovid_date("2020-02-07"),
-                          strain_seed_size = 10,
-                          strain_seed_pattern = rep(1, 4),
-                          cross_immunity = 0.5)
- mod <- lancelot$new(p, 0, np)
- initial <- lancelot_initial(mod$info(), np, p)
- mod$update_state(state = initial)
- set.seed(1)
- y <- mod$transform_variables(
-   drop(mod$simulate(steps)))
- infect_some_cross <- y$cum_infections_per_strain[3:4, 123]
+             ## some cross-immunity
+             p <- lancelot_parameters(
+               sircovid_date("2020-02-07"), "england",
+               strain_transmission = c(1, 1),
+               strain_seed_date = sircovid_date("2020-02-07"),
+               strain_seed_size = 10,
+               strain_seed_pattern = rep(1, 4),
+               cross_immunity = 0.5)
+             mod <- lancelot$new(p, 0, np)
+             initial <- lancelot_initial(mod$info(), np, p)
+             mod$update_state(state = initial)
+             set.seed(1)
+             y <- mod$transform_variables(
+               drop(mod$simulate(steps)))
+             infect_some_cross <- y$cum_infections_per_strain[3:4, 123]
 
- expect_vector_lte(infect_some_cross, infect_no_cross)
- expect_true(all(infect_some_cross > 0))
- expect_true(all(infect_no_cross > 0))
-})
+             expect_vector_lte(infect_some_cross, infect_no_cross)
+             expect_true(all(infect_some_cross > 0))
+             expect_true(all(infect_no_cross > 0))
+           })
 
 
 test_that("cross-immunity can be separated by strain", {
@@ -2470,11 +3117,182 @@ test_that("Can calculate ifr_t with an empty second variant ", {
 })
 
 
+test_that("Can calculate ihr_t with a second less symptomatic variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_sympt = c(1, 0.5),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 1)
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## move everyone into first strain
+  I[1:19, , ] <- I[1:19, , ] + I[20:38, , ] + I[39:57, , ] + I[58:76, , ]
+  I[20:76, , ] <- 0
+  R[1:19, , ] <- R[1:19, , ] + R[20:38, , ] + R[39:57, , ] + R[58:76, , ]
+  R[20:76, , ] <- 0
+
+  ifr_t_1_empty_strain2 <-
+    lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_empty_strain2 <-
+    lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## IHRt should be lower (or equal) for the two variant version
+  ## because less stymptomatic and hence less severe
+  tol <- 1e-5
+  expect_vector_lte(ifr_t_1$IHR_t_all, ifr_t_1_empty_strain2$IHR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_1$IHR_t_general, ifr_t_1_empty_strain2$IHR_t_general,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IHR_t_all, ifr_t_all_empty_strain2$IHR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IHR_t_general,
+                    ifr_t_all_empty_strain2$IHR_t_general, tol = tol)
+
+})
+
+
+test_that("Can calculate ihr_t with a second less severe variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_hosp_if_sympt = c(1, 0.5),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 1)
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## move everyone into first strain
+  I[1:19, , ] <- I[1:19, , ] + I[20:38, , ] + I[39:57, , ] + I[58:76, , ]
+  I[20:76, , ] <- 0
+  R[1:19, , ] <- R[1:19, , ] + R[20:38, , ] + R[39:57, , ] + R[58:76, , ]
+  R[20:76, , ] <- 0
+
+  ifr_t_1_empty_strain2 <-
+    lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_empty_strain2 <-
+    lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## IHRt should be lower (or equal) for the two variant version
+  ## because less severe
+  tol <- 1e-5
+  expect_vector_lte(ifr_t_1$IHR_t_all, ifr_t_1_empty_strain2$IHR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_1$IHR_t_general, ifr_t_1_empty_strain2$IHR_t_general,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IHR_t_all, ifr_t_all_empty_strain2$IHR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IHR_t_general,
+                    ifr_t_all_empty_strain2$IHR_t_general, tol = tol)
+
+})
+
+
+test_that("Can calculate ifr_t with a second less severe (icu) variant", {
+  ## Seed with 10 cases on same day as other variant
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_icu = c(1, 0.5),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 1)
+
+
+  np <- 3L
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+  index_S <- mod$info()$index$S
+  index_I <- mod$info()$index$I_weighted
+  index_R <- mod$info()$index$R
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  S <- y[index_S, , ]
+  I <- y[index_I, , ]
+  R <- y[index_R, , ]
+
+  ifr_t_1 <- lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all <- lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## move everyone into first strain
+  I[1:19, , ] <- I[1:19, , ] + I[20:38, , ] + I[39:57, , ] + I[58:76, , ]
+  I[20:76, , ] <- 0
+  R[1:19, , ] <- R[1:19, , ] + R[20:38, , ] + R[39:57, , ] + R[58:76, , ]
+  R[20:76, , ] <- 0
+
+  ifr_t_1_empty_strain2 <-
+    lancelot_ifr_t(steps, S[, 1, ], I[, 1, ], p, R = R[, 1, ])
+  ifr_t_all_empty_strain2 <-
+    lancelot_ifr_t_trajectories(steps, S, I, p, R = R)
+
+  ## Rt should be lower (or equal) for the two variant version
+  ## because less lethal
+  tol <- 1e-5
+  expect_vector_lte(ifr_t_1$IFR_t_all, ifr_t_1_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_1$IFR_t_general, ifr_t_1_empty_strain2$IFR_t_general,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_all, ifr_t_all_empty_strain2$IFR_t_all,
+                    tol = tol)
+  expect_vector_lte(ifr_t_all$IFR_t_general,
+                    ifr_t_all_empty_strain2$IFR_t_general, tol = tol)
+})
+
+
 test_that("Can calculate ifr_t with a second less lethal variant", {
   ## Seed with 10 cases on same day as other variant
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_severity = c(1, 0.5),
+                           strain_rel_p_death = c(1, 0.5),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
