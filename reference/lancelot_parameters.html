@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.27</span>
       </span>
     </div>
 
@@ -79,7 +79,10 @@
   strain_rel_gamma_P <span class="op">=</span> <span class="fl">1</span>,
   strain_rel_gamma_C_1 <span class="op">=</span> <span class="fl">1</span>,
   strain_rel_gamma_C_2 <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_severity <span class="op">=</span> <span class="fl">1</span>,
+  strain_rel_p_sympt <span class="op">=</span> <span class="fl">1</span>,
+  strain_rel_p_hosp_if_sympt <span class="op">=</span> <span class="fl">1</span>,
+  strain_rel_p_icu <span class="op">=</span> <span class="fl">1</span>,
+  strain_rel_p_death <span class="op">=</span> <span class="fl">1</span>,
   rel_susceptibility <span class="op">=</span> <span class="fl">1</span>,
   rel_p_sympt <span class="op">=</span> <span class="fl">1</span>,
   rel_p_hosp_if_sympt <span class="op">=</span> <span class="fl">1</span>,
@@ -231,13 +234,61 @@ I_C_2 (gamma_C_2) for each
 strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
 same length as <code>strain_transmission</code>, with entries that determines the
 relative scaling of the defaults for each strain.</p></dd>
-<dt>strain_rel_severity</dt>
+<dt>strain_rel_p_sympt</dt>
+<dd><p>Vector of relative probabilities of
+symptoms for
+each strain modelled. If <code>1</code> all strains have same
+probabilities of symptoms. Otherwise vector of same length as
+<code>strain_transmission</code>, where the first value should be 1 (for the first
+strain) and subsequent values between 0 and 1. In this case parameters
+will be "mirrored" for pseudostrains i.e. the relative probability of
+symptoms will be assume the same irrespective of previous infection
+with another strain. Alternatively, a vector of twice the length of
+<code>strain_transmission</code> can be provided to allow specifying directly
+relative probability of symptoms for each pseudostrain
+(with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
+probabilities, p_sympt is upper-truncated at 1 after scaling.</p></dd>
+<dt>strain_rel_p_hosp_if_sympt</dt>
+<dd><p>Vector of relative probabilities of
+hospitalisation given symptoms for
+each strain modelled. If <code>1</code> all strains have same
+probabilities of hospitalisation. Otherwise vector of same length as
+<code>strain_transmission</code>, where the first value should be 1 (for the first
+strain) and subsequent values between 0 and 1. In this case parameters
+will be "mirrored" for pseudostrains i.e. the relative probability of
+hospitalisation will be assume the same irrespective of previous infection
+with another strain. Alternatively, a vector of twice the length of
+<code>strain_transmission</code> can be provided to allow specifying directly
+relative probability of hospitalisation for each pseudostrain
+(with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
+probabilities, p_hosp_if_sympt is upper-truncated at 1 after scaling.</p></dd>
+<dt>strain_rel_p_icu</dt>
+<dd><p>Vector of relative probabilities of
+icu given hospitalised for
+each strain modelled. If <code>1</code> all strains have same
+probabilities of icu admission. Otherwise vector of same length as
+<code>strain_transmission</code>, where the first value should be 1 (for the first
+strain) and subsequent values between 0 and 1. In this case parameters
+will be "mirrored" for pseudostrains i.e. the relative probability of
+icu admission will be assume the same irrespective of previous infection
+with another strain. Alternatively, a vector of twice the length of
+<code>strain_transmission</code> can be provided to allow specifying directly
+relative probability of icu admission for each pseudostrain
+(with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
+probabilities, p_icu is upper-truncated at 1 after scaling.</p></dd>
+<dt>strain_rel_p_death</dt>
 <dd><p>Vector of relative probabilities of death for
 each strain modelled. If <code>1</code> all strains have same
 probabilities of death. Otherwise vector of same length as
 <code>strain_transmission</code>, where the first value should be 1 (for the first
-strain) and subsequent values between 0 and 1. To ensure valid
-probabilities, severity is upper-truncated at 1 after scaling.</p></dd>
+strain) and subsequent values between 0 and 1. In this case parameters
+will be "mirrored" for pseudostrains i.e. the relative probability of
+death will be assume the same irrespective of previous infection with
+another strain. Alternatively, a vector of twice the length of
+<code>strain_transmission</code> can be provided to allow specifying directly
+relative probability of death for each pseudostrain (with strain 3 - 1.2
+and strain 4 = 2.1). To ensure valid
+probabilities, p_death is upper-truncated at 1 after scaling.</p></dd>
 <dt>rel_susceptibility</dt>
 <dd><p>A vector or array of values representing the
 relative susceptibility of individuals in different vaccination groups.
