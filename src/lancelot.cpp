@@ -765,8 +765,8 @@ compare(const typename T::real_type * state,
 // [[dust::param(vaccine_catchup_fraction, has_default = TRUE, default_value = 0L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class lancelot {
 public:
-  typedef double real_type;
-  typedef dust::random::generator<real_type> rng_state_type;
+  using real_type = double;
+  using rng_state_type = dust::random::generator<real_type>;
   struct __align__(16) data_type {
     real_type icu;
     real_type general;
@@ -5235,7 +5235,7 @@ inline cpp11::writable::integers integer_sequence(size_t from, size_t len) {
 namespace dust {
 template<>
 dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
-  typedef typename lancelot::real_type real_type;
+  using real_type = typename lancelot::real_type;
   auto shared = std::make_shared<lancelot::shared_type>();
   lancelot::internal_type internal;
   shared->initial_D_carehomes_inc = 0;
@@ -8010,7 +8010,7 @@ cpp11::sexp dust_info<lancelot>(const dust::pars_type<lancelot>& pars) {
 }
 template <>
 lancelot::data_type dust_data<lancelot>(cpp11::list data) {
-  typedef lancelot::real_type real_type;
+  using real_type = lancelot::real_type;
   return lancelot::data_type{
       cpp11::as_cpp<real_type>(data["icu"]),
       cpp11::as_cpp<real_type>(data["general"]),

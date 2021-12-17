@@ -153,8 +153,8 @@ compare(const typename T::real_type * state,
 // [[dust::param(n_trans_classes, has_default = TRUE, default_value = 1L, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class basic {
 public:
-  typedef double real_type;
-  typedef dust::random::generator<real_type> rng_state_type;
+  using real_type = double;
+  using rng_state_type = dust::random::generator<real_type>;
   struct __align__(16) data_type {
     real_type icu;
     real_type deaths;
@@ -1069,7 +1069,7 @@ inline cpp11::writable::integers integer_sequence(size_t from, size_t len) {
 namespace dust {
 template<>
 dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
-  typedef typename basic::real_type real_type;
+  using real_type = typename basic::real_type;
   auto shared = std::make_shared<basic::shared_type>();
   basic::internal_type internal;
   shared->initial_D_inc = 0;
@@ -1493,7 +1493,7 @@ cpp11::sexp dust_info<basic>(const dust::pars_type<basic>& pars) {
 }
 template <>
 basic::data_type dust_data<basic>(cpp11::list data) {
-  typedef basic::real_type real_type;
+  using real_type = basic::real_type;
   return basic::data_type{
       cpp11::as_cpp<real_type>(data["icu"]),
       cpp11::as_cpp<real_type>(data["deaths"])
