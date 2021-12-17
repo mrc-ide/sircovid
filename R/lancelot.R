@@ -696,13 +696,10 @@ lancelot_parameters <- function(start_date, region,
 
 process_strain_rel_p <- function(p, n_strains, n_real_strains) {
   if (length(p) < n_strains) {
-    p <- recycle(assert_relatives(p),
-                 n_real_strains)
+    p <- recycle(p, n_real_strains)
     if (n_real_strains > 1) {
       p <- mirror_strain(p)
     }
-  } else {
-    p <- assert_relatives(p)
   }
   p
 }

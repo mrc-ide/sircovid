@@ -635,10 +635,7 @@ combine_rt1_epiestim <- function(what, rt, samples, rank) {
 
 combine_steps_groups <- function(step, n_groups, n_time_steps, n_strains,
                                  n_vacc_classes, p_step, rel_p,
-                                 strain_rel_p = NULL) {
-  if (is.null(strain_rel_p)) {
-    strain_rel_p <- rep(1, n_strains)
-  }
+                                 strain_rel_p) {
 
   ret <- vapply(
     seq_len(n_groups),
