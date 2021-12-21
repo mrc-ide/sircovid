@@ -1665,9 +1665,42 @@ update(general_tot) <- new_general_tot
 initial(hosp_tot) <- 0
 update(hosp_tot) <- new_ICU_tot + new_general_tot
 
+## cumulative deaths in hospital by age
 initial(D_hosp_tot) <- 0
 delta_D_hosp_tot <- sum(delta_D_hosp)
 update(D_hosp_tot) <- D_hosp_tot + delta_D_hosp_tot
+
+initial(D_hosp_tot_0_49) <- 0
+delta_D_hosp_tot_0_49 <- sum(delta_D_hosp[1:10]) + delta_D_hosp[18] * 3 / 8
+update(D_hosp_tot_0_49) <- D_hosp_tot_0_49 + delta_D_hosp_tot_0_49
+
+initial(D_hosp_tot_50_54) <- 0
+delta_D_hosp_tot_50_54 <- delta_D_hosp[11] + delta_D_hosp[18] * 1 / 8
+update(D_hosp_tot_50_54) <- D_hosp_tot_50_54 + delta_D_hosp_tot_50_54
+
+initial(D_hosp_tot_55_59) <- 0
+delta_D_hosp_tot_55_59 <- delta_D_hosp[12] + delta_D_hosp[18] * 2 / 8
+update(D_hosp_tot_55_59) <- D_hosp_tot_55_59 + delta_D_hosp_tot_55_59
+
+initial(D_hosp_tot_60_64) <- 0
+delta_D_hosp_tot_60_64 <- delta_D_hosp[13] + delta_D_hosp[18] * 2 / 8
+update(D_hosp_tot_60_64) <- D_hosp_tot_60_64 + delta_D_hosp_tot_60_64
+
+initial(D_hosp_tot_65_69) <- 0
+delta_D_hosp_tot_65_69 <- delta_D_hosp[14] + delta_D_hosp[19] * 1 / 8
+update(D_hosp_tot_65_69) <- D_hosp_tot_65_69 + delta_D_hosp_tot_65_69
+
+initial(D_hosp_tot_70_74) <- 0
+delta_D_hosp_tot_70_74 <- delta_D_hosp[15] + delta_D_hosp[19] * 1 / 8
+update(D_hosp_tot_70_74) <- D_hosp_tot_70_74 + delta_D_hosp_tot_70_74
+
+initial(D_hosp_tot_75_79) <- 0
+delta_D_hosp_tot_75_79 <- delta_D_hosp[16] + delta_D_hosp[19] * 1 / 8
+update(D_hosp_tot_75_79) <- D_hosp_tot_75_79 + delta_D_hosp_tot_75_79
+
+initial(D_hosp_tot_80_plus) <- 0
+delta_D_hosp_tot_80_plus <- delta_D_hosp[17] + delta_D_hosp[19] * 5 / 8
+update(D_hosp_tot_80_plus) <- D_hosp_tot_80_plus + delta_D_hosp_tot_80_plus
 
 ## community deaths are non-hospital deaths in groups 1 to 18
 initial(D_comm_tot) <- 0
@@ -1687,10 +1720,6 @@ initial(D_carehomes_inc) <- 0
 update(D_carehomes_inc) <- if (step %% steps_per_day == 0)
   delta_D_carehomes_tot else D_carehomes_inc + delta_D_carehomes_tot
 
-initial(D_hosp_inc) <- 0
-update(D_hosp_inc) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
-
 initial(D_tot) <- 0
 delta_D_tot <- delta_D_hosp_tot + delta_D_comm_tot + delta_D_carehomes_tot
 update(D_tot) <- D_tot + delta_D_tot
@@ -1698,6 +1727,44 @@ update(D_tot) <- D_tot + delta_D_tot
 initial(D_inc) <- 0
 update(D_inc) <- if (step %% steps_per_day == 0)
   delta_D_tot else D_inc + delta_D_tot
+
+## Incident deaths in hospital overall and then by age
+initial(D_hosp_inc) <- 0
+update(D_hosp_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
+
+initial(D_hosp_inc_0_49) <- 0
+update(D_hosp_inc_0_49) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_0_49 else D_hosp_inc_0_49 + delta_D_hosp_tot_0_49
+
+initial(D_hosp_inc_50_54) <- 0
+update(D_hosp_inc_50_54) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_50_54 else D_hosp_inc_50_54 + delta_D_hosp_tot_50_54
+
+initial(D_hosp_inc_55_59) <- 0
+update(D_hosp_inc_55_59) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_55_59 else D_hosp_inc_55_59 + delta_D_hosp_tot_55_59
+
+initial(D_hosp_inc_60_64) <- 0
+update(D_hosp_inc_60_64) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_60_64 else D_hosp_inc_60_64 + delta_D_hosp_tot_60_64
+
+initial(D_hosp_inc_65_69) <- 0
+update(D_hosp_inc_65_69) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_65_69 else D_hosp_inc_65_69 + delta_D_hosp_tot_65_69
+
+initial(D_hosp_inc_70_74) <- 0
+update(D_hosp_inc_70_74) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_70_74 else D_hosp_inc_70_74 + delta_D_hosp_tot_70_74
+
+initial(D_hosp_inc_75_79) <- 0
+update(D_hosp_inc_75_79) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_75_79 else D_hosp_inc_75_79 + delta_D_hosp_tot_75_79
+
+initial(D_hosp_inc_80_plus) <- 0
+update(D_hosp_inc_80_plus) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_tot_80_plus else D_hosp_inc_80_plus + delta_D_hosp_tot_80_plus
+
 
 ## Our age groups for serology are fixed: we break them down into the
 ##
