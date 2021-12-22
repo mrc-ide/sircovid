@@ -746,7 +746,7 @@ lancelot_index <- function(info) {
                   deaths_hosp_inc_60_64 = index[["D_hosp_inc_60_64"]],
                   deaths_hosp_inc_65_69 = index[["D_hosp_inc_65_69"]],
                   deaths_hosp_inc_70_74 = index[["D_hosp_inc_70_74"]],
-                  deaths_hosp_inc_65_79 = index[["D_hosp_inc_75_79"]],
+                  deaths_hosp_inc_75_79 = index[["D_hosp_inc_75_79"]],
                   deaths_hosp_inc_80_plus = index[["D_hosp_inc_80_plus"]],
                   admitted_inc = index[["admit_conf_inc"]],
                   diagnoses_inc = index[["new_conf_inc"]],
@@ -812,7 +812,7 @@ lancelot_index <- function(info) {
   }
 
   ## age varying only
-  index_D_hosp <- calculate_index(index, "D_hosp", list(), suffix)
+  # index_D_hosp <- calculate_index(index, "D_hosp", list(), suffix)
   index_cum_admit <- calculate_index(index, "cum_admit_by_age",
                                      list(), suffix, "cum_admit")
 
@@ -840,7 +840,7 @@ lancelot_index <- function(info) {
 
   list(run = index_run,
        state = c(index_core, index_save, index_S, index_R,
-                 index_cum_admit, index_D_hosp, index_D,
+                 index_cum_admit, index_D, # index_D_hosp,
                  index_diagnoses_admitted, index_cum_infections_disag,
                  index_I_weighted, index_prob_strain, index_cum_n_vaccinated
        ))
@@ -2318,6 +2318,10 @@ lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
 lancelot_data <- function(data, start_date, dt) {
   expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
                 deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
+                deaths_hosp_0_49 = NA_real_, deaths_hosp_50_54 = NA_real_,
+                deaths_hosp_55_59 = NA_real_, deaths_hosp_60_64 = NA_real_,
+                deaths_hosp_65_69 = NA_real_, deaths_hosp_70_74 = NA_real_,
+                deaths_hosp_75_79 = NA_real_, deaths_hosp_80_plus = NA_real_,
                 icu = NA_real_, general = NA_real_, hosp = NA_real_,
                 deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
                 all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
