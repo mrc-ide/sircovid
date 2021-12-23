@@ -1687,19 +1687,19 @@ delta_D_hosp_tot_60_64 <- delta_D_hosp[13] + delta_D_hosp[18] * 2 / 8
 update(D_hosp_tot_60_64) <- D_hosp_tot_60_64 + delta_D_hosp_tot_60_64
 
 initial(D_hosp_tot_65_69) <- 0
-delta_D_hosp_tot_65_69 <- delta_D_hosp[14] + delta_D_hosp[19] * 1 / 8
+delta_D_hosp_tot_65_69 <- delta_D_hosp[14] + delta_D_hosp[19] * 0.05
 update(D_hosp_tot_65_69) <- D_hosp_tot_65_69 + delta_D_hosp_tot_65_69
 
 initial(D_hosp_tot_70_74) <- 0
-delta_D_hosp_tot_70_74 <- delta_D_hosp[15] + delta_D_hosp[19] * 1 / 8
+delta_D_hosp_tot_70_74 <- delta_D_hosp[15] + delta_D_hosp[19] * 0.05
 update(D_hosp_tot_70_74) <- D_hosp_tot_70_74 + delta_D_hosp_tot_70_74
 
 initial(D_hosp_tot_75_79) <- 0
-delta_D_hosp_tot_75_79 <- delta_D_hosp[16] + delta_D_hosp[19] * 1 / 8
+delta_D_hosp_tot_75_79 <- delta_D_hosp[16] + delta_D_hosp[19] * 0.15
 update(D_hosp_tot_75_79) <- D_hosp_tot_75_79 + delta_D_hosp_tot_75_79
 
 initial(D_hosp_tot_80_plus) <- 0
-delta_D_hosp_tot_80_plus <- delta_D_hosp[17] + delta_D_hosp[19] * 5 / 8
+delta_D_hosp_tot_80_plus <- delta_D_hosp[17] + delta_D_hosp[19] * 0.75
 update(D_hosp_tot_80_plus) <- D_hosp_tot_80_plus + delta_D_hosp_tot_80_plus
 
 ## community deaths are non-hospital deaths in groups 1 to 18
