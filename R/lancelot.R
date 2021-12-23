@@ -812,7 +812,6 @@ lancelot_index <- function(info) {
   }
 
   ## age varying only
-  # index_D_hosp <- calculate_index(index, "D_hosp", list(), suffix)
   index_cum_admit <- calculate_index(index, "cum_admit_by_age",
                                      list(), suffix, "cum_admit")
 
@@ -840,7 +839,7 @@ lancelot_index <- function(info) {
 
   list(run = index_run,
        state = c(index_core, index_save, index_S, index_R,
-                 index_cum_admit, index_D, # index_D_hosp,
+                 index_cum_admit, index_D,
                  index_diagnoses_admitted, index_cum_infections_disag,
                  index_I_weighted, index_prob_strain, index_cum_n_vaccinated
        ))
