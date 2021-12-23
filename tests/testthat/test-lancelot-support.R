@@ -420,7 +420,10 @@ test_that("lancelot_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("time", "icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
-      "deaths_hosp_inc", "admitted_inc", "diagnoses_inc",
+      "deaths_hosp_inc", "deaths_hosp_inc_0_49", "deaths_hosp_inc_50_54",
+      "deaths_hosp_inc_55_59", "deaths_hosp_inc_60_64", "deaths_hosp_inc_65_69",
+      "deaths_hosp_inc_70_74", "deaths_hosp_inc_75_79",
+      "deaths_hosp_inc_80_plus", "admitted_inc", "diagnoses_inc",
       "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
       "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
       "sympt_cases_under15_inc", "sympt_cases_15_24_inc",

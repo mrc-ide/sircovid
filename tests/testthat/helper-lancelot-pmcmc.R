@@ -8,6 +8,9 @@ reference_data_lancelot_mcmc <- function() {
     data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
                           0, pars$dt)
     v <- c("deaths_comm", "deaths", "deaths_carehomes", "deaths_non_hosp",
+           "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
+           "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
+           "deaths_hosp_75_79", "deaths_hosp_80_plus",
            "general", "hosp", "admitted", "diagnoses", "all_admission",
            "sero_pos_15_64_1", "sero_tot_15_64_1", "sero_pos_15_64_2",
            "sero_tot_15_64_2", "pillar2_pos", "pillar2_tot", "pillar2_cases",
