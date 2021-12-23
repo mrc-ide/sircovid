@@ -1125,7 +1125,6 @@ lancelot_compare <- function(state, observed, pars) {
                                     model_deaths_carehomes,
                                   pars$kappa_death_non_hosp, exp_noise)
   ll_deaths <- ll_nbinom(observed$deaths,
-                         pars$phi_death_hosp * model_deaths_hosp +
                            pars$phi_death_hosp * model_deaths_hosp_0_49 +
                            pars$phi_death_hosp * model_deaths_hosp_50_54 +
                            pars$phi_death_hosp * model_deaths_hosp_55_59 +
@@ -1241,15 +1240,18 @@ lancelot_compare <- function(state, observed, pars) {
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
-    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-    ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
-    ll_pillar2_tests + ll_pillar2_cases + ll_pillar2_over25_tests +
-    ll_pillar2_under15_tests + ll_pillar2_15_24_tests +
-    ll_pillar2_25_49_tests + ll_pillar2_50_64_tests + ll_pillar2_65_79_tests +
-    ll_pillar2_80_plus_tests + ll_pillar2_over25_cases +
-    ll_pillar2_under15_cases + ll_pillar2_15_24_cases + ll_pillar2_25_49_cases +
-    ll_pillar2_50_64_cases + ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases +
-    ll_react + ll_strain + ll_strain_over25
+    ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
+    ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
+    ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
+    ll_deaths_hosp_80_plus + ll_admitted + ll_diagnoses + ll_all_admission +
+    ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
+    ll_pillar2_over25_tests + ll_pillar2_under15_tests +
+    ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
+    ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
+    ll_pillar2_over25_cases + ll_pillar2_under15_cases +
+    ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
+    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_react + ll_strain +
+    ll_strain_over25
 }
 
 
