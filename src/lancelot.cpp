@@ -3998,10 +3998,10 @@ public:
     real_type delta_D_hosp_tot_50_54 = internal.delta_D_hosp[10] + internal.delta_D_hosp[17] * 1 / (real_type) 8;
     real_type delta_D_hosp_tot_55_59 = internal.delta_D_hosp[11] + internal.delta_D_hosp[17] * 2 / (real_type) 8;
     real_type delta_D_hosp_tot_60_64 = internal.delta_D_hosp[12] + internal.delta_D_hosp[17] * 2 / (real_type) 8;
-    real_type delta_D_hosp_tot_65_69 = internal.delta_D_hosp[13] + internal.delta_D_hosp[18] * 1 / (real_type) 8;
-    real_type delta_D_hosp_tot_70_74 = internal.delta_D_hosp[14] + internal.delta_D_hosp[18] * 1 / (real_type) 8;
-    real_type delta_D_hosp_tot_75_79 = internal.delta_D_hosp[15] + internal.delta_D_hosp[18] * 1 / (real_type) 8;
-    real_type delta_D_hosp_tot_80_plus = internal.delta_D_hosp[16] + internal.delta_D_hosp[18] * 5 / (real_type) 8;
+    real_type delta_D_hosp_tot_65_69 = internal.delta_D_hosp[13] + internal.delta_D_hosp[18] * 0.050000000000000003;
+    real_type delta_D_hosp_tot_70_74 = internal.delta_D_hosp[14] + internal.delta_D_hosp[18] * 0.050000000000000003;
+    real_type delta_D_hosp_tot_75_79 = internal.delta_D_hosp[15] + internal.delta_D_hosp[18] * 0.14999999999999999;
+    real_type delta_D_hosp_tot_80_plus = internal.delta_D_hosp[16] + internal.delta_D_hosp[18] * 0.75;
     for (int i = 1; i <= shared->dim_n_ICU_D_unconf_to_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_n_ICU_D_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_D_unconf_to_conf_3; ++k) {
