@@ -2183,7 +2183,7 @@ lancelot_prepare_data <- function(data) {
   P2_all <- c("", P2_all_ages)
 
   check_deaths <- function(df)
-    sum(c(any(!is.na(df[, paste0("deaths_hosp_", deaths_ages)])) |
+    sum(c(any(!is.na(df[, paste0("deaths_hosp_", deaths_ages)])),
             any(!is.na(df$deaths)) | any(!is.na(df$deaths_hosp))))
 
   check_pillar2 <- function(df)

@@ -833,6 +833,76 @@ test_that("lancelot_prepare_data requires consistent deaths", {
          homes/community")
 })
 
+test_that("lancelot_prepare_data does not allow double fitting to aggregated and
+          disaggregated hospital deaths", {
+            data <- sircovid_data(
+              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
+            # Add additional columns
+            data$deaths_hosp <- NA
+            data$deaths_hosp_0_49 <- NA
+            data$deaths_hosp_50_54 <- NA
+            data$deaths_hosp_55_59 <- NA
+            data$deaths_hosp_60_64 <- NA
+            data$deaths_hosp_65_69 <- NA
+            data$deaths_hosp_70_74 <- NA
+            data$deaths_hosp_75_79 <- NA
+            data$deaths_hosp_80_plus <- NA
+            data$deaths_comm <- NA
+            data$deaths_carehomes <- NA
+            data$deaths_non_hosp <- NA
+            data$general <- NA
+            data$hosp <- NA
+            data$admitted <- NA
+            data$diagnoses <- NA
+            data$all_admission <- NA
+            data$sero_pos_15_64_1 <- NA
+            data$sero_tot_15_64_1 <- NA
+            data$sero_pos_15_64_2 <- NA
+            data$sero_tot_15_64_2 <- NA
+            data$pillar2_pos <- NA
+            data$pillar2_tot <- NA
+            data$pillar2_cases <- NA
+            data$pillar2_over25_pos <- NA
+            data$pillar2_over25_tot <- NA
+            data$pillar2_over25_cases <- NA
+            data$react_pos <- NA
+            data$react_tot <- NA
+            data$strain_non_variant <- NA
+            data$strain_tot <- NA
+            data$strain_over25_non_variant <- NA
+            data$strain_over25_tot <- NA
+            data$pillar2_under15_cases <- NA
+            data$pillar2_15_24_cases <- NA
+            data$pillar2_25_49_cases <- NA
+            data$pillar2_50_64_cases <- NA
+            data$pillar2_65_79_cases <- NA
+            data$pillar2_80_plus_cases <- NA
+            data$pillar2_under15_tot <- NA
+            data$pillar2_15_24_tot <- NA
+            data$pillar2_25_49_tot <- NA
+            data$pillar2_50_64_tot <- NA
+            data$pillar2_65_79_tot <- NA
+            data$pillar2_80_plus_tot <- NA
+            data$pillar2_under15_pos <- NA
+            data$pillar2_15_24_pos <- NA
+            data$pillar2_25_49_pos <- NA
+            data$pillar2_50_64_pos <- NA
+            data$pillar2_65_79_pos <- NA
+            data$pillar2_80_plus_pos <- NA
+
+            ## Example that should not cause error
+            pf <- lancelot_particle_filter(data, 10)
+            expect_s3_class(pf, "particle_filter")
+
+            ## Throw error
+            data$deaths_hosp_0_49 <- 1
+            data_deaths_hosp_65_69 <- 4
+            expect_error(
+              lancelot_particle_filter(data),
+              "Cannot fit to all ages aggregated for deaths if fitting to any
+           sub-groups")
+})
+
 
 test_that("lancelot_prepare_data does not allow more than one pillar 2,
           strain data stream or pillar 2 double fitting", {
