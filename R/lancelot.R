@@ -740,14 +740,14 @@ lancelot_index <- function(info) {
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
-                  deaths_hosp_inc_0_49 = index[["D_hosp_inc_0_49"]],
-                  deaths_hosp_inc_50_54 = index[["D_hosp_inc_50_54"]],
-                  deaths_hosp_inc_55_59 = index[["D_hosp_inc_55_59"]],
-                  deaths_hosp_inc_60_64 = index[["D_hosp_inc_60_64"]],
-                  deaths_hosp_inc_65_69 = index[["D_hosp_inc_65_69"]],
-                  deaths_hosp_inc_70_74 = index[["D_hosp_inc_70_74"]],
-                  deaths_hosp_inc_75_79 = index[["D_hosp_inc_75_79"]],
-                  deaths_hosp_inc_80_plus = index[["D_hosp_inc_80_plus"]],
+                  deaths_hosp_0_49_inc = index[["D_hosp_0_49_inc"]],
+                  deaths_hosp_50_54_inc = index[["D_hosp_50_54_inc"]],
+                  deaths_hosp_55_59_inc = index[["D_hosp_55_59_inc"]],
+                  deaths_hosp_60_64_inc = index[["D_hosp_60_64_inc"]],
+                  deaths_hosp_65_69_inc = index[["D_hosp_65_69_inc"]],
+                  deaths_hosp_70_74_inc = index[["D_hosp_70_74_inc"]],
+                  deaths_hosp_75_79_inc = index[["D_hosp_75_79_inc"]],
+                  deaths_hosp_80_plus_inc = index[["D_hosp_80_plus_inc"]],
                   admitted_inc = index[["admit_conf_inc"]],
                   diagnoses_inc = index[["new_conf_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
@@ -777,11 +777,11 @@ lancelot_index <- function(info) {
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
                               "deaths_comm_inc", "deaths_hosp_inc",
-                              "deaths_hosp_inc_0_49", "deaths_hosp_inc_50_54",
-                              "deaths_hosp_inc_55_59", "deaths_hosp_inc_60_64",
-                              "deaths_hosp_inc_65_69", "deaths_hosp_inc_70_74",
-                              "deaths_hosp_inc_75_79",
-                              "deaths_hosp_inc_80_plus", "admitted_inc",
+                              "deaths_hosp_0_49_inc", "deaths_hosp_50_54_inc",
+                              "deaths_hosp_55_59_inc", "deaths_hosp_60_64_inc",
+                              "deaths_hosp_65_69_inc", "deaths_hosp_70_74_inc",
+                              "deaths_hosp_75_79_inc",
+                              "deaths_hosp_80_plus_inc", "admitted_inc",
                               "diagnoses_inc", "sero_pos_1", "sero_pos_2",
                               "sympt_cases_inc", "sympt_cases_non_variant_inc",
                               "sympt_cases_over25_inc",
@@ -881,14 +881,14 @@ lancelot_compare <- function(state, observed, pars) {
   model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
-  model_deaths_hosp_0_49 <- state["deaths_hosp_inc_0_49", ]
-  model_deaths_hosp_50_54 <- state["deaths_hosp_inc_50_54", ]
-  model_deaths_hosp_55_59 <- state["deaths_hosp_inc_55_59", ]
-  model_deaths_hosp_60_64 <- state["deaths_hosp_inc_60_64", ]
-  model_deaths_hosp_65_69 <- state["deaths_hosp_inc_65_69", ]
-  model_deaths_hosp_70_74 <- state["deaths_hosp_inc_70_74", ]
-  model_deaths_hosp_75_79 <- state["deaths_hosp_inc_75_79", ]
-  model_deaths_hosp_80_plus <- state["deaths_hosp_inc_80_plus", ]
+  model_deaths_hosp_0_49 <- state["deaths_hosp_0_49_inc", ]
+  model_deaths_hosp_50_54 <- state["deaths_hosp_50_54_inc", ]
+  model_deaths_hosp_55_59 <- state["deaths_hosp_55_59_inc", ]
+  model_deaths_hosp_60_64 <- state["deaths_hosp_60_64_inc", ]
+  model_deaths_hosp_65_69 <- state["deaths_hosp_65_69_inc", ]
+  model_deaths_hosp_70_74 <- state["deaths_hosp_70_74_inc", ]
+  model_deaths_hosp_75_79 <- state["deaths_hosp_75_79_inc", ]
+  model_deaths_hosp_80_plus <- state["deaths_hosp_80_plus_inc", ]
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
@@ -2157,7 +2157,10 @@ lancelot_prepare_data <- function(data) {
                 "pillar2_under15_tot", "pillar2_15_24_tot", "pillar2_25_49_tot",
                 "pillar2_50_64_tot", "pillar2_65_79_tot", "pillar2_80_plus_tot",
                 "pillar2_under15_pos", "pillar2_15_24_pos", "pillar2_25_49_pos",
-                "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos")
+                "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos",
+                "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
+                "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
+                "deaths_hosp_75_79", "deaths_hosp_80_plus")
 
   verify_names(data, required, allow_extra = TRUE)
 
@@ -2173,9 +2176,15 @@ lancelot_prepare_data <- function(data) {
          homes/community")
   }
 
+  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
+                   "75_79", "80_plus")
   P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
   P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
   P2_all <- c("", P2_all_ages)
+
+  check_deaths <- function(df)
+    sum(c(any(!is.na(df[, paste0("deaths_hosp_", deaths_ages)])) |
+            any(!is.na(df$deaths)) | any(!is.na(df$deaths_hosp))))
 
   check_pillar2 <- function(df)
     sum(c(any(!is.na(df[, paste0("pillar2", P2_all, "_pos")])) |
@@ -2205,6 +2214,10 @@ lancelot_prepare_data <- function(data) {
             any(!is.na(df$strain_over25_tot))))
 
   if (is.null(data$population)) {
+    if (check_deaths(data) > 1) {
+      stop("Cannot fit to all ages aggregated for deaths if fitting to any
+           sub-groups")
+    }
     if (check_pillar2(data) > 1) {
       stop("Cannot fit to pillar 2 cases and positivity together")
     }
@@ -2223,6 +2236,10 @@ lancelot_prepare_data <- function(data) {
     }
   } else {
     lapply(split(data, data$population), function(x) {
+      if (check_deaths(x) > 1) {
+        stop(sprintf("cannot fit to all ages aggregated for deaths if fitting
+                     to any sub-groups for region %s", x$population[[1]]))
+      }
       if (check_pillar2(x) > 1) {
         stop(sprintf("Cannot fit to pillar 2 cases and positivity together for
                       region %s", x$population[[1]]))

@@ -1670,37 +1670,37 @@ initial(D_hosp_tot) <- 0
 delta_D_hosp_tot <- sum(delta_D_hosp)
 update(D_hosp_tot) <- D_hosp_tot + delta_D_hosp_tot
 
-initial(D_hosp_tot_0_49) <- 0
-delta_D_hosp_tot_0_49 <- sum(delta_D_hosp[1:10]) + delta_D_hosp[18] * 3 / 8
-update(D_hosp_tot_0_49) <- D_hosp_tot_0_49 + delta_D_hosp_tot_0_49
+initial(D_hosp_0_49_tot) <- 0
+delta_D_hosp_0_49_tot <- sum(delta_D_hosp[1:10]) + delta_D_hosp[18] * 3 / 8
+update(D_hosp_0_49_tot) <- D_hosp_0_49_tot + delta_D_hosp_0_49_tot
 
-initial(D_hosp_tot_50_54) <- 0
-delta_D_hosp_tot_50_54 <- delta_D_hosp[11] + delta_D_hosp[18] * 1 / 8
-update(D_hosp_tot_50_54) <- D_hosp_tot_50_54 + delta_D_hosp_tot_50_54
+initial(D_hosp_50_54_tot) <- 0
+delta_D_hosp_50_54_tot <- delta_D_hosp[11] + delta_D_hosp[18] * 1 / 8
+update(D_hosp_50_54_tot) <- D_hosp_50_54_tot + delta_D_hosp_50_54_tot
 
-initial(D_hosp_tot_55_59) <- 0
-delta_D_hosp_tot_55_59 <- delta_D_hosp[12] + delta_D_hosp[18] * 2 / 8
-update(D_hosp_tot_55_59) <- D_hosp_tot_55_59 + delta_D_hosp_tot_55_59
+initial(D_hosp_55_59_tot) <- 0
+delta_D_hosp_55_59_tot <- delta_D_hosp[12] + delta_D_hosp[18] * 2 / 8
+update(D_hosp_55_59_tot) <- D_hosp_55_59_tot + delta_D_hosp_55_59_tot
 
-initial(D_hosp_tot_60_64) <- 0
-delta_D_hosp_tot_60_64 <- delta_D_hosp[13] + delta_D_hosp[18] * 2 / 8
-update(D_hosp_tot_60_64) <- D_hosp_tot_60_64 + delta_D_hosp_tot_60_64
+initial(D_hosp_60_64_tot) <- 0
+delta_D_hosp_60_64_tot <- delta_D_hosp[13] + delta_D_hosp[18] * 2 / 8
+update(D_hosp_60_64_tot) <- D_hosp_60_64_tot + delta_D_hosp_60_64_tot
 
-initial(D_hosp_tot_65_69) <- 0
-delta_D_hosp_tot_65_69 <- delta_D_hosp[14] + delta_D_hosp[19] * 0.05
-update(D_hosp_tot_65_69) <- D_hosp_tot_65_69 + delta_D_hosp_tot_65_69
+initial(D_hosp_65_69_tot) <- 0
+delta_D_hosp_65_69_tot <- delta_D_hosp[14] + delta_D_hosp[19] * 0.05
+update(D_hosp_65_69_tot) <- D_hosp_65_69_tot + delta_D_hosp_65_69_tot
 
-initial(D_hosp_tot_70_74) <- 0
-delta_D_hosp_tot_70_74 <- delta_D_hosp[15] + delta_D_hosp[19] * 0.05
-update(D_hosp_tot_70_74) <- D_hosp_tot_70_74 + delta_D_hosp_tot_70_74
+initial(D_hosp_70_74_tot) <- 0
+delta_D_hosp_70_74_tot <- delta_D_hosp[15] + delta_D_hosp[19] * 0.05
+update(D_hosp_70_74_tot) <- D_hosp_70_74_tot + delta_D_hosp_70_74_tot
 
-initial(D_hosp_tot_75_79) <- 0
-delta_D_hosp_tot_75_79 <- delta_D_hosp[16] + delta_D_hosp[19] * 0.15
-update(D_hosp_tot_75_79) <- D_hosp_tot_75_79 + delta_D_hosp_tot_75_79
+initial(D_hosp_75_79_tot) <- 0
+delta_D_hosp_75_79_tot <- delta_D_hosp[16] + delta_D_hosp[19] * 0.15
+update(D_hosp_75_79_tot) <- D_hosp_75_79_tot + delta_D_hosp_75_79_tot
 
-initial(D_hosp_tot_80_plus) <- 0
-delta_D_hosp_tot_80_plus <- delta_D_hosp[17] + delta_D_hosp[19] * 0.75
-update(D_hosp_tot_80_plus) <- D_hosp_tot_80_plus + delta_D_hosp_tot_80_plus
+initial(D_hosp_80_plus_tot) <- 0
+delta_D_hosp_80_plus_tot <- delta_D_hosp[17] + delta_D_hosp[19] * 0.75
+update(D_hosp_80_plus_tot) <- D_hosp_80_plus_tot + delta_D_hosp_80_plus_tot
 
 ## community deaths are non-hospital deaths in groups 1 to 18
 initial(D_comm_tot) <- 0
@@ -1733,37 +1733,37 @@ initial(D_hosp_inc) <- 0
 update(D_hosp_inc) <- if (step %% steps_per_day == 0)
   delta_D_hosp_tot else D_hosp_inc + delta_D_hosp_tot
 
-initial(D_hosp_inc_0_49) <- 0
-update(D_hosp_inc_0_49) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_0_49 else D_hosp_inc_0_49 + delta_D_hosp_tot_0_49
+initial(D_hosp_0_49_inc) <- 0
+update(D_hosp_0_49_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_0_49_tot else D_hosp_0_49_inc + delta_D_hosp_0_49_tot
 
-initial(D_hosp_inc_50_54) <- 0
-update(D_hosp_inc_50_54) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_50_54 else D_hosp_inc_50_54 + delta_D_hosp_tot_50_54
+initial(D_hosp_50_54_inc) <- 0
+update(D_hosp_50_54_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_50_54_tot else D_hosp_50_54_inc + delta_D_hosp_50_54_tot
 
-initial(D_hosp_inc_55_59) <- 0
-update(D_hosp_inc_55_59) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_55_59 else D_hosp_inc_55_59 + delta_D_hosp_tot_55_59
+initial(D_hosp_55_59_inc) <- 0
+update(D_hosp_55_59_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_55_59_tot else D_hosp_55_59_inc + delta_D_hosp_55_59_tot
 
-initial(D_hosp_inc_60_64) <- 0
-update(D_hosp_inc_60_64) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_60_64 else D_hosp_inc_60_64 + delta_D_hosp_tot_60_64
+initial(D_hosp_60_64_inc) <- 0
+update(D_hosp_60_64_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_60_64_tot else D_hosp_60_64_inc + delta_D_hosp_60_64_tot
 
-initial(D_hosp_inc_65_69) <- 0
-update(D_hosp_inc_65_69) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_65_69 else D_hosp_inc_65_69 + delta_D_hosp_tot_65_69
+initial(D_hosp_65_69_inc) <- 0
+update(D_hosp_65_69_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_65_69_tot else D_hosp_65_69_inc + delta_D_hosp_65_69_tot
 
-initial(D_hosp_inc_70_74) <- 0
-update(D_hosp_inc_70_74) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_70_74 else D_hosp_inc_70_74 + delta_D_hosp_tot_70_74
+initial(D_hosp_70_74_inc) <- 0
+update(D_hosp_70_74_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_70_74_tot else D_hosp_70_74_inc + delta_D_hosp_70_74_tot
 
-initial(D_hosp_inc_75_79) <- 0
-update(D_hosp_inc_75_79) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_75_79 else D_hosp_inc_75_79 + delta_D_hosp_tot_75_79
+initial(D_hosp_75_79_inc) <- 0
+update(D_hosp_75_79_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_75_79_tot else D_hosp_75_79_inc + delta_D_hosp_75_79_tot
 
-initial(D_hosp_inc_80_plus) <- 0
-update(D_hosp_inc_80_plus) <- if (step %% steps_per_day == 0)
-  delta_D_hosp_tot_80_plus else D_hosp_inc_80_plus + delta_D_hosp_tot_80_plus
+initial(D_hosp_80_plus_inc) <- 0
+update(D_hosp_80_plus_inc) <- if (step %% steps_per_day == 0)
+  delta_D_hosp_80_plus_tot else D_hosp_80_plus_inc + delta_D_hosp_80_plus_tot
 
 
 ## Our age groups for serology are fixed: we break them down into the
