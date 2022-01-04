@@ -33,6 +33,14 @@ test_that("can run the lancelot model", {
           deaths_carehomes_inc               = c(0, 0, 0, 0, 0),
           deaths_comm_inc                    = c(2, 2, 0, 2, 3),
           deaths_hosp_inc                    = c(25, 34, 9, 16, 13),
+          deaths_hosp_0_49_inc               = c(1, 0, 1, 1, 1),
+          deaths_hosp_50_54_inc              = c(0, 1, 0, 1, 1),
+          deaths_hosp_55_59_inc              = c(3, 3, 0, 0, 0),
+          deaths_hosp_60_64_inc              = c(6, 4, 2, 2, 3),
+          deaths_hosp_65_69_inc              = c(4, 12, 0, 3, 1),
+          deaths_hosp_70_74_inc              = c(2, 4, 1, 2, 3),
+          deaths_hosp_75_79_inc              = c(3, 1, 1, 1, 3),
+          deaths_hosp_80_plus_inc            = c(6, 9, 4, 6, 1),
           admitted_inc                       = c(4, 8, 2, 4, 2),
           diagnoses_inc                      = c(21, 35, 13, 19, 12),
           sero_pos_1                         = c(5486055, 6511760, 4432346,
@@ -158,6 +166,22 @@ test_that("incidence calculation is correct", {
              deaths_carehomes_inc = info$index$D_carehomes_inc,
              deaths_hosp = info$index$D_hosp_tot,
              deaths_hosp_inc = info$index$D_hosp_inc,
+             deaths_hosp_0_49 = info$index$D_hosp_0_49_tot,
+             deaths_hosp_0_49_inc = info$index$D_hosp_0_49_inc,
+             deaths_hosp_50_54 = info$index$D_hosp_50_54_tot,
+             deaths_hosp_50_54_inc = info$index$D_hosp_50_54_inc,
+             deaths_hosp_55_59 = info$index$D_hosp_55_59_tot,
+             deaths_hosp_55_59_inc = info$index$D_hosp_55_59_inc,
+             deaths_hosp_60_64 = info$index$D_hosp_60_64_tot,
+             deaths_hosp_60_64_inc = info$index$D_hosp_60_64_inc,
+             deaths_hosp_65_69 = info$index$D_hosp_65_69_tot,
+             deaths_hosp_65_69_inc = info$index$D_hosp_65_69_inc,
+             deaths_hosp_70_74 = info$index$D_hosp_70_74_tot,
+             deaths_hosp_70_74_inc = info$index$D_hosp_70_74_inc,
+             deaths_hosp_75_79 = info$index$D_hosp_75_79_tot,
+             deaths_hosp_75_79_inc = info$index$D_hosp_75_79_inc,
+             deaths_hosp_80_plus = info$index$D_hosp_80_plus_tot,
+             deaths_hosp_80_plus_inc = info$index$D_hosp_80_plus_inc,
              deaths = info$index$D_tot,
              deaths_inc = info$index$D_inc,
              admitted = info$index$cum_admit_conf,
@@ -178,14 +202,14 @@ test_that("incidence calculation is correct", {
                info$index$sympt_cases_non_variant_over25_inc,
              infections = info$index$cum_infections,
              infections_inc = info$index$infections_inc)
-  expect_length(index, 22) # guard against name changes
+  expect_length(index, 38) # guard against name changes
 
   steps <- seq(0, length.out = 60 * 4 + 1)
   mod$set_index(index)
   y <- mod$simulate(steps)
 
   i <- which(steps %% pars$steps_per_day == 0)
-  j <- seq(1, 22, by = 2)
+  j <- seq(1, length(index), by = 2)
   y0 <- y[, , i[-length(i)]]
   y1 <- y[, , i[-1]]
   yd <- y1[j, , ] - y0[j, , ]
@@ -246,6 +270,18 @@ test_that("Test compiled lancelot components", {
     c(icu = 50),
     c(general = 50),
     c(hosp = 50),
+    c(deaths_hosp_0_49 = 1),
+    c(deaths_hosp_50_54 = 1),
+    c(deaths_hosp_55_59 = 1),
+    c(deaths_hosp_60_64 = 2),
+    c(deaths_hosp_65_69 = 2),
+    c(deaths_hosp_70_74 = 3),
+    c(deaths_hosp_75_79 = 5),
+    c(deaths_hosp_80_plus = 10),
+    c(deaths_hosp = 30),
+    c(deaths_carehomes = 10),
+    c(deaths_comm = 10),
+    c(deaths_non_hosp = 20),
     c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 10),
     c(deaths_hosp = 30, deaths_non_hosp = 20),
     c(deaths = 50),
