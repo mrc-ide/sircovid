@@ -901,6 +901,14 @@ test_that("lancelot_prepare_data does not allow double fitting to aggregated and
               lancelot_particle_filter(data),
               "Cannot fit to all ages aggregated for deaths if fitting to any
            sub-groups")
+
+            ## Add populations and throw regional error
+            data <- rbind(data, data)
+            data$population <- rep(factor(letters[1:2]), each = 31)
+            expect_error(
+              lancelot_particle_filter(data, 10),
+              "cannot fit to all ages aggregated for deaths if fitting
+                     to any sub-groups for region a")
 })
 
 
