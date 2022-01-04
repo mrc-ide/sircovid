@@ -911,12 +911,12 @@ test_that("Deaths in hospital by age add up correctly", {
   y <- mod$transform_variables(
     drop(mod$simulate(seq(0, 400, by = 4))))
 
-  expect_true(all(y$D_hosp_inc ==
-                    y$D_hosp_0_49_inc +
-                    y$D_hosp_50_54_inc + y$D_hosp_55_59_inc +
-                    y$D_hosp_60_64_inc + y$D_hosp_65_69_inc +
-                    y$D_hosp_70_74_inc + y$D_hosp_75_79_inc +
-                    y$D_hosp_80_plus_inc))
+  expect_true(all(round(y$D_hosp_inc) ==
+                    round(y$D_hosp_0_49_inc +
+                            y$D_hosp_50_54_inc + y$D_hosp_55_59_inc +
+                            y$D_hosp_60_64_inc + y$D_hosp_65_69_inc +
+                            y$D_hosp_70_74_inc + y$D_hosp_75_79_inc +
+                            y$D_hosp_80_plus_inc)))
 })
 
 
