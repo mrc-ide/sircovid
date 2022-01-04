@@ -281,6 +281,7 @@ test_that("Test compiled lancelot components", {
     c(deaths_hosp = 30),
     c(deaths_carehomes = 10),
     c(deaths_comm = 10),
+    c(deaths_non_hosp = 20),
     c(deaths_hosp = 30, deaths_carehomes = 10, deaths_comm = 10),
     c(deaths_hosp = 30, deaths_non_hosp = 20),
     c(deaths = 50),
