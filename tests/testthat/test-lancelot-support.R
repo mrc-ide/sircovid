@@ -1094,6 +1094,8 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             ## Add populations
             data <- rbind(data, data)
             data$population <- rep(factor(letters[1:2]), each = 31)
+            attr(data, "population") <- "population"
+            attr(data, "populations") <- c("a", "b")
             pf <- lancelot_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
 
