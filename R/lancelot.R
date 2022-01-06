@@ -2235,7 +2235,10 @@ lancelot_prepare_data <- function(data) {
         sub-groups"))
     }
   } else {
-    lapply(split(data, data$population), function(x) {
+    ## The as.data.frame() sidesteps the index-prevention that the
+    ## mcstate particle_filter_data would prevent.  This would be
+    ## *much* better if done on the raw data first.
+    lapply(split(as.data.frame(data), data$population), function(x) {
       if (check_deaths(x) > 1) {
         stop(sprintf("cannot fit to all ages aggregated for deaths if fitting
                      to any sub-groups for region %s", x$population[[1]]))
