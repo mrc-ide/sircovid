@@ -29,7 +29,7 @@ reference_data_lancelot_mcmc <- function() {
     }
     data$deaths_hosp <- data$deaths
 
-    filter <- lancelot_particle_filter(data, 10)
+    filter <- helper_lancelot_particle_filter(data, 10)
 
     ## Completely dummy mcmc parameters object
     pars_mcmc <- mcstate::pmcmc_parameters$new(

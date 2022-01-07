@@ -820,7 +820,7 @@ test_that("lancelot_prepare_data requires consistent deaths", {
   data$pillar2_65_79_pos <- NA
   data$pillar2_80_plus_pos <- NA
   expect_error(
-    lancelot_particle_filter(data),
+    helper_lancelot_particle_filter(data),
     "Deaths are not consistently split into total vs hospital/non-hospital
           or hospital/care homes/community")
 
@@ -828,7 +828,7 @@ test_that("lancelot_prepare_data requires consistent deaths", {
   data$deaths_carehomes <- data$deaths
   data$deaths <- NA
   expect_error(
-    lancelot_particle_filter(data),
+    helper_lancelot_particle_filter(data),
     "Non-hospital deaths are not consistently split into total vs care
          homes/community")
 })
@@ -891,14 +891,14 @@ test_that("lancelot_prepare_data does not allow double fitting to aggregated and
             data$pillar2_80_plus_pos <- NA
 
             ## Example that should not cause error
-            pf <- lancelot_particle_filter(data, 10)
+            pf <- helper_lancelot_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
 
             ## Throw error
             data$deaths_hosp_0_49 <- 1
             data_deaths_hosp_65_69 <- 4
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to all ages aggregated for deaths if fitting to any
            sub-groups")
 
@@ -906,7 +906,7 @@ test_that("lancelot_prepare_data does not allow double fitting to aggregated and
             data <- rbind(data, data)
             data$population <- rep(factor(letters[1:2]), each = 31)
             expect_error(
-              lancelot_particle_filter(data, 10),
+              helper_lancelot_particle_filter(data, 10),
               "cannot fit to all ages aggregated for deaths if fitting
                      to any sub-groups for region a")
 })
@@ -974,14 +974,14 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2,
             data$pillar2_tot <- 6
             data$strain_non_variant <- 8
             data$strain_tot <- 10
-            pf <- lancelot_particle_filter(data, 10)
+            pf <- helper_lancelot_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
 
             data$pillar2_pos <- 3
             data$pillar2_tot <- 6
             data$pillar2_cases <- 5
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to pillar 2 cases and positivity together")
 
             data$pillar2_pos <- 3
@@ -989,7 +989,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2,
             data$pillar2_cases <- NA
             data$pillar2_25_49_cases <- 5
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to pillar 2 cases and positivity together")
 
             data$pillar2_pos <- 3
@@ -998,7 +998,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2,
             data$pillar2_under15_pos <- 3
             data$pillar2_under15_tot <- 6
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to all ages aggregated for pillar 2 if fitting to")
 
             data$pillar2_pos <- NA
@@ -1008,7 +1008,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2,
             data$pillar2_under15_pos <- NA
             data$pillar2_under15_tot <- NA
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to over 25s for pillar 2 if fitting to any over 25")
 
             data$pillar2_over25_cases <- NA
@@ -1018,7 +1018,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2,
             data$strain_over25_non_variant <- 6
             data$strain_over25_tot <- 9
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to more than one strain data stream")
 
           })
@@ -1096,7 +1096,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data$population <- rep(factor(letters[1:2]), each = 31)
             attr(data, "population") <- "population"
             attr(data, "populations") <- c("a", "b")
-            pf <- lancelot_particle_filter(data, 10)
+            pf <- helper_lancelot_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
 
             ## Error if one region has multiple streams
@@ -1104,7 +1104,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data$pillar2_tot <- 6
             data$pillar2_cases <- 5
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to pillar 2 cases and positivity together")
 
             data$pillar2_pos <- 3
@@ -1112,7 +1112,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data$pillar2_cases <- NA
             data$pillar2_25_49_cases <- 5
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to pillar 2 cases and positivity together")
 
             data$pillar2_pos <- 3
@@ -1121,7 +1121,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data$pillar2_under15_pos <- 3
             data$pillar2_under15_tot <- 6
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to all ages aggregated for pillar 2 if fitting")
 
             data$pillar2_pos <- NA
@@ -1131,7 +1131,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data$pillar2_under15_pos <- NA
             data$pillar2_under15_tot <- NA
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to over 25s for pillar 2 if fitting to any over")
 
             data$pillar2_over25_cases <- NA
@@ -1141,7 +1141,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data$strain_over25_non_variant <- 6
             data$strain_over25_tot <- 9
             expect_error(
-              lancelot_particle_filter(data),
+              helper_lancelot_particle_filter(data),
               "Cannot fit to more than one strain data stream")
 
             ## Don't error if two regions have different streams
@@ -1152,7 +1152,7 @@ test_that("lancelot_prepare_data does not allow more than one pillar 2
             data[1:31, "strain_tot"] <- NA
             data[32:62, "strain_over25_non_variant"] <- NA
             data[32:62, "strain_over25_tot"] <- NA
-            pf <- lancelot_particle_filter(data, 10)
+            pf <- helper_lancelot_particle_filter(data, 10)
             expect_s3_class(pf, "particle_filter")
           })
 

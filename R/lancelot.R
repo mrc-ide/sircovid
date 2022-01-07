@@ -2088,58 +2088,15 @@ lancelot_population <- function(population, carehome_workers,
 }
 
 
-##' Construct a particle filter using the [`lancelot`] model. This is
-##' a convenience function, ensuring that compatible functions are
-##' used together.
+##' Check that data for the particle filter has required columns and
+##' constraints among columns.  This function does not alter the data
+##' at present (though it does return it invisibly).
 ##'
-##' @title Lancelot particle filter
-##'
-##' @param data Data suitable for use with with the
-##'   [`mcstate::particle_filter`], created by created by
-##'   [mcstate::particle_filter_data()]. We require columns "icu",
-##'   "general", "hosp", "deaths_hosp", "deaths_carehomes",
-##'   "deaths_non_hosp", "deaths_comm", "deaths",
-##'   "admitted", "diagnoses", "all_admission", "sero_pos_15_64_1",
-##'   "sero_tot_15_64_1", "sero_pos_15_64_2", "sero_tot_15_64_2",
-##'   "pillar2_pos", "pillar2_tot", "pillar2_cases",
-##'   "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
-##'   "react_pos", "react_tot", though thse may be entirely `NA`
-##'   if no data are present.
-##'
-##' @param n_particles Number of particles to use
-##'
-##' @param n_threads Number of threads to use
-##'
-##' @param seed Random seed to use
-##'
-##' @param compiled_compare Logical, indicating if we should use the
-##'   new compiled compare function (this will shortly become the
-##'   default).
-##'
-##' @return A [`mcstate::particle_filter`] object
-##' @export
-lancelot_particle_filter <- function(data, n_particles,
-                                     n_threads = 1L, seed = NULL,
-                                     compiled_compare = FALSE) {
-  mcstate::particle_filter$new(
-    lancelot_prepare_data(data),
-    lancelot,
-    n_particles,
-    if (compiled_compare) NULL else lancelot_compare,
-    lancelot_index,
-    lancelot_initial,
-    n_threads,
-    seed)
-}
-
-
-##' Prepare data for the particle filter
-##'
-##' @title Prepare data for particle filter
+##' @title Check data for particle filter
 ##' @param data A data.frame of data
-##' @return A data frame
+##' @return Invisibly, a data frame, identical to `data`
 ##' @export
-lancelot_prepare_data <- function(data) {
+lancelot_check_data <- function(data) {
   ## NOTE: see also data.R for a similar bit of code that builds a
   ## suitable data set.
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
@@ -2213,7 +2170,8 @@ lancelot_prepare_data <- function(data) {
           any(!is.na(df$strain_over25_non_variant)) |
             any(!is.na(df$strain_over25_tot))))
 
-  if (is.null(data$population)) {
+  ## TODO: this all needs sorting out as part of this PR.
+  if (is.null(data$region) || nlevels(data$region) <= 1) {
     if (check_deaths(data) > 1) {
       stop("Cannot fit to all ages aggregated for deaths if fitting to any
            sub-groups")
@@ -2262,7 +2220,9 @@ lancelot_prepare_data <- function(data) {
     })
   }
 
-  data
+  ## Same as above, return it invisibly similarly to our assertion
+  ## functions
+  invisible(data)
 }
 
 lancelot_n_groups <- function() {
@@ -2331,41 +2291,6 @@ lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
   ret$trajectories <- add_trajectory_incidence(
     ret$trajectories, incidence_states)
   ret
-}
-
-
-## This one looks like it's just used for testing now? The
-## sircovid_data function that it calls also outdated.
-lancelot_data <- function(data, start_date, dt) {
-  expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
-                deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
-                deaths_hosp_0_49 = NA_real_, deaths_hosp_50_54 = NA_real_,
-                deaths_hosp_55_59 = NA_real_, deaths_hosp_60_64 = NA_real_,
-                deaths_hosp_65_69 = NA_real_, deaths_hosp_70_74 = NA_real_,
-                deaths_hosp_75_79 = NA_real_, deaths_hosp_80_plus = NA_real_,
-                icu = NA_real_, general = NA_real_, hosp = NA_real_,
-                deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
-                all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
-                sero_tot_15_64_1 = NA_real_, sero_pos_15_64_2 = NA_real_,
-                sero_tot_15_64_2 = NA_real_, pillar2_tot = NA_real_,
-                pillar2_pos = NA_real_, pillar2_cases = NA_real_,
-                pillar2_over25_tot = NA_real_, pillar2_under15_tot = NA_real_,
-                pillar2_15_24_tot = NA_real_, pillar2_25_49_tot = NA_real_,
-                pillar2_50_64_tot = NA_real_, pillar2_65_79_tot = NA_real_,
-                pillar2_80_plus_tot = NA_real_, pillar2_over25_pos = NA_real_,
-                pillar2_under15_pos = NA_real_, pillar2_15_24_pos = NA_real_,
-                pillar2_25_49_pos = NA_real_, pillar2_50_64_pos = NA_real_,
-                pillar2_65_79_pos = NA_real_, pillar2_80_plus_pos = NA_real_,
-                pillar2_over25_cases = NA_real_,
-                pillar2_under15_cases = NA_real_,
-                pillar2_15_24_cases = NA_real_, pillar2_25_49_cases = NA_real_,
-                pillar2_50_64_cases = NA_real_, pillar2_65_79_cases = NA_real_,
-                pillar2_80_plus_cases = NA_real_, react_pos = NA_real_,
-                react_tot = NA_real_, strain_non_variant = NA_real_,
-                strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
-                strain_over25_tot = NA_real_)
-  data <- sircovid_data(data, start_date, dt, expected)
-  lancelot_prepare_data(data)
 }
 
 
