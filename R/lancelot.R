@@ -2097,8 +2097,6 @@ lancelot_population <- function(population, carehome_workers,
 ##' @return Invisibly, a data frame, identical to `data`
 ##' @export
 lancelot_check_data <- function(data) {
-  ## NOTE: see also data.R for a similar bit of code that builds a
-  ## suitable data set.
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
                 "diagnoses", "all_admission", "sero_pos_15_64_1",
@@ -2122,8 +2120,8 @@ lancelot_check_data <- function(data) {
   verify_names(data, required, allow_extra = TRUE)
 
   if (any(!is.na(data$deaths) &
-          (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp) |
-           !is.na(data$deaths_carehomes) | !is.na(data$deaths_non_hosp)))) {
+           (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp) |
+             !is.na(data$deaths_carehomes) | !is.na(data$deaths_non_hosp)))) {
     stop("Deaths are not consistently split into total vs hospital/non-hospital
           or hospital/care homes/community")
   }
@@ -2173,8 +2171,10 @@ lancelot_check_data <- function(data) {
   ## TODO: this all needs sorting out as part of this PR.
   if (is.null(data$region) || nlevels(data$region) <= 1) {
     if (check_deaths(data) > 1) {
-      stop("Cannot fit to all ages aggregated for deaths if fitting to any
-           sub-groups")
+      ## Perhaps it's just me, but I am not sure that would find this
+      ## actionable :)
+      stop(paste("Cannot fit to all ages aggregated for deaths if fitting",
+                 "to any sub-groups"))
     }
     if (check_pillar2(data) > 1) {
       stop("Cannot fit to pillar 2 cases and positivity together")
@@ -2196,26 +2196,21 @@ lancelot_check_data <- function(data) {
     ## The as.data.frame() sidesteps the index-prevention that the
     ## mcstate particle_filter_data would prevent.  This would be
     ## *much* better if done on the raw data first.
-    lapply(split(as.data.frame(data), data$population), function(x) {
+    lapply(split(as.data.frame(data), data$region), function(x) {
       if (check_deaths(x) > 1) {
-        stop(sprintf("cannot fit to all ages aggregated for deaths if fitting
-                     to any sub-groups for region %s", x$population[[1]]))
+        stop(sprintf("cannot fit to all ages aggregated for deaths if fitting to any sub-groups for region %s", x$region[[1]]))
       }
       if (check_pillar2(x) > 1) {
-        stop(sprintf("Cannot fit to pillar 2 cases and positivity together for
-                      region %s", x$population[[1]]))
+        stop(sprintf("Cannot fit to pillar 2 cases and positivity together for region %s", x$region[[1]]))
       }
       if (check_strain_streams(x) > 1) {
-        stop(sprintf("Cannot fit to more than one strain data stream for
-                      region %s", x$population[[1]]))
+        stop(sprintf("Cannot fit to more than one strain data stream for region %s", x$region[[1]]))
       }
       if (check_pillar2_over25_ages(x) > 1) {
-        stop(sprintf("Cannot fit to over 25s for pillar 2 if fitting to any over
-                     25 sub-groups for region %s", x$population[[1]]))
+        stop(sprintf("Cannot fit to over 25s for pillar 2 if fitting to any over 25 sub-groups for region %s", x$region[[1]]))
       }
       if (check_pillar2_all_ages(x) > 1) {
-        stop(sprintf("Cannot fit to all ages aggregated for pillar 2 if fitting
-                     to any sub-groups for region %s", x$population[[1]]))
+        stop(sprintf("Cannot fit to all ages aggregated for pillar 2 if fitting to any sub-groups for region %s", x$region[[1]]))
       }
     })
   }
