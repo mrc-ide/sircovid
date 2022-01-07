@@ -769,16 +769,16 @@ test_that("lancelot_check_data requires consistent deaths", {
   data$deaths_hosp <- data$deaths
   expect_error(
     lancelot_check_data(data),
-    "Deaths are not consistently split into total vs hospital/non-hospital
-          or hospital/care homes/community")
+    paste("Deaths are not consistently split into total vs",
+          "hospital/non-hospital or hospital/care homes/community"))
 
   data$deaths_non_hosp <- data$deaths
   data$deaths_carehomes <- data$deaths
   data$deaths <- NA_real_
   expect_error(
     lancelot_check_data(data),
-    "Non-hospital deaths are not consistently split into total vs care
-         homes/community")
+    paste("Non-hospital deaths are not consistently split into total vs",
+          "care homes/community"))
 })
 
 
@@ -803,7 +803,7 @@ test_that("lancelot_check_data disallows double fitting to deaths", {
 
   expect_error(
     lancelot_check_data(data2),
-    "cannot fit to all ages aggregated for deaths if fitting to any sub-groups for region london")
+    "london: Cannot fit to all ages aggregated for deaths if")
 })
 
 
@@ -889,7 +889,7 @@ test_that("lancelot_check_data prevents pillar 2 double fitting (nested)", {
   data2$pillar2_cases <- 5
   expect_error(
     lancelot_check_data(data2),
-    "Cannot fit to pillar 2 cases and positivity together")
+    "london: Cannot fit to pillar 2 cases and positivity together")
 
   data2$pillar2_pos <- 3
   data2$pillar2_tot <- 6
@@ -897,7 +897,7 @@ test_that("lancelot_check_data prevents pillar 2 double fitting (nested)", {
   data2$pillar2_25_49_cases <- 5
   expect_error(
     lancelot_check_data(data2),
-    "Cannot fit to pillar 2 cases and positivity together")
+    "london: Cannot fit to pillar 2 cases and positivity together")
 
   data2$pillar2_pos <- 3
   data2$pillar2_tot <- 6
@@ -906,7 +906,7 @@ test_that("lancelot_check_data prevents pillar 2 double fitting (nested)", {
   data2$pillar2_under15_tot <- 6
   expect_error(
     lancelot_check_data(data2),
-    "Cannot fit to all ages aggregated for pillar 2 if fitting")
+    "london: Cannot fit to all ages aggregated for pillar 2 if fitting")
 
   data2$pillar2_pos <- NA
   data2$pillar2_tot <- NA
@@ -916,7 +916,7 @@ test_that("lancelot_check_data prevents pillar 2 double fitting (nested)", {
   data2$pillar2_under15_tot <- NA
   expect_error(
     lancelot_check_data(data2),
-    "Cannot fit to over 25s for pillar 2 if fitting to any over")
+    "london: Cannot fit to over 25s for pillar 2 if fitting to any over")
 
   data2$pillar2_over25_cases <- NA
   data2$pillar2_65_79_cases <- NA
@@ -926,7 +926,7 @@ test_that("lancelot_check_data prevents pillar 2 double fitting (nested)", {
   data2$strain_over25_tot <- 9
   expect_error(
     lancelot_check_data(data2),
-    "Cannot fit to more than one strain data stream")
+    "london: Cannot fit to more than one strain data stream")
 
   ## Don't error if two regions have different streams
   i1 <- seq_len(nrow(data))
