@@ -765,8 +765,8 @@ test_that("lancelot_index returns S compartments", {
 
 
 test_that("lancelot_prepare_data requires consistent deaths", {
-  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                        1, 0.25)
+  data <- helper_sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
+                               1, 0.25)
   ## Add additional columns
   data$deaths_hosp <- data$deaths
   data$deaths_hosp_0_49 <- NA
@@ -835,7 +835,7 @@ test_that("lancelot_prepare_data requires consistent deaths", {
 
 test_that("lancelot_prepare_data does not allow double fitting to aggregated and
           disaggregated hospital deaths", {
-            data <- sircovid_data(
+            data <- helper_sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             # Add additional columns
             data$deaths_hosp <- NA
@@ -914,7 +914,7 @@ test_that("lancelot_prepare_data does not allow double fitting to aggregated and
 
 test_that("lancelot_prepare_data does not allow more than one pillar 2,
           strain data stream or pillar 2 double fitting", {
-            data <- sircovid_data(
+            data <- helper_sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             ## Add additional columns
             data$deaths_hosp <- NA
@@ -1031,7 +1031,7 @@ test_that("the lancelot sircovid model has 19 groups", {
 
 test_that("lancelot_prepare_data does not allow more than one pillar 2
           or strain data stream (II)", {
-            data <- sircovid_data(
+            data <- helper_sircovid_data(
               read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
             class(data)[1] <- "particle_filter_data_nested"
             ## Add additional columns

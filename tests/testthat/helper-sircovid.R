@@ -129,3 +129,36 @@ create_old_info <- function(info, drop) {
 
   info_old
 }
+
+
+helper_sircovid_data <- function(data, start_date, dt, expected = NULL) {
+  start_date <- as_sircovid_date(start_date)
+  ## Some horrid off-by-one unpleasantness lurking here. See this commit:
+  ##   https://github.com/mrc-ide/mcstate/commit/97e68ad
+  ## for for more details, and the accompanying PR.
+  ##
+  ## To make this work, we've manually inserted a fake reporting
+  ## period at the first row of the file so that our compare works
+  ## correctly; this should be something that mcstate can do for us.
+  data$date <- sircovid_date(data$date)
+
+  msg <- setdiff(names(expected), names(data))
+  if (length(msg) > 0) {
+    message(sprintf("Adding empty %s to data: %s",
+                    ngettext(length(msg), "column", "columns"),
+                    paste(squote(msg), collapse = ", ")))
+    for (nm in msg) {
+      data[[nm]] <- expected[[nm]]
+    }
+  }
+
+  rate <- 1 / dt
+  data <- mcstate::particle_filter_data(data, "date", rate, start_date)
+  data
+}
+
+
+helper_basic_data <- function(data, start_date, dt) {
+  expected <- list("icu" = NA_real_, "deaths" = NA_real_)
+  helper_sircovid_data(data, start_date, dt, expected)
+}

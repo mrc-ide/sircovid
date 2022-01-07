@@ -26,7 +26,7 @@ helper_lancelot_data <- function(data, start_date, dt) {
                 react_tot = NA_real_, strain_non_variant = NA_real_,
                 strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
                 strain_over25_tot = NA_real_)
-  data <- sircovid_data(data, start_date, dt, expected)
+  data <- helper_sircovid_data(data, start_date, dt, expected)
   lancelot_check_data(data)
   data
 }
