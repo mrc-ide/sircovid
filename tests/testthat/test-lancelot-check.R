@@ -902,6 +902,24 @@ test_that("Symptomatic cases by age add up correctly", {
 })
 
 
+test_that("Deaths in hospital by age add up correctly", {
+  p <- lancelot_parameters(0, "england")
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(round(y$D_hosp_inc) ==
+                    round(y$D_hosp_0_49_inc +
+                            y$D_hosp_50_54_inc + y$D_hosp_55_59_inc +
+                            y$D_hosp_60_64_inc + y$D_hosp_65_69_inc +
+                            y$D_hosp_70_74_inc + y$D_hosp_75_79_inc +
+                            y$D_hosp_80_plus_inc)))
+})
+
+
 test_that("Individuals cannot infect in compartment with zero transmission", {
   helper <- function(transmission_name, compartment_name, gamma_name) {
     ## Use a large beta so that infections would be immediate

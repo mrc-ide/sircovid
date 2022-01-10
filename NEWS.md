@@ -1,3 +1,6 @@
+# sircovid 0.12.28
+
+* Fit to deaths in hospital by age
 
 # sircovid 0.12.27
 
