@@ -458,13 +458,12 @@ reorder_sample <- function(sample, rank) {
 ##'
 ##' @title Reorder Rt or IFR trajectories
 ##'
-##' @param x An `Rt_trajectories` or `IFR_t_trajectories` object, as returned
-##'   by [lancelot_Rt_trajectories()] or [lancelot_ifr_t_trajectories]
-##'   respectively.
+##' @param x An `Rt_trajectories` object, as returned
+##'   by [lancelot_Rt_trajectories()]
 ##'
 ##' @param rank A vector of ranks to reorder by
 ##'
-##' @return An `Rt_trajectories` or `IFR_t_trajectories` object with
+##' @return An `Rt_trajectories` object with
 ##'   appropriately reordered elements
 ##'
 ##' @export

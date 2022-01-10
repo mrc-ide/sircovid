@@ -7,14 +7,13 @@
 reorder_rt_ifr(x, rank)
 }
 \arguments{
-\item{x}{An \code{Rt_trajectories} or \code{IFR_t_trajectories} object, as returned
-by \code{\link[=lancelot_Rt_trajectories]{lancelot_Rt_trajectories()}} or \link{lancelot_ifr_t_trajectories}
-respectively.}
+\item{x}{An \code{Rt_trajectories} object, as returned
+by \code{\link[=lancelot_Rt_trajectories]{lancelot_Rt_trajectories()}}}
 
 \item{rank}{A vector of ranks to reorder by}
 }
 \value{
-An \code{Rt_trajectories} or \code{IFR_t_trajectories} object with
+An \code{Rt_trajectories} object with
 appropriately reordered elements
 }
 \description{
