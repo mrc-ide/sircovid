@@ -829,10 +829,6 @@ lancelot_index <- function(info) {
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
 
   ## age x (total) strain x vacc class
-  index_I_weighted <- calculate_index(index, "I_weighted",
-                                      list(S = n_tot_strains,
-                                           V = n_vacc_classes),
-                                      suffix)
   index_R <- calculate_index(index, "R",
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)
@@ -841,7 +837,7 @@ lancelot_index <- function(info) {
        state = c(index_core, index_save, index_S, index_R,
                  index_cum_admit, index_D,
                  index_diagnoses_admitted, index_cum_infections_disag,
-                 index_I_weighted, index_prob_strain, index_cum_n_vaccinated
+                 index_prob_strain, index_cum_n_vaccinated
        ))
 }
 
