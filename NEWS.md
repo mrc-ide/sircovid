@@ -1,3 +1,7 @@
+# sircovid 0.12.31
+
+* IFR post-processing calculation removed
+
 # sircovid 0.12.28
 
 * Fit to deaths in hospital by age
