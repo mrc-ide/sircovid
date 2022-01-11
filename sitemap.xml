@@ -76,6 +76,9 @@
     <loc>/reference/lancelot_Rt_trajectories.html</loc>
   </url>
   <url>
+    <loc>/reference/lancelot_check_data.html</loc>
+  </url>
+  <url>
     <loc>/reference/lancelot_check_severity.html</loc>
   </url>
   <url>
@@ -112,12 +115,6 @@
     <loc>/reference/lancelot_parameters_severity.html</loc>
   </url>
   <url>
-    <loc>/reference/lancelot_particle_filter.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lancelot_prepare_data.html</loc>
-  </url>
-  <url>
     <loc>/reference/lancelot_rt_trajectories_epiestim.html</loc>
   </url>
   <url>
@@ -134,9 +131,6 @@
   </url>
   <url>
     <loc>/reference/rotate_strains.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sircovid_data.html</loc>
   </url>
   <url>
     <loc>/reference/sircovid_date.html</loc>
