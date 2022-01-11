@@ -81,8 +81,8 @@ test_that("initial seeding spread out", {
 test_that("can run the particle filter on the model", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england")
-  data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     0, pars$dt)
+  data <- helper_basic_data(read_csv(sircovid_file("extdata/example.csv")),
+                            0, pars$dt)
 
   n_particles <- 100
   pf <- mcstate::particle_filter$new(
@@ -124,8 +124,8 @@ test_that("incidence calculation is correct", {
 test_that("compiled compare function is correct", {
   start_date <- sircovid_date("2020-02-02")
   pars <- basic_parameters(start_date, "england", exp_noise = Inf)
-  data <- basic_data(read_csv(sircovid_file("extdata/example.csv")),
-                     0, pars$dt)
+  data <- helper_basic_data(read_csv(sircovid_file("extdata/example.csv")),
+                            0, pars$dt)
 
   np <- 10
   mod <- basic$new(pars, 0, np, seed = 1L)
