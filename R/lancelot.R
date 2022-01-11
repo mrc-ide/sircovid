@@ -711,21 +711,21 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'
 ##' @inheritParams basic_index
 ##'
-##' @param rt logical parameter output trajectories required for 
+##' @param rt logical parameter output trajectories required for
 ##'   calculating Rt (default = FALSE)
 ##'
 ##' @param cum_admit logical parameter whether to output cumulative
 ##'   admissions by age (default = FALSE)
 ##'
-##' @param diagnoses_admitted logical parameter whether to output 
-##'   cumulative combined confirmed admissions and inpatient 
+##' @param diagnoses_admitted logical parameter whether to output
+##'   cumulative combined confirmed admissions and inpatient
 ##'   diagnoses by age and vaccine class (default = FALSE)
 ##'
-##' @param cum_infections_disag logical parameter whether to output 
+##' @param cum_infections_disag logical parameter whether to output
 ##'   cumulative infections by age and vaccine class (default = FALSE)
 ##'
 ##' @param cum_n_vaccinated logical parameter whether to output
-##'   cumulative number vaccinated by age and vaccine class 
+##'   cumulative number vaccinated by age and vaccine class
 ##'   (default = FALSE)
 ##'
 ##' @return A list with element `run`, indicating the locations of (in
@@ -744,7 +744,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' mod <- lancelot$new(p, 0, 10)
 ##' lancelot_index(mod$info())
 
-lancelot_index <- function(info, rt = FALSE, cum_admit = FALSE, 
+lancelot_index <- function(info, rt = FALSE, cum_admit = FALSE,
                             diagnoses_admitted = FALSE,
                             cum_infections_disag = FALSE,
                             cum_n_vaccinated = FALSE) {
@@ -838,21 +838,24 @@ lancelot_index <- function(info, rt = FALSE, cum_admit = FALSE,
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)
 
-
   index_state <- c(index_core, index_save)
 
   if (rt) {
     index_state <- c(index_state, index_S, index_R, index_prob_strain)
-  } 
+  }
+
   if (cum_admit) {
       index_state <- c(index_state, index_cum_admit)
   }
+
   if (diagnoses_admitted) {
     index_state <- c(index_state, index_diagnoses_admitted)
   }
+
   if (cum_infections_disag) {
     index_state <- c(index_state, index_cum_infections_disag)
   }
+
   if (cum_n_vaccinated) {
     index_state <- c(index_state, index_cum_n_vaccinated)
   }
