@@ -69,14 +69,6 @@ upgrade_state <- function(state_orig, info_orig, info_new, allowed = NULL) {
 ##' @author Richard Fitzjohn
 ##' @export
 inflate_state_strains <- function(state1, info1, info2) {
-
-  if (inherits(info1, "dust")) {
-    info1 <- info1$info()
-  }
-  if (inherits(info2, "dust")) {
-    info2 <- info2$info()
-  }
-
   fn <- function(state1, info1, info2, d1, d2, i1, i2, ny, x1, x2, nm) {
     if (length(d1) == 1) {
       x2[1, ] <- x1

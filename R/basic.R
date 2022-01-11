@@ -233,12 +233,6 @@ basic_initial <- function(info, n_particles, pars) {
 }
 
 
-basic_data <- function(data, start_date, dt) {
-  expected <- list("icu" = NA_real_, "deaths" = NA_real_)
-  sircovid_data(data, start_date, dt, expected)
-}
-
-
 basic_parameters_progression <- function() {
   ## These need to be aligned with Bob's severity outputs, and we will
   ## come up with a better way of correlating the two.

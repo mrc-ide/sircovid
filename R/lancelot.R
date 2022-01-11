@@ -2088,60 +2088,17 @@ lancelot_population <- function(population, carehome_workers,
 }
 
 
-##' Construct a particle filter using the [`lancelot`] model. This is
-##' a convenience function, ensuring that compatible functions are
-##' used together.
+##' Check that data for the particle filter has required columns and
+##' constraints among columns.  This function does not alter the data
+##' at present (though it does return it invisibly).
 ##'
-##' @title Lancelot particle filter
-##'
-##' @param data Data suitable for use with with the
-##'   [`mcstate::particle_filter`], created by created by
-##'   [mcstate::particle_filter_data()]. We require columns "icu",
-##'   "general", "hosp", "deaths_hosp", "deaths_carehomes",
-##'   "deaths_non_hosp", "deaths_comm", "deaths",
-##'   "admitted", "diagnoses", "all_admission", "sero_pos_15_64_1",
-##'   "sero_tot_15_64_1", "sero_pos_15_64_2", "sero_tot_15_64_2",
-##'   "pillar2_pos", "pillar2_tot", "pillar2_cases",
-##'   "pillar2_over25_pos", "pillar2_over25_tot", "pillar2_over25_cases",
-##'   "react_pos", "react_tot", though thse may be entirely `NA`
-##'   if no data are present.
-##'
-##' @param n_particles Number of particles to use
-##'
-##' @param n_threads Number of threads to use
-##'
-##' @param seed Random seed to use
-##'
-##' @param compiled_compare Logical, indicating if we should use the
-##'   new compiled compare function (this will shortly become the
-##'   default).
-##'
-##' @return A [`mcstate::particle_filter`] object
-##' @export
-lancelot_particle_filter <- function(data, n_particles,
-                                     n_threads = 1L, seed = NULL,
-                                     compiled_compare = FALSE) {
-  mcstate::particle_filter$new(
-    lancelot_prepare_data(data),
-    lancelot,
-    n_particles,
-    if (compiled_compare) NULL else lancelot_compare,
-    lancelot_index,
-    lancelot_initial,
-    n_threads,
-    seed)
-}
-
-
-##' Prepare data for the particle filter
-##'
-##' @title Prepare data for particle filter
+##' @title Check data for particle filter
 ##' @param data A data.frame of data
-##' @return A data frame
+##' @return Invisibly, a data frame, identical to `data`
 ##' @export
-lancelot_prepare_data <- function(data) {
-  ## NOTE: see also data.R for a similar bit of code that builds a
-  ## suitable data set.
+lancelot_check_data <- function(data) {
+  ## Column names apply at the level of the whole data set, and would
+  ## be confusing if we reported it for each region together
   required <- c("icu", "general", "hosp", "deaths_hosp", "deaths_carehomes",
                 "deaths_comm", "deaths_non_hosp", "deaths", "admitted",
                 "diagnoses", "all_admission", "sero_pos_15_64_1",
@@ -2161,19 +2118,38 @@ lancelot_prepare_data <- function(data) {
                 "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
                 "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
                 "deaths_hosp_75_79", "deaths_hosp_80_plus")
-
+  assert_is(data, "data.frame")
   verify_names(data, required, allow_extra = TRUE)
 
-  if (any(!is.na(data$deaths) &
-          (!is.na(data$deaths_comm) | !is.na(data$deaths_hosp) |
-           !is.na(data$deaths_carehomes) | !is.na(data$deaths_non_hosp)))) {
-    stop("Deaths are not consistently split into total vs hospital/non-hospital
-          or hospital/care homes/community")
+  if (length(unique(data$region)) > 1) {
+    res <- lapply(split(as.data.frame(data), data$region), function(d)
+      tryCatch(lancelot_check_data(d), error = identity))
+    err <- vlapply(res, inherits, "error")
+    if (any(err)) {
+      msg <- sprintf("  %s: %s",
+                     names(which(err)), vcapply(res[err], "[[", "message"))
+      stop("Validation failures:\n", paste(msg, collapse = "\n"))
+    }
+    return(invisible(data))
   }
-  if (any(!is.na(data$deaths_non_hosp) &
-          (!is.na(data$deaths_comm) | !is.na(data$deaths_carehomes)))) {
-    stop("Non-hospital deaths are not consistently split into total vs care
-         homes/community")
+
+  has <- as.data.frame(!is.na(data[required]))
+  has_any <- function(nms) {
+    apply(has[nms], 1, any)
+  }
+
+  nms_deaths_split <- c("deaths_comm", "deaths_hosp", "deaths_carehomes",
+                        "deaths_non_hosp")
+  err_deaths <- has$deaths & has_any(nms_deaths_split)
+  if (any(has$deaths & has_any(nms_deaths_split))) {
+    stop(paste("Deaths are not consistently split into total vs",
+               "hospital/non-hospital or hospital/care homes/community"))
+  }
+
+  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes")
+  if (any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))) {
+    stop(paste("Non-hospital deaths are not consistently split into total vs",
+               "care homes/community"))
   }
 
   deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
@@ -2182,88 +2158,74 @@ lancelot_prepare_data <- function(data) {
   P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
   P2_all <- c("", P2_all_ages)
 
-  check_deaths <- function(df)
-    sum(c(any(!is.na(df[, paste0("deaths_hosp_", deaths_ages)])),
-            any(!is.na(df$deaths)) | any(!is.na(df$deaths_hosp))))
-
-  check_pillar2 <- function(df)
-    sum(c(any(!is.na(df[, paste0("pillar2", P2_all, "_pos")])) |
-            any(!is.na(df[, paste0("pillar2", P2_all, "_tot")])),
-          any(!is.na(df[, paste0("pillar2", P2_all, "_cases")]))))
-
-  check_pillar2_over25_ages <- function(df)
-    sum(c(any(!is.na(df[, paste0("pillar2", P2_over25_ages, "_pos")])) |
-            any(!is.na(df[, paste0("pillar2", P2_over25_ages, "_tot")])) |
-            any(!is.na(df[, paste0("pillar2", P2_over25_ages, "_cases")])),
-          any(!is.na(df$pillar2_over25_pos)) |
-            any(!is.na(df$pillar2_over25_tot)) |
-            any(!is.na(df$pillar2_over25_cases))))
-
-  check_pillar2_all_ages <- function(df)
-    sum(c(any(!is.na(df[, paste0("pillar2", P2_all_ages, "_pos")])) |
-            any(!is.na(df[, paste0("pillar2", P2_all_ages, "_tot")])) |
-            any(!is.na(df[, paste0("pillar2", P2_all_ages, "_cases")])),
-          any(!is.na(df$pillar2_pos)) |
-            any(!is.na(df$pillar2_tot)) |
-            any(!is.na(df$pillar2_cases))))
-
-  check_strain_streams <- function(df)
-    sum(c(any(!is.na(df$strain_non_variant)) |
-            any(!is.na(df$strain_tot)),
-          any(!is.na(df$strain_over25_non_variant)) |
-            any(!is.na(df$strain_over25_tot))))
-
-  if (is.null(data$population)) {
-    if (check_deaths(data) > 1) {
-      stop("Cannot fit to all ages aggregated for deaths if fitting to any
-           sub-groups")
-    }
-    if (check_pillar2(data) > 1) {
-      stop("Cannot fit to pillar 2 cases and positivity together")
-    }
-    if (check_strain_streams(data) > 1) {
-      stop("Cannot fit to more than one strain data stream")
-    }
-    if (check_pillar2_over25_ages(data) > 1) {
-      stop(paste(
-        "Cannot fit to over 25s for pillar 2 if fitting to any over 25
-        sub-groups"))
-    }
-    if (check_pillar2_all_ages(data) > 1) {
-      stop(paste(
-        "Cannot fit to all ages aggregated for pillar 2 if fitting to any
-        sub-groups"))
-    }
-  } else {
-    ## The as.data.frame() sidesteps the index-prevention that the
-    ## mcstate particle_filter_data would prevent.  This would be
-    ## *much* better if done on the raw data first.
-    lapply(split(as.data.frame(data), data$population), function(x) {
-      if (check_deaths(x) > 1) {
-        stop(sprintf("cannot fit to all ages aggregated for deaths if fitting
-                     to any sub-groups for region %s", x$population[[1]]))
-      }
-      if (check_pillar2(x) > 1) {
-        stop(sprintf("Cannot fit to pillar 2 cases and positivity together for
-                      region %s", x$population[[1]]))
-      }
-      if (check_strain_streams(x) > 1) {
-        stop(sprintf("Cannot fit to more than one strain data stream for
-                      region %s", x$population[[1]]))
-      }
-      if (check_pillar2_over25_ages(x) > 1) {
-        stop(sprintf("Cannot fit to over 25s for pillar 2 if fitting to any over
-                     25 sub-groups for region %s", x$population[[1]]))
-      }
-      if (check_pillar2_all_ages(x) > 1) {
-        stop(sprintf("Cannot fit to all ages aggregated for pillar 2 if fitting
-                     to any sub-groups for region %s", x$population[[1]]))
-      }
-    })
+  ## NOTE: I (RGF) think that nms_deaths_aggr might really be deaths
+  ## and nms_deaths_split more completely, but practically I expect
+  ## this is equivalent.
+  ##
+  ## NOTE: This is asserted at the level of the _entire_ time series,
+  ## not per day; that might be overly strict?
+  nms_deaths_ages <- paste0("deaths_hosp_", deaths_ages)
+  nms_deaths_aggr <- c("deaths", "deaths_hosp")
+  err_deaths <- any(has_any(nms_deaths_ages)) && any(has_any(nms_deaths_aggr))
+  if (err_deaths) {
+    ## Perhaps it's just me, but I am not sure that would find this
+    ## actionable; we probably need to indicate the appropriate
+    ## columns.
+    stop(paste("Cannot fit to all ages aggregated for deaths if fitting",
+               "to any sub-groups"))
   }
 
-  data
+  nms_pillar2_pos <- sprintf("pillar2%s_pos", P2_all)
+  nms_pillar2_tot <- sprintf("pillar2%s_tot", P2_all)
+  nms_pillar2_cases <- sprintf("pillar2%s_cases", P2_all)
+  err_pillar2 <- any(has_any(nms_pillar2_cases)) &&
+    any(has_any(c(nms_pillar2_pos, nms_pillar2_tot)))
+  if (err_pillar2) {
+    stop("Cannot fit to pillar 2 cases and positivity together")
+  }
+
+  err_strain_stream <-
+    any(has_any(c("strain_non_variant", "strain_tot"))) &&
+    any(has_any(c("strain_over25_non_variant", "strain_over25_tot")))
+  if (err_strain_stream) {
+    stop("Cannot fit to more than one strain data stream")
+  }
+
+  nms_pillar2_over25_pos <- sprintf("pillar2%s_pos", P2_over25_ages)
+  nms_pillar2_over25_tot <- sprintf("pillar2%s_tot", P2_over25_ages)
+  nms_pillar2_over25_cases <- sprintf("pillar2%s_cases", P2_over25_ages)
+  nms_pillar2_over25_aggregated <- c("pillar2_over25_pos",
+                                     "pillar2_over25_tot",
+                                     "pillar2_over25_cases")
+  err_pillar2_over25 <-
+    any(has_any(nms_pillar2_over25_aggregated)) &&
+    any(has_any(c(nms_pillar2_over25_pos,
+                  nms_pillar2_over25_tot,
+                  nms_pillar2_over25_cases)))
+  if (err_pillar2_over25) {
+    stop(paste("Cannot fit to over 25s for pillar 2 if fitting to any over 25",
+               "sub-groups"))
+  }
+
+  nms_pillar2_all_ages_pos <- sprintf("pillar2%s_pos", P2_all_ages)
+  nms_pillar2_all_ages_tot <- sprintf("pillar2%s_tot", P2_all_ages)
+  nms_pillar2_all_ages_cases <- sprintf("pillar2%s_cases", P2_all_ages)
+  nms_pillar2_all_ages_aggregated <- c("pillar2_pos",
+                                     "pillar2_tot",
+                                     "pillar2_cases")
+  err_pillar2_all_ages <-
+    any(has_any(nms_pillar2_all_ages_aggregated)) &&
+    any(has_any(c(nms_pillar2_all_ages_pos,
+                  nms_pillar2_all_ages_tot,
+                  nms_pillar2_all_ages_cases)))
+  if (err_pillar2_all_ages) {
+    stop(paste("Cannot fit to all ages aggregated for pillar 2",
+               "if fitting to any sub-groups"))
+  }
+
+  invisible(data)
 }
+
 
 lancelot_n_groups <- function() {
   length(sircovid_age_bins()$start) + 2L
@@ -2331,41 +2293,6 @@ lancelot_forecast <- function(samples, n_sample, burnin, forecast_days,
   ret$trajectories <- add_trajectory_incidence(
     ret$trajectories, incidence_states)
   ret
-}
-
-
-## This one looks like it's just used for testing now? The
-## sircovid_data function that it calls also outdated.
-lancelot_data <- function(data, start_date, dt) {
-  expected <- c(deaths_hosp = NA_real_, deaths_comm = NA_real_,
-                deaths_carehomes = NA_real_, deaths_non_hosp = NA_real_,
-                deaths_hosp_0_49 = NA_real_, deaths_hosp_50_54 = NA_real_,
-                deaths_hosp_55_59 = NA_real_, deaths_hosp_60_64 = NA_real_,
-                deaths_hosp_65_69 = NA_real_, deaths_hosp_70_74 = NA_real_,
-                deaths_hosp_75_79 = NA_real_, deaths_hosp_80_plus = NA_real_,
-                icu = NA_real_, general = NA_real_, hosp = NA_real_,
-                deaths = NA_real_, admitted = NA_real_, diagnoses = NA_real_,
-                all_admission = NA_real_, sero_pos_15_64_1 = NA_real_,
-                sero_tot_15_64_1 = NA_real_, sero_pos_15_64_2 = NA_real_,
-                sero_tot_15_64_2 = NA_real_, pillar2_tot = NA_real_,
-                pillar2_pos = NA_real_, pillar2_cases = NA_real_,
-                pillar2_over25_tot = NA_real_, pillar2_under15_tot = NA_real_,
-                pillar2_15_24_tot = NA_real_, pillar2_25_49_tot = NA_real_,
-                pillar2_50_64_tot = NA_real_, pillar2_65_79_tot = NA_real_,
-                pillar2_80_plus_tot = NA_real_, pillar2_over25_pos = NA_real_,
-                pillar2_under15_pos = NA_real_, pillar2_15_24_pos = NA_real_,
-                pillar2_25_49_pos = NA_real_, pillar2_50_64_pos = NA_real_,
-                pillar2_65_79_pos = NA_real_, pillar2_80_plus_pos = NA_real_,
-                pillar2_over25_cases = NA_real_,
-                pillar2_under15_cases = NA_real_,
-                pillar2_15_24_cases = NA_real_, pillar2_25_49_cases = NA_real_,
-                pillar2_50_64_cases = NA_real_, pillar2_65_79_cases = NA_real_,
-                pillar2_80_plus_cases = NA_real_, react_pos = NA_real_,
-                react_tot = NA_real_, strain_non_variant = NA_real_,
-                strain_tot = NA_real_, strain_over25_non_variant = NA_real_,
-                strain_over25_tot = NA_real_)
-  data <- sircovid_data(data, start_date, dt, expected)
-  lancelot_prepare_data(data)
 }
 
 

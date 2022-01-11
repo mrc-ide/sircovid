@@ -764,264 +764,105 @@ test_that("lancelot_index returns S compartments", {
 })
 
 
-test_that("lancelot_prepare_data requires consistent deaths", {
-  data <- sircovid_data(read_csv(sircovid_file("extdata/example.csv")),
-                        1, 0.25)
-  ## Add additional columns
+test_that("lancelot_check_data requires consistent deaths", {
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
   data$deaths_hosp <- data$deaths
-  data$deaths_hosp_0_49 <- NA
-  data$deaths_hosp_50_54 <- NA
-  data$deaths_hosp_55_59 <- NA
-  data$deaths_hosp_60_64 <- NA
-  data$deaths_hosp_65_69 <- NA
-  data$deaths_hosp_70_74 <- NA
-  data$deaths_hosp_75_79 <- NA
-  data$deaths_hosp_80_plus <- NA
-  data$deaths_carehomes <- NA
-  data$deaths_comm <- NA
-  data$deaths_non_hosp <- NA
-  data$general <- NA
-  data$hosp <- NA
-  data$admitted <- NA
-  data$diagnoses <- NA
-  data$all_admission <- NA
-  data$sero_pos_15_64_1 <- NA
-  data$sero_tot_15_64_1 <- NA
-  data$sero_pos_15_64_2 <- NA
-  data$sero_tot_15_64_2 <- NA
-  data$pillar2_pos <- NA
-  data$pillar2_tot <- NA
-  data$pillar2_cases <- NA
-  data$pillar2_over25_pos <- NA
-  data$pillar2_over25_tot <- NA
-  data$pillar2_over25_cases <- NA
-  data$react_pos <- NA
-  data$react_tot <- NA
-  data$strain_non_variant <- NA
-  data$strain_tot <- NA
-  data$strain_over25_non_variant <- NA
-  data$strain_over25_tot <- NA
-  data$pillar2_under15_cases <- NA
-  data$pillar2_15_24_cases <- NA
-  data$pillar2_25_49_cases <- NA
-  data$pillar2_50_64_cases <- NA
-  data$pillar2_65_79_cases <- NA
-  data$pillar2_80_plus_cases <- NA
-  data$pillar2_under15_tot <- NA
-  data$pillar2_15_24_tot <- NA
-  data$pillar2_25_49_tot <- NA
-  data$pillar2_50_64_tot <- NA
-  data$pillar2_65_79_tot <- NA
-  data$pillar2_80_plus_tot <- NA
-  data$pillar2_under15_pos <- NA
-  data$pillar2_15_24_pos <- NA
-  data$pillar2_25_49_pos <- NA
-  data$pillar2_50_64_pos <- NA
-  data$pillar2_65_79_pos <- NA
-  data$pillar2_80_plus_pos <- NA
   expect_error(
-    lancelot_particle_filter(data),
-    "Deaths are not consistently split into total vs hospital/non-hospital
-          or hospital/care homes/community")
+    lancelot_check_data(data),
+    paste("Deaths are not consistently split into total vs",
+          "hospital/non-hospital or hospital/care homes/community"))
 
   data$deaths_non_hosp <- data$deaths
   data$deaths_carehomes <- data$deaths
-  data$deaths <- NA
+  data$deaths <- NA_real_
   expect_error(
-    lancelot_particle_filter(data),
-    "Non-hospital deaths are not consistently split into total vs care
-         homes/community")
-})
-
-test_that("lancelot_prepare_data does not allow double fitting to aggregated and
-          disaggregated hospital deaths", {
-            data <- sircovid_data(
-              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
-            # Add additional columns
-            data$deaths_hosp <- NA
-            data$deaths_hosp_0_49 <- NA
-            data$deaths_hosp_50_54 <- NA
-            data$deaths_hosp_55_59 <- NA
-            data$deaths_hosp_60_64 <- NA
-            data$deaths_hosp_65_69 <- NA
-            data$deaths_hosp_70_74 <- NA
-            data$deaths_hosp_75_79 <- NA
-            data$deaths_hosp_80_plus <- NA
-            data$deaths_comm <- NA
-            data$deaths_carehomes <- NA
-            data$deaths_non_hosp <- NA
-            data$general <- NA
-            data$hosp <- NA
-            data$admitted <- NA
-            data$diagnoses <- NA
-            data$all_admission <- NA
-            data$sero_pos_15_64_1 <- NA
-            data$sero_tot_15_64_1 <- NA
-            data$sero_pos_15_64_2 <- NA
-            data$sero_tot_15_64_2 <- NA
-            data$pillar2_pos <- NA
-            data$pillar2_tot <- NA
-            data$pillar2_cases <- NA
-            data$pillar2_over25_pos <- NA
-            data$pillar2_over25_tot <- NA
-            data$pillar2_over25_cases <- NA
-            data$react_pos <- NA
-            data$react_tot <- NA
-            data$strain_non_variant <- NA
-            data$strain_tot <- NA
-            data$strain_over25_non_variant <- NA
-            data$strain_over25_tot <- NA
-            data$pillar2_under15_cases <- NA
-            data$pillar2_15_24_cases <- NA
-            data$pillar2_25_49_cases <- NA
-            data$pillar2_50_64_cases <- NA
-            data$pillar2_65_79_cases <- NA
-            data$pillar2_80_plus_cases <- NA
-            data$pillar2_under15_tot <- NA
-            data$pillar2_15_24_tot <- NA
-            data$pillar2_25_49_tot <- NA
-            data$pillar2_50_64_tot <- NA
-            data$pillar2_65_79_tot <- NA
-            data$pillar2_80_plus_tot <- NA
-            data$pillar2_under15_pos <- NA
-            data$pillar2_15_24_pos <- NA
-            data$pillar2_25_49_pos <- NA
-            data$pillar2_50_64_pos <- NA
-            data$pillar2_65_79_pos <- NA
-            data$pillar2_80_plus_pos <- NA
-
-            ## Example that should not cause error
-            pf <- lancelot_particle_filter(data, 10)
-            expect_s3_class(pf, "particle_filter")
-
-            ## Throw error
-            data$deaths_hosp_0_49 <- 1
-            data_deaths_hosp_65_69 <- 4
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to all ages aggregated for deaths if fitting to any
-           sub-groups")
-
-            ## Add populations and throw regional error
-            data <- rbind(data, data)
-            data$population <- rep(factor(letters[1:2]), each = 31)
-            expect_error(
-              lancelot_particle_filter(data, 10),
-              "cannot fit to all ages aggregated for deaths if fitting
-                     to any sub-groups for region a")
+    lancelot_check_data(data),
+    paste("Non-hospital deaths are not consistently split into total vs",
+          "care homes/community"))
 })
 
 
-test_that("lancelot_prepare_data does not allow more than one pillar 2,
-          strain data stream or pillar 2 double fitting", {
-            data <- sircovid_data(
-              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
-            ## Add additional columns
-            data$deaths_hosp <- NA
-            data$deaths_hosp_0_49 <- NA
-            data$deaths_hosp_50_54 <- NA
-            data$deaths_hosp_55_59 <- NA
-            data$deaths_hosp_60_64 <- NA
-            data$deaths_hosp_65_69 <- NA
-            data$deaths_hosp_70_74 <- NA
-            data$deaths_hosp_75_79 <- NA
-            data$deaths_hosp_80_plus <- NA
-            data$deaths_comm <- NA
-            data$deaths_carehomes <- NA
-            data$deaths_non_hosp <- NA
-            data$general <- NA
-            data$hosp <- NA
-            data$admitted <- NA
-            data$diagnoses <- NA
-            data$all_admission <- NA
-            data$sero_pos_15_64_1 <- NA
-            data$sero_tot_15_64_1 <- NA
-            data$sero_pos_15_64_2 <- NA
-            data$sero_tot_15_64_2 <- NA
-            data$pillar2_pos <- NA
-            data$pillar2_tot <- NA
-            data$pillar2_cases <- NA
-            data$pillar2_over25_pos <- NA
-            data$pillar2_over25_tot <- NA
-            data$pillar2_over25_cases <- NA
-            data$react_pos <- NA
-            data$react_tot <- NA
-            data$strain_non_variant <- NA
-            data$strain_tot <- NA
-            data$strain_over25_non_variant <- NA
-            data$strain_over25_tot <- NA
-            data$pillar2_under15_cases <- NA
-            data$pillar2_15_24_cases <- NA
-            data$pillar2_25_49_cases <- NA
-            data$pillar2_50_64_cases <- NA
-            data$pillar2_65_79_cases <- NA
-            data$pillar2_80_plus_cases <- NA
-            data$pillar2_under15_tot <- NA
-            data$pillar2_15_24_tot <- NA
-            data$pillar2_25_49_tot <- NA
-            data$pillar2_50_64_tot <- NA
-            data$pillar2_65_79_tot <- NA
-            data$pillar2_80_plus_tot <- NA
-            data$pillar2_under15_pos <- NA
-            data$pillar2_15_24_pos <- NA
-            data$pillar2_25_49_pos <- NA
-            data$pillar2_50_64_pos <- NA
-            data$pillar2_65_79_pos <- NA
-            data$pillar2_80_plus_pos <- NA
+test_that("lancelot_check_data disallows double fitting to deaths", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## disaggregated hospital deaths
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
 
-            ## Example that should not cause error
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$strain_non_variant <- 8
-            data$strain_tot <- 10
-            pf <- lancelot_particle_filter(data, 10)
-            expect_s3_class(pf, "particle_filter")
+  expect_silent(lancelot_check_data(data))
 
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$pillar2_cases <- 5
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to pillar 2 cases and positivity together")
+  ## Throw error
+  data$deaths_hosp_0_49 <- 1
+  data_deaths_hosp_65_69 <- 4
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to all ages aggregated for deaths if fitting to any sub-groups")
 
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$pillar2_cases <- NA
-            data$pillar2_25_49_cases <- 5
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to pillar 2 cases and positivity together")
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
 
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$pillar2_25_49_cases <- NA
-            data$pillar2_under15_pos <- 3
-            data$pillar2_under15_tot <- 6
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to all ages aggregated for pillar 2 if fitting to")
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to all ages aggregated for deaths if")
+})
 
-            data$pillar2_pos <- NA
-            data$pillar2_tot <- NA
-            data$pillar2_over25_cases <- 5
-            data$pillar2_65_79_cases <- 4
-            data$pillar2_under15_pos <- NA
-            data$pillar2_under15_tot <- NA
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to over 25s for pillar 2 if fitting to any over 25")
 
-            data$pillar2_over25_cases <- NA
-            data$pillar2_65_79_cases <- NA
-            data$strain_non_variant <- 8
-            data$strain_tot <- 10
-            data$strain_over25_non_variant <- 6
-            data$strain_over25_tot <- 9
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to more than one strain data stream")
+test_that("lancelot_check_data prevents pillar 2 double fitting", {
+  ## does not allow more than one pillar 2, strain data stream or
+  ## pillar 2 double fitting
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
 
-          })
+  ## Example that should not cause error
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$strain_non_variant <- 8
+  data$strain_tot <- 10
+  expect_silent(lancelot_check_data(data))
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- 5
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to pillar 2 cases and positivity together")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_cases <- NA
+  data$pillar2_25_49_cases <- 5
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to pillar 2 cases and positivity together")
+
+  data$pillar2_pos <- 3
+  data$pillar2_tot <- 6
+  data$pillar2_25_49_cases <- NA
+  data$pillar2_under15_pos <- 3
+  data$pillar2_under15_tot <- 6
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to all ages aggregated for pillar 2 if fitting to")
+
+  data$pillar2_pos <- NA
+  data$pillar2_tot <- NA
+  data$pillar2_over25_cases <- 5
+  data$pillar2_65_79_cases <- 4
+  data$pillar2_under15_pos <- NA
+  data$pillar2_under15_tot <- NA
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to over 25s for pillar 2 if fitting to any over 25")
+
+  data$pillar2_over25_cases <- NA
+  data$pillar2_65_79_cases <- NA
+  data$strain_non_variant <- 8
+  data$strain_tot <- 10
+  data$strain_over25_non_variant <- 6
+  data$strain_over25_tot <- 9
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to more than one strain data stream")
+})
 
 
 test_that("the lancelot sircovid model has 19 groups", {
@@ -1029,132 +870,76 @@ test_that("the lancelot sircovid model has 19 groups", {
 })
 
 
-test_that("lancelot_prepare_data does not allow more than one pillar 2
-          or strain data stream (II)", {
-            data <- sircovid_data(
-              read_csv(sircovid_file("extdata/example.csv")), 1, 0.25)
-            class(data)[1] <- "particle_filter_data_nested"
-            ## Add additional columns
-            data$deaths_hosp <- NA
-            data$deaths_hosp_0_49 <- NA
-            data$deaths_hosp_50_54 <- NA
-            data$deaths_hosp_55_59 <- NA
-            data$deaths_hosp_60_64 <- NA
-            data$deaths_hosp_65_69 <- NA
-            data$deaths_hosp_70_74 <- NA
-            data$deaths_hosp_75_79 <- NA
-            data$deaths_hosp_80_plus <- NA
-            data$deaths_comm <- NA
-            data$deaths_carehomes <- NA
-            data$deaths_non_hosp <- NA
-            data$general <- NA
-            data$hosp <- NA
-            data$admitted <- NA
-            data$diagnoses <- NA
-            data$all_admission <- NA
-            data$sero_pos_15_64_1 <- NA
-            data$sero_tot_15_64_1 <- NA
-            data$sero_pos_15_64_2 <- NA
-            data$sero_tot_15_64_2 <- NA
-            data$pillar2_pos <- NA
-            data$pillar2_tot <- NA
-            data$pillar2_cases <- NA
-            data$pillar2_over25_pos <- NA
-            data$pillar2_over25_tot <- NA
-            data$pillar2_over25_cases <- NA
-            data$react_pos <- NA
-            data$react_tot <- NA
-            data$strain_non_variant <- NA
-            data$strain_tot <- NA
-            data$strain_over25_non_variant <- NA
-            data$strain_over25_tot <- NA
-            data$pillar2_under15_cases <- NA
-            data$pillar2_15_24_cases <- NA
-            data$pillar2_25_49_cases <- NA
-            data$pillar2_50_64_cases <- NA
-            data$pillar2_65_79_cases <- NA
-            data$pillar2_80_plus_cases <- NA
-            data$pillar2_under15_tot <- NA
-            data$pillar2_15_24_tot <- NA
-            data$pillar2_25_49_tot <- NA
-            data$pillar2_50_64_tot <- NA
-            data$pillar2_65_79_tot <- NA
-            data$pillar2_80_plus_tot <- NA
-            data$pillar2_under15_pos <- NA
-            data$pillar2_15_24_pos <- NA
-            data$pillar2_25_49_pos <- NA
-            data$pillar2_50_64_pos <- NA
-            data$pillar2_65_79_pos <- NA
-            data$pillar2_80_plus_pos <- NA
+test_that("lancelot_check_data prevents pillar 2 double fitting (nested)", {
+  ## does not allow more than one pillar 2, strain data stream or
+  ## pillar 2 double fitting (for grouped data)
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
 
-            ## Example that should not cause error
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
+  ## Example that should not cause error
+  data2$pillar2_pos <- 3
+  data2$pillar2_tot <- 6
+  expect_silent(lancelot_check_data(data2))
 
-            ## Add populations
-            data <- rbind(data, data)
-            data$population <- rep(factor(letters[1:2]), each = 31)
-            attr(data, "population") <- "population"
-            attr(data, "populations") <- c("a", "b")
-            pf <- lancelot_particle_filter(data, 10)
-            expect_s3_class(pf, "particle_filter")
+  ## Error if one region has multiple streams
+  data2$pillar2_pos <- 3
+  data2$pillar2_tot <- 6
+  data2$pillar2_cases <- 5
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to pillar 2 cases and positivity together")
 
-            ## Error if one region has multiple streams
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$pillar2_cases <- 5
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to pillar 2 cases and positivity together")
+  data2$pillar2_pos <- 3
+  data2$pillar2_tot <- 6
+  data2$pillar2_cases <- NA
+  data2$pillar2_25_49_cases <- 5
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to pillar 2 cases and positivity together")
 
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$pillar2_cases <- NA
-            data$pillar2_25_49_cases <- 5
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to pillar 2 cases and positivity together")
+  data2$pillar2_pos <- 3
+  data2$pillar2_tot <- 6
+  data2$pillar2_25_49_cases <- NA
+  data2$pillar2_under15_pos <- 3
+  data2$pillar2_under15_tot <- 6
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to all ages aggregated for pillar 2 if fitting")
 
-            data$pillar2_pos <- 3
-            data$pillar2_tot <- 6
-            data$pillar2_25_49_cases <- NA
-            data$pillar2_under15_pos <- 3
-            data$pillar2_under15_tot <- 6
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to all ages aggregated for pillar 2 if fitting")
+  data2$pillar2_pos <- NA
+  data2$pillar2_tot <- NA
+  data2$pillar2_over25_cases <- 5
+  data2$pillar2_65_79_cases <- 4
+  data2$pillar2_under15_pos <- NA
+  data2$pillar2_under15_tot <- NA
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to over 25s for pillar 2 if fitting to any over")
 
-            data$pillar2_pos <- NA
-            data$pillar2_tot <- NA
-            data$pillar2_over25_cases <- 5
-            data$pillar2_65_79_cases <- 4
-            data$pillar2_under15_pos <- NA
-            data$pillar2_under15_tot <- NA
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to over 25s for pillar 2 if fitting to any over")
+  data2$pillar2_over25_cases <- NA
+  data2$pillar2_65_79_cases <- NA
+  data2$strain_non_variant <- 8
+  data2$strain_tot <- 10
+  data2$strain_over25_non_variant <- 6
+  data2$strain_over25_tot <- 9
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to more than one strain data stream")
 
-            data$pillar2_over25_cases <- NA
-            data$pillar2_65_79_cases <- NA
-            data$strain_non_variant <- 8
-            data$strain_tot <- 10
-            data$strain_over25_non_variant <- 6
-            data$strain_over25_tot <- 9
-            expect_error(
-              lancelot_particle_filter(data),
-              "Cannot fit to more than one strain data stream")
-
-            ## Don't error if two regions have different streams
-            data[1:31, "pillar2_cases"] <- 3
-            data[32:62, "pillar2_pos"] <- 3
-            data[32:62, "pillar2_tot"] <- 5
-            data[1:31, "strain_non_variant"] <- NA
-            data[1:31, "strain_tot"] <- NA
-            data[32:62, "strain_over25_non_variant"] <- NA
-            data[32:62, "strain_over25_tot"] <- NA
-            pf <- lancelot_particle_filter(data, 10)
-            expect_s3_class(pf, "particle_filter")
-          })
+  ## Don't error if two regions have different streams
+  i1 <- seq_len(nrow(data))
+  i2 <- i1 + nrow(data)
+  data2[i1, "pillar2_cases"] <- 3
+  data2[i2, "pillar2_pos"] <- 3
+  data2[i2, "pillar2_tot"] <- 5
+  data2[i1, "strain_non_variant"] <- NA
+  data2[i1, "strain_tot"] <- NA
+  data2[i2, "strain_over25_non_variant"] <- NA
+  data2[i2, "strain_over25_tot"] <- NA
+  expect_silent(lancelot_check_data(data2))
+})
 
 
 test_that("lancelot check severity works as expected", {

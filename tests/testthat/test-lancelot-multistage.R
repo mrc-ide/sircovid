@@ -26,11 +26,11 @@ test_that("can run a multistage particle filter", {
                                 p2, inflate_state_strains)))
 
   ## The usual test data set for the filter:
-  data <- lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
-                        0, p1$dt)
+  data <- helper_lancelot_data(read_csv(sircovid_file("extdata/example.csv")),
+                               0, p1$dt)
 
   ## Construct the filter with the existing functions
-  filter <- lancelot_particle_filter(data, n_particles = 10, seed = 1L)
+  filter <- helper_lancelot_particle_filter(data, n_particles = 10, seed = 1L)
 
   ## The first case runs the filter just on the first parameter set
   ## over the data
