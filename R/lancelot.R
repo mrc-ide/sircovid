@@ -714,7 +714,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' @param rt logical parameter output trajectories required for
 ##'   calculating Rt (default = FALSE)
 ##'
-##' @param cum_admit logical parameter whether to output cumulative
+##' @param cum_admit Logical, whether to output cumulative
 ##'   admissions by age (default = FALSE)
 ##'
 ##' @param diagnoses_admitted Logical, whether to output
