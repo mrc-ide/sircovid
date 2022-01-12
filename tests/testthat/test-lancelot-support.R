@@ -771,7 +771,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$infections_inc,
       info$index$diagnoses_admitted))
 
-  index_cum_infections_disag <- lancelot_index(info, cum_infections_disag = TRUE)
+  index_cum_infections_disag <- lancelot_index(info,
+   cum_infections_disag = TRUE)
   expect_equal(
     unname(
       index_cum_infections_disag$state[!names(index_cum_infections_disag$state)
