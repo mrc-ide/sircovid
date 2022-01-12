@@ -4,11 +4,35 @@
 \alias{lancelot_index}
 \title{Index of lancelot model}
 \usage{
-lancelot_index(info)
+lancelot_index(
+  info,
+  rt = FALSE,
+  cum_admit = FALSE,
+  diagnoses_admitted = FALSE,
+  cum_infections_disag = FALSE,
+  cum_n_vaccinated = FALSE
+)
 }
 \arguments{
 \item{info}{The result of running the \verb{$info()} method on an
 initialised \link{basic} model}
+
+\item{rt}{logical parameter output trajectories required for
+calculating Rt (default = FALSE)}
+
+\item{cum_admit}{logical parameter whether to output cumulative
+admissions by age (default = FALSE)}
+
+\item{diagnoses_admitted}{logical parameter whether to output
+cumulative combined confirmed admissions and inpatient
+diagnoses by age and vaccine class (default = FALSE)}
+
+\item{cum_infections_disag}{logical parameter whether to output
+cumulative infections by age and vaccine class (default = FALSE)}
+
+\item{cum_n_vaccinated}{logical parameter whether to output
+cumulative number vaccinated by age and vaccine class
+(default = FALSE)}
 }
 \value{
 A list with element \code{run}, indicating the locations of (in
