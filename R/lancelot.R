@@ -711,7 +711,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'
 ##' @inheritParams basic_index
 ##'
-##' @param rt logical parameter output trajectories required for
+##' @param rt Logical, whether to output trajectories required for
 ##'   calculating Rt (default = FALSE)
 ##'
 ##' @param cum_admit Logical, whether to output cumulative
