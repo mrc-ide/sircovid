@@ -50,7 +50,7 @@ reference_data_lancelot_mcmc <- function() {
 reference_data_lancelot_trajectories <- function() {
   load_reference("data/lancelot_trajectories.rds", {
     dat <- reference_data_lancelot_mcmc()
-    incidence <- "deaths"
+    incidence <- "icu"
     lancelot_forecast(dat, 3, 5, 10, incidence, TRUE)
   })
 }

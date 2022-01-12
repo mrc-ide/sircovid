@@ -19,7 +19,7 @@ test_that("adding incidence adds appropriate states", {
 
 test_that("can add and remove trajectories from mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
-  v <- c("deaths", "icu")
+  v <- c("general", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
                    add_trajectory_incidence(dat$trajectories, v))
@@ -30,10 +30,10 @@ test_that("can add and remove trajectories from mcstate_pmcmc objects", {
 
 test_that("can compute incidence for a single variable", {
   dat <- reference_data_lancelot_mcmc()
-  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
-  res <- add_trajectory_incidence(dat$trajectories, "deaths")
-  expect_identical(res$state["deaths_inc", , ],
-                   cmp$state["deaths_inc", , ])
+  cmp <- add_trajectory_incidence(dat$trajectories, c("general", "icu"))
+  res <- add_trajectory_incidence(dat$trajectories, "general")
+  expect_identical(res$state["general_inc", , ],
+                   cmp$state["general_inc", , ])
 })
 
 
@@ -52,7 +52,7 @@ test_that("Can drop predictions from trajectories", {
 
 test_that("Can compute forecasts from mcmc output", {
   dat <- reference_data_lancelot_mcmc()
-  res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"))
+  res <- lancelot_forecast(dat, 3, 5, 10, c("general", "icu"))
 
   expect_equal(dim(res$pars), c(3, 2))
   expect_equal(dim(res$probabilities), c(3, 3))
@@ -60,14 +60,14 @@ test_that("Can compute forecasts from mcmc output", {
   expect_equal(dim(res$trajectories$state),
                dim(dat$trajectories$state) + c(2, -8, 10))
 
-  expect_true(all(c("deaths_inc", "icu_inc") %in%
+  expect_true(all(c("general_inc", "icu_inc") %in%
                     rownames(res$trajectories$state)))
 })
 
 
 test_that("Can compute forecasts from mcmc output without prepending", {
   dat <- reference_data_lancelot_mcmc()
-  res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"),
+  res <- lancelot_forecast(dat, 3, 5, 10, c("general", "icu"),
                            FALSE)
 
   expect_equal(dim(res$pars), c(3, 2))
@@ -75,7 +75,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
   expect_equal(dim(res$state), c(nrow(dat$state), 3))
   expect_equal(dim(res$trajectories$state),
                c(nrow(dat$trajectories$state) + 2, 3, 11))
-  expect_true(all(c("deaths_inc", "icu_inc") %in%
+  expect_true(all(c("general_inc", "icu_inc") %in%
                     rownames(res$trajectories$state)))
 })
 
@@ -83,7 +83,7 @@ test_that("Can compute forecasts from mcmc output without prepending", {
 test_that("Can compute forecasts from mcmc output with thinned sample", {
   dat <- reference_data_lancelot_mcmc()
 
-  res_thin <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
+  res_thin <- lancelot_forecast(dat, 3, 2, 10, c("general", "icu"),
                                 FALSE, random_sample = FALSE, thin = 3)
   expect_equal(res_thin$iteration, c(2, 5, 8))
 
@@ -91,7 +91,7 @@ test_that("Can compute forecasts from mcmc output with thinned sample", {
   ## For comparison, typically would not expect random sampling to produce
   ## same samples as thinned sampling
   set.seed(1)
-  res_random <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
+  res_random <- lancelot_forecast(dat, 3, 2, 10, c("general", "icu"),
                                   FALSE, random_sample = TRUE)
   expect_false(all(res_random$iteration == c(2, 5, 8)))
 })
@@ -99,7 +99,7 @@ test_that("Can compute forecasts from mcmc output with thinned sample", {
 
 test_that("Can compute forecasts from mcmc output with forecast_days = 0", {
   dat <- reference_data_lancelot_mcmc()
-  res <- lancelot_forecast(dat, 3, 5, 0, c("deaths", "icu"),
+  res <- lancelot_forecast(dat, 3, 5, 0, c("general", "icu"),
                            FALSE)
 
   ## with forecast_days = 0, we will have no forecasting
@@ -243,7 +243,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(176, 11, 2, 32),
+    dat$trajectories$state, c(69, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -251,9 +251,9 @@ test_that("adding incidence adds appropriate states - nested", {
 
   tmp <- res$state["icu_inc", , , ]
   expect_true(all(is.na(tmp[, 2, 1:2])))
-  deaths <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
+  icu <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
   expect_equal(
-    deaths,
+    icu,
     res$state["icu", , 2,  -c(1, 2)] -
       res$state["icu", , 2,  2])
 
@@ -266,7 +266,7 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(176, 11, 2, 32),
+    dat$trajectories$state, c(69, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   v <- "icu"
@@ -281,7 +281,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(176, 11, 2, 32),
+    dat$trajectories$state, c(69, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -294,10 +294,8 @@ test_that("can compute incidence for a single variable - nested", {
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+  index_inc <- grep("infections_inc", names(dat$predict$index))
+  inc <- dat$trajectories$state[index_inc, , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -321,10 +319,8 @@ test_that("can combine EpiEstim rt calculations over trajectories", {
 test_that("can combine EpiEstim rt over trajectories without reordering", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+  index_inc <- grep("infections_inc", names(dat$predict$index))
+  inc <- dat$trajectories$state[index_inc, , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -348,10 +344,8 @@ test_that("can combine EpiEstim rt over trajectories without reordering", {
 test_that("Combining EpiEstim rt reject invalid inputs", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+  index_inc <- grep("infections_inc", names(dat$predict$index))
+  inc <- dat$trajectories$state[index_inc, , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 

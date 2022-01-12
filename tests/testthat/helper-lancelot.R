@@ -35,13 +35,18 @@ helper_lancelot_data <- function(data, start_date, dt) {
 helper_lancelot_particle_filter <- function(data, n_particles,
                                             n_threads = 1L, seed = NULL,
                                             compiled_compare = FALSE) {
+
+  fit_index <- function(info) {
+    lancelot_index(info, rt = TRUE)
+  }
+
   lancelot_check_data(data)
   mcstate::particle_filter$new(
     data,
     lancelot,
     n_particles,
     if (compiled_compare) NULL else lancelot_compare,
-    lancelot_index,
+    fit_index,
     lancelot_initial,
     n_threads,
     seed)
