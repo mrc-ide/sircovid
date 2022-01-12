@@ -783,7 +783,7 @@ lancelot_index <- function(info, rt = FALSE, cum_admit = FALSE,
                   react_pos = index[["react_pos"]])
 
   ## Only incidence versions for the likelihood now. We add time here so it
-  ## can be used in the compare, without having to save it
+  ## can be used in the compare, without having to save it.
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
                               "deaths_comm_inc", "deaths_hosp_inc",
