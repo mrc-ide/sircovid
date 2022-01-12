@@ -721,7 +721,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'   cumulative combined confirmed admissions and inpatient
 ##'   diagnoses by age and vaccine class (default = FALSE)
 ##'
-##' @param cum_infections_disag logical parameter whether to output
+##' @param cum_infections_disag Logical, whether to output
 ##'   cumulative infections by age and vaccine class (default = FALSE)
 ##'
 ##' @param cum_n_vaccinated Logical, whether to output
