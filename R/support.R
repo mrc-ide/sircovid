@@ -445,6 +445,10 @@ reorder_sample <- function(sample, rank) {
   if (!is.null(sample$chain)) {
     sample$chain <- sample$chain[rank]
   }
+  ## This looks like a no-op, but acts to drop any "full" parameters
+  ## (using mcstate 0.8.2 or later).  Without this, the
+  ## pars/probability subsetting will behave unexpectedly.
+  sample <- mcstate::pmcmc_thin(sample)
   sample$iteration <- sample$iteration[rank]
   sample$pars <- sample$pars[rank, ]
   sample$probabilities <- sample$probabilities[rank, ]
