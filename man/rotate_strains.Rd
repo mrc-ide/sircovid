@@ -4,12 +4,17 @@
 \alias{rotate_strains}
 \title{Rotate strains}
 \usage{
-rotate_strains(state, info)
+rotate_strains(state, info, ...)
 }
 \arguments{
 \item{state}{Model state}
 
 \item{info}{Model info}
+
+\item{...}{Additional arguments, ignored. This exists so that this
+function can be used as an argument to
+\link[mcstate:multistage_epoch]{mcstate::multistage_epoch}.  Practically your two model
+informations in this case would be equivalent.}
 }
 \description{
 Rotate strains, so that strain 1 becomes the sum of strains 1 and
