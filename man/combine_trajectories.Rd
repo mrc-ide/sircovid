@@ -7,7 +7,7 @@
 combine_trajectories(samples, rank = TRUE)
 }
 \arguments{
-\item{samples}{A list of samples from \code{\link[=lancelot_forecast]{lancelot_forecast()}}}
+\item{samples}{A list of samples from \link[mcstate:pmcmc]{mcstate::pmcmc}}
 
 \item{rank}{Logical, indicating if trajectories should be ranked
 before combination.}

@@ -37,76 +37,6 @@ test_that("can compute incidence for a single variable", {
 })
 
 
-test_that("Can drop predictions from trajectories", {
-  dat <- reference_data_lancelot_mcmc()
-  dat$trajectories$date <- dat$trajectories$step / 4
-  res <- lancelot_forecast(dat, 0, 0, 10, NULL)
-  ans <- drop_trajectory_predicted(res)
-
-  expect_equal(drop_trajectory_predicted(res), dat)
-  expect_equal(drop_trajectory_predicted(dat), dat)
-  expect_equal(drop_trajectory_predicted(res$trajectories), dat$trajectories)
-  expect_equal(drop_trajectory_predicted(dat$trajectories), dat$trajectories)
-})
-
-
-test_that("Can compute forecasts from mcmc output", {
-  dat <- reference_data_lancelot_mcmc()
-  res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"))
-
-  expect_equal(dim(res$pars), c(3, 2))
-  expect_equal(dim(res$probabilities), c(3, 3))
-  expect_equal(dim(res$state), c(nrow(dat$state), 3))
-  expect_equal(dim(res$trajectories$state),
-               dim(dat$trajectories$state) + c(2, -8, 10))
-
-  expect_true(all(c("deaths_inc", "icu_inc") %in%
-                    rownames(res$trajectories$state)))
-})
-
-
-test_that("Can compute forecasts from mcmc output without prepending", {
-  dat <- reference_data_lancelot_mcmc()
-  res <- lancelot_forecast(dat, 3, 5, 10, c("deaths", "icu"),
-                           FALSE)
-
-  expect_equal(dim(res$pars), c(3, 2))
-  expect_equal(dim(res$probabilities), c(3, 3))
-  expect_equal(dim(res$state), c(nrow(dat$state), 3))
-  expect_equal(dim(res$trajectories$state),
-               c(nrow(dat$trajectories$state) + 2, 3, 11))
-  expect_true(all(c("deaths_inc", "icu_inc") %in%
-                    rownames(res$trajectories$state)))
-})
-
-
-test_that("Can compute forecasts from mcmc output with thinned sample", {
-  dat <- reference_data_lancelot_mcmc()
-
-  res_thin <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
-                                FALSE, random_sample = FALSE, thin = 3)
-  expect_equal(res_thin$iteration, c(2, 5, 8))
-
-
-  ## For comparison, typically would not expect random sampling to produce
-  ## same samples as thinned sampling
-  set.seed(1)
-  res_random <- lancelot_forecast(dat, 3, 2, 10, c("deaths", "icu"),
-                                  FALSE, random_sample = TRUE)
-  expect_false(all(res_random$iteration == c(2, 5, 8)))
-})
-
-
-test_that("Can compute forecasts from mcmc output with forecast_days = 0", {
-  dat <- reference_data_lancelot_mcmc()
-  res <- lancelot_forecast(dat, 3, 5, 0, c("deaths", "icu"),
-                           FALSE)
-
-  ## with forecast_days = 0, we will have no forecasting
-  expect_true(all(!res$trajectories$predicted))
-})
-
-
 test_that("Can combine trajectories of equal size - rank = FALSE", {
   dat <- reference_data_lancelot_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
@@ -401,8 +331,8 @@ test_that("reorder_sample rejects invalid inputs", {
                "'sample' should be an 'mcstate_pmcmc' object",
                fixed = TRUE)
 
-  expect_error(reorder_sample(dat, 1:10),
-               "Unexpected length for 'rank': 10 ; should have length 3",
+  expect_error(reorder_sample(dat, 1:50),
+               "Unexpected length for 'rank': 50 ; should have length 10",
                fixed = TRUE)
 })
 
@@ -411,7 +341,7 @@ test_that("reorder_sample returns expected output", {
   dat <- reference_data_lancelot_trajectories()
 
   ## maintaining the initial order returns the same as input
-  expect_equal(reorder_sample(dat, 1:3), dat)
+  expect_equal(reorder_sample(dat, 1:10), dat)
 
   ## ordering and then ordering back returns the same as input
   # order by increasing cumulative incidence
@@ -419,9 +349,9 @@ test_that("reorder_sample returns expected output", {
   dat2 <- reorder_sample(dat, rnk1)
   rnk2 <- get_sample_rank(dat2, by = "infections")
   # check this is now ordered by increasing incidence
-  expect_equal(rnk2, 1:3)
+  expect_equal(rnk2, 1:10)
   # apply revert ordering
-  dat3 <- reorder_sample(dat2, match(1:3, rnk1))
+  dat3 <- reorder_sample(dat2, match(1:10, rnk1))
   # check we are back to initial object
   expect_equal(dat3, dat)
 
@@ -444,8 +374,8 @@ test_that("reorder_rt_ifr rejects invalid inputs", {
                "'x' should be an 'Rt_trajectories' or 'IFR_t_trajectories'",
                fixed = TRUE)
 
-  expect_error(reorder_rt_ifr(rt, 1:10),
-               "Unexpected length for 'rank': 10 ; should have length 3",
+  expect_error(reorder_rt_ifr(rt, 1:50),
+               "Unexpected length for 'rank': 50 ; should have length 10",
                fixed = TRUE)
 
 })
@@ -464,14 +394,14 @@ test_that("reorder_rt_ifr returns expected output", {
     shared_parameters = FALSE)
 
   ## maintaining the initial order returns the same as input
-  expect_equal(reorder_rt_ifr(rt, 1:3), rt)
+  expect_equal(reorder_rt_ifr(rt, 1:10), rt)
 
   ## ordering and then ordering back returns the same as input
   # order by increasing cumulative incidence
   rnk1 <- get_sample_rank(dat, by = "infections")
   rt2 <- reorder_rt_ifr(rt, rnk1)
   # apply revert ordering
-  rt3 <- reorder_rt_ifr(rt2, match(1:3, rnk1))
+  rt3 <- reorder_rt_ifr(rt2, match(1:10, rnk1))
   # check we are back to initial object
   expect_equal(rt3, rt)
 

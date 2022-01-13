@@ -335,7 +335,7 @@ drop_trajectory_predicted <- function(obj) {
 ##'
 ##' @title Combine trajectories
 ##'
-##' @param samples A list of samples from [lancelot_forecast()]
+##' @param samples A list of samples from [mcstate::pmcmc]
 ##'
 ##' @param rank Logical, indicating if trajectories should be ranked
 ##'   before combination.
@@ -495,7 +495,7 @@ reorder_rt_ifr <- function(x, rank) {
 ##'   [lancelot_Rt_trajectories()] (though any Rt calculation that
 ##'   confirms to this will work)
 ##'
-##' @param samples A list of samples from [lancelot_forecast()]
+##' @param samples A list of samples from [mcstate::pmcmc]
 ##'
 ##' @param rank A boolean deciding whether to rank trajectories by increasing
 ##' incidence or not before combining Rt estimates
@@ -522,7 +522,7 @@ combine_rt <- function(rt, samples, rank = TRUE) {
 ##'   [lancelot_rt_trajectories_epiestim()] (though any Rt calculation that
 ##'   confirms to this will work)
 ##'
-##' @param samples A list of samples from [lancelot_forecast()]
+##' @param samples A list of samples from [mcstate::pmcmc]
 ##'
 ##' @param q A vector of quantiles to return values for
 ##'
