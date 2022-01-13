@@ -1,5 +1,12 @@
 context("pmcmc")
 
+test_that("adding no incidence leaves object the same", {
+  dat <- reference_data_lancelot_mcmc()
+  res <- add_trajectory_incidence(dat$trajectories, NULL)
+  expect_identical(res, dat$trajectories)
+})
+
+
 test_that("adding incidence adds appropriate states", {
   dat <- reference_data_lancelot_mcmc()
   res <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -355,6 +362,23 @@ test_that("reorder_sample returns expected output", {
   # check we are back to initial object
   expect_equal(dat3, dat)
 
+})
+
+
+test_that("reorder_sample tolerates multiple chains", {
+  dat <- reference_data_lancelot_trajectories()
+  dat$chain <- rep(1:2, each = 5)
+  dat$iteration <- rep(1:5, 2)
+
+  ## maintaining the initial order returns the same as input
+  expect_equal(reorder_sample(dat, 1:10), dat)
+
+  ## ordering and then ordering back returns the same as input
+  # order by increasing cumulative incidence
+  rnk1 <- get_sample_rank(dat, by = "infections")
+  dat2 <- reorder_sample(dat, rnk1)
+  expect_equal(get_sample_rank(dat2, by = "infections"), 1:10)
+  expect_equal(dat2$chain, dat$chain[rnk1])
 })
 
 
