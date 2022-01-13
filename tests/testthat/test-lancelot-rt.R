@@ -188,7 +188,7 @@ test_that("can't compute Rt for unknown types", {
 
 
 test_that("Can interpolate Rt with step changes", {
-  skip("Needs updating without add_future_betas")
+  skip("Needs updating without add_future_betas/sircovid_simulate*")
   dat <- reference_data_lancelot_mcmc()
   rt <- local({
     p <- lapply(seq_len(nrow(dat$pars)), function(i)

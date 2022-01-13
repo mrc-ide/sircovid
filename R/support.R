@@ -306,31 +306,6 @@ drop_trajectory_incidence <- function(obj) {
 }
 
 
-##' Drop predicted elements from a set of trajectories
-##'
-##' @title Drop predictions from trajectories
-##'
-##' @param obj A `mcstate_trajectories` or `mcstate_pmcmc` object to
-##'   update
-##'
-##' @export
-drop_trajectory_predicted <- function(obj) {
-  if (inherits(obj, "mcstate_pmcmc")) {
-    obj$trajectories <- drop_trajectory_predicted(obj$trajectories)
-    return(obj)
-  }
-
-  k <- which(obj$predicted)
-  if (length(k) > 0) {
-    obj$step <- obj$step[-k]
-    obj$predicted <- obj$predicted[-k]
-    obj$date <- obj$date[-k]
-    obj$state <- obj$state[, , -k]
-  }
-  obj
-}
-
-
 ##' Combine trajectories across multiple runs
 ##'
 ##' @title Combine trajectories
