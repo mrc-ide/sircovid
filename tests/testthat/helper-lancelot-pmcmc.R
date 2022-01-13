@@ -47,11 +47,22 @@ reference_data_lancelot_mcmc <- function() {
 }
 
 
+## This is the remains of lancelot_forecast, since removed from the
+## package; it is used in some integration tests elsewhere in the
+## package, but the objects these would be used on in practice are
+## build by spimalot.
 reference_data_lancelot_trajectories <- function() {
   load_reference("data/lancelot_trajectories.rds", {
     dat <- reference_data_lancelot_mcmc()
     incidence <- "deaths"
-    lancelot_forecast(dat, 3, 5, 10, incidence, TRUE)
+    ret <- mcstate::pmcmc_thin(dat)
+    steps_predict <- seq(ret$predict$step, length.out = 11,
+                         by = ret$predict$rate)
+    ret$trajectories <- mcstate::pmcmc_predict(
+      ret, steps_predict, prepend_trajectories = TRUE)
+    ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
+    ret$trajectories <- add_trajectory_incidence(ret$trajectories, "deaths")
+    ret
   })
 }
 

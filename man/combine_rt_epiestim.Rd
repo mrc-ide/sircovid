@@ -11,7 +11,7 @@ combine_rt_epiestim(rt, samples, q = NULL, rank = TRUE)
 \code{\link[=lancelot_rt_trajectories_epiestim]{lancelot_rt_trajectories_epiestim()}} (though any Rt calculation that
 confirms to this will work)}
 
-\item{samples}{A list of samples from \code{\link[=lancelot_forecast]{lancelot_forecast()}}}
+\item{samples}{A list of samples from \link[mcstate:pmcmc]{mcstate::pmcmc}}
 
 \item{q}{A vector of quantiles to return values for}
 

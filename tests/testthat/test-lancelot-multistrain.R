@@ -3148,6 +3148,7 @@ test_that("Can calculate Rt with asymmetric cross immunity", {
 
 
 test_that("Can interpolate multistrain Rt", {
+  skip("Needs updating without add_future_betas/sircovid_simulate*")
   dat <- reference_data_lancelot_mcmc()
   rt <- local({
     p <- lapply(seq_len(nrow(dat$pars)), function(i)
