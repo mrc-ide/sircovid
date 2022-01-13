@@ -16,9 +16,6 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/add_future_betas.html</loc>
-  </url>
-  <url>
     <loc>/reference/add_trajectory_incidence.html</loc>
   </url>
   <url>
@@ -52,9 +49,6 @@
     <loc>/reference/compile_gpu.html</loc>
   </url>
   <url>
-    <loc>/reference/drop_trajectory_predicted.html</loc>
-  </url>
-  <url>
     <loc>/reference/get_sample_rank.html</loc>
   </url>
   <url>
@@ -83,9 +77,6 @@
   </url>
   <url>
     <loc>/reference/lancelot_compare.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lancelot_forecast.html</loc>
   </url>
   <url>
     <loc>/reference/lancelot_index.html</loc>
@@ -143,12 +134,6 @@
   </url>
   <url>
     <loc>/reference/sircovid_parameters_severity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sircovid_simulate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sircovid_simulate_events.html</loc>
   </url>
   <url>
     <loc>/reference/upgrade_state.html</loc>
