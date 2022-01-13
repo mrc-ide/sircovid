@@ -19,7 +19,7 @@ of strains."><meta property="og:image" content="/logo.png"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.33</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.34</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@ of strains.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">rotate_strains</span><span class="op">(</span><span class="va">state</span>, <span class="va">info</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">rotate_strains</span><span class="op">(</span><span class="va">state</span>, <span class="va">info</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -66,6 +66,11 @@ of strains.</p>
 <dd><p>Model state</p></dd>
 <dt>info</dt>
 <dd><p>Model info</p></dd>
+<dt>...</dt>
+<dd><p>Additional arguments, ignored. This exists so that this
+function can be used as an argument to
+<a href="https://rdrr.io/pkg/mcstate/man/multistage_epoch.html" class="external-link">mcstate::multistage_epoch</a>.  Practically your two model
+informations in this case would be equivalent.</p></dd>
 </dl></div>
 
   </div>
@@ -80,7 +85,7 @@ of strains.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>
