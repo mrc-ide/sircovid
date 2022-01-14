@@ -302,10 +302,17 @@ NULL
 ##'   recovering from another) can be turned off by setting
 ##'   `cross_immunity = 1`.
 ##'
+##' @param n_real_strains Number of real strains, default is 2.
+##'   Value should be '1' (single-strain model) or '2' (multi-strain).
+##'
+##' @param n_vacc_classes Number of vaccine classes. Should match the third
+##'   dimension of `rel_susceptibility`.
+##'
 ##' @return A list of inputs to the model, many of which are fixed and
 ##'   represent data. These correspond largely to `user()` calls
 ##'   within the odin code, though some are also used in processing
 ##'   just before the model is run.
+##'
 ##'
 ##' @export
 ##' @examples
@@ -470,9 +477,19 @@ lancelot_parameters <- function(start_date, region,
                                 vacc_skip_weight = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
-                                cross_immunity = 1) {
+                                cross_immunity = 1,
+                                n_real_strains = 1L,
+                                n_vacc_classes = 1L) {
 
-  n_real_strains <- length(strain_transmission)
+  stopifnot(n_real_strains == length(strain_transmission))
+
+  if (n_real_strains == 1) {
+    n_strains <- 1L
+  } else if (n_real_strains == 2) {
+    n_strains <- 4L
+  } else {
+    stop("`n_real_strains` should be '1' or '2'")
+  }
 
   if (!is.null(population)) {
     if (!is.null(dim(population)) || length(population) != 17L) {
@@ -575,16 +592,17 @@ lancelot_parameters <- function(start_date, region,
                                                  vaccine_schedule,
                                                  vaccine_index_dose2,
                                                  vaccine_index_booster,
-                                                 strain$n_strains,
+                                                 n_strains,
                                                  vaccine_catchup_fraction,
-                                                 n_doses)
+                                                 n_doses,
+                                                 n_vacc_classes)
 
   ## vacc_skip parameters
-  vacc_classes <- seq_len(vaccination$n_vacc_classes)
+  vacc_classes <- seq_len(n_vacc_classes)
   if (!vacc_skip_from %in% vacc_classes || !vacc_skip_to %in% vacc_classes) {
     stop(sprintf("There are %s vaccine classes so 'vacc_skip_from' and
                  'vacc_skip_to' must each be one of: %s",
-                 vaccination$n_vacc_classes,
+                 n_vacc_classes,
                  paste(vacc_classes, collapse = ", ")))
   }
   if (vacc_skip_to != vacc_skip_from && vacc_skip_to < vacc_skip_from + 2) {
@@ -619,7 +637,7 @@ lancelot_parameters <- function(start_date, region,
   }
 
   strain_rel_p_death <- process_strain_rel_p(strain_rel_p_death,
-                                             strain$n_strains,
+                                             n_strains,
                                              n_real_strains)
   ret$strain_rel_p_ICU_D <- strain_rel_p_death
   ret$strain_rel_p_H_D <- strain_rel_p_death
@@ -627,31 +645,31 @@ lancelot_parameters <- function(start_date, region,
   ret$strain_rel_p_G_D <- strain_rel_p_death
 
   strain_rel_p_icu <- process_strain_rel_p(strain_rel_p_icu,
-                                           strain$n_strains,
+                                           n_strains,
                                            n_real_strains)
   ret$strain_rel_p_icu <- strain_rel_p_icu
 
   strain_rel_p_hosp_if_sympt <- process_strain_rel_p(strain_rel_p_hosp_if_sympt,
-                                                     strain$n_strains,
+                                                     n_strains,
                                                      n_real_strains)
   ret$strain_rel_p_hosp_if_sympt <- strain_rel_p_hosp_if_sympt
 
   strain_rel_p_sympt <- process_strain_rel_p(strain_rel_p_sympt,
-                                                     strain$n_strains,
+                                                     n_strains,
                                                      n_real_strains)
   ret$strain_rel_p_sympt <- strain_rel_p_sympt
 
   # combine strain-specific relative severity with vaccination reduction in
   # probability of death
 
-  rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
-                                 vaccination$n_vacc_classes, "rel_p_death")
+  rel_p_death <- build_rel_param(rel_p_death, n_strains,
+                                 n_vacc_classes, "rel_p_death")
 
-  ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
-                              vaccination$n_vacc_classes))
+  ret$rel_p_ICU <- array(1, c(ret$n_groups, n_strains,
+                              n_vacc_classes))
 
-  ret$rel_p_R <- array(1, c(ret$n_groups, strain$n_strains,
-                            vaccination$n_vacc_classes))
+  ret$rel_p_R <- array(1, c(ret$n_groups, n_strains,
+                            n_vacc_classes))
 
   ret$rel_p_ICU_D <- rel_p_death
   ret$rel_p_H_D <- rel_p_death
@@ -676,14 +694,14 @@ lancelot_parameters <- function(start_date, region,
     rel_gamma <- strain_rel_gammas[[name]]
     rel_gamma_name <- paste0("rel_gamma_", name)
     if (is.null(rel_gamma)) {
-      ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
+      ret[[rel_gamma_name]] <- rep(1, n_strains)
     } else {
       rel_gamma <- recycle(assert_relatives(rel_gamma),
                            n_real_strains)
       if (length(rel_gamma) == 2) {
         ret[[rel_gamma_name]] <- mirror_strain(rel_gamma)
       } else {
-        ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
+        ret[[rel_gamma_name]] <- rep(1, n_strains)
       }
     }
   }
@@ -1567,7 +1585,8 @@ lancelot_parameters_vaccination <- function(N_tot,
                                             vaccine_index_booster = NULL,
                                             n_strains = 1,
                                             vaccine_catchup_fraction = 1,
-                                            n_doses = 2L) {
+                                            n_doses = 2L,
+                                            n_vacc_classes = 1L) {
   n_groups <- lancelot_n_groups()
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
@@ -1589,7 +1608,6 @@ lancelot_parameters_vaccination <- function(N_tot,
     msg2 <- "should have the same dimension"
     stop(paste(msg1, msg2))
   }
-  n_vacc_classes <- max(n)
 
   ret <- Map(function(value, name)
     build_rel_param(value, n_strains, n_vacc_classes, name),

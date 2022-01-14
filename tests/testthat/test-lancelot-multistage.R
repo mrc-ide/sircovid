@@ -12,7 +12,8 @@ test_that("can run a multistage particle filter", {
                             strain_seed_date = sircovid_date("2020-03-15"),
                             strain_seed_size = 100,
                             strain_seed_pattern = rep(1, 4),
-                            cross_immunity = 0)
+                            cross_immunity = 0,
+                            n_real_strains = 2)
 
   ## Then we put them together as a single multistage parameter set.
   ## The data here is important; that's the changeover date.  So betas

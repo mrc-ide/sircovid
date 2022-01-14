@@ -1,3 +1,7 @@
+# sircovid 0.12.35
+
+* Added params `n_real_strains` and `n_vacc_classes` to `lancelot_parameters` to explicitly state the number of strains and vaccination classes (instead of just inferring them)
+
 # sircovid 0.12.31
 
 * IFR post-processing calculation removed
@@ -8,10 +12,10 @@
 
 # sircovid 0.12.27
 
-* Have strain_rel_p_death, strain_rel_p_icu, 
+* Have strain_rel_p_death, strain_rel_p_icu,
 strain_rel_p_hosp_if_sympt and strain_rel_p_sympt
 as separate parameters in odin code to clarify effects of strains and vaccines
-on severity and so these parameters can be changed more easily without 
+on severity and so these parameters can be changed more easily without
 necessarily going through the `lancelot_parameters` function
 
 # sircovid 0.12.26

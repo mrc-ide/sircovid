@@ -70,7 +70,8 @@ test_that("lancelot vaccination parameters", {
                                        vaccine_progression_rate =
                                          vaccine_progression_rate,
                                        vaccine_schedule = vaccine_schedule,
-                                       vaccine_index_dose2 = 3L)
+                                       vaccine_index_dose2 = 3L,
+                                        n_vacc_classes = 4)
   expect_setequal(
     names(p),
     c("rel_susceptibility", "rel_p_sympt", "rel_p_hosp_if_sympt", "rel_p_death",
