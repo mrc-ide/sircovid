@@ -52,7 +52,7 @@ lancelot_parameters(
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1,
-  n_strains = 1L,
+  n_real_strains = 1L,
   n_vacc_classes = 1L
 )
 }
@@ -394,12 +394,8 @@ and values of 0 mean no cross-immunity. Modelling
 recovering from another) can be turned off by setting
 \code{cross_immunity = 1}.}
 
-\item{n_strains}{Number of strains, default is 4, corresponding
-to: 'real' strain 1 - infected with strain 1; 'real' strain 2 -
-infected with strain 2; 'pseudo' strain 3 - infected with 2 straight
-after infection from 1; 'pseudo' strain 4 - infected with 1 after
-strain 2. Value should be '1' (single-strain model) or '4'
-(multi-strain).}
+\item{n_real_strains}{Number of real strains, default is 2.
+Value should be '1' (single-strain model) or '2' (multi-strain).}
 
 \item{n_vacc_classes}{Number of vaccine classes. Should match the third
 dimension of \code{rel_susceptibility}.}
