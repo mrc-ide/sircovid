@@ -3295,7 +3295,7 @@ test_that("Everyone vaccine skips if there is no waning", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = rep(0, 19),,
+                           vacc_skip_progression_rate = rep(0, 19),
                             n_vacc_classes = 5)
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
