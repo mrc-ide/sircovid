@@ -306,36 +306,11 @@ drop_trajectory_incidence <- function(obj) {
 }
 
 
-##' Drop predicted elements from a set of trajectories
-##'
-##' @title Drop predictions from trajectories
-##'
-##' @param obj A `mcstate_trajectories` or `mcstate_pmcmc` object to
-##'   update
-##'
-##' @export
-drop_trajectory_predicted <- function(obj) {
-  if (inherits(obj, "mcstate_pmcmc")) {
-    obj$trajectories <- drop_trajectory_predicted(obj$trajectories)
-    return(obj)
-  }
-
-  k <- which(obj$predicted)
-  if (length(k) > 0) {
-    obj$step <- obj$step[-k]
-    obj$predicted <- obj$predicted[-k]
-    obj$date <- obj$date[-k]
-    obj$state <- obj$state[, , -k]
-  }
-  obj
-}
-
-
 ##' Combine trajectories across multiple runs
 ##'
 ##' @title Combine trajectories
 ##'
-##' @param samples A list of samples from [lancelot_forecast()]
+##' @param samples A list of samples from [mcstate::pmcmc]
 ##'
 ##' @param rank Logical, indicating if trajectories should be ranked
 ##'   before combination.
@@ -495,7 +470,7 @@ reorder_rt_ifr <- function(x, rank) {
 ##'   [lancelot_Rt_trajectories()] (though any Rt calculation that
 ##'   confirms to this will work)
 ##'
-##' @param samples A list of samples from [lancelot_forecast()]
+##' @param samples A list of samples from [mcstate::pmcmc]
 ##'
 ##' @param rank A boolean deciding whether to rank trajectories by increasing
 ##' incidence or not before combining Rt estimates
@@ -522,7 +497,7 @@ combine_rt <- function(rt, samples, rank = TRUE) {
 ##'   [lancelot_rt_trajectories_epiestim()] (though any Rt calculation that
 ##'   confirms to this will work)
 ##'
-##' @param samples A list of samples from [lancelot_forecast()]
+##' @param samples A list of samples from [mcstate::pmcmc]
 ##'
 ##' @param q A vector of quantiles to return values for
 ##'

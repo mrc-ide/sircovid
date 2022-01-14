@@ -11,7 +11,7 @@ combine_rt(rt, samples, rank = TRUE)
 \code{\link[=lancelot_Rt_trajectories]{lancelot_Rt_trajectories()}} (though any Rt calculation that
 confirms to this will work)}
 
-\item{samples}{A list of samples from \code{\link[=lancelot_forecast]{lancelot_forecast()}}}
+\item{samples}{A list of samples from \link[mcstate:pmcmc]{mcstate::pmcmc}}
 
 \item{rank}{A boolean deciding whether to rank trajectories by increasing
 incidence or not before combining Rt estimates}

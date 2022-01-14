@@ -192,8 +192,14 @@ check_sircovid_model <- function(sircovid_model) {
 ##' @param state Model state
 ##'
 ##' @param info Model info
+##'
+##' @param ... Additional arguments, ignored. This exists so that this
+##'   function can be used as an argument to
+##'   [mcstate::multistage_epoch].  Practically your two model
+##'   informations in this case would be equivalent.
+##'
 ##' @export
-rotate_strains <- function(state, info) {
+rotate_strains <- function(state, info, ...) {
   if (is.null(dim(state))) {
     stop("Expected a matrix or array for 'state'")
   }
