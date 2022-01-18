@@ -738,7 +738,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
   ## passes with waning immunity
   p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step[, ] <- 0
-  p$gamma_U <- 0
+  p$gamma_U_step <- 0
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
@@ -772,7 +772,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
   p$p_star_step[, ] <- 0
 
-  p$gamma_U <- Inf
+  p$gamma_U_step <- Inf
   p$gamma_ICU_pre_step <- Inf
   p$gamma_H_R_step <- Inf
   p$gamma_H_D_step <- Inf
