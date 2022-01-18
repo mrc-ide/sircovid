@@ -644,6 +644,7 @@ typename T::real_type
 // [[dust::param(gamma_ICU_W_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU_pre_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_P_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_U_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(hosp_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -696,6 +697,7 @@ typename T::real_type
 // [[dust::param(n_gamma_ICU_W_R_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_ICU_pre_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_P_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_gamma_U_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_W_D_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_W_R_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -810,7 +812,6 @@ typename T::real_type
 // [[dust::param(waning_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_PCR_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_U, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pos_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pos_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1349,6 +1350,7 @@ public:
     int dim_gamma_ICU_pre_step;
     int dim_gamma_P;
     int dim_gamma_P_step;
+    int dim_gamma_U_step;
     int dim_gamma_W_D;
     int dim_gamma_W_D_step;
     int dim_gamma_W_R;
@@ -2345,7 +2347,7 @@ public:
     real_type gamma_PCR_pos;
     real_type gamma_PCR_pre;
     std::vector<real_type> gamma_P_step;
-    real_type gamma_U;
+    std::vector<real_type> gamma_U_step;
     std::vector<real_type> gamma_W_D_step;
     std::vector<real_type> gamma_W_R_step;
     real_type gamma_sero_pos_1;
@@ -2521,6 +2523,7 @@ public:
     int n_gamma_ICU_W_R_steps;
     int n_gamma_ICU_pre_steps;
     int n_gamma_P_steps;
+    int n_gamma_U_steps;
     int n_gamma_W_D_steps;
     int n_gamma_W_R_steps;
     int n_groups;
@@ -2622,7 +2625,6 @@ public:
     std::vector<real_type> p_sero_pos_1;
     std::vector<real_type> p_sero_pos_2;
     std::vector<real_type> p_star_step;
-    real_type p_test;
     real_type phi_ICU;
     real_type phi_admitted;
     real_type phi_all_admission;
@@ -3186,6 +3188,7 @@ public:
     for (int i = 1; i <= shared->dim_gamma_P; ++i) {
       internal.gamma_P[i - 1] = (static_cast<int>(step) >= shared->n_gamma_P_steps ? shared->gamma_P_step[shared->n_gamma_P_steps - 1] * shared->rel_gamma_P[i - 1] : shared->gamma_P_step[step + 1 - 1] * shared->rel_gamma_P[i - 1]);
     }
+    real_type gamma_U = (static_cast<int>(step) >= shared->n_gamma_U_steps ? shared->gamma_U_step[shared->n_gamma_U_steps - 1] : shared->gamma_U_step[step + 1 - 1]);
     for (int i = 1; i <= shared->dim_gamma_W_D; ++i) {
       internal.gamma_W_D[i - 1] = (static_cast<int>(step) >= shared->n_gamma_W_D_steps ? shared->gamma_W_D_step[shared->n_gamma_W_D_steps - 1] * shared->rel_gamma_W_D[i - 1] : shared->gamma_W_D_step[step + 1 - 1] * shared->rel_gamma_W_D[i - 1]);
     }
@@ -3363,6 +3366,7 @@ public:
     for (int i = 1; i <= shared->dim_p_star; ++i) {
       internal.p_star[i - 1] = (static_cast<int>(step) >= shared->n_p_star_steps ? shared->p_star_step[shared->dim_p_star_step_1 * (i - 1) + shared->n_p_star_steps - 1] : shared->p_star_step[shared->dim_p_star_step_1 * (i - 1) + step + 1 - 1]);
     }
+    real_type p_test = 1 - std::exp(- gamma_U * shared->dt);
     real_type seed = dust::random::poisson<real_type>(rng_state, seed_rate);
     real_type strain_seed = dust::random::poisson<real_type>(rng_state, strain_seed_rate);
     for (int i = 1; i <= shared->dim_total_attempted_doses_1; ++i) {
@@ -3872,7 +3876,7 @@ public:
       for (int j = 1; j <= shared->dim_n_H_D_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_H_D_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_H_D_unconf_to_conf_4; ++l) {
-            internal.n_H_D_unconf_to_conf[i - 1 + shared->dim_n_H_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_H_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_H_D_unconf[shared->dim_aux_H_D_unconf_123 * (l - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_H_D_unconf_to_conf[i - 1 + shared->dim_n_H_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_H_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_H_D_unconf[shared->dim_aux_H_D_unconf_123 * (l - 1) + shared->dim_aux_H_D_unconf_12 * (k - 1) + shared->dim_aux_H_D_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -3881,7 +3885,7 @@ public:
       for (int j = 1; j <= shared->dim_n_H_R_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_H_R_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_H_R_unconf_to_conf_4; ++l) {
-            internal.n_H_R_unconf_to_conf[i - 1 + shared->dim_n_H_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_H_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_R_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_H_R_unconf[shared->dim_aux_H_R_unconf_123 * (l - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_H_R_unconf_to_conf[i - 1 + shared->dim_n_H_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_H_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_H_R_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_H_R_unconf[shared->dim_aux_H_R_unconf_123 * (l - 1) + shared->dim_aux_H_R_unconf_12 * (k - 1) + shared->dim_aux_H_R_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -3904,7 +3908,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_pre_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_pre_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_pre_unconf_to_conf_4; ++l) {
-            internal.n_ICU_pre_unconf_to_conf[i - 1 + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_ICU_pre_unconf_to_conf[i - 1 + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -3920,7 +3924,7 @@ public:
       for (int j = 1; j <= shared->dim_n_W_D_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_W_D_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_D_unconf_to_conf_4; ++l) {
-            internal.n_W_D_unconf_to_conf[i - 1 + shared->dim_n_W_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_W_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_W_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_W_D_unconf[shared->dim_aux_W_D_unconf_123 * (l - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_W_D_unconf_to_conf[i - 1 + shared->dim_n_W_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_W_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_W_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_W_D_unconf[shared->dim_aux_W_D_unconf_123 * (l - 1) + shared->dim_aux_W_D_unconf_12 * (k - 1) + shared->dim_aux_W_D_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -3929,7 +3933,7 @@ public:
       for (int j = 1; j <= shared->dim_n_W_R_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_W_R_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_R_unconf_to_conf_4; ++l) {
-            internal.n_W_R_unconf_to_conf[i - 1 + shared->dim_n_W_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_W_R_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_W_R_unconf[shared->dim_aux_W_R_unconf_123 * (l - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_W_R_unconf_to_conf[i - 1 + shared->dim_n_W_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_W_R_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_W_R_unconf[shared->dim_aux_W_R_unconf_123 * (l - 1) + shared->dim_aux_W_R_unconf_12 * (k - 1) + shared->dim_aux_W_R_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -4066,7 +4070,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_D_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_D_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_D_unconf_to_conf_4; ++l) {
-            internal.n_ICU_D_unconf_to_conf[i - 1 + shared->dim_n_ICU_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_D_unconf[shared->dim_aux_ICU_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_ICU_D_unconf_to_conf[i - 1 + shared->dim_n_ICU_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_D_unconf[shared->dim_aux_ICU_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_D_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -4318,7 +4322,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_W_D_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_D_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_D_unconf_to_conf_4; ++l) {
-            internal.n_ICU_W_D_unconf_to_conf[i - 1 + shared->dim_n_ICU_W_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_W_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_W_D_unconf[shared->dim_aux_ICU_W_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_ICU_W_D_unconf_to_conf[i - 1 + shared->dim_n_ICU_W_D_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_W_D_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_D_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_W_D_unconf[shared->dim_aux_ICU_W_D_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_D_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_D_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -4486,7 +4490,7 @@ public:
       for (int j = 1; j <= shared->dim_n_ICU_W_R_unconf_to_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_n_ICU_W_R_unconf_to_conf_3; ++k) {
           for (int l = 1; l <= shared->dim_n_ICU_W_R_unconf_to_conf_4; ++l) {
-            internal.n_ICU_W_R_unconf_to_conf[i - 1 + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1], shared->p_test);
+            internal.n_ICU_W_R_unconf_to_conf[i - 1 + shared->dim_n_ICU_W_R_unconf_to_conf_1 * (j - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_W_R_unconf_to_conf_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, internal.aux_ICU_W_R_unconf[shared->dim_aux_ICU_W_R_unconf_123 * (l - 1) + shared->dim_aux_ICU_W_R_unconf_12 * (k - 1) + shared->dim_aux_ICU_W_R_unconf_1 * (j - 1) + i - 1], p_test);
           }
         }
       }
@@ -5498,6 +5502,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->n_gamma_ICU_W_R_steps = NA_INTEGER;
   shared->n_gamma_ICU_pre_steps = NA_INTEGER;
   shared->n_gamma_P_steps = NA_INTEGER;
+  shared->n_gamma_U_steps = NA_INTEGER;
   shared->n_gamma_W_D_steps = NA_INTEGER;
   shared->n_gamma_W_R_steps = NA_INTEGER;
   shared->n_groups = NA_INTEGER;
@@ -5563,7 +5568,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->vacc_skip_weight = NA_REAL;
   shared->gamma_PCR_pos = 0.10000000000000001;
   shared->gamma_PCR_pre = 0.10000000000000001;
-  shared->gamma_U = 0.10000000000000001;
   shared->gamma_sero_pos_1 = 0.10000000000000001;
   shared->gamma_sero_pos_2 = 0.10000000000000001;
   shared->gamma_sero_pre_1 = 0.10000000000000001;
@@ -5591,7 +5595,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->exp_noise = user_get_scalar<real_type>(user, "exp_noise", shared->exp_noise, NA_REAL, NA_REAL);
   shared->gamma_PCR_pos = user_get_scalar<real_type>(user, "gamma_PCR_pos", shared->gamma_PCR_pos, NA_REAL, NA_REAL);
   shared->gamma_PCR_pre = user_get_scalar<real_type>(user, "gamma_PCR_pre", shared->gamma_PCR_pre, NA_REAL, NA_REAL);
-  shared->gamma_U = user_get_scalar<real_type>(user, "gamma_U", shared->gamma_U, NA_REAL, NA_REAL);
   shared->gamma_sero_pos_1 = user_get_scalar<real_type>(user, "gamma_sero_pos_1", shared->gamma_sero_pos_1, NA_REAL, NA_REAL);
   shared->gamma_sero_pos_2 = user_get_scalar<real_type>(user, "gamma_sero_pos_2", shared->gamma_sero_pos_2, NA_REAL, NA_REAL);
   shared->gamma_sero_pre_1 = user_get_scalar<real_type>(user, "gamma_sero_pre_1", shared->gamma_sero_pre_1, NA_REAL, NA_REAL);
@@ -5643,6 +5646,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->n_gamma_ICU_W_R_steps = user_get_scalar<int>(user, "n_gamma_ICU_W_R_steps", shared->n_gamma_ICU_W_R_steps, NA_REAL, NA_REAL);
   shared->n_gamma_ICU_pre_steps = user_get_scalar<int>(user, "n_gamma_ICU_pre_steps", shared->n_gamma_ICU_pre_steps, NA_REAL, NA_REAL);
   shared->n_gamma_P_steps = user_get_scalar<int>(user, "n_gamma_P_steps", shared->n_gamma_P_steps, NA_REAL, NA_REAL);
+  shared->n_gamma_U_steps = user_get_scalar<int>(user, "n_gamma_U_steps", shared->n_gamma_U_steps, NA_REAL, NA_REAL);
   shared->n_gamma_W_D_steps = user_get_scalar<int>(user, "n_gamma_W_D_steps", shared->n_gamma_W_D_steps, NA_REAL, NA_REAL);
   shared->n_gamma_W_R_steps = user_get_scalar<int>(user, "n_gamma_W_R_steps", shared->n_gamma_W_R_steps, NA_REAL, NA_REAL);
   shared->n_groups = user_get_scalar<int>(user, "n_groups", shared->n_groups, NA_REAL, NA_REAL);
@@ -5998,6 +6002,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_gamma_ICU_pre_step = shared->n_gamma_ICU_pre_steps;
   shared->dim_gamma_P = shared->n_strains;
   shared->dim_gamma_P_step = shared->n_gamma_P_steps;
+  shared->dim_gamma_U_step = shared->n_gamma_U_steps;
   shared->dim_gamma_W_D = shared->n_strains;
   shared->dim_gamma_W_D_step = shared->n_gamma_W_D_steps;
   shared->dim_gamma_W_R = shared->n_strains;
@@ -7205,6 +7210,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->gamma_ICU_W_R_step = user_get_array_fixed<real_type, 1>(user, "gamma_ICU_W_R_step", shared->gamma_ICU_W_R_step, {shared->dim_gamma_ICU_W_R_step}, NA_REAL, NA_REAL);
   shared->gamma_ICU_pre_step = user_get_array_fixed<real_type, 1>(user, "gamma_ICU_pre_step", shared->gamma_ICU_pre_step, {shared->dim_gamma_ICU_pre_step}, NA_REAL, NA_REAL);
   shared->gamma_P_step = user_get_array_fixed<real_type, 1>(user, "gamma_P_step", shared->gamma_P_step, {shared->dim_gamma_P_step}, NA_REAL, NA_REAL);
+  shared->gamma_U_step = user_get_array_fixed<real_type, 1>(user, "gamma_U_step", shared->gamma_U_step, {shared->dim_gamma_U_step}, NA_REAL, NA_REAL);
   shared->gamma_W_D_step = user_get_array_fixed<real_type, 1>(user, "gamma_W_D_step", shared->gamma_W_D_step, {shared->dim_gamma_W_D_step}, NA_REAL, NA_REAL);
   shared->gamma_W_R_step = user_get_array_fixed<real_type, 1>(user, "gamma_W_R_step", shared->gamma_W_R_step, {shared->dim_gamma_W_R_step}, NA_REAL, NA_REAL);
   shared->index_dose = user_get_array_fixed<int, 1>(user, "index_dose", shared->index_dose, {shared->dim_index_dose}, NA_REAL, NA_REAL);
@@ -7261,7 +7267,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->p_T_sero_pre_2_progress = 1 - std::exp(- shared->gamma_sero_pre_2 * shared->dt);
   shared->p_sero_pos_1 = user_get_array_fixed<real_type, 1>(user, "p_sero_pos_1", shared->p_sero_pos_1, {shared->dim_p_sero_pos_1}, NA_REAL, NA_REAL);
   shared->p_sero_pos_2 = user_get_array_fixed<real_type, 1>(user, "p_sero_pos_2", shared->p_sero_pos_2, {shared->dim_p_sero_pos_2}, NA_REAL, NA_REAL);
-  shared->p_test = 1 - std::exp(- shared->gamma_U * shared->dt);
   shared->rel_gamma_A = user_get_array_fixed<real_type, 1>(user, "rel_gamma_A", shared->rel_gamma_A, {shared->dim_rel_gamma_A}, NA_REAL, NA_REAL);
   shared->rel_gamma_C_1 = user_get_array_fixed<real_type, 1>(user, "rel_gamma_C_1", shared->rel_gamma_C_1, {shared->dim_rel_gamma_C_1}, NA_REAL, NA_REAL);
   shared->rel_gamma_C_2 = user_get_array_fixed<real_type, 1>(user, "rel_gamma_C_2", shared->rel_gamma_C_2, {shared->dim_rel_gamma_C_2}, NA_REAL, NA_REAL);
