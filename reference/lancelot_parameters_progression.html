@@ -22,7 +22,7 @@ two."><meta property="og:image" content="/logo.png"><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.35</span>
       </span>
     </div>
 
@@ -78,7 +78,8 @@ two.</p>
   gamma_H_R <span class="op">=</span> <span class="cn">NULL</span>,
   gamma_W_D <span class="op">=</span> <span class="cn">NULL</span>,
   gamma_W_R <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_G_D <span class="op">=</span> <span class="cn">NULL</span>
+  gamma_G_D <span class="op">=</span> <span class="cn">NULL</span>,
+  gamma_U <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -139,6 +140,11 @@ compartment. See Details.</p></dd>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the G_D (delay to death in the community/care homes)
 compartment. See Details.</p></dd>
+<dt>gamma_U</dt>
+<dd><p>Time-varying parameters for the Erlang rate parameter of
+the duration of the delay from hospital admission to diagnosis for those
+not confirmed on admission. Note this duration is a single-stage Erlang.
+See Details.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
