@@ -3100,7 +3100,8 @@ test_that("Can calculate Rt with asymmetric cross immunity", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -3109,8 +3110,7 @@ test_that("Can calculate Rt with asymmetric cross immunity", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
-  dim_R <- mod$info()$dim$R
-  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
+  R <- y[index_R, , ]
   prob_strain <- y[index_prob_strain, , ]
 
   rt <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
