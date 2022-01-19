@@ -84,6 +84,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
   ## move prob_strain check up here and make NULL if not needed to shortcut
   ##  checks and calculations
   if (n_strains > 1) {
+    n_real_strains <- 2
     if (is.null(prob_strain) || is.null(R)) {
       stop("Expected prob_strain and R input because there is more than one
             strain")
@@ -121,6 +122,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
       return(ret)
     }
   } else {
+    n_real_strains <- 1
     prob_strain <- array(1, length(step))
     R <- NULL
   }
@@ -167,12 +169,12 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
                  length(step)))
   }
   if (!is.null(R)) {
-    if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * n_strains) {
+    if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * n_real_strains) {
       stop(sprintf(
         "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
           classes",
-        p$n_groups * nlayer(p$rel_susceptibility) * n_strains,
-        p$n_groups, n_strains, nlayer(p$rel_susceptibility)))
+        p$n_groups * nlayer(p$rel_susceptibility) * n_real_strains,
+        p$n_groups, n_real_strains, nlayer(p$rel_susceptibility)))
     }
     if (ncol(R) != length(step)) {
       stop(sprintf("Expected 'R' to have %d columns, following 'step'",
@@ -276,10 +278,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
         compute_ngm(md, x, p$rel_susceptibility)
       } else {
         N <- n_groups * n_vacc_classes
-        ## in the new model set-up it can only be 4, can make a variable
-        ##  if this changes in the future
-        n_total_strains <- 4
-        RR <- array(R, c(n_groups, n_total_strains, n_vacc_classes, ncol(R)))
+        RR <- array(R, c(n_groups, n_real_strains, n_vacc_classes, ncol(R)))
 
         if (i == 1) {
           if (effective) {

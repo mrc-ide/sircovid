@@ -833,6 +833,10 @@ lancelot_index <- function(info) {
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)
 
+  if (n_strains == 2) {
+    index_R <- index_R[!grepl("S[23]", names(index_R))]
+  }
+
   list(run = index_run,
        state = c(index_core, index_save, index_S, index_R,
                  index_cum_admit, index_D,

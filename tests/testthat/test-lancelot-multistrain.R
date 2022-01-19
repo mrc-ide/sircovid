@@ -645,7 +645,8 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -663,7 +664,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected prob_strain and R input because")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[-1, 1, ]),
-    "Expected 'R' to have 76 rows")
+    "Expected 'R' to have 38 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, -1]),
     "Expected 'R' to have 123 columns")
@@ -692,7 +693,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected a 3d array of 'R'")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R[-1, , ]),
-    "Expected 'R' to have 76 rows")
+    "Expected 'R' to have 38 rows")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R[, -1, ]),
     "Expected 2nd and 3rd")
@@ -730,7 +731,8 @@ test_that("wtmean_Rt works as expected", {
   set.seed(1)
   y <- mod$simulate(steps)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
   S <- y[index_S, , ]
   R <- y[index_R, , ]
@@ -822,7 +824,8 @@ test_that("Can calculate Rt with an empty second variant ", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -898,7 +901,8 @@ test_that("Can calculate Rt with strain_transmission (1, 0) ", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -934,7 +938,8 @@ test_that("Can calculate Rt with a second less infectious variant", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1001,7 +1006,8 @@ test_that("Can calculate Rt with a second more infectious variant", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1071,7 +1077,8 @@ test_that("Can calculate Rt with a second less symptomatic variant", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1141,7 +1148,8 @@ test_that("Can calculate Rt with a second less severe variant", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1210,7 +1218,8 @@ test_that("Can calculate Rt with a second less severe (p_icu) variant", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1279,7 +1288,8 @@ test_that("Can calculate Rt with a second less lethal variant", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1348,7 +1358,8 @@ test_that("Can calculate Rt with a second variant with longer I_E", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1418,7 +1429,8 @@ test_that("Can calculate Rt with a second variant with longer I_A", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1488,7 +1500,8 @@ test_that("Can calculate Rt with a second variant with longer I_P", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1558,7 +1571,8 @@ test_that("Can calculate Rt with a second variant with longer I_C_1", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1625,7 +1639,8 @@ test_that("If prob_strain is NA then Rt is NA only in same steps", {
 
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1691,7 +1706,8 @@ test_that("Can compute Rt if all prob_strain is NA", {
 
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -1763,7 +1779,8 @@ test_that("calculate Rt with both second variant and vaccination", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
   index_I <- mod$info()$index$I_weighted
 
@@ -2007,7 +2024,8 @@ test_that("Lower rate variant has higher Rt", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2036,7 +2054,8 @@ test_that("Lower rate variant has higher Rt", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -3028,7 +3047,8 @@ test_that("Rt lower with perfect cross immunity", {
   initial <- lancelot_initial(mod$info(), 10, p)
   mod$update_state(state = initial)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -3089,7 +3109,8 @@ test_that("Can calculate Rt with asymmetric cross immunity", {
   set.seed(1)
   y <- mod$simulate(steps)
   S <- y[index_S, , ]
-  R <- y[index_R, , ]
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   prob_strain <- y[index_prob_strain, , ]
 
   rt <- lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ],
@@ -3247,7 +3268,8 @@ test_that("wtmean_Rt works as expected with interpolation", {
   set.seed(1)
   y <- mod$simulate(steps)
   index_S <- mod$info()$index$S
-  index_R <- mod$info()$index$R
+  dim_R <- mod$info()$dim$R
+  index_R <- array(mod$info()$index$R, dim_R)[, 1:2, , drop = FALSE]
   index_prob_strain <- mod$info()$index$prob_strain
   S <- y[index_S, , ]
   R <- y[index_R, , ]
