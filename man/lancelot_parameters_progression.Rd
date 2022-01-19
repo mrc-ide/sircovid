@@ -19,7 +19,8 @@ lancelot_parameters_progression(
   gamma_H_R = NULL,
   gamma_W_D = NULL,
   gamma_W_R = NULL,
-  gamma_G_D = NULL
+  gamma_G_D = NULL,
+  gamma_U = NULL
 )
 }
 \arguments{
@@ -77,6 +78,11 @@ compartment. See Details.}
 \item{gamma_G_D}{Time-varying parameters for the Erlang rate parameter of
 the duration in the G_D (delay to death in the community/care homes)
 compartment. See Details.}
+
+\item{gamma_U}{Time-varying parameters for the Erlang rate parameter of
+the duration of the delay from hospital admission to diagnosis for those
+not confirmed on admission. Note this duration is a single-stage Erlang.
+See Details.}
 }
 \value{
 A list of parameter values

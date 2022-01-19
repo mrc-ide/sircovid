@@ -367,6 +367,10 @@ gamma_W_D[] <- if (as.integer(step) >= n_gamma_W_D_steps)
   gamma_W_D_step[n_gamma_W_D_steps] * rel_gamma_W_D[i] else
     gamma_W_D_step[step + 1] * rel_gamma_W_D[i]
 
+gamma_U <- if (as.integer(step) >= n_gamma_U_steps)
+  gamma_U_step[n_gamma_U_steps] else
+    gamma_U_step[step + 1]
+
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
 
@@ -1268,7 +1272,9 @@ k_sero_pos_2 <- user()
 gamma_sero_pos_2 <- user(0.1)
 
 ## Parameters relating to testing
-gamma_U <- user(0.1)
+gamma_U_step[] <- user()
+n_gamma_U_steps <- user()
+dim(gamma_U_step) <- n_gamma_U_steps
 p_star_step[, ] <- user()
 n_p_star_steps <- user()
 dim(p_star) <- n_groups
