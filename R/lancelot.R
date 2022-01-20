@@ -1815,6 +1815,11 @@ lancelot_parameters_waning <- function(waning_rate) {
 ##'   the duration in the G_D (delay to death in the community/care homes)
 ##'   compartment. See Details.
 ##'
+##' @param gamma_U Time-varying parameters for the Erlang rate parameter of
+##'   the duration of the delay from hospital admission to diagnosis for those
+##'   not confirmed on admission. Note this duration is a single-stage Erlang.
+##'   See Details.
+##'
 ##' @return A list of parameter values
 ##'
 ##' @export
@@ -1832,7 +1837,8 @@ lancelot_parameters_progression <- function(dt,
                                             gamma_H_R = NULL,
                                             gamma_W_D = NULL,
                                             gamma_W_R = NULL,
-                                            gamma_G_D = NULL) {
+                                            gamma_G_D = NULL,
+                                            gamma_U = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -1894,7 +1900,8 @@ lancelot_parameters_progression <- function(dt,
                               H_R = gamma_H_R,
                               W_D = gamma_W_D,
                               W_R = gamma_W_R,
-                              G_D = gamma_G_D)
+                              G_D = gamma_G_D,
+                              U = gamma_U)
 
   get_gamma_step <- function(x, name) {
 

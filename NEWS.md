@@ -1,3 +1,7 @@
+# sircovid 0.12.35
+
+* gamma_U is now time-varying
+
 # sircovid 0.12.31
 
 * IFR post-processing calculation removed
