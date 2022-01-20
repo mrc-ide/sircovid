@@ -728,6 +728,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' lancelot_index(mod$info())
 lancelot_index <- function(info) {
   index <- info$index
+  dim <- info$dim
 
   ## Variables required for the particle filter to run:
   index_core <- c(icu = index[["ICU_tot"]],
@@ -812,30 +813,35 @@ lancelot_index <- function(info) {
   }
 
   ## age varying only
-  index_cum_admit <- calculate_index(index, "cum_admit_by_age",
+  index_cum_admit <- calculate_index(index$cum_admit_by_age,
                                      list(), suffix, "cum_admit")
 
   ## age x vacc class
-  index_S <- calculate_index(index, "S", list(n_vacc_classes), suffix)
-  index_diagnoses_admitted <- calculate_index(index, "diagnoses_admitted",
-                                              list(n_vacc_classes), suffix)
-  index_cum_infections_disag <- calculate_index(index, "cum_infections_disag",
-                                                list(n_vacc_classes), suffix)
-  index_cum_n_vaccinated <- calculate_index(index, "cum_n_vaccinated",
-                                            list(n_vacc_classes), suffix)
-  index_D <- calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all")
+  index_S <- calculate_index(index$S, list(n_vacc_classes), suffix, "S")
+  index_diagnoses_admitted <- calculate_index(index$diagnoses_admitted,
+                                              list(n_vacc_classes), suffix,
+                                              "diagnoses_admitted")
+  index_cum_infections_disag <- calculate_index(index$cum_infections_disag,
+                                                list(n_vacc_classes), suffix,
+                                                "cum_infections_disag")
+  index_cum_n_vaccinated <- calculate_index(index$cum_n_vaccinated,
+                                            list(n_vacc_classes), suffix,
+                                            "cum_n_vaccinated")
+  index_D <- calculate_index(index$D, list(n_vacc_classes), suffix, "D_all")
 
   ## (real) strain only
-  index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
+  index_prob_strain <- calculate_index(index$prob_strain, list(n_strains),
+                                       NULL, "prob_strain")
 
   ## age x (total) strain x vacc class
-  index_R <- calculate_index(index, "R",
-                             list(S = n_tot_strains, V = n_vacc_classes),
-                             suffix)
-
-  if (n_strains == 2) {
-    index_R <- index_R[!grepl("S[23]", names(index_R))]
+  if (n_strains == 1) {
+    index_R <- index$R
+  } else {
+    index_R <- array(index$R, dim$R)[, 1:2, , drop = FALSE]
   }
+  index_R <- calculate_index(index_R,
+                             list(S = n_strains, V = n_vacc_classes),
+                             suffix, "R")
 
   list(run = index_run,
        state = c(index_core, index_save, index_S, index_R,
@@ -2299,7 +2305,7 @@ create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
 }
 
 
-calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
+calculate_index <- function(index, suffix_list, suffix0 = NULL,
                             state_name = state) {
   if (is.null(suffix0)) {
     suffixes <- list()
@@ -2319,5 +2325,5 @@ calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
   nms <- apply(suffixes, 1,
                function(x) sprintf("%s%s",
                                    state_name, paste0(x, collapse = "")))
-  set_names(index[[state]], nms)
+  set_names(index, nms)
 }
