@@ -738,7 +738,8 @@ test_that("lancelot_index switches work as expected", {
   index <- lancelot_index(info)
   expect_equal(
     unname(index$state[!names(index$state) %in% names(index$run)]),
-    c(info$index$hosp_tot,
+    c(info$index$D_tot,
+      info$index$hosp_tot,
       info$index$cum_infections,
       info$index$infections_inc))
 
