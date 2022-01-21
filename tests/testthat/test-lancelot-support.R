@@ -746,7 +746,8 @@ test_that("lancelot_index switches work as expected", {
   index_rt <- lancelot_index(info, rt = TRUE)
   expect_equal(
     unname(index_rt$state[!names(index_rt$state) %in% names(index_rt$run)]),
-    c(info$index$hosp_tot,
+    c(info$index$D_tot,
+      info$index$hosp_tot,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$S,
@@ -757,7 +758,8 @@ test_that("lancelot_index switches work as expected", {
   expect_equal(
     unname(index_cum_admit$state[!names(index_cum_admit$state) %in%
     names(index_cum_admit$run)]),
-    c(info$index$hosp_tot,
+    c(info$index$D_tot,
+      info$index$hosp_tot,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$cum_admit_by_age))
@@ -767,7 +769,8 @@ test_that("lancelot_index switches work as expected", {
     unname(
       index_diagnoses_admitted$state[!names(index_diagnoses_admitted$state)
       %in% names(index_diagnoses_admitted$run)]),
-    c(info$index$hosp_tot,
+    c(info$index$D_tot,
+      info$index$hosp_tot,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$diagnoses_admitted))
@@ -778,7 +781,8 @@ test_that("lancelot_index switches work as expected", {
     unname(
       index_cum_infections_disag$state[!names(index_cum_infections_disag$state)
       %in% names(index_cum_infections_disag$run)]),
-    c(info$index$hosp_tot,
+    c(info$index$D_tot,
+      info$index$hosp_tot,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$cum_infections_disag))
@@ -788,7 +792,8 @@ test_that("lancelot_index switches work as expected", {
     unname(
       index_cum_n_vaccinated$state[!names(index_cum_n_vaccinated$state)
       %in% names(index_cum_n_vaccinated$run)]),
-    c(info$index$hosp_tot,
+    c(info$index$D_tot,
+      info$index$hosp_tot,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$cum_n_vaccinated))
