@@ -1,6 +1,10 @@
-# sircovid 0.12.35
+# sircovid 0.12.36
 
 * Added params `n_real_strains` and `n_vacc_classes` to `lancelot_parameters` to explicitly state the number of strains and vaccination classes (instead of just inferring them)
+
+# sircovid 0.12.35
+
+* gamma_U is now time-varying
 
 # sircovid 0.12.31
 
