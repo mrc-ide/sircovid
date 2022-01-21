@@ -459,7 +459,8 @@ p <- lancelot_parameters(
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
        vaccine_schedule = schedule,
-       vaccine_index_dose2 = 2)
+       vaccine_index_dose2 = 2,
+       n_vacc_classes = 3)
 
 # vaccination parameters are automatically copied across all age groups#
 # (and across strains but here we only have 1 strain which is the 2nd
@@ -523,7 +524,8 @@ p <- lancelot_parameters(
        rel_infectivity = rel_infectivity,
        vaccine_progression_rate = vaccine_progression_rate,
        vaccine_schedule = schedule,
-       vaccine_index_dose2 = 2)
+       vaccine_index_dose2 = 2,
+       n_vacc_classes = 3)
 
 # TODO: add an example of manually set up vaccine schedule
 
