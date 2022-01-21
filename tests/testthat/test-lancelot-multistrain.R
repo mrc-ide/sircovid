@@ -238,7 +238,8 @@ test_that("N_tots stay constant with second strain and no waning immunity - no
               strain_transmission = c(1, 1),
               strain_seed_date = sircovid_date(date_seeding),
               strain_seed_size = n_seeded_new_strain_inf,
-              strain_seed_pattern = rep(1, 4))
+              strain_seed_pattern = rep(1, 4),
+              n_real_strains = 2)
 
             mod <- lancelot$new(p, 0, 1, seed = 1L)
             info <- mod$info()
@@ -273,7 +274,8 @@ test_that("N_tot is constant with second strain and waning immunity, while
               strain_seed_date = sircovid_date(date_seeding),
               strain_seed_size = n_seeded_new_strain_inf,
               strain_seed_pattern = rep(1, 4),
-              cross_immunity = 0)
+              cross_immunity = 0,
+              n_real_strains = 2)
 
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
@@ -303,7 +305,8 @@ test_that("N_tot is constant with second strain and waning immunity, while
               strain_transmission = c(1, 1),
               strain_seed_date = sircovid_date(date_seeding),
               strain_seed_size = n_seeded_new_strain_inf,
-              strain_seed_pattern = rep(1, 4))
+              strain_seed_pattern = rep(1, 4),
+              n_real_strains = 2)
 
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
