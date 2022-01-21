@@ -489,8 +489,6 @@ lancelot_parameters <- function(start_date, region,
     n_strains <- 1L
   } else if (n_real_strains == 2) {
     n_strains <- 4L
-  } else {
-    stop("`n_real_strains` should be '1' or '2'")
   }
 
   if (!is.null(population)) {
