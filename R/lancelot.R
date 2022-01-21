@@ -804,7 +804,10 @@ lancelot_index <- function(info, rt = FALSE, cum_admit = FALSE,
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
+                  admitted = index[["cum_admit_conf"]],
+                  diagnoses = index[["cum_new_conf"]],
                   deaths = index[["D_tot"]],
+                  deaths_inc = index[["D_inc"]],
                   infections = index[["cum_infections"]],
                   infections_inc = index[["infections_inc"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
