@@ -624,7 +624,11 @@ lancelot_parameters <- function(start_date, region,
   ret$strain_rel_p_ICU_D <- strain_rel_p_death
   ret$strain_rel_p_H_D <- strain_rel_p_death
   ret$strain_rel_p_W_D <- strain_rel_p_death
-  ret$strain_rel_p_G_D <- strain_rel_p_death
+
+  strain_rel_p_G_D <- process_strain_rel_p(strain_rel_p_G_D,
+                                           strain$n_strains,
+                                           n_real_strains)
+  ret$strain_rel_p_G_D <- strain_rel_p_G_D
 
   strain_rel_p_icu <- process_strain_rel_p(strain_rel_p_icu,
                                            strain$n_strains,
