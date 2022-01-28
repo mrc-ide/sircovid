@@ -34,6 +34,7 @@ lancelot_parameters(
   strain_rel_p_hosp_if_sympt = 1,
   strain_rel_p_icu = 1,
   strain_rel_p_death = 1,
+  strain_rel_p_G_D = 1,
   rel_susceptibility = 1,
   rel_p_sympt = 1,
   rel_p_hosp_if_sympt = 1,
@@ -237,6 +238,19 @@ another strain. Alternatively, a vector of twice the length of
 relative probability of death for each pseudostrain (with strain 3 - 1.2
 and strain 4 = 2.1). To ensure valid
 probabilities, p_death is upper-truncated at 1 after scaling.}
+
+\item{strain_rel_p_G_D}{Vector of relative probabilities of death in the
+coummunity for each strain modelled. If \code{1} all strains have same
+probabilities of death. Otherwise vector of same length as
+\code{strain_transmission}, where the first value should be 1 (for the first
+strain) and subsequent values between 0 and 1. In this case parameters
+will be "mirrored" for pseudostrains i.e. the relative probability of
+death will be assume the same irrespective of previous infection with
+another strain. Alternatively, a vector of twice the length of
+\code{strain_transmission} can be provided to allow specifying directly
+relative probability of death for each pseudostrain (with strain 3 - 1.2
+and strain 4 = 2.1). To ensure valid
+probabilities, p_G_D is upper-truncated at 1 after scaling.}
 
 \item{rel_susceptibility}{A vector or array of values representing the
 relative susceptibility of individuals in different vaccination groups.
