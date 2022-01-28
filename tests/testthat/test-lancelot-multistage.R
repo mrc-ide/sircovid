@@ -37,5 +37,6 @@ test_that("can run a multistage particle filter", {
   expect_silent(filter$run(p1))
 
   ## This case runs the multistage filter!
+  filter <- helper_lancelot_particle_filter(data, n_particles = 10, seed = 1L)
   expect_silent(filter$run(p))
 })

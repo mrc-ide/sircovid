@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.0.3
+FROM rocker/r-ver:4.1.2
 
 RUN apt-get update &&  apt-get install -y --no-install-recommends \
         gnupg2 \
