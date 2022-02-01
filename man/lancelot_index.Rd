@@ -6,11 +6,11 @@
 \usage{
 lancelot_index(
   info,
-  rt = FALSE,
-  cum_admit = FALSE,
-  diagnoses_admitted = FALSE,
-  cum_infections_disag = FALSE,
-  cum_n_vaccinated = FALSE
+  rt = TRUE,
+  cum_admit = TRUE,
+  diagnoses_admitted = TRUE,
+  cum_infections_disag = TRUE,
+  cum_n_vaccinated = TRUE
 )
 }
 \arguments{
@@ -18,21 +18,21 @@ lancelot_index(
 initialised \link{basic} model}
 
 \item{rt}{Logical, whether to output trajectories required for
-calculating Rt (default = FALSE)}
+calculating Rt (default = TRUE)}
 
 \item{cum_admit}{Logical, whether to output cumulative
-admissions by age (default = FALSE)}
+admissions by age (default = TRUE)}
 
 \item{diagnoses_admitted}{Logical, whether to output
 cumulative combined confirmed admissions and inpatient
-diagnoses by age and vaccine class (default = FALSE)}
+diagnoses by age and vaccine class (default = TRUE)}
 
 \item{cum_infections_disag}{Logical, whether to output
-cumulative infections by age and vaccine class (default = FALSE)}
+cumulative infections by age and vaccine class (default = TRUE)}
 
 \item{cum_n_vaccinated}{Logical, whether to output
 cumulative number vaccinated by age and vaccine class
-(default = FALSE)}
+(default = TRUE)}
 }
 \value{
 A list with element \code{run}, indicating the locations of (in
