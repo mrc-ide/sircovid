@@ -730,36 +730,120 @@ test_that("lancelot_population preserves population", {
 })
 
 
-test_that("lancelot_index returns S compartments", {
+test_that("lancelot_index switches work as expected", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
   mod <- lancelot$new(p, 0, 5, seed = 1L)
-  index <- lancelot_index(mod$info())
   info <- mod$info()
-  i <- seq_along(index$run)
+
+  index <- lancelot_index(info)
   expect_equal(
     unname(index$state[!names(index$state) %in% names(index$run)]),
-    c(info$index$D_comm_tot,
-      info$index$D_carehomes_tot,
-      info$index$D_hosp_tot,
+    c(info$index$hosp_tot,
       info$index$cum_admit_conf,
       info$index$cum_new_conf,
-      info$index$cum_sympt_cases,
-      info$index$cum_sympt_cases_non_variant,
-      info$index$cum_sympt_cases_over25,
-      info$index$cum_sympt_cases_non_variant_over25,
-      info$index$hosp_tot,
       info$index$D_tot,
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
       info$index$S,
       info$index$R,
+      info$index$prob_strain,
       info$index$cum_admit_by_age,
-      info$index$D,
       info$index$diagnoses_admitted,
       info$index$cum_infections_disag,
-      info$index$prob_strain,
       info$index$cum_n_vaccinated))
+
+  index_rt <- lancelot_index(info, rt = FALSE)
+  expect_equal(
+    unname(index_rt$state[!names(index_rt$state) %in% names(index_rt$run)]),
+     c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated))
+
+  index_cum_admit <- lancelot_index(info, cum_admit = FALSE)
+  expect_equal(
+    unname(index_cum_admit$state[!names(index_cum_admit$state) %in%
+    names(index_cum_admit$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated))
+
+  index_diagnoses_admitted <- lancelot_index(info, diagnoses_admitted = FALSE)
+  expect_equal(
+    unname(
+      index_diagnoses_admitted$state[!names(index_diagnoses_admitted$state)
+      %in% names(index_diagnoses_admitted$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated))
+
+  index_cum_infections_disag <- lancelot_index(info,
+   cum_infections_disag = FALSE)
+  expect_equal(
+    unname(
+      index_cum_infections_disag$state[!names(index_cum_infections_disag$state)
+      %in% names(index_cum_infections_disag$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_n_vaccinated))
+
+  index_cum_n_vaccinated <- lancelot_index(info, cum_n_vaccinated = FALSE)
+  expect_equal(
+    unname(
+      index_cum_n_vaccinated$state[!names(index_cum_n_vaccinated$state)
+      %in% names(index_cum_n_vaccinated$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag))
+
 })
 
 

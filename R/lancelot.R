@@ -729,6 +729,23 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'
 ##' @inheritParams basic_index
 ##'
+##' @param rt Logical, whether to output trajectories required for
+##'   calculating Rt (default = TRUE)
+##'
+##' @param cum_admit Logical, whether to output cumulative
+##'   admissions by age (default = TRUE)
+##'
+##' @param diagnoses_admitted Logical, whether to output
+##'   cumulative combined confirmed admissions and inpatient
+##'   diagnoses by age and vaccine class (default = TRUE)
+##'
+##' @param cum_infections_disag Logical, whether to output
+##'   cumulative infections by age and vaccine class (default = TRUE)
+##'
+##' @param cum_n_vaccinated Logical, whether to output
+##'   cumulative number vaccinated by age and vaccine class
+##'   (default = TRUE)
+##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
@@ -744,17 +761,16 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
 ##' mod <- lancelot$new(p, 0, 10)
 ##' lancelot_index(mod$info())
-lancelot_index <- function(info) {
+
+lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
+                            diagnoses_admitted = TRUE,
+                            cum_infections_disag = TRUE,
+                            cum_n_vaccinated = TRUE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
   index_core <- c(icu = index[["ICU_tot"]],
                   general = index[["general_tot"]],
-                  deaths_comm = index[["D_comm_tot"]],
-                  deaths_carehomes = index[["D_carehomes_tot"]],
-                  deaths_hosp = index[["D_hosp_tot"]],
-                  admitted = index[["cum_admit_conf"]],
-                  diagnoses = index[["cum_new_conf"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
@@ -770,12 +786,6 @@ lancelot_index <- function(info) {
                   diagnoses_inc = index[["new_conf_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
-                  sympt_cases = index[["cum_sympt_cases"]],
-                  sympt_cases_non_variant =
-                    index[["cum_sympt_cases_non_variant"]],
-                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
-                  sympt_cases_non_variant_over25 =
-                    index[["cum_sympt_cases_non_variant_over25"]],
                   sympt_cases_inc = index[["sympt_cases_inc"]],
                   sympt_cases_non_variant_inc =
                     index[["sympt_cases_non_variant_inc"]],
@@ -791,7 +801,7 @@ lancelot_index <- function(info) {
                   react_pos = index[["react_pos"]])
 
   ## Only incidence versions for the likelihood now. We add time here so it
-  ## can be used in the compare, without having to save it
+  ## can be used in the compare, without having to save it.
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
                               "deaths_comm_inc", "deaths_hosp_inc",
@@ -812,6 +822,8 @@ lancelot_index <- function(info) {
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
+                  admitted = index[["cum_admit_conf"]],
+                  diagnoses = index[["cum_new_conf"]],
                   deaths = index[["D_tot"]],
                   deaths_inc = index[["D_inc"]],
                   infections = index[["cum_infections"]],
@@ -841,8 +853,6 @@ lancelot_index <- function(info) {
                                                 list(n_vacc_classes), suffix)
   index_cum_n_vaccinated <- calculate_index(index, "cum_n_vaccinated",
                                             list(n_vacc_classes), suffix)
-  index_D <- calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all")
-
   ## (real) strain only
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
 
@@ -851,12 +861,31 @@ lancelot_index <- function(info) {
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)
 
+  index_state <- c(index_core, index_save)
+
+  if (rt) {
+    index_state <- c(index_state, index_S, index_R, index_prob_strain)
+  }
+
+  if (cum_admit) {
+      index_state <- c(index_state, index_cum_admit)
+  }
+
+  if (diagnoses_admitted) {
+    index_state <- c(index_state, index_diagnoses_admitted)
+  }
+
+  if (cum_infections_disag) {
+    index_state <- c(index_state, index_cum_infections_disag)
+  }
+
+  if (cum_n_vaccinated) {
+    index_state <- c(index_state, index_cum_n_vaccinated)
+  }
+
+
   list(run = index_run,
-       state = c(index_core, index_save, index_S, index_R,
-                 index_cum_admit, index_D,
-                 index_diagnoses_admitted, index_cum_infections_disag,
-                 index_prob_strain, index_cum_n_vaccinated
-       ))
+       state = index_state)
 }
 
 

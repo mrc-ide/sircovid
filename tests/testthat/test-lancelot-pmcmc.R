@@ -43,7 +43,6 @@ test_that("can compute incidence for a single variable", {
                    cmp$state["deaths_inc", , ])
 })
 
-
 test_that("Can combine trajectories of equal size - rank = FALSE", {
   dat <- reference_data_lancelot_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
@@ -180,7 +179,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(176, 11, 2, 32),
+    dat$trajectories$state, c(150, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -188,9 +187,9 @@ test_that("adding incidence adds appropriate states - nested", {
 
   tmp <- res$state["icu_inc", , , ]
   expect_true(all(is.na(tmp[, 2, 1:2])))
-  deaths <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
+  icu <- t(apply(tmp[, 2, -c(1, 2)], 1, cumsum))
   expect_equal(
-    deaths,
+    icu,
     res$state["icu", , 2,  -c(1, 2)] -
       res$state["icu", , 2,  2])
 
@@ -203,7 +202,7 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(176, 11, 2, 32),
+    dat$trajectories$state, c(150, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   v <- "icu"
@@ -218,7 +217,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(176, 11, 2, 32),
+    dat$trajectories$state, c(150, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -231,10 +230,8 @@ test_that("can compute incidence for a single variable - nested", {
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+  index_inc <- grep("infections_inc", names(dat$predict$index))
+  inc <- dat$trajectories$state[index_inc, , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -258,10 +255,8 @@ test_that("can combine EpiEstim rt calculations over trajectories", {
 test_that("can combine EpiEstim rt over trajectories without reordering", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+  index_inc <- grep("infections_inc", names(dat$predict$index))
+  inc <- dat$trajectories$state[index_inc, , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -285,10 +280,8 @@ test_that("can combine EpiEstim rt over trajectories without reordering", {
 test_that("Combining EpiEstim rt reject invalid inputs", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_cum_inc <- grep("infections", names(dat$predict$index))
-  cum_inc <- dat$trajectories$state[index_cum_inc, , , drop = FALSE]
-  inc_tmp <- apply(cum_inc[1, , ], 1, diff)
-  inc <- t(rbind(rep(0, ncol(inc_tmp)), inc_tmp))
+  index_inc <- grep("infections_inc", names(dat$predict$index))
+  inc <- dat$trajectories$state[index_inc, , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
