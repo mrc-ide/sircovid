@@ -35,7 +35,6 @@ helper_lancelot_data <- function(data, start_date, dt) {
 helper_lancelot_particle_filter <- function(data, n_particles,
                                             n_threads = 1L, seed = NULL,
                                             compiled_compare = FALSE) {
-
   lancelot_check_data(data)
   mcstate::particle_filter$new(
     data,
