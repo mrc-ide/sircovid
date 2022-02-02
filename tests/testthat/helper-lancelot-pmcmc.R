@@ -61,7 +61,7 @@ reference_data_lancelot_trajectories <- function() {
     ret$trajectories <- mcstate::pmcmc_predict(
       ret, steps_predict, prepend_trajectories = TRUE)
     ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
-    ret$trajectories <- add_trajectory_incidence(ret$trajectories, "icu")
+    ret$trajectories <- add_trajectory_incidence(ret$trajectories, "deaths")
     ret
   })
 }
