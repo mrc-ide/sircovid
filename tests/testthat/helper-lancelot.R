@@ -42,6 +42,7 @@ helper_lancelot_particle_filter <- function(data, n_particles,
     lancelot,
     n_particles,
     if (compiled_compare) NULL else lancelot_compare,
+    lancelot_index,
     lancelot_initial,
     n_threads = n_threads,
     seed = seed)
