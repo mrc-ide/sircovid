@@ -26,7 +26,7 @@ test_that("adding incidence adds appropriate states", {
 
 test_that("can add and remove trajectories from mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
-  v <- c("general", "icu")
+  v <- c("deaths", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
                    add_trajectory_incidence(dat$trajectories, v))

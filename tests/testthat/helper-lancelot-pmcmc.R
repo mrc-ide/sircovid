@@ -54,7 +54,7 @@ reference_data_lancelot_mcmc <- function() {
 reference_data_lancelot_trajectories <- function() {
   load_reference("data/lancelot_trajectories.rds", {
     dat <- reference_data_lancelot_mcmc()
-    incidence <- "icu"
+    incidence <- "deaths"
     ret <- mcstate::pmcmc_thin(dat)
     steps_predict <- seq(ret$predict$step, length.out = 11,
                          by = ret$predict$rate)
