@@ -26,7 +26,7 @@ test_that("adding incidence adds appropriate states", {
 
 test_that("can add and remove trajectories from mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
-  v <- c("general", "icu")
+  v <- c("deaths", "icu")
   res <- add_trajectory_incidence(dat, v)
   expect_identical(res$trajectories,
                    add_trajectory_incidence(dat$trajectories, v))
@@ -37,10 +37,10 @@ test_that("can add and remove trajectories from mcstate_pmcmc objects", {
 
 test_that("can compute incidence for a single variable", {
   dat <- reference_data_lancelot_mcmc()
-  cmp <- add_trajectory_incidence(dat$trajectories, c("general", "icu"))
-  res <- add_trajectory_incidence(dat$trajectories, "general")
-  expect_identical(res$state["general_inc", , ],
-                   cmp$state["general_inc", , ])
+  cmp <- add_trajectory_incidence(dat$trajectories, c("deaths", "icu"))
+  res <- add_trajectory_incidence(dat$trajectories, "deaths")
+  expect_identical(res$state["deaths_inc", , ],
+                   cmp$state["deaths_inc", , ])
 })
 
 test_that("Can combine trajectories of equal size - rank = FALSE", {
