@@ -22,7 +22,7 @@ The "basic" sircovid model. This is a dust model.'><meta property="og:image" con
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.38</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.39</span>
       </span>
     </div>
 
@@ -81,25 +81,25 @@ The "basic" sircovid model. This is a dust model.</h1>
 <span class="r-in"><span class="co"># The filtered state is returned at the end of the run</span></span>
 <span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="va">step_end</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> icu         208  215  228  112  264  240   79  165  203   275</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deaths      593  646  586  313  767  761  289  539  604   656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deaths_inc   90  110  103   59  146  117   57  102   96   113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> icu         315  226  174  161  276  189   92  133  262   262</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deaths      867  630  471  491  674  564  272  410  703   705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deaths_inc  142  119   83   74  118   81   53   64  109   137</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># More state can be retrieved using the "state" method</span></span>
 <span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       91.0       91.0       91.0       91.0       91.0       91.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      208.0      215.0      228.0      112.0      264.0      240.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      593.0      646.0      586.0      313.0      767.0      761.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       90.0      110.0      103.0       59.0      146.0      117.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      315.0      226.0      174.0      161.0      276.0      189.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      867.0      630.0      471.0      491.0      674.0      564.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]      142.0      119.0       83.0       74.0      118.0       81.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]        0.1        0.1        0.1        0.1        0.1        0.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,7]       [,8]       [,9]      [,10]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       91.0       91.0       91.0       91.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 56550138.0 56550138.0 56550138.0 56550138.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]       79.0      165.0      203.0      275.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      289.0      539.0      604.0      656.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       57.0      102.0       96.0      113.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]       92.0      133.0      262.0      262.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      272.0      410.0      703.0      705.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       53.0       64.0      109.0      137.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]        0.1        0.1        0.1        0.1</span>
 </code></pre></div>
     </div>
