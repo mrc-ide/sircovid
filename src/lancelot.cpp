@@ -173,6 +173,15 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(admitted = real_type)]]
 // [[odin.dust::compare_data(diagnoses = real_type)]]
 // [[odin.dust::compare_data(all_admission = real_type)]]
+// [[odin.dust::compare_data(admissions_0_9 = real_type)]]
+// [[odin.dust::compare_data(admissions_10_19 = real_type)]]
+// [[odin.dust::compare_data(admissions_20_29 = real_type)]]
+// [[odin.dust::compare_data(admissions_30_39 = real_type)]]
+// [[odin.dust::compare_data(admissions_40_49 = real_type)]]
+// [[odin.dust::compare_data(admissions_50_59 = real_type)]]
+// [[odin.dust::compare_data(admissions_60_69 = real_type)]]
+// [[odin.dust::compare_data(admissions_70_79 = real_type)]]
+// [[odin.dust::compare_data(admissions_80_plus = real_type)]]
 // [[odin.dust::compare_data(sero_pos_15_64_1 = real_type)]]
 // [[odin.dust::compare_data(sero_tot_15_64_1 = real_type)]]
 // [[odin.dust::compare_data(sero_pos_15_64_2 = real_type)]]
@@ -233,8 +242,44 @@ typename T::real_type
     const real_type model_deaths_hosp_75_79 = state[72];
     const real_type model_deaths_hosp_80_plus = state[73];
     const real_type model_admitted = state[1];
+    const real_type model_admitted_0_9 = state[2];
+    const real_type model_admitted_10_19 = state[3];
+    const real_type model_admitted_20_29 = state[4];
+    const real_type model_admitted_30_39 = state[5];
+    const real_type model_admitted_40_49 = state[6];
+    const real_type model_admitted_50_59 = state[7];
+    const real_type model_admitted_60_69 = state[8];
+    const real_type model_admitted_70_79 = state[9];
+    const real_type model_admitted_80_plus = state[10];
     const real_type model_diagnoses = state[11];
+    const real_type model_diagnoses_0_9 = state[12];
+    const real_type model_diagnoses_10_19 = state[13];
+    const real_type model_diagnoses_20_29 = state[14];
+    const real_type model_diagnoses_30_39 = state[15];
+    const real_type model_diagnoses_40_49 = state[16];
+    const real_type model_diagnoses_50_59 = state[17];
+    const real_type model_diagnoses_60_69 = state[18];
+    const real_type model_diagnoses_70_79 = state[19];
+    const real_type model_diagnoses_80_plus = state[20];
     const real_type model_all_admission = model_admitted + model_diagnoses;
+    const real_type model_all_admission_0_9 =
+      model_admitted_0_9 + model_diagnoses_0_9;
+    const real_type model_all_admission_10_19 =
+      model_admitted_10_19 + model_diagnoses_10_19;
+    const real_type model_all_admission_20_29 =
+      model_admitted_20_29 + model_diagnoses_20_29;
+    const real_type model_all_admission_30_39 =
+      model_admitted_30_39 + model_diagnoses_30_39;
+    const real_type model_all_admission_40_49 =
+      model_admitted_40_49 + model_diagnoses_40_49;
+    const real_type model_all_admission_50_59 =
+      model_admitted_50_59 + model_diagnoses_50_59;
+    const real_type model_all_admission_60_69 =
+      model_admitted_60_69 + model_diagnoses_60_69;
+    const real_type model_all_admission_70_79 =
+      model_admitted_70_79 + model_diagnoses_70_79;
+    const real_type model_all_admission_80_plus =
+      model_admitted_80_plus + model_diagnoses_80_plus;
     const real_type model_sero_pos_1 = state[74];
     const real_type model_sero_pos_2 = state[75];
     const real_type model_sympt_cases = state[86];
@@ -522,7 +567,44 @@ typename T::real_type
       ll_nbinom(data.diagnoses, shared->phi_diagnoses * model_diagnoses,
                 shared->kappa_diagnoses, shared->exp_noise, rng_state);
     const real_type ll_all_admission =
-      ll_nbinom(data.all_admission, shared->phi_all_admission * model_all_admission,
+      ll_nbinom(data.all_admission,
+                shared->phi_all_admission * model_all_admission,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_0_9 =
+      ll_nbinom(data.admissions_0_9,
+                shared->phi_all_admission * model_all_admission_0_9,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_10_19 =
+      ll_nbinom(data.admissions_10_19,
+                shared->phi_all_admission * model_all_admission_10_19,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_20_29 =
+      ll_nbinom(data.admissions_20_29,
+                shared->phi_all_admission * model_all_admission_20_29,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_30_39 =
+      ll_nbinom(data.admissions_30_39,
+                shared->phi_all_admission * model_all_admission_30_39,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_40_49 =
+      ll_nbinom(data.admissions_40_49,
+                shared->phi_all_admission * model_all_admission_40_49,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_50_59 =
+      ll_nbinom(data.admissions_50_59,
+                shared->phi_all_admission * model_all_admission_50_59,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_60_69 =
+      ll_nbinom(data.admissions_60_69,
+                shared->phi_all_admission * model_all_admission_60_69,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_70_79 =
+      ll_nbinom(data.admissions_70_79,
+                shared->phi_all_admission * model_all_admission_70_79,
+                shared->kappa_all_admission, shared->exp_noise, rng_state);
+    const real_type ll_all_admission_80_plus =
+      ll_nbinom(data.admissions_80_plus,
+                shared->phi_all_admission * model_all_admission_80_plus,
                 shared->kappa_all_admission, shared->exp_noise, rng_state);
 
     const real_type ll_serology_1 =
@@ -605,7 +687,11 @@ typename T::real_type
       ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
       ll_deaths_hosp_80_plus + ll_deaths_hosp + ll_deaths_carehomes +
       ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-      ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
+      ll_diagnoses + ll_all_admission +
+      ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
+      ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
+      ll_all_admission_60_69 + ll_all_admission_70_79 +
+      ll_all_admission_80_plus + ll_serology_1 + ll_serology_2 +
       ll_pillar2_tests + ll_pillar2_over25_tests + ll_pillar2_under15_tests +
       ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
       ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
@@ -843,6 +929,15 @@ public:
     real_type admitted;
     real_type diagnoses;
     real_type all_admission;
+    real_type admissions_0_9;
+    real_type admissions_10_19;
+    real_type admissions_20_29;
+    real_type admissions_30_39;
+    real_type admissions_40_49;
+    real_type admissions_50_59;
+    real_type admissions_60_69;
+    real_type admissions_70_79;
+    real_type admissions_80_plus;
     real_type sero_pos_15_64_1;
     real_type sero_tot_15_64_1;
     real_type sero_pos_15_64_2;
@@ -8493,6 +8588,15 @@ lancelot::data_type dust_data<lancelot>(cpp11::list data) {
       cpp11::as_cpp<real_type>(data["admitted"]),
       cpp11::as_cpp<real_type>(data["diagnoses"]),
       cpp11::as_cpp<real_type>(data["all_admission"]),
+      cpp11::as_cpp<real_type>(data["admissions_0_9"]),
+      cpp11::as_cpp<real_type>(data["admissions_10_19"]),
+      cpp11::as_cpp<real_type>(data["admissions_20_29"]),
+      cpp11::as_cpp<real_type>(data["admissions_30_39"]),
+      cpp11::as_cpp<real_type>(data["admissions_40_49"]),
+      cpp11::as_cpp<real_type>(data["admissions_50_59"]),
+      cpp11::as_cpp<real_type>(data["admissions_60_69"]),
+      cpp11::as_cpp<real_type>(data["admissions_70_79"]),
+      cpp11::as_cpp<real_type>(data["admissions_80_plus"]),
       cpp11::as_cpp<real_type>(data["sero_pos_15_64_1"]),
       cpp11::as_cpp<real_type>(data["sero_tot_15_64_1"]),
       cpp11::as_cpp<real_type>(data["sero_pos_15_64_2"]),

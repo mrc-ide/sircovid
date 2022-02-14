@@ -79,6 +79,15 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(admitted = real_type)]]
 // [[odin.dust::compare_data(diagnoses = real_type)]]
 // [[odin.dust::compare_data(all_admission = real_type)]]
+// [[odin.dust::compare_data(admissions_0_9 = real_type)]]
+// [[odin.dust::compare_data(admissions_10_19 = real_type)]]
+// [[odin.dust::compare_data(admissions_20_29 = real_type)]]
+// [[odin.dust::compare_data(admissions_30_39 = real_type)]]
+// [[odin.dust::compare_data(admissions_40_49 = real_type)]]
+// [[odin.dust::compare_data(admissions_50_59 = real_type)]]
+// [[odin.dust::compare_data(admissions_60_69 = real_type)]]
+// [[odin.dust::compare_data(admissions_70_79 = real_type)]]
+// [[odin.dust::compare_data(admissions_80_plus = real_type)]]
 // [[odin.dust::compare_data(sero_pos_15_64_1 = real_type)]]
 // [[odin.dust::compare_data(sero_tot_15_64_1 = real_type)]]
 // [[odin.dust::compare_data(sero_pos_15_64_2 = real_type)]]
@@ -139,8 +148,44 @@ typename T::real_type
     const real_type model_deaths_hosp_75_79 = odin(D_hosp_75_79_inc);
     const real_type model_deaths_hosp_80_plus = odin(D_hosp_80_plus_inc);
     const real_type model_admitted = odin(admit_conf_inc);
+    const real_type model_admitted_0_9 = odin(admit_0_9_conf_inc);
+    const real_type model_admitted_10_19 = odin(admit_10_19_conf_inc);
+    const real_type model_admitted_20_29 = odin(admit_20_29_conf_inc);
+    const real_type model_admitted_30_39 = odin(admit_30_39_conf_inc);
+    const real_type model_admitted_40_49 = odin(admit_40_49_conf_inc);
+    const real_type model_admitted_50_59 = odin(admit_50_59_conf_inc);
+    const real_type model_admitted_60_69 = odin(admit_60_69_conf_inc);
+    const real_type model_admitted_70_79 = odin(admit_70_79_conf_inc);
+    const real_type model_admitted_80_plus = odin(admit_80_plus_conf_inc);
     const real_type model_diagnoses = odin(new_conf_inc);
+    const real_type model_diagnoses_0_9 = odin(new_0_9_conf_inc);
+    const real_type model_diagnoses_10_19 = odin(new_10_19_conf_inc);
+    const real_type model_diagnoses_20_29 = odin(new_20_29_conf_inc);
+    const real_type model_diagnoses_30_39 = odin(new_30_39_conf_inc);
+    const real_type model_diagnoses_40_49 = odin(new_40_49_conf_inc);
+    const real_type model_diagnoses_50_59 = odin(new_50_59_conf_inc);
+    const real_type model_diagnoses_60_69 = odin(new_60_69_conf_inc);
+    const real_type model_diagnoses_70_79 = odin(new_70_79_conf_inc);
+    const real_type model_diagnoses_80_plus = odin(new_80_plus_conf_inc);
     const real_type model_all_admission = model_admitted + model_diagnoses;
+    const real_type model_all_admission_0_9 =
+      model_admitted_0_9 + model_diagnoses_0_9;
+    const real_type model_all_admission_10_19 =
+      model_admitted_10_19 + model_diagnoses_10_19;
+    const real_type model_all_admission_20_29 =
+      model_admitted_20_29 + model_diagnoses_20_29;
+    const real_type model_all_admission_30_39 =
+      model_admitted_30_39 + model_diagnoses_30_39;
+    const real_type model_all_admission_40_49 =
+      model_admitted_40_49 + model_diagnoses_40_49;
+    const real_type model_all_admission_50_59 =
+      model_admitted_50_59 + model_diagnoses_50_59;
+    const real_type model_all_admission_60_69 =
+      model_admitted_60_69 + model_diagnoses_60_69;
+    const real_type model_all_admission_70_79 =
+      model_admitted_70_79 + model_diagnoses_70_79;
+    const real_type model_all_admission_80_plus =
+      model_admitted_80_plus + model_diagnoses_80_plus;
     const real_type model_sero_pos_1 = odin(sero_pos_1);
     const real_type model_sero_pos_2 = odin(sero_pos_2);
     const real_type model_sympt_cases = odin(sympt_cases_inc);
@@ -428,7 +473,44 @@ typename T::real_type
       ll_nbinom(data.diagnoses, odin(phi_diagnoses) * model_diagnoses,
                 odin(kappa_diagnoses), odin(exp_noise), rng_state);
     const real_type ll_all_admission =
-      ll_nbinom(data.all_admission, odin(phi_all_admission) * model_all_admission,
+      ll_nbinom(data.all_admission,
+                odin(phi_all_admission) * model_all_admission,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_0_9 =
+      ll_nbinom(data.admissions_0_9,
+                odin(phi_all_admission) * model_all_admission_0_9,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_10_19 =
+      ll_nbinom(data.admissions_10_19,
+                odin(phi_all_admission) * model_all_admission_10_19,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_20_29 =
+      ll_nbinom(data.admissions_20_29,
+                odin(phi_all_admission) * model_all_admission_20_29,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_30_39 =
+      ll_nbinom(data.admissions_30_39,
+                odin(phi_all_admission) * model_all_admission_30_39,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_40_49 =
+      ll_nbinom(data.admissions_40_49,
+                odin(phi_all_admission) * model_all_admission_40_49,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_50_59 =
+      ll_nbinom(data.admissions_50_59,
+                odin(phi_all_admission) * model_all_admission_50_59,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_60_69 =
+      ll_nbinom(data.admissions_60_69,
+                odin(phi_all_admission) * model_all_admission_60_69,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_70_79 =
+      ll_nbinom(data.admissions_70_79,
+                odin(phi_all_admission) * model_all_admission_70_79,
+                odin(kappa_all_admission), odin(exp_noise), rng_state);
+    const real_type ll_all_admission_80_plus =
+      ll_nbinom(data.admissions_80_plus,
+                odin(phi_all_admission) * model_all_admission_80_plus,
                 odin(kappa_all_admission), odin(exp_noise), rng_state);
 
     const real_type ll_serology_1 =
@@ -511,7 +593,11 @@ typename T::real_type
       ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
       ll_deaths_hosp_80_plus + ll_deaths_hosp + ll_deaths_carehomes +
       ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-      ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
+      ll_diagnoses + ll_all_admission +
+      ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
+      ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
+      ll_all_admission_60_69 + ll_all_admission_70_79 +
+      ll_all_admission_80_plus + ll_serology_1 + ll_serology_2 +
       ll_pillar2_tests + ll_pillar2_over25_tests + ll_pillar2_under15_tests +
       ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
       ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
