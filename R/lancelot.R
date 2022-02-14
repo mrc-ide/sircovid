@@ -1184,6 +1184,7 @@ lancelot_compare <- function(state, observed, pars) {
   ll_diagnoses <- ll_nbinom(observed$diagnoses,
                             pars$phi_diagnoses * model_diagnoses,
                             pars$kappa_diagnoses, exp_noise)
+
   ll_all_admission <- ll_nbinom(observed$all_admission,
                                 pars$phi_all_admission * model_all_admission,
                                 pars$kappa_all_admission, exp_noise)

@@ -1,3 +1,7 @@
+# sircovid 0.13.0
+
+* admissions are now fitted by age
+
 # sircovid 0.12.35
 
 * gamma_U is now time-varying
