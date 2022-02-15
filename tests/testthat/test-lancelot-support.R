@@ -423,7 +423,13 @@ test_that("lancelot_index identifies ICU and D_tot in real model", {
       "deaths_hosp_inc", "deaths_hosp_0_49_inc", "deaths_hosp_50_54_inc",
       "deaths_hosp_55_59_inc", "deaths_hosp_60_64_inc", "deaths_hosp_65_69_inc",
       "deaths_hosp_70_74_inc", "deaths_hosp_75_79_inc",
-      "deaths_hosp_80_plus_inc", "admitted_inc", "diagnoses_inc",
+      "deaths_hosp_80_plus_inc", "admitted_inc", "admitted_0_9_inc",
+      "admitted_10_19_inc", "admitted_20_29_inc", "admitted_30_39_inc",
+      "admitted_40_49_inc", "admitted_50_59_inc", "admitted_60_69_inc",
+      "admitted_70_79_inc", "admitted_80_plus_inc", "diagnoses_inc",
+      "diagnoses_0_9_inc", "diagnoses_10_19_inc", "diagnoses_20_29_inc",
+      "diagnoses_30_39_inc", "diagnoses_40_49_inc", "diagnoses_50_59_inc",
+      "diagnoses_60_69_inc", "diagnoses_70_79_inc", "diagnoses_80_plus_inc",
       "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
       "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
       "sympt_cases_under15_inc", "sympt_cases_15_24_inc",
@@ -545,7 +551,25 @@ test_that("lancelot_compare combines likelihood correctly", {
     deaths_hosp_75_79_inc = 4:9,
     deaths_hosp_80_plus_inc = 4:9,
     admitted_inc = 50:55,
+    admitted_0_9_inc = 1:6,
+    admitted_10_19_inc = 1:6,
+    admitted_20_29_inc = 1:6,
+    admitted_30_39_inc = 1:6,
+    admitted_40_49_inc = 2:7,
+    admitted_50_59_inc = 2:7,
+    admitted_60_69_inc = 9:14,
+    admitted_70_79_inc = 10:15,
+    admitted_80_plus_inc = 10:15,
     diagnoses_inc = 60:65,
+    diagnoses_0_9_inc = 1:6,
+    diagnoses_10_19_inc = 1:6,
+    diagnoses_20_29_inc = 1:6,
+    diagnoses_30_39_inc = 1:6,
+    diagnoses_40_49_inc = 2:7,
+    diagnoses_50_59_inc = 2:7,
+    diagnoses_60_69_inc = 9:14,
+    diagnoses_70_79_inc = 10:15,
+    diagnoses_80_plus_inc = 10:15,
     sero_pos_1 = 4:9,
     sero_pos_2 = 14:19,
     sympt_cases_inc = 100:105,
@@ -579,6 +603,15 @@ test_that("lancelot_compare combines likelihood correctly", {
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
+    admissions_0_9 = 2,
+    admissions_10_19 = 4,
+    admissions_20_29 = 5,
+    admissions_30_39 = 5,
+    admissions_40_49 = 10,
+    admissions_50_59 = 15,
+    admissions_60_69 = 20,
+    admissions_70_79 = 25,
+    admissions_80_plus = 30,
     sero_pos_15_64_1 = 43,
     sero_tot_15_64_1 = 83,
     sero_pos_15_64_2 = 58,
@@ -887,6 +920,30 @@ test_that("lancelot_check_data disallows double fitting to deaths", {
   expect_error(
     lancelot_check_data(data2),
     "london: Cannot fit to all ages aggregated for deaths if")
+})
+
+
+test_that("lancelot_check_data disallows double fitting to admissions", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## age-specific hospital admissions
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$admissions_60_69 <- 1
+  data$all_admission <- 4
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to admissions by age and aggregate together!")
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to admissions by age and aggregate together!")
 })
 
 
