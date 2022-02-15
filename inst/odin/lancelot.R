@@ -236,7 +236,8 @@ delta_admit_80_plus_conf <-
   sum(n_I_C_2_to_H_R_conf[19, , ]) * 0.75 +
   sum(n_I_C_2_to_ICU_pre_conf[17, , ]) +
   sum(n_I_C_2_to_ICU_pre_conf[19, , ]) * 0.75
-update(cum_admit_80_plus_conf) <- cum_admit_80_plus_conf + delta_admit_80_plus_conf
+update(cum_admit_80_plus_conf) <- cum_admit_80_plus_conf +
+  delta_admit_80_plus_conf
 
 
 # New in-hospital diagnoses by age

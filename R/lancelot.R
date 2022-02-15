@@ -2325,7 +2325,7 @@ lancelot_check_data <- function(data) {
   err_admissions <- function(i, nms_admission_ages, nms_admission_agg) {
     TRUE %in% has[i, nms_admission_ages] && isTRUE(has[i, nms_admission_agg])
   }
-  for (i in 1:nrow(has)) {
+  for (i in 1:seq_len(nrow(has))) {
     if (err_admissions(i, nms_admission_ages, nms_admission_agg)) {
       stop("Cannot fit to admissions by age and aggregate together!")
     }
