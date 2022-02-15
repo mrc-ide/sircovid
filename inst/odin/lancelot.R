@@ -162,80 +162,80 @@ update(cum_admit_conf) <- cum_admit_conf + delta_admit_conf
 
 delta_admit_0_9_conf <-
   sum(n_I_C_2_to_H_D_conf[1:2, , ]) +
-  sum(n_I_C_2_to_H_R_conf[1:2, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[1:2, ,])
+  sum(n_I_C_2_to_H_R_conf[1:2, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[1:2, , ])
 update(cum_admit_0_9_conf) <- cum_admit_0_9_conf + delta_admit_0_9_conf
 
 delta_admit_10_19_conf <-
   sum(n_I_C_2_to_H_D_conf[3:4, , ]) +
-  sum(n_I_C_2_to_H_R_conf[3:4, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[3:4, ,])
+  sum(n_I_C_2_to_H_R_conf[3:4, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[3:4, , ])
 update(cum_admit_10_19_conf) <- cum_admit_10_19_conf + delta_admit_10_19_conf
 
 delta_admit_20_29_conf <-
   sum(n_I_C_2_to_H_D_conf[5:6, , ]) +
   sum(n_I_C_2_to_H_D_conf[18, , ]) * 1 / 8 +
-  sum(n_I_C_2_to_H_R_conf[5:6, ,]) +
-  sum(n_I_C_2_to_H_R_conf[18, ,]) * 1 / 8 +
-  sum(n_I_C_2_to_ICU_pre_conf[5:6, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[18, ,]) * 1 / 8
+  sum(n_I_C_2_to_H_R_conf[5:6, , ]) +
+  sum(n_I_C_2_to_H_R_conf[18, , ]) * 1 / 8 +
+  sum(n_I_C_2_to_ICU_pre_conf[5:6, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[18, , ]) * 1 / 8
 update(cum_admit_20_29_conf) <- cum_admit_20_29_conf + delta_admit_20_29_conf
 
 delta_admit_30_39_conf <-
   sum(n_I_C_2_to_H_D_conf[7:8, , ]) +
   sum(n_I_C_2_to_H_D_conf[18, , ]) * 1 / 8 +
-  sum(n_I_C_2_to_H_R_conf[7:8, ,]) +
-  sum(n_I_C_2_to_H_R_conf[18, ,]) * 1 / 8 +
-  sum(n_I_C_2_to_ICU_pre_conf[7:8, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[18, ,]) * 1 / 8
+  sum(n_I_C_2_to_H_R_conf[7:8, , ]) +
+  sum(n_I_C_2_to_H_R_conf[18, , ]) * 1 / 8 +
+  sum(n_I_C_2_to_ICU_pre_conf[7:8, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[18, , ]) * 1 / 8
 update(cum_admit_30_39_conf) <- cum_admit_30_39_conf + delta_admit_30_39_conf
 
 delta_admit_40_49_conf <-
   sum(n_I_C_2_to_H_D_conf[9:10, , ]) +
   sum(n_I_C_2_to_H_D_conf[18, , ]) * 2 / 8 +
-  sum(n_I_C_2_to_H_R_conf[9:10, ,]) +
-  sum(n_I_C_2_to_H_R_conf[18, ,]) * 2 / 8 +
-  sum(n_I_C_2_to_ICU_pre_conf[9:10, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[18, ,]) * 2 / 8
+  sum(n_I_C_2_to_H_R_conf[9:10, , ]) +
+  sum(n_I_C_2_to_H_R_conf[18, , ]) * 2 / 8 +
+  sum(n_I_C_2_to_ICU_pre_conf[9:10, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[18, , ]) * 2 / 8
 update(cum_admit_40_49_conf) <- cum_admit_40_49_conf + delta_admit_40_49_conf
 
 delta_admit_50_59_conf <-
   sum(n_I_C_2_to_H_D_conf[11:12, , ]) +
   sum(n_I_C_2_to_H_D_conf[18, , ]) * 3 / 8 +
-  sum(n_I_C_2_to_H_R_conf[11:12, ,]) +
-  sum(n_I_C_2_to_H_R_conf[18, ,]) * 3 / 8 +
-  sum(n_I_C_2_to_ICU_pre_conf[11:12, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[18, ,]) * 3 / 8
+  sum(n_I_C_2_to_H_R_conf[11:12, , ]) +
+  sum(n_I_C_2_to_H_R_conf[18, , ]) * 3 / 8 +
+  sum(n_I_C_2_to_ICU_pre_conf[11:12, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[18, , ]) * 3 / 8
 update(cum_admit_50_59_conf) <- cum_admit_50_59_conf + delta_admit_50_59_conf
 
 delta_admit_60_69_conf <-
   sum(n_I_C_2_to_H_D_conf[13:14, , ]) +
   sum(n_I_C_2_to_H_D_conf[18, , ]) * 1 / 8 +
   sum(n_I_C_2_to_H_D_conf[19, , ]) * 0.05 +
-  sum(n_I_C_2_to_H_R_conf[13:14, ,]) +
-  sum(n_I_C_2_to_H_R_conf[18, ,]) * 1 / 8 +
-  sum(n_I_C_2_to_H_R_conf[19, ,]) * 0.05 +
-  sum(n_I_C_2_to_ICU_pre_conf[13:14, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[18, ,]) * 1 / 8 +
-  sum(n_I_C_2_to_ICU_pre_conf[19, ,]) * 0.05
+  sum(n_I_C_2_to_H_R_conf[13:14, , ]) +
+  sum(n_I_C_2_to_H_R_conf[18, , ]) * 1 / 8 +
+  sum(n_I_C_2_to_H_R_conf[19, , ]) * 0.05 +
+  sum(n_I_C_2_to_ICU_pre_conf[13:14, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[18, , ]) * 1 / 8 +
+  sum(n_I_C_2_to_ICU_pre_conf[19, , ]) * 0.05
 update(cum_admit_60_69_conf) <- cum_admit_60_69_conf + delta_admit_60_69_conf
 
 delta_admit_70_79_conf <-
   sum(n_I_C_2_to_H_D_conf[15:16, , ]) +
   sum(n_I_C_2_to_H_D_conf[19, , ]) * 0.2 +
-  sum(n_I_C_2_to_H_R_conf[15:16, ,]) +
-  sum(n_I_C_2_to_H_R_conf[19, ,]) * 0.2 +
-  sum(n_I_C_2_to_ICU_pre_conf[15:16, ,]) +
-sum(n_I_C_2_to_ICU_pre_conf[19, ,]) * 0.2
+  sum(n_I_C_2_to_H_R_conf[15:16, , ]) +
+  sum(n_I_C_2_to_H_R_conf[19, , ]) * 0.2 +
+  sum(n_I_C_2_to_ICU_pre_conf[15:16, , ]) +
+sum(n_I_C_2_to_ICU_pre_conf[19, , ]) * 0.2
 update(cum_admit_70_79_conf) <- cum_admit_70_79_conf + delta_admit_70_79_conf
 
 delta_admit_80_plus_conf <-
   sum(n_I_C_2_to_H_D_conf[17, , ]) +
   sum(n_I_C_2_to_H_D_conf[19, , ]) * 0.75 +
-  sum(n_I_C_2_to_H_R_conf[17, ,]) +
-  sum(n_I_C_2_to_H_R_conf[19, ,]) * 0.75 +
-  sum(n_I_C_2_to_ICU_pre_conf[17, ,]) +
-  sum(n_I_C_2_to_ICU_pre_conf[19, ,]) * 0.75
+  sum(n_I_C_2_to_H_R_conf[17, , ]) +
+  sum(n_I_C_2_to_H_R_conf[19, , ]) * 0.75 +
+  sum(n_I_C_2_to_ICU_pre_conf[17, , ]) +
+  sum(n_I_C_2_to_ICU_pre_conf[19, , ]) * 0.75
 update(cum_admit_80_plus_conf) <- cum_admit_80_plus_conf + delta_admit_80_plus_conf
 
 
@@ -252,166 +252,166 @@ delta_new_conf <-
 update(cum_new_conf) <- cum_new_conf + delta_new_conf
 
 delta_new_0_9_conf <-
-  sum(n_H_D_unconf_to_conf[1:2, , ,]) +
-  sum(n_H_R_unconf_to_conf[1:2, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[1:2, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[1:2, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[1:2, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[1:2, , ,]) +
-  sum(n_W_R_unconf_to_conf[1:2, , ,]) +
-  sum(n_W_D_unconf_to_conf[1:2, , ,])
+  sum(n_H_D_unconf_to_conf[1:2, , , ]) +
+  sum(n_H_R_unconf_to_conf[1:2, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[1:2, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[1:2, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[1:2, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[1:2, , , ]) +
+  sum(n_W_R_unconf_to_conf[1:2, , , ]) +
+  sum(n_W_D_unconf_to_conf[1:2, , , ])
 update(cum_new_0_9_conf) <- cum_new_0_9_conf + delta_new_0_9_conf
 
 delta_new_10_19_conf <-
-  sum(n_H_D_unconf_to_conf[3:4, , ,]) +
-  sum(n_H_R_unconf_to_conf[3:4, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[3:4, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[3:4, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[3:4, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[3:4, , ,]) +
-  sum(n_W_R_unconf_to_conf[3:4, , ,]) +
-  sum(n_W_D_unconf_to_conf[3:4, , ,])
+  sum(n_H_D_unconf_to_conf[3:4, , , ]) +
+  sum(n_H_R_unconf_to_conf[3:4, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[3:4, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[3:4, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[3:4, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[3:4, , , ]) +
+  sum(n_W_R_unconf_to_conf[3:4, , , ]) +
+  sum(n_W_D_unconf_to_conf[3:4, , , ])
 update(cum_new_10_19_conf) <- cum_new_10_19_conf + delta_new_10_19_conf
 
 delta_new_20_29_conf <-
-  sum(n_H_D_unconf_to_conf[5:6, , ,]) +
-  sum(n_H_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_H_R_unconf_to_conf[5:6, , ,]) +
-  sum(n_H_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_pre_unconf_to_conf[5:6, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_D_unconf_to_conf[5:6, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_W_R_unconf_to_conf[5:6, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_W_D_unconf_to_conf[5:6, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_W_R_unconf_to_conf[5:6, , ,]) +
-  sum(n_W_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_W_D_unconf_to_conf[5:6, , ,]) +
-  sum(n_W_D_unconf_to_conf[18, , ,]) * 1 / 8
+  sum(n_H_D_unconf_to_conf[5:6, , , ]) +
+  sum(n_H_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_H_R_unconf_to_conf[5:6, , , ]) +
+  sum(n_H_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_pre_unconf_to_conf[5:6, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_D_unconf_to_conf[5:6, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_W_R_unconf_to_conf[5:6, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_W_D_unconf_to_conf[5:6, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_W_R_unconf_to_conf[5:6, , , ]) +
+  sum(n_W_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_W_D_unconf_to_conf[5:6, , , ]) +
+  sum(n_W_D_unconf_to_conf[18, , , ]) * 1 / 8
 update(cum_new_20_29_conf) <- cum_new_20_29_conf + delta_new_20_29_conf
 
 delta_new_30_39_conf <-
-  sum(n_H_D_unconf_to_conf[7:8, , ,]) +
-  sum(n_H_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_H_R_unconf_to_conf[7:8, , ,]) +
-  sum(n_H_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_pre_unconf_to_conf[7:8, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_D_unconf_to_conf[7:8, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_W_R_unconf_to_conf[7:8, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_W_D_unconf_to_conf[7:8, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_W_R_unconf_to_conf[7:8, , ,]) +
-  sum(n_W_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_W_D_unconf_to_conf[7:8, , ,]) +
-  sum(n_W_D_unconf_to_conf[18, , ,]) * 1 / 8
+  sum(n_H_D_unconf_to_conf[7:8, , , ]) +
+  sum(n_H_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_H_R_unconf_to_conf[7:8, , , ]) +
+  sum(n_H_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_pre_unconf_to_conf[7:8, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_D_unconf_to_conf[7:8, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_W_R_unconf_to_conf[7:8, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_W_D_unconf_to_conf[7:8, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_W_R_unconf_to_conf[7:8, , , ]) +
+  sum(n_W_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_W_D_unconf_to_conf[7:8, , , ]) +
+  sum(n_W_D_unconf_to_conf[18, , , ]) * 1 / 8
 update(cum_new_30_39_conf) <- cum_new_30_39_conf + delta_new_30_39_conf
 
 delta_new_40_49_conf <-
-  sum(n_H_D_unconf_to_conf[9:10, , ,]) +
-  sum(n_H_D_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_H_R_unconf_to_conf[9:10, , ,]) +
-  sum(n_H_R_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_ICU_pre_unconf_to_conf[9:10, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_ICU_D_unconf_to_conf[9:10, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_ICU_W_R_unconf_to_conf[9:10, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_ICU_W_D_unconf_to_conf[9:10, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_W_R_unconf_to_conf[9:10, , ,]) +
-  sum(n_W_R_unconf_to_conf[18, , ,]) * 2 / 8 +
-  sum(n_W_D_unconf_to_conf[9:10, , ,]) +
-  sum(n_W_D_unconf_to_conf[18, , ,]) * 2 / 8
+  sum(n_H_D_unconf_to_conf[9:10, , , ]) +
+  sum(n_H_D_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_H_R_unconf_to_conf[9:10, , , ]) +
+  sum(n_H_R_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_ICU_pre_unconf_to_conf[9:10, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_ICU_D_unconf_to_conf[9:10, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_ICU_W_R_unconf_to_conf[9:10, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_ICU_W_D_unconf_to_conf[9:10, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_W_R_unconf_to_conf[9:10, , , ]) +
+  sum(n_W_R_unconf_to_conf[18, , , ]) * 2 / 8 +
+  sum(n_W_D_unconf_to_conf[9:10, , , ]) +
+  sum(n_W_D_unconf_to_conf[18, , , ]) * 2 / 8
 update(cum_new_40_49_conf) <- cum_new_40_49_conf + delta_new_40_49_conf
 
 delta_new_50_59_conf <-
-  sum(n_H_D_unconf_to_conf[11:12, , ,]) +
-  sum(n_H_D_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_H_R_unconf_to_conf[11:12, , ,]) +
-  sum(n_H_R_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_ICU_pre_unconf_to_conf[11:12, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_ICU_D_unconf_to_conf[11:12, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_ICU_W_R_unconf_to_conf[11:12, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_ICU_W_D_unconf_to_conf[11:12, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_W_R_unconf_to_conf[11:12, , ,]) +
-  sum(n_W_R_unconf_to_conf[18, , ,]) * 3 / 8 +
-  sum(n_W_D_unconf_to_conf[11:12, , ,]) +
-  sum(n_W_D_unconf_to_conf[18, , ,]) * 3 / 8
+  sum(n_H_D_unconf_to_conf[11:12, , , ]) +
+  sum(n_H_D_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_H_R_unconf_to_conf[11:12, , , ]) +
+  sum(n_H_R_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_ICU_pre_unconf_to_conf[11:12, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_ICU_D_unconf_to_conf[11:12, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_ICU_W_R_unconf_to_conf[11:12, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_ICU_W_D_unconf_to_conf[11:12, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_W_R_unconf_to_conf[11:12, , , ]) +
+  sum(n_W_R_unconf_to_conf[18, , , ]) * 3 / 8 +
+  sum(n_W_D_unconf_to_conf[11:12, , , ]) +
+  sum(n_W_D_unconf_to_conf[18, , , ]) * 3 / 8
 update(cum_new_50_59_conf) <- cum_new_50_59_conf + delta_new_50_59_conf
 
 delta_new_60_69_conf <-
-  sum(n_H_D_unconf_to_conf[13:14, , ,]) +
-  sum(n_H_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_H_D_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_H_R_unconf_to_conf[13:14, , ,]) +
-  sum(n_H_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_H_R_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_ICU_pre_unconf_to_conf[13:14, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_pre_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_ICU_D_unconf_to_conf[13:14, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_D_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_ICU_W_R_unconf_to_conf[13:14, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_W_R_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_ICU_W_D_unconf_to_conf[13:14, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_ICU_W_D_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_W_R_unconf_to_conf[13:14, , ,]) +
-  sum(n_W_R_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_W_R_unconf_to_conf[19, , ,]) * 0.05 +
-  sum(n_W_D_unconf_to_conf[13:14, , ,]) +
-  sum(n_W_D_unconf_to_conf[18, , ,]) * 1 / 8 +
-  sum(n_W_D_unconf_to_conf[19, , ,]) * 0.05
+  sum(n_H_D_unconf_to_conf[13:14, , , ]) +
+  sum(n_H_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_H_D_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_H_R_unconf_to_conf[13:14, , , ]) +
+  sum(n_H_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_H_R_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_ICU_pre_unconf_to_conf[13:14, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_pre_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_ICU_D_unconf_to_conf[13:14, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_D_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_ICU_W_R_unconf_to_conf[13:14, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_W_R_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_ICU_W_D_unconf_to_conf[13:14, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_ICU_W_D_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_W_R_unconf_to_conf[13:14, , , ]) +
+  sum(n_W_R_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_W_R_unconf_to_conf[19, , , ]) * 0.05 +
+  sum(n_W_D_unconf_to_conf[13:14, , , ]) +
+  sum(n_W_D_unconf_to_conf[18, , , ]) * 1 / 8 +
+  sum(n_W_D_unconf_to_conf[19, , , ]) * 0.05
 update(cum_new_60_69_conf) <- cum_new_60_69_conf + delta_new_60_69_conf
 
 delta_new_70_79_conf <-
-  sum(n_H_D_unconf_to_conf[15:16, , ,]) +
-  sum(n_H_D_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_H_R_unconf_to_conf[15:16, , ,]) +
-  sum(n_H_R_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_ICU_pre_unconf_to_conf[15:16, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_ICU_D_unconf_to_conf[15:16, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_ICU_W_R_unconf_to_conf[15:16, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_ICU_W_D_unconf_to_conf[15:16, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_W_R_unconf_to_conf[15:16, , ,]) +
-  sum(n_W_R_unconf_to_conf[19, , ,]) * 0.2 +
-  sum(n_W_D_unconf_to_conf[15:16, , ,]) +
-  sum(n_W_D_unconf_to_conf[19, , ,]) * 0.2
+  sum(n_H_D_unconf_to_conf[15:16, , , ]) +
+  sum(n_H_D_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_H_R_unconf_to_conf[15:16, , , ]) +
+  sum(n_H_R_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_ICU_pre_unconf_to_conf[15:16, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_ICU_D_unconf_to_conf[15:16, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_ICU_W_R_unconf_to_conf[15:16, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_ICU_W_D_unconf_to_conf[15:16, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_W_R_unconf_to_conf[15:16, , , ]) +
+  sum(n_W_R_unconf_to_conf[19, , , ]) * 0.2 +
+  sum(n_W_D_unconf_to_conf[15:16, , , ]) +
+  sum(n_W_D_unconf_to_conf[19, , , ]) * 0.2
 update(cum_new_70_79_conf) <- cum_new_70_79_conf + delta_new_70_79_conf
 
 delta_new_80_plus_conf <-
-  sum(n_H_D_unconf_to_conf[17, , ,]) +
-  sum(n_H_D_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_H_R_unconf_to_conf[17, , ,]) +
-  sum(n_H_R_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_ICU_pre_unconf_to_conf[17, , ,]) +
-  sum(n_ICU_pre_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_ICU_D_unconf_to_conf[17, , ,]) +
-  sum(n_ICU_D_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_ICU_W_R_unconf_to_conf[17, , ,]) +
-  sum(n_ICU_W_R_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_ICU_W_D_unconf_to_conf[17, , ,]) +
-  sum(n_ICU_W_D_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_W_R_unconf_to_conf[17, , ,]) +
-  sum(n_W_R_unconf_to_conf[19, , ,]) * 0.75 +
-  sum(n_W_D_unconf_to_conf[17, , ,]) +
-  sum(n_W_D_unconf_to_conf[19, , ,]) * 0.75
+  sum(n_H_D_unconf_to_conf[17, , , ]) +
+  sum(n_H_D_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_H_R_unconf_to_conf[17, , , ]) +
+  sum(n_H_R_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_ICU_pre_unconf_to_conf[17, , , ]) +
+  sum(n_ICU_pre_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_ICU_D_unconf_to_conf[17, , , ]) +
+  sum(n_ICU_D_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_ICU_W_R_unconf_to_conf[17, , , ]) +
+  sum(n_ICU_W_R_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_ICU_W_D_unconf_to_conf[17, , , ]) +
+  sum(n_ICU_W_D_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_W_R_unconf_to_conf[17, , , ]) +
+  sum(n_W_R_unconf_to_conf[19, , , ]) * 0.75 +
+  sum(n_W_D_unconf_to_conf[17, , , ]) +
+  sum(n_W_D_unconf_to_conf[19, , , ]) * 0.75
 update(cum_new_80_plus_conf) <- cum_new_80_plus_conf + delta_new_80_plus_conf
 
 initial(diagnoses_admitted[, ]) <- 0
