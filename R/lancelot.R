@@ -1373,9 +1373,9 @@ lancelot_compare <- function(state, observed, pars) {
     ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
     ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
     ll_deaths_hosp_80_plus + ll_admitted + ll_diagnoses + ll_all_admission +
-    ll_admissions_0_9 + ll_admissions_10_19 + ll_admissions_20_29 +
-    ll_admissions_30_39 + ll_admissions_40_49 + ll_admissions_50_59 +
-    ll_admissions_60_69 + ll_admissions_70_79 + ll_admissions_80_plus +
+    ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
+    ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
+    ll_all_admission_60_69 + ll_all_admission_70_79 + ll_all_admission_80_plus +
     ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_under15_tests +
     ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
@@ -2300,6 +2300,8 @@ lancelot_check_data <- function(data) {
   P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
   P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
   P2_all <- c("", P2_all_ages)
+  admission_ages <- c("0_9", "10_19", "20_29", "30_39", "40_49", "50_59",
+                      "60_69", "70_79", "80_plus")
 
   ## NOTE: I (RGF) think that nms_deaths_aggr might really be deaths
   ## and nms_deaths_split more completely, but practically I expect
@@ -2316,6 +2318,17 @@ lancelot_check_data <- function(data) {
     ## columns.
     stop(paste("Cannot fit to all ages aggregated for deaths if fitting",
                "to any sub-groups"))
+  }
+
+  nms_admission_ages <- paste0("admissions_", admission_ages)
+  nms_admission_agg <- "all_admission"
+  err_admissions <- function(i, nms_admission_ages, nms_admission_agg) {
+    TRUE %in% has[i, nms_admission_ages] && isTRUE(has[i, nms_admission_agg])
+  }
+  for (i in 1:nrow(has)) {
+    if (err_admissions(i, nms_admission_ages, nms_admission_agg)) {
+      stop("Cannot fit to admissions by age and aggregate together!")
+    }
   }
 
   nms_pillar2_pos <- sprintf("pillar2%s_pos", P2_all)
