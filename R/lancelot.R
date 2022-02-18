@@ -783,25 +783,24 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   deaths_hosp_75_79_inc = index[["D_hosp_75_79_inc"]],
                   deaths_hosp_80_plus_inc = index[["D_hosp_80_plus_inc"]],
                   admitted_inc = index[["admit_conf_inc"]],
-                  admitted_0_9_inc = index[["admit_0_9_conf_inc"]],
-                  admitted_10_19_inc = index[["admit_10_19_conf_inc"]],
-                  admitted_20_29_inc = index[["admit_20_29_conf_inc"]],
-                  admitted_30_39_inc = index[["admit_30_39_conf_inc"]],
-                  admitted_40_49_inc = index[["admit_40_49_conf_inc"]],
-                  admitted_50_59_inc = index[["admit_50_59_conf_inc"]],
-                  admitted_60_69_inc = index[["admit_60_69_conf_inc"]],
-                  admitted_70_79_inc = index[["admit_70_79_conf_inc"]],
-                  admitted_80_plus_inc = index[["admit_80_plus_conf_inc"]],
+                  all_admission_0_9_inc = index[["all_admission_0_9_conf_inc"]],
+                  all_admission_10_19_inc =
+                    index[["all_admission_10_19_conf_inc"]],
+                  all_admission_20_29_inc =
+                    index[["all_admission_20_29_conf_inc"]],
+                  all_admission_30_39_inc =
+                    index[["all_admission_30_39_conf_inc"]],
+                  all_admission_40_49_inc =
+                    index[["all_admission_40_49_conf_inc"]],
+                  all_admission_50_59_inc =
+                    index[["all_admission_50_59_conf_inc"]],
+                  all_admission_60_69_inc =
+                    index[["all_admission_60_69_conf_inc"]],
+                  all_admission_70_79_inc =
+                    index[["all_admission_70_79_conf_inc"]],
+                  all_admission_80_plus_inc =
+                    index[["all_admission_80_plus_conf_inc"]],
                   diagnoses_inc = index[["new_conf_inc"]],
-                  diagnoses_0_9_inc = index[["new_0_9_conf_inc"]],
-                  diagnoses_10_19_inc = index[["new_10_19_conf_inc"]],
-                  diagnoses_20_29_inc = index[["new_20_29_conf_inc"]],
-                  diagnoses_30_39_inc = index[["new_30_39_conf_inc"]],
-                  diagnoses_40_49_inc = index[["new_40_49_conf_inc"]],
-                  diagnoses_50_59_inc = index[["new_50_59_conf_inc"]],
-                  diagnoses_60_69_inc = index[["new_60_69_conf_inc"]],
-                  diagnoses_70_79_inc = index[["new_70_79_conf_inc"]],
-                  diagnoses_80_plus_inc = index[["new_80_plus_conf_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
                   sympt_cases_inc = index[["sympt_cases_inc"]],
@@ -828,17 +827,16 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                               "deaths_hosp_65_69_inc", "deaths_hosp_70_74_inc",
                               "deaths_hosp_75_79_inc",
                               "deaths_hosp_80_plus_inc", "admitted_inc",
-                              "admitted_0_9_inc", "admitted_10_19_inc",
-                              "admitted_20_29_inc", "admitted_30_39_inc",
-                              "admitted_40_49_inc", "admitted_50_59_inc",
-                              "admitted_60_69_inc", "admitted_70_79_inc",
-                              "admitted_80_plus_inc", "diagnoses_inc",
-                              "diagnoses_0_9_inc", "diagnoses_10_19_inc",
-                              "diagnoses_20_29_inc", "diagnoses_30_39_inc",
-                              "diagnoses_40_49_inc", "diagnoses_50_59_inc",
-                              "diagnoses_60_69_inc", "diagnoses_70_79_inc",
-                              "diagnoses_80_plus_inc", "sero_pos_1",
-                              "sero_pos_2", "sympt_cases_inc",
+                              "all_admission_0_9_inc",
+                              "all_admission_10_19_inc",
+                              "all_admission_20_29_inc",
+                              "all_admission_30_39_inc",
+                              "all_admission_40_49_inc",
+                              "all_admission_50_59_inc",
+                              "all_admission_60_69_inc",
+                              "all_admission_70_79_inc",
+                              "all_admission_80_plus_inc", "diagnoses_inc",
+                              "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
                               "sympt_cases_non_variant_inc",
                               "sympt_cases_over25_inc",
                               "sympt_cases_under15_inc",
@@ -961,36 +959,17 @@ lancelot_compare <- function(state, observed, pars) {
   model_deaths_hosp_75_79 <- state["deaths_hosp_75_79_inc", ]
   model_deaths_hosp_80_plus <- state["deaths_hosp_80_plus_inc", ]
   model_admitted <- state["admitted_inc", ]
-  model_admitted_0_9 <- state["admitted_0_9_inc", ]
-  model_admitted_10_19 <- state["admitted_10_19_inc", ]
-  model_admitted_20_29 <- state["admitted_20_29_inc", ]
-  model_admitted_30_39 <- state["admitted_30_39_inc", ]
-  model_admitted_40_49 <- state["admitted_40_49_inc", ]
-  model_admitted_50_59 <- state["admitted_50_59_inc", ]
-  model_admitted_60_69 <- state["admitted_60_69_inc", ]
-  model_admitted_70_79 <- state["admitted_70_79_inc", ]
-  model_admitted_80_plus <- state["admitted_80_plus_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
-  model_diagnoses_0_9 <- state["diagnoses_0_9_inc", ]
-  model_diagnoses_10_19 <- state["diagnoses_10_19_inc", ]
-  model_diagnoses_20_29 <- state["diagnoses_20_29_inc", ]
-  model_diagnoses_30_39 <- state["diagnoses_30_39_inc", ]
-  model_diagnoses_40_49 <- state["diagnoses_40_49_inc", ]
-  model_diagnoses_50_59 <- state["diagnoses_50_59_inc", ]
-  model_diagnoses_60_69 <- state["diagnoses_60_69_inc", ]
-  model_diagnoses_70_79 <- state["diagnoses_70_79_inc", ]
-  model_diagnoses_80_plus <- state["diagnoses_80_plus_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
-  model_all_admission_0_9 <- model_admitted_0_9 + model_diagnoses_0_9
-  model_all_admission_10_19 <- model_admitted_10_19 + model_diagnoses_10_19
-  model_all_admission_20_29 <- model_admitted_20_29 + model_diagnoses_20_29
-  model_all_admission_30_39 <- model_admitted_30_39 + model_diagnoses_30_39
-  model_all_admission_40_49 <- model_admitted_40_49 + model_diagnoses_40_49
-  model_all_admission_50_59 <- model_admitted_50_59 + model_diagnoses_50_59
-  model_all_admission_60_69 <- model_admitted_60_69 + model_diagnoses_60_69
-  model_all_admission_70_79 <- model_admitted_70_79 + model_diagnoses_70_79
-  model_all_admission_80_plus <- model_admitted_80_plus +
-    model_diagnoses_80_plus
+  model_all_admission_0_9 <- state["all_admission_0_9_inc", ]
+  model_all_admission_10_19 <- state["all_admission_10_19_inc", ]
+  model_all_admission_20_29 <- state["all_admission_20_29_inc", ]
+  model_all_admission_30_39 <- state["all_admission_30_39_inc", ]
+  model_all_admission_40_49 <- state["all_admission_40_49_inc", ]
+  model_all_admission_50_59 <- state["all_admission_50_59_inc", ]
+  model_all_admission_60_69 <- state["all_admission_60_69_inc", ]
+  model_all_admission_70_79 <- state["all_admission_70_79_inc", ]
+  model_all_admission_80_plus <- state["all_admission_80_plus_inc", ]
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]

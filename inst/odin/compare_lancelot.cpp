@@ -148,44 +148,25 @@ typename T::real_type
     const real_type model_deaths_hosp_75_79 = odin(D_hosp_75_79_inc);
     const real_type model_deaths_hosp_80_plus = odin(D_hosp_80_plus_inc);
     const real_type model_admitted = odin(admit_conf_inc);
-    const real_type model_admitted_0_9 = odin(admit_0_9_conf_inc);
-    const real_type model_admitted_10_19 = odin(admit_10_19_conf_inc);
-    const real_type model_admitted_20_29 = odin(admit_20_29_conf_inc);
-    const real_type model_admitted_30_39 = odin(admit_30_39_conf_inc);
-    const real_type model_admitted_40_49 = odin(admit_40_49_conf_inc);
-    const real_type model_admitted_50_59 = odin(admit_50_59_conf_inc);
-    const real_type model_admitted_60_69 = odin(admit_60_69_conf_inc);
-    const real_type model_admitted_70_79 = odin(admit_70_79_conf_inc);
-    const real_type model_admitted_80_plus = odin(admit_80_plus_conf_inc);
     const real_type model_diagnoses = odin(new_conf_inc);
-    const real_type model_diagnoses_0_9 = odin(new_0_9_conf_inc);
-    const real_type model_diagnoses_10_19 = odin(new_10_19_conf_inc);
-    const real_type model_diagnoses_20_29 = odin(new_20_29_conf_inc);
-    const real_type model_diagnoses_30_39 = odin(new_30_39_conf_inc);
-    const real_type model_diagnoses_40_49 = odin(new_40_49_conf_inc);
-    const real_type model_diagnoses_50_59 = odin(new_50_59_conf_inc);
-    const real_type model_diagnoses_60_69 = odin(new_60_69_conf_inc);
-    const real_type model_diagnoses_70_79 = odin(new_70_79_conf_inc);
-    const real_type model_diagnoses_80_plus = odin(new_80_plus_conf_inc);
-    const real_type model_all_admission = model_admitted + model_diagnoses;
-    const real_type model_all_admission_0_9 =
-      model_admitted_0_9 + model_diagnoses_0_9;
+    const real_type model_all_admission_0_9 = odin(all_admission_0_9_conf_inc);
     const real_type model_all_admission_10_19 =
-      model_admitted_10_19 + model_diagnoses_10_19;
+      odin(all_admission_10_19_conf_inc);
     const real_type model_all_admission_20_29 =
-      model_admitted_20_29 + model_diagnoses_20_29;
+      odin(all_admission_20_29_conf_inc);
     const real_type model_all_admission_30_39 =
-      model_admitted_30_39 + model_diagnoses_30_39;
+      odin(all_admission_30_39_conf_inc);
     const real_type model_all_admission_40_49 =
-      model_admitted_40_49 + model_diagnoses_40_49;
+      odin(all_admission_40_49_conf_inc);
     const real_type model_all_admission_50_59 =
-      model_admitted_50_59 + model_diagnoses_50_59;
+      odin(all_admission_50_59_conf_inc);
     const real_type model_all_admission_60_69 =
-      model_admitted_60_69 + model_diagnoses_60_69;
+      odin(all_admission_60_69_conf_inc);
     const real_type model_all_admission_70_79 =
-      model_admitted_70_79 + model_diagnoses_70_79;
+      odin(all_admission_70_79_conf_inc);
     const real_type model_all_admission_80_plus =
-      model_admitted_80_plus + model_diagnoses_80_plus;
+      odin(all_admission_80_plus_conf_inc);
+    const real_type model_all_admission = model_admitted + model_diagnoses;
     const real_type model_sero_pos_1 = odin(sero_pos_1);
     const real_type model_sero_pos_2 = odin(sero_pos_2);
     const real_type model_sympt_cases = odin(sympt_cases_inc);
