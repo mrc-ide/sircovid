@@ -3,6 +3,7 @@
 
 
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // basic.cpp
 cpp11::sexp dust_basic_capabilities();
@@ -262,44 +263,6 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_n_state(SEXP ptr) {
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _sircovid_dust_basic_capabilities();
-extern SEXP _sircovid_dust_basic_gpu_info();
-extern SEXP _sircovid_dust_cpu_basic_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_compare_data(SEXP);
-extern SEXP _sircovid_dust_cpu_basic_filter(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_n_state(SEXP);
-extern SEXP _sircovid_dust_cpu_basic_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_simulate(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_basic_step(SEXP);
-extern SEXP _sircovid_dust_cpu_basic_update_state(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_compare_data(SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_filter(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_n_state(SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_reorder(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_resample(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_rng_state(SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_run(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_data(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_index(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_n_threads(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_set_rng_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_simulate(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_state(SEXP, SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_step(SEXP);
-extern SEXP _sircovid_dust_cpu_lancelot_update_state(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _sircovid_dust_lancelot_capabilities();
-extern SEXP _sircovid_dust_lancelot_gpu_info();
-
 static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_basic_capabilities",         (DL_FUNC) &_sircovid_dust_basic_capabilities,         0},
     {"_sircovid_dust_basic_gpu_info",             (DL_FUNC) &_sircovid_dust_basic_gpu_info,             0},
@@ -341,7 +304,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern "C" void R_init_sircovid(DllInfo* dll){
+extern "C" attribute_visible void R_init_sircovid(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
