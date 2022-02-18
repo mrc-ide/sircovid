@@ -1227,32 +1227,32 @@ lancelot_compare <- function(state, observed, pars) {
                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_0_9 <- ll_nbinom(observed$admissions_0_9,
                                  pars$phi_admitted * model_all_admission_0_9,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_10_19 <- ll_nbinom(observed$admissions_10_19,
                                  pars$phi_admitted * model_all_admission_10_19,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_20_29 <- ll_nbinom(observed$admissions_20_29,
                                  pars$phi_admitted * model_all_admission_20_29,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_30_39 <- ll_nbinom(observed$admissions_30_39,
                                  pars$phi_admitted * model_all_admission_30_39,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_40_49 <- ll_nbinom(observed$admissions_40_49,
                                  pars$phi_admitted * model_all_admission_40_49,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_50_59 <- ll_nbinom(observed$admissions_50_59,
                                  pars$phi_admitted * model_all_admission_50_59,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_60_69 <- ll_nbinom(observed$admissions_60_69,
                                  pars$phi_admitted * model_all_admission_60_69,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_70_79 <- ll_nbinom(observed$admissions_70_79,
                                  pars$phi_admitted * model_all_admission_70_79,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
   ll_all_admission_80_plus <- ll_nbinom(observed$admissions_80_plus,
                                  pars$phi_admitted *
                                    model_all_admission_80_plus,
-                                 pars$kappa_admitted, exp_noise)
+                                 pars$kappa_all_admission, exp_noise)
 
   ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
                             observed$sero_tot_15_64_1,
