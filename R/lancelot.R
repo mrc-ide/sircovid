@@ -2256,15 +2256,16 @@ lancelot_check_data <- function(data) {
   nms_deaths_split <- c("deaths_comm", "deaths_hosp", "deaths_carehomes",
                         "deaths_non_hosp", nms_deaths_hosp_ages,
                         nms_deaths_comm_ages)
-  err_deaths <- has$deaths & has_any(nms_deaths_split)
-  if (any(has$deaths & has_any(nms_deaths_split))) {
+  err_deaths <- any(has$deaths & has_any(nms_deaths_split))
+  if (err_deaths) {
     stop(paste("Deaths are not consistently split into total vs",
                "hospital/non-hospital or hospital/care homes/community"))
   }
 
   nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes",
                            nms_deaths_comm_ages)
-  if (any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))) {
+  err_deaths_non_hosp <- any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))
+  if (err_deaths_non_hosp) {
     stop(paste("Non-hospital deaths are not consistently split into total vs",
                "care homes/community"))
   }
