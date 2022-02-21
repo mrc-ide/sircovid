@@ -884,19 +884,30 @@ test_that("lancelot_check_data requires consistent deaths", {
 })
 
 
-test_that("lancelot_check_data disallows double fitting to deaths", {
+test_that("lancelot_check_data disallows double fitting to hospital deaths", {
   ## Specifically, disallow double fitting to aggregated and
   ## disaggregated hospital deaths
   data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  data$deaths <- NA
+  data$deaths_hosp <- 10
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Allow age disaggregated and aggregated on different days
+  data$deaths_hosp[11:20] <- NA
+  data$deaths_hosp_60_64[11:20] <- 3
+  data$deaths_hosp_80_plus[11:20] <- 7
 
   expect_silent(lancelot_check_data(data))
 
   ## Throw error
   data$deaths_hosp_0_49 <- 1
-  data_deaths_hosp_65_69 <- 4
+  data$deaths_hosp_65_69 <- 4
   expect_error(
     lancelot_check_data(data),
-    "Cannot fit to all ages aggregated for deaths if fitting to any sub-groups")
+    paste0("Cannot fit to all ages aggregated for hospital deaths if fitting ",
+           "to any sub-groups"))
 
   ## Add populations and throw regional error
   data2 <- cbind(
@@ -905,7 +916,43 @@ test_that("lancelot_check_data disallows double fitting to deaths", {
 
   expect_error(
     lancelot_check_data(data2),
-    "london: Cannot fit to all ages aggregated for deaths if")
+    "london: Cannot fit to all ages aggregated for hospital deaths if")
+})
+
+
+test_that("lancelot_check_data disallows double fitting to community deaths", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## disaggregated community deaths
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  data$deaths <- NA
+  data$deaths_comm <- 10
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Allow age disaggregated and aggregated on different days
+  data$deaths_comm[11:20] <- NA
+  data$deaths_comm_60_64[11:20] <- 3
+  data$deaths_comm_80_plus[11:20] <- 7
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$deaths_comm_0_49 <- 1
+  data$deaths_comm_65_69 <- 4
+  expect_error(
+    lancelot_check_data(data),
+    paste0("Cannot fit to all ages aggregated for community deaths if fitting ",
+           "to any sub-groups"))
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to all ages aggregated for community deaths if")
 })
 
 

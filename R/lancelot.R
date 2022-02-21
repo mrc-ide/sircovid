@@ -2248,42 +2248,50 @@ lancelot_check_data <- function(data) {
     apply(has[nms], 1, any)
   }
 
+  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
+                   "75_79", "80_plus")
+  nms_deaths_hosp_ages <- paste0("deaths_hosp_", deaths_ages)
+  nms_deaths_comm_ages <- paste0("deaths_comm_", deaths_ages)
+
   nms_deaths_split <- c("deaths_comm", "deaths_hosp", "deaths_carehomes",
-                        "deaths_non_hosp")
+                        "deaths_non_hosp", nms_deaths_hosp_ages,
+                        nms_deaths_comm_ages)
   err_deaths <- has$deaths & has_any(nms_deaths_split)
   if (any(has$deaths & has_any(nms_deaths_split))) {
     stop(paste("Deaths are not consistently split into total vs",
                "hospital/non-hospital or hospital/care homes/community"))
   }
 
-  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes")
+  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes",
+                           nms_deaths_comm_ages)
   if (any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))) {
     stop(paste("Non-hospital deaths are not consistently split into total vs",
                "care homes/community"))
   }
 
-  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
-                   "75_79", "80_plus")
-  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
-  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
-  P2_all <- c("", P2_all_ages)
-
-  ## NOTE: I (RGF) think that nms_deaths_aggr might really be deaths
-  ## and nms_deaths_split more completely, but practically I expect
-  ## this is equivalent.
-  ##
   ## NOTE: This is asserted at the level of the _entire_ time series,
   ## not per day; that might be overly strict?
-  nms_deaths_ages <- paste0("deaths_hosp_", deaths_ages)
-  nms_deaths_aggr <- c("deaths", "deaths_hosp")
-  err_deaths <- any(has_any(nms_deaths_ages)) && any(has_any(nms_deaths_aggr))
-  if (err_deaths) {
+  err_deaths_hosp <- any(has$deaths_hosp & has_any(nms_deaths_hosp_ages))
+  if (err_deaths_hosp) {
     ## Perhaps it's just me, but I am not sure that would find this
     ## actionable; we probably need to indicate the appropriate
     ## columns.
-    stop(paste("Cannot fit to all ages aggregated for deaths if fitting",
-               "to any sub-groups"))
+    stop(paste("Cannot fit to all ages aggregated for hospital deaths if",
+               "fitting to any sub-groups"))
   }
+
+  err_deaths_comm <- any(has$deaths_comm & has_any(nms_deaths_comm_ages))
+  if (err_deaths_comm) {
+    ## Perhaps it's just me, but I am not sure that would find this
+    ## actionable; we probably need to indicate the appropriate
+    ## columns.
+    stop(paste("Cannot fit to all ages aggregated for community deaths if",
+               "fitting to any sub-groups"))
+  }
+
+  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
+  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
+  P2_all <- c("", P2_all_ages)
 
   nms_pillar2_pos <- sprintf("pillar2%s_pos", P2_all)
   nms_pillar2_tot <- sprintf("pillar2%s_tot", P2_all)
