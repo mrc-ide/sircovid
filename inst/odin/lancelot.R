@@ -1717,6 +1717,47 @@ initial(D_comm_inc) <- 0
 update(D_comm_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_tot else D_comm_inc + delta_D_comm_tot
 
+initial(D_comm_0_49_inc) <- 0
+delta_D_comm_0_49 <- sum(delta_D_non_hosp[1:10]) + delta_D_non_hosp[18] * 3 / 8
+update(D_comm_0_49_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_0_49 else D_comm_0_49_inc + delta_D_comm_0_49
+
+initial(D_comm_50_54_inc) <- 0
+delta_D_comm_50_54 <- delta_D_non_hosp[11] + delta_D_non_hosp[18] * 1 / 8
+update(D_comm_50_54_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_50_54 else D_comm_50_54_inc + delta_D_comm_50_54
+
+initial(D_comm_55_59_inc) <- 0
+delta_D_comm_55_59 <- delta_D_non_hosp[12] + delta_D_non_hosp[18] * 2 / 8
+update(D_comm_55_59_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_55_59 else D_comm_55_59_inc + delta_D_comm_55_59
+
+initial(D_comm_60_64_inc) <- 0
+delta_D_comm_60_64 <- delta_D_non_hosp[13] + delta_D_non_hosp[18] * 2 / 8
+update(D_comm_60_64_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_60_64 else D_comm_60_64_inc + delta_D_comm_60_64
+
+initial(D_comm_65_69_inc) <- 0
+delta_D_comm_65_69 <- delta_D_non_hosp[14]
+update(D_comm_65_69_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_65_69 else D_comm_65_69_inc + delta_D_comm_65_69
+
+initial(D_comm_70_74_inc) <- 0
+delta_D_comm_70_74 <- delta_D_non_hosp[15]
+update(D_comm_70_74_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_70_74 else D_comm_70_74_inc + delta_D_comm_70_74
+
+initial(D_comm_75_79_inc) <- 0
+delta_D_comm_75_79 <- delta_D_non_hosp[16]
+update(D_comm_75_79_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_75_79 else D_comm_75_79_inc + delta_D_comm_75_79
+
+initial(D_comm_80_plus_inc) <- 0
+delta_D_comm_80_plus <- delta_D_non_hosp[17]
+update(D_comm_80_plus_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_80_plus else D_comm_80_plus_inc + delta_D_comm_80_plus
+
+
 ## carehome deaths are non-hospital deaths in group 19
 initial(D_carehomes_tot) <- 0
 delta_D_carehomes_tot <- delta_D_non_hosp[19]
