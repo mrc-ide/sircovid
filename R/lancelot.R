@@ -2224,7 +2224,10 @@ lancelot_check_data <- function(data) {
                 "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos",
                 "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
                 "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
-                "deaths_hosp_75_79", "deaths_hosp_80_plus")
+                "deaths_hosp_75_79", "deaths_hosp_80_plus",
+                "deaths_comm_0_49", "deaths_comm_50_54", "deaths_comm_55_59",
+                "deaths_comm_60_64", "deaths_comm_65_69", "deaths_comm_70_74",
+                "deaths_comm_75_79", "deaths_comm_80_plus")
   assert_is(data, "data.frame")
   verify_names(data, required, allow_extra = TRUE)
 
