@@ -773,6 +773,15 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   general = index[["general_tot"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
+                  deaths_comm_inc = index[["D_comm_inc"]],
+                  deaths_comm_0_49_inc = index[["D_comm_0_49_inc"]],
+                  deaths_comm_50_54_inc = index[["D_comm_50_54_inc"]],
+                  deaths_comm_55_59_inc = index[["D_comm_55_59_inc"]],
+                  deaths_comm_60_64_inc = index[["D_comm_60_64_inc"]],
+                  deaths_comm_65_69_inc = index[["D_comm_65_69_inc"]],
+                  deaths_comm_70_74_inc = index[["D_comm_70_74_inc"]],
+                  deaths_comm_75_79_inc = index[["D_comm_75_79_inc"]],
+                  deaths_comm_80_plus_inc = index[["D_comm_80_plus_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
                   deaths_hosp_0_49_inc = index[["D_hosp_0_49_inc"]],
                   deaths_hosp_50_54_inc = index[["D_hosp_50_54_inc"]],
@@ -804,7 +813,11 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   ## can be used in the compare, without having to save it.
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
-                              "deaths_comm_inc", "deaths_hosp_inc",
+                              "deaths_comm_inc", "deaths_comm_0_49_inc",
+                              "deaths_comm_50_54_inc", "deaths_comm_55_59_inc",
+                              "deaths_comm_60_64_inc", "deaths_comm_65_69_inc",
+                              "deaths_comm_70_74_inc", "deaths_comm_75_79_inc",
+                              "deaths_comm_80_plus_inc", "deaths_hosp_inc",
                               "deaths_hosp_0_49_inc", "deaths_hosp_50_54_inc",
                               "deaths_hosp_55_59_inc", "deaths_hosp_60_64_inc",
                               "deaths_hosp_65_69_inc", "deaths_hosp_70_74_inc",
@@ -923,6 +936,14 @@ lancelot_compare <- function(state, observed, pars) {
   model_hosp <- model_icu + model_general
   model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
+  model_deaths_comm_0_49 <- state["deaths_comm_0_49_inc", ]
+  model_deaths_comm_50_54 <- state["deaths_comm_50_54_inc", ]
+  model_deaths_comm_55_59 <- state["deaths_comm_55_59_inc", ]
+  model_deaths_comm_60_64 <- state["deaths_comm_60_64_inc", ]
+  model_deaths_comm_65_69 <- state["deaths_comm_65_69_inc", ]
+  model_deaths_comm_70_74 <- state["deaths_comm_70_74_inc", ]
+  model_deaths_comm_75_79 <- state["deaths_comm_75_79_inc", ]
+  model_deaths_comm_80_plus <- state["deaths_comm_80_plus_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_deaths_hosp_0_49 <- state["deaths_hosp_0_49_inc", ]
   model_deaths_hosp_50_54 <- state["deaths_hosp_50_54_inc", ]
@@ -1158,9 +1179,43 @@ lancelot_compare <- function(state, observed, pars) {
                                    pars$phi_death_carehomes *
                                      model_deaths_carehomes,
                                    pars$kappa_death_carehomes, exp_noise)
+
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * model_deaths_comm,
                               pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_0_49 <-
+    ll_nbinom(observed$deaths_comm_0_49,
+              pars$phi_death_comm * model_deaths_comm_0_49,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_50_54 <-
+    ll_nbinom(observed$deaths_comm_50_54,
+              pars$phi_death_comm * model_deaths_comm_50_54,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_55_59 <-
+    ll_nbinom(observed$deaths_comm_55_59,
+              pars$phi_death_comm * model_deaths_comm_55_59,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_60_64 <-
+    ll_nbinom(observed$deaths_comm_60_64,
+              pars$phi_death_comm * model_deaths_comm_60_64,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_65_69 <-
+    ll_nbinom(observed$deaths_comm_65_69,
+              pars$phi_death_comm * model_deaths_comm_65_69,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_70_74 <-
+    ll_nbinom(observed$deaths_comm_70_74,
+              pars$phi_death_comm * model_deaths_comm_70_74,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_75_79 <-
+    ll_nbinom(observed$deaths_comm_75_79,
+              pars$phi_death_comm * model_deaths_comm_75_79,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_80_plus <-
+    ll_nbinom(observed$deaths_comm_80_plus,
+              pars$phi_death_comm * model_deaths_comm_80_plus,
+              pars$kappa_death_comm, exp_noise)
+
   ll_deaths_non_hosp <- ll_nbinom(observed$deaths_non_hosp,
                                   pars$phi_death_comm * model_deaths_comm +
                                     pars$phi_death_carehomes *
@@ -1285,7 +1340,10 @@ lancelot_compare <- function(state, observed, pars) {
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
     ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
     ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
-    ll_deaths_hosp_80_plus + ll_admitted + ll_diagnoses + ll_all_admission +
+    ll_deaths_hosp_80_plus + ll_deaths_comm_0_49 + ll_deaths_comm_50_54 +
+    ll_deaths_comm_55_59 + ll_deaths_comm_60_64 + ll_deaths_comm_65_69 +
+    ll_deaths_comm_70_74 + ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
+    ll_admitted + ll_diagnoses + ll_all_admission +
     ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_under15_tests +
     ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
