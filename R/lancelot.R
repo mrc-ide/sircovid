@@ -2269,8 +2269,6 @@ lancelot_check_data <- function(data) {
                "care homes/community"))
   }
 
-  ## NOTE: This is asserted at the level of the _entire_ time series,
-  ## not per day; that might be overly strict?
   err_deaths_hosp <- any(has$deaths_hosp & has_any(nms_deaths_hosp_ages))
   if (err_deaths_hosp) {
     ## Perhaps it's just me, but I am not sure that would find this
@@ -2282,9 +2280,6 @@ lancelot_check_data <- function(data) {
 
   err_deaths_comm <- any(has$deaths_comm & has_any(nms_deaths_comm_ages))
   if (err_deaths_comm) {
-    ## Perhaps it's just me, but I am not sure that would find this
-    ## actionable; we probably need to indicate the appropriate
-    ## columns.
     stop(paste("Cannot fit to all ages aggregated for community deaths if",
                "fitting to any sub-groups"))
   }
@@ -2303,8 +2298,8 @@ lancelot_check_data <- function(data) {
   }
 
   err_strain_stream <-
-    any(has_any(c("strain_non_variant", "strain_tot"))) &&
-    any(has_any(c("strain_over25_non_variant", "strain_over25_tot")))
+    any(has_any(c("strain_non_variant", "strain_tot")) &
+          has_any(c("strain_over25_non_variant", "strain_over25_tot")))
   if (err_strain_stream) {
     stop("Cannot fit to more than one strain data stream")
   }
@@ -2316,10 +2311,10 @@ lancelot_check_data <- function(data) {
                                      "pillar2_over25_tot",
                                      "pillar2_over25_cases")
   err_pillar2_over25 <-
-    any(has_any(nms_pillar2_over25_aggregated)) &&
-    any(has_any(c(nms_pillar2_over25_pos,
-                  nms_pillar2_over25_tot,
-                  nms_pillar2_over25_cases)))
+    any(has_any(nms_pillar2_over25_aggregated) &
+          has_any(c(nms_pillar2_over25_pos,
+                    nms_pillar2_over25_tot,
+                    nms_pillar2_over25_cases)))
   if (err_pillar2_over25) {
     stop(paste("Cannot fit to over 25s for pillar 2 if fitting to any over 25",
                "sub-groups"))
@@ -2332,10 +2327,10 @@ lancelot_check_data <- function(data) {
                                      "pillar2_tot",
                                      "pillar2_cases")
   err_pillar2_all_ages <-
-    any(has_any(nms_pillar2_all_ages_aggregated)) &&
-    any(has_any(c(nms_pillar2_all_ages_pos,
-                  nms_pillar2_all_ages_tot,
-                  nms_pillar2_all_ages_cases)))
+    any(has_any(nms_pillar2_all_ages_aggregated) &
+          has_any(c(nms_pillar2_all_ages_pos,
+                    nms_pillar2_all_ages_tot,
+                    nms_pillar2_all_ages_cases)))
   if (err_pillar2_all_ages) {
     stop(paste("Cannot fit to all ages aggregated for pillar 2",
                "if fitting to any sub-groups"))
