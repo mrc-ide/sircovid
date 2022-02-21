@@ -103,6 +103,14 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(deaths_hosp_75_79 = real_type)]]
 // [[odin.dust::compare_data(deaths_hosp_80_plus = real_type)]]
 // [[odin.dust::compare_data(deaths_comm = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_0_49 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_50_54 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_55_59 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_60_64 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_65_69 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_70_74 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_75_79 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_80_plus = real_type)]]
 // [[odin.dust::compare_data(deaths_carehomes = real_type)]]
 // [[odin.dust::compare_data(deaths = real_type)]]
 // [[odin.dust::compare_data(deaths_non_hosp = real_type)]]
@@ -159,6 +167,14 @@ typename T::real_type
     const real_type model_hosp = model_icu + model_general;
     const real_type model_deaths_carehomes = state[34];
     const real_type model_deaths_comm = state[24];
+    const real_type model_deaths_comm_0_49 = state[25];
+    const real_type model_deaths_comm_50_54 = state[26];
+    const real_type model_deaths_comm_55_59 = state[27];
+    const real_type model_deaths_comm_60_64 = state[28];
+    const real_type model_deaths_comm_65_69 = state[29];
+    const real_type model_deaths_comm_70_74 = state[30];
+    const real_type model_deaths_comm_75_79 = state[31];
+    const real_type model_deaths_comm_80_plus = state[32];
     const real_type model_deaths_hosp = state[37];
     const real_type model_deaths_hosp_0_49 = state[38];
     const real_type model_deaths_hosp_50_54 = state[39];
@@ -436,9 +452,43 @@ typename T::real_type
       ll_nbinom(data.deaths_carehomes,
                 shared->phi_death_carehomes * model_deaths_carehomes,
                 shared->kappa_death_carehomes, shared->exp_noise, rng_state);
+
     const real_type ll_deaths_comm =
       ll_nbinom(data.deaths_comm, shared->phi_death_comm * model_deaths_comm,
                 shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_0_49 =
+      ll_nbinom(data.deaths_comm_0_49,
+                shared->phi_death_comm * model_deaths_comm_0_49,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_50_54 =
+      ll_nbinom(data.deaths_comm_50_54,
+                shared->phi_death_comm * model_deaths_comm_50_54,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_55_59 =
+      ll_nbinom(data.deaths_comm_55_59,
+                shared->phi_death_comm * model_deaths_comm_55_59,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_60_64 =
+      ll_nbinom(data.deaths_comm_60_64,
+                shared->phi_death_comm * model_deaths_comm_60_64,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_65_69 =
+      ll_nbinom(data.deaths_comm_65_69,
+                shared->phi_death_comm * model_deaths_comm_65_69,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_70_74 =
+      ll_nbinom(data.deaths_comm_70_74,
+                shared->phi_death_comm * model_deaths_comm_70_74,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_75_79 =
+      ll_nbinom(data.deaths_comm_75_79,
+                shared->phi_death_comm * model_deaths_comm_75_79,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+    const real_type ll_deaths_comm_80_plus =
+      ll_nbinom(data.deaths_comm_80_plus,
+                shared->phi_death_comm * model_deaths_comm_80_plus,
+                shared->kappa_death_comm, shared->exp_noise, rng_state);
+
     const real_type ll_deaths_non_hosp =
       ll_nbinom(data.deaths_non_hosp,
                 shared->phi_death_carehomes * model_deaths_carehomes +
@@ -540,6 +590,9 @@ typename T::real_type
       ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
       ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
       ll_deaths_hosp_80_plus + ll_deaths_hosp + ll_deaths_carehomes +
+      ll_deaths_comm_0_49 + ll_deaths_comm_50_54 + ll_deaths_comm_55_59 +
+      ll_deaths_comm_60_64 + ll_deaths_comm_65_69 + ll_deaths_comm_70_74 +
+      ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
       ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
       ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
       ll_pillar2_tests + ll_pillar2_over25_tests + ll_pillar2_under15_tests +
@@ -773,6 +826,14 @@ public:
     real_type deaths_hosp_75_79;
     real_type deaths_hosp_80_plus;
     real_type deaths_comm;
+    real_type deaths_comm_0_49;
+    real_type deaths_comm_50_54;
+    real_type deaths_comm_55_59;
+    real_type deaths_comm_60_64;
+    real_type deaths_comm_65_69;
+    real_type deaths_comm_70_74;
+    real_type deaths_comm_75_79;
+    real_type deaths_comm_80_plus;
     real_type deaths_carehomes;
     real_type deaths;
     real_type deaths_non_hosp;
@@ -8217,6 +8278,14 @@ lancelot::data_type dust_data<lancelot>(cpp11::list data) {
       cpp11::as_cpp<real_type>(data["deaths_hosp_75_79"]),
       cpp11::as_cpp<real_type>(data["deaths_hosp_80_plus"]),
       cpp11::as_cpp<real_type>(data["deaths_comm"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_0_49"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_50_54"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_55_59"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_60_64"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_65_69"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_70_74"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_75_79"]),
+      cpp11::as_cpp<real_type>(data["deaths_comm_80_plus"]),
       cpp11::as_cpp<real_type>(data["deaths_carehomes"]),
       cpp11::as_cpp<real_type>(data["deaths"]),
       cpp11::as_cpp<real_type>(data["deaths_non_hosp"]),
