@@ -921,7 +921,7 @@ test_that("lancelot_check_data disallows double fitting to admissions", {
 
   ## Expect no error
   n <- nrow(data)
-  data[1:n-1 , "all_admission_60_69"] <- 1
+  data[1:n - 1, "all_admission_60_69"] <- 1
   data[n, "all_admission"] <- 4
   expect_silent(lancelot_check_data(data))
 
