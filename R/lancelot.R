@@ -773,6 +773,14 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   general = index[["general_tot"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
+                  deaths_comm_0_49_inc = index[["D_comm_0_49_inc"]],
+                  deaths_comm_50_54_inc = index[["D_comm_50_54_inc"]],
+                  deaths_comm_55_59_inc = index[["D_comm_55_59_inc"]],
+                  deaths_comm_60_64_inc = index[["D_comm_60_64_inc"]],
+                  deaths_comm_65_69_inc = index[["D_comm_65_69_inc"]],
+                  deaths_comm_70_74_inc = index[["D_comm_70_74_inc"]],
+                  deaths_comm_75_79_inc = index[["D_comm_75_79_inc"]],
+                  deaths_comm_80_plus_inc = index[["D_comm_80_plus_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
                   deaths_hosp_0_49_inc = index[["D_hosp_0_49_inc"]],
                   deaths_hosp_50_54_inc = index[["D_hosp_50_54_inc"]],
@@ -804,7 +812,11 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   ## can be used in the compare, without having to save it.
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
-                              "deaths_comm_inc", "deaths_hosp_inc",
+                              "deaths_comm_inc", "deaths_comm_0_49_inc",
+                              "deaths_comm_50_54_inc", "deaths_comm_55_59_inc",
+                              "deaths_comm_60_64_inc", "deaths_comm_65_69_inc",
+                              "deaths_comm_70_74_inc", "deaths_comm_75_79_inc",
+                              "deaths_comm_80_plus_inc", "deaths_hosp_inc",
                               "deaths_hosp_0_49_inc", "deaths_hosp_50_54_inc",
                               "deaths_hosp_55_59_inc", "deaths_hosp_60_64_inc",
                               "deaths_hosp_65_69_inc", "deaths_hosp_70_74_inc",
@@ -923,6 +935,14 @@ lancelot_compare <- function(state, observed, pars) {
   model_hosp <- model_icu + model_general
   model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
+  model_deaths_comm_0_49 <- state["deaths_comm_0_49_inc", ]
+  model_deaths_comm_50_54 <- state["deaths_comm_50_54_inc", ]
+  model_deaths_comm_55_59 <- state["deaths_comm_55_59_inc", ]
+  model_deaths_comm_60_64 <- state["deaths_comm_60_64_inc", ]
+  model_deaths_comm_65_69 <- state["deaths_comm_65_69_inc", ]
+  model_deaths_comm_70_74 <- state["deaths_comm_70_74_inc", ]
+  model_deaths_comm_75_79 <- state["deaths_comm_75_79_inc", ]
+  model_deaths_comm_80_plus <- state["deaths_comm_80_plus_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_deaths_hosp_0_49 <- state["deaths_hosp_0_49_inc", ]
   model_deaths_hosp_50_54 <- state["deaths_hosp_50_54_inc", ]
@@ -1158,9 +1178,43 @@ lancelot_compare <- function(state, observed, pars) {
                                    pars$phi_death_carehomes *
                                      model_deaths_carehomes,
                                    pars$kappa_death_carehomes, exp_noise)
+
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * model_deaths_comm,
                               pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_0_49 <-
+    ll_nbinom(observed$deaths_comm_0_49,
+              pars$phi_death_comm * model_deaths_comm_0_49,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_50_54 <-
+    ll_nbinom(observed$deaths_comm_50_54,
+              pars$phi_death_comm * model_deaths_comm_50_54,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_55_59 <-
+    ll_nbinom(observed$deaths_comm_55_59,
+              pars$phi_death_comm * model_deaths_comm_55_59,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_60_64 <-
+    ll_nbinom(observed$deaths_comm_60_64,
+              pars$phi_death_comm * model_deaths_comm_60_64,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_65_69 <-
+    ll_nbinom(observed$deaths_comm_65_69,
+              pars$phi_death_comm * model_deaths_comm_65_69,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_70_74 <-
+    ll_nbinom(observed$deaths_comm_70_74,
+              pars$phi_death_comm * model_deaths_comm_70_74,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_75_79 <-
+    ll_nbinom(observed$deaths_comm_75_79,
+              pars$phi_death_comm * model_deaths_comm_75_79,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_80_plus <-
+    ll_nbinom(observed$deaths_comm_80_plus,
+              pars$phi_death_comm * model_deaths_comm_80_plus,
+              pars$kappa_death_comm, exp_noise)
+
   ll_deaths_non_hosp <- ll_nbinom(observed$deaths_non_hosp,
                                   pars$phi_death_comm * model_deaths_comm +
                                     pars$phi_death_carehomes *
@@ -1285,7 +1339,10 @@ lancelot_compare <- function(state, observed, pars) {
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
     ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
     ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
-    ll_deaths_hosp_80_plus + ll_admitted + ll_diagnoses + ll_all_admission +
+    ll_deaths_hosp_80_plus + ll_deaths_comm_0_49 + ll_deaths_comm_50_54 +
+    ll_deaths_comm_55_59 + ll_deaths_comm_60_64 + ll_deaths_comm_65_69 +
+    ll_deaths_comm_70_74 + ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
+    ll_admitted + ll_diagnoses + ll_all_admission +
     ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_under15_tests +
     ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
@@ -2167,7 +2224,10 @@ lancelot_check_data <- function(data) {
                 "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos",
                 "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
                 "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
-                "deaths_hosp_75_79", "deaths_hosp_80_plus")
+                "deaths_hosp_75_79", "deaths_hosp_80_plus",
+                "deaths_comm_0_49", "deaths_comm_50_54", "deaths_comm_55_59",
+                "deaths_comm_60_64", "deaths_comm_65_69", "deaths_comm_70_74",
+                "deaths_comm_75_79", "deaths_comm_80_plus")
   assert_is(data, "data.frame")
   verify_names(data, required, allow_extra = TRUE)
 
@@ -2188,42 +2248,46 @@ lancelot_check_data <- function(data) {
     apply(has[nms], 1, any)
   }
 
+  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
+                   "75_79", "80_plus")
+  nms_deaths_hosp_ages <- paste0("deaths_hosp_", deaths_ages)
+  nms_deaths_comm_ages <- paste0("deaths_comm_", deaths_ages)
+
   nms_deaths_split <- c("deaths_comm", "deaths_hosp", "deaths_carehomes",
-                        "deaths_non_hosp")
-  err_deaths <- has$deaths & has_any(nms_deaths_split)
-  if (any(has$deaths & has_any(nms_deaths_split))) {
+                        "deaths_non_hosp", nms_deaths_hosp_ages,
+                        nms_deaths_comm_ages)
+  err_deaths <- any(has$deaths & has_any(nms_deaths_split))
+  if (err_deaths) {
     stop(paste("Deaths are not consistently split into total vs",
                "hospital/non-hospital or hospital/care homes/community"))
   }
 
-  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes")
-  if (any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))) {
+  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes",
+                           nms_deaths_comm_ages)
+  err_deaths_non_hosp <- any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))
+  if (err_deaths_non_hosp) {
     stop(paste("Non-hospital deaths are not consistently split into total vs",
                "care homes/community"))
   }
 
-  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
-                   "75_79", "80_plus")
-  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
-  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
-  P2_all <- c("", P2_all_ages)
-
-  ## NOTE: I (RGF) think that nms_deaths_aggr might really be deaths
-  ## and nms_deaths_split more completely, but practically I expect
-  ## this is equivalent.
-  ##
-  ## NOTE: This is asserted at the level of the _entire_ time series,
-  ## not per day; that might be overly strict?
-  nms_deaths_ages <- paste0("deaths_hosp_", deaths_ages)
-  nms_deaths_aggr <- c("deaths", "deaths_hosp")
-  err_deaths <- any(has_any(nms_deaths_ages)) && any(has_any(nms_deaths_aggr))
-  if (err_deaths) {
+  err_deaths_hosp <- any(has$deaths_hosp & has_any(nms_deaths_hosp_ages))
+  if (err_deaths_hosp) {
     ## Perhaps it's just me, but I am not sure that would find this
     ## actionable; we probably need to indicate the appropriate
     ## columns.
-    stop(paste("Cannot fit to all ages aggregated for deaths if fitting",
-               "to any sub-groups"))
+    stop(paste("Cannot fit to all ages aggregated for hospital deaths if",
+               "fitting to any sub-groups"))
   }
+
+  err_deaths_comm <- any(has$deaths_comm & has_any(nms_deaths_comm_ages))
+  if (err_deaths_comm) {
+    stop(paste("Cannot fit to all ages aggregated for community deaths if",
+               "fitting to any sub-groups"))
+  }
+
+  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
+  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
+  P2_all <- c("", P2_all_ages)
 
   nms_pillar2_pos <- sprintf("pillar2%s_pos", P2_all)
   nms_pillar2_tot <- sprintf("pillar2%s_tot", P2_all)
@@ -2235,8 +2299,8 @@ lancelot_check_data <- function(data) {
   }
 
   err_strain_stream <-
-    any(has_any(c("strain_non_variant", "strain_tot"))) &&
-    any(has_any(c("strain_over25_non_variant", "strain_over25_tot")))
+    any(has_any(c("strain_non_variant", "strain_tot")) &
+          has_any(c("strain_over25_non_variant", "strain_over25_tot")))
   if (err_strain_stream) {
     stop("Cannot fit to more than one strain data stream")
   }
@@ -2248,10 +2312,10 @@ lancelot_check_data <- function(data) {
                                      "pillar2_over25_tot",
                                      "pillar2_over25_cases")
   err_pillar2_over25 <-
-    any(has_any(nms_pillar2_over25_aggregated)) &&
-    any(has_any(c(nms_pillar2_over25_pos,
-                  nms_pillar2_over25_tot,
-                  nms_pillar2_over25_cases)))
+    any(has_any(nms_pillar2_over25_aggregated) &
+          has_any(c(nms_pillar2_over25_pos,
+                    nms_pillar2_over25_tot,
+                    nms_pillar2_over25_cases)))
   if (err_pillar2_over25) {
     stop(paste("Cannot fit to over 25s for pillar 2 if fitting to any over 25",
                "sub-groups"))
@@ -2264,10 +2328,10 @@ lancelot_check_data <- function(data) {
                                      "pillar2_tot",
                                      "pillar2_cases")
   err_pillar2_all_ages <-
-    any(has_any(nms_pillar2_all_ages_aggregated)) &&
-    any(has_any(c(nms_pillar2_all_ages_pos,
-                  nms_pillar2_all_ages_tot,
-                  nms_pillar2_all_ages_cases)))
+    any(has_any(nms_pillar2_all_ages_aggregated) &
+          has_any(c(nms_pillar2_all_ages_pos,
+                    nms_pillar2_all_ages_tot,
+                    nms_pillar2_all_ages_cases)))
   if (err_pillar2_all_ages) {
     stop(paste("Cannot fit to all ages aggregated for pillar 2",
                "if fitting to any sub-groups"))

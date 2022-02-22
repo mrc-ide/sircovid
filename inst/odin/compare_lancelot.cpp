@@ -73,6 +73,14 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(deaths_hosp_75_79 = real_type)]]
 // [[odin.dust::compare_data(deaths_hosp_80_plus = real_type)]]
 // [[odin.dust::compare_data(deaths_comm = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_0_49 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_50_54 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_55_59 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_60_64 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_65_69 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_70_74 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_75_79 = real_type)]]
+// [[odin.dust::compare_data(deaths_comm_80_plus = real_type)]]
 // [[odin.dust::compare_data(deaths_carehomes = real_type)]]
 // [[odin.dust::compare_data(deaths = real_type)]]
 // [[odin.dust::compare_data(deaths_non_hosp = real_type)]]
@@ -129,6 +137,14 @@ typename T::real_type
     const real_type model_hosp = model_icu + model_general;
     const real_type model_deaths_carehomes = odin(D_carehomes_inc);
     const real_type model_deaths_comm = odin(D_comm_inc);
+    const real_type model_deaths_comm_0_49 = odin(D_comm_0_49_inc);
+    const real_type model_deaths_comm_50_54 = odin(D_comm_50_54_inc);
+    const real_type model_deaths_comm_55_59 = odin(D_comm_55_59_inc);
+    const real_type model_deaths_comm_60_64 = odin(D_comm_60_64_inc);
+    const real_type model_deaths_comm_65_69 = odin(D_comm_65_69_inc);
+    const real_type model_deaths_comm_70_74 = odin(D_comm_70_74_inc);
+    const real_type model_deaths_comm_75_79 = odin(D_comm_75_79_inc);
+    const real_type model_deaths_comm_80_plus = odin(D_comm_80_plus_inc);
     const real_type model_deaths_hosp = odin(D_hosp_inc);
     const real_type model_deaths_hosp_0_49 = odin(D_hosp_0_49_inc);
     const real_type model_deaths_hosp_50_54 = odin(D_hosp_50_54_inc);
@@ -406,9 +422,43 @@ typename T::real_type
       ll_nbinom(data.deaths_carehomes,
                 odin(phi_death_carehomes) * model_deaths_carehomes,
                 odin(kappa_death_carehomes), odin(exp_noise), rng_state);
+
     const real_type ll_deaths_comm =
       ll_nbinom(data.deaths_comm, odin(phi_death_comm) * model_deaths_comm,
                 odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_0_49 =
+      ll_nbinom(data.deaths_comm_0_49,
+                odin(phi_death_comm) * model_deaths_comm_0_49,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_50_54 =
+      ll_nbinom(data.deaths_comm_50_54,
+                odin(phi_death_comm) * model_deaths_comm_50_54,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_55_59 =
+      ll_nbinom(data.deaths_comm_55_59,
+                odin(phi_death_comm) * model_deaths_comm_55_59,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_60_64 =
+      ll_nbinom(data.deaths_comm_60_64,
+                odin(phi_death_comm) * model_deaths_comm_60_64,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_65_69 =
+      ll_nbinom(data.deaths_comm_65_69,
+                odin(phi_death_comm) * model_deaths_comm_65_69,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_70_74 =
+      ll_nbinom(data.deaths_comm_70_74,
+                odin(phi_death_comm) * model_deaths_comm_70_74,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_75_79 =
+      ll_nbinom(data.deaths_comm_75_79,
+                odin(phi_death_comm) * model_deaths_comm_75_79,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+    const real_type ll_deaths_comm_80_plus =
+      ll_nbinom(data.deaths_comm_80_plus,
+                odin(phi_death_comm) * model_deaths_comm_80_plus,
+                odin(kappa_death_comm), odin(exp_noise), rng_state);
+
     const real_type ll_deaths_non_hosp =
       ll_nbinom(data.deaths_non_hosp,
                 odin(phi_death_carehomes) * model_deaths_carehomes +
@@ -510,6 +560,9 @@ typename T::real_type
       ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
       ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
       ll_deaths_hosp_80_plus + ll_deaths_hosp + ll_deaths_carehomes +
+      ll_deaths_comm_0_49 + ll_deaths_comm_50_54 + ll_deaths_comm_55_59 +
+      ll_deaths_comm_60_64 + ll_deaths_comm_65_69 + ll_deaths_comm_70_74 +
+      ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
       ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
       ll_diagnoses + ll_all_admission + ll_serology_1 + ll_serology_2 +
       ll_pillar2_tests + ll_pillar2_over25_tests + ll_pillar2_under15_tests +
