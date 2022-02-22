@@ -186,7 +186,7 @@ delta_all_admission_20_29_conf <-
 
 delta_all_admission_30_39_conf <-
   sum(delta_diagnoses_admitted[7:8, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 1 / 8
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
 
 delta_all_admission_40_49_conf <-
   sum(delta_diagnoses_admitted[9:10, ]) +
@@ -194,7 +194,7 @@ delta_all_admission_40_49_conf <-
 
 delta_all_admission_50_59_conf <-
   sum(delta_diagnoses_admitted[11:12, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 3 / 8
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
 
 delta_all_admission_60_69_conf <-
   sum(delta_diagnoses_admitted[13:14, ]) +
