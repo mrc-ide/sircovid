@@ -2344,14 +2344,6 @@ lancelot_check_data <- function(data) {
                "care homes/community"))
   }
 
-  ## NOTE: I (RGF) think that nms_deaths_aggr might really be deaths
-  ## and nms_deaths_split more completely, but practically I expect
-  ## this is equivalent.
-  ##
-  ## NOTE: This is asserted at the level of the _entire_ time series,
-  ## not per day; that might be overly strict?
-  nms_deaths_ages <- paste0("deaths_hosp_", deaths_ages)
-  nms_deaths_aggr <- c("deaths", "deaths_hosp")
   err_deaths_hosp <- any(has$deaths_hosp & has_any(nms_deaths_hosp_ages))
   if (err_deaths_hosp) {
     ## Perhaps it's just me, but I am not sure that would find this
