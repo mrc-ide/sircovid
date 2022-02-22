@@ -902,7 +902,7 @@ test_that("Symptomatic cases by age add up correctly", {
 })
 
 
-test_that("Deaths in hospital and the community by age add up correctly", {
+test_that("Disaggregated and aggregated data streams add up correctly", {
   p <- lancelot_parameters(0, "england")
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
@@ -923,6 +923,16 @@ test_that("Deaths in hospital and the community by age add up correctly", {
                             y$D_comm_60_64_inc + y$D_comm_65_69_inc +
                             y$D_comm_70_74_inc + y$D_comm_75_79_inc +
                             y$D_comm_80_plus_inc)))
+  expect_true(all(round(y$admit_conf_inc + y$new_conf_inc) ==
+                    round(y$all_admission_0_9_conf_inc +
+                            y$all_admission_10_19_conf_inc +
+                            y$all_admission_20_29_conf_inc +
+                            y$all_admission_30_39_conf_inc +
+                            y$all_admission_40_49_conf_inc +
+                            y$all_admission_50_59_conf_inc +
+                            y$all_admission_60_69_conf_inc +
+                            y$all_admission_70_79_conf_inc +
+                            y$all_admission_80_plus_conf_inc)))
 })
 
 
