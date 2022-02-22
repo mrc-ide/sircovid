@@ -592,15 +592,15 @@ test_that("lancelot_compare combines likelihood correctly", {
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
-    admissions_0_9 = 2,
-    admissions_10_19 = 4,
-    admissions_20_29 = 5,
-    admissions_30_39 = 5,
-    admissions_40_49 = 10,
-    admissions_50_59 = 15,
-    admissions_60_69 = 20,
-    admissions_70_79 = 25,
-    admissions_80_plus = 30,
+    all_admission_0_9 = 2,
+    all_admission_10_19 = 4,
+    all_admission_20_29 = 5,
+    all_admission_30_39 = 5,
+    all_admission_40_49 = 10,
+    all_admission_50_59 = 15,
+    all_admission_60_69 = 20,
+    all_admission_70_79 = 25,
+    all_admission_80_plus = 30,
     sero_pos_15_64_1 = 43,
     sero_tot_15_64_1 = 83,
     sero_pos_15_64_2 = 58,
@@ -919,8 +919,14 @@ test_that("lancelot_check_data disallows double fitting to admissions", {
 
   expect_silent(lancelot_check_data(data))
 
+  ## Expect no error
+  n <- nrow(data)
+  data[1:n-1 , "all_admission_60_69"] <- 1
+  data[n, "all_admission"] <- 4
+  expect_silent(lancelot_check_data(data))
+
   ## Throw error
-  data$admissions_60_69 <- 1
+  data$all_admission_60_69 <- 1
   data$all_admission <- 4
   expect_error(
     lancelot_check_data(data),

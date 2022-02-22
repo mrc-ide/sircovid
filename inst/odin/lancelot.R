@@ -176,56 +176,38 @@ update(cum_new_conf) <- cum_new_conf + delta_new_conf
 
 delta_all_admission_0_9_conf <-
   sum(delta_diagnoses_admitted[1:2, ])
-update(cum_all_admission_0_9_conf) <- cum_all_admission_0_9_conf +
-  delta_all_admission_0_9_conf
 
 delta_all_admission_10_19_conf <-
   sum(delta_diagnoses_admitted[3:4, ])
-update(cum_all_admission_10_19_conf) <- cum_all_admission_10_19_conf +
-  delta_all_admission_10_19_conf
 
 delta_all_admission_20_29_conf <-
   sum(delta_diagnoses_admitted[5:6, ]) +
   sum(delta_diagnoses_admitted[18, ]) * 1 / 8
-update(cum_all_admission_20_29_conf) <- cum_all_admission_20_29_conf +
-  delta_all_admission_20_29_conf
 
 delta_all_admission_30_39_conf <-
   sum(delta_diagnoses_admitted[7:8, ]) +
   sum(delta_diagnoses_admitted[18, ]) * 1 / 8
-update(cum_all_admission_30_39_conf) <- cum_all_admission_30_39_conf +
-  delta_all_admission_30_39_conf
 
 delta_all_admission_40_49_conf <-
   sum(delta_diagnoses_admitted[9:10, ]) +
   sum(delta_diagnoses_admitted[18, ]) * 2 / 8
-update(cum_all_admission_40_49_conf) <- cum_all_admission_40_49_conf +
-  delta_all_admission_40_49_conf
 
 delta_all_admission_50_59_conf <-
   sum(delta_diagnoses_admitted[11:12, ]) +
   sum(delta_diagnoses_admitted[18, ]) * 3 / 8
-update(cum_all_admission_50_59_conf) <- cum_all_admission_50_59_conf +
-  delta_all_admission_50_59_conf
 
 delta_all_admission_60_69_conf <-
   sum(delta_diagnoses_admitted[13:14, ]) +
   sum(delta_diagnoses_admitted[18, ]) * 1 / 8 +
   sum(delta_diagnoses_admitted[19, ]) * 0.05
-update(cum_all_admission_60_69_conf) <- cum_all_admission_60_69_conf +
-  delta_all_admission_60_69_conf
 
 delta_all_admission_70_79_conf <-
   sum(delta_diagnoses_admitted[15:16, ]) +
   sum(delta_diagnoses_admitted[19, ]) * 0.2
-update(cum_all_admission_70_79_conf) <- cum_all_admission_70_79_conf +
-  delta_all_admission_70_79_conf
 
 delta_all_admission_80_plus_conf <-
   sum(delta_diagnoses_admitted[17, ]) +
   sum(delta_diagnoses_admitted[19, ]) * 0.75
-update(cum_all_admission_80_plus_conf) <- cum_all_admission_80_plus_conf +
-  delta_all_admission_80_plus_conf
 
 initial(diagnoses_admitted[, ]) <- 0
 update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
@@ -1154,15 +1136,6 @@ initial(T_PCR_neg[, , ]) <- 0
 initial(cum_admit_conf) <- 0
 initial(cum_new_conf) <- 0
 initial(cum_admit_by_age[]) <- 0
-initial(cum_all_admission_0_9_conf) <- 0
-initial(cum_all_admission_10_19_conf) <- 0
-initial(cum_all_admission_20_29_conf) <- 0
-initial(cum_all_admission_30_39_conf) <- 0
-initial(cum_all_admission_40_49_conf) <- 0
-initial(cum_all_admission_50_59_conf) <- 0
-initial(cum_all_admission_60_69_conf) <- 0
-initial(cum_all_admission_70_79_conf) <- 0
-initial(cum_all_admission_80_plus_conf) <- 0
 
 ## User defined parameters - default in parentheses:
 
