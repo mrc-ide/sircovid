@@ -1,6 +1,10 @@
+# sircovid 0.13.1
+
+* Fit to hospital admissions by age
+
 # sircovid 0.13.0
 
-* admissions are now fitted by age
+* Fit to deaths in the community by age
 
 # sircovid 0.12.35
 
