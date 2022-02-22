@@ -2362,7 +2362,7 @@ lancelot_check_data <- function(data) {
   admission_ages <- c("0_9", "10_19", "20_29", "30_39", "40_49", "50_59",
                       "60_69", "70_79", "80_plus")
   nms_admission_ages <- paste0("all_admission_", admission_ages)
-  err_admissions <- any(has$all_admission & has_any(nms_admission_agg))
+  err_admissions <- any(has$all_admission & has_any(nms_admission_ages))
  if (err_admissions) {
     stop("Cannot fit to admissions by age and aggregate together!")
   }
