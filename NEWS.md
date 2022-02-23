@@ -1,3 +1,7 @@
+# sircovid 0.13.3
+
+* Fix compatibility with mac M1
+
 # sircovid 0.13.1
 
 * Fit to hospital admissions by age
