@@ -18,7 +18,7 @@ interface required for mcstate"><meta property="og:image" content="/logo.png"><!
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.1</span>
       </span>
     </div>
 
@@ -82,8 +82,8 @@ this list we will use the <code>population</code> element.</p></dd>
 <span class="r-in"><span class="va">mod</span> <span class="op">&lt;-</span> <span class="va"><a href="lancelot.html">lancelot</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">p</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">lancelot_initial</span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span>, <span class="fl">10</span>, <span class="va">p</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    [1]        0        0        0        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    [9] 56550140 56550140 56550140        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [17]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    [9]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [17]        0 56550140 56550140 56550140        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [25]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [33]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [41]        0        0        0        0        0        0        0        0</span>
@@ -111,10 +111,10 @@ this list we will use the <code>population</code> element.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [217]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [225]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [233]        0        0        0        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [241]        0  3239447  3539458  3435579  3115871  3472522  3729034  3782193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [249]  3695750  3433844  3596180  3832892  3719323  3154354  2767316  2797144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [257]  1959041  2600844   339674   339674        1        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [265]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [241]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [249]        0        0  3239447  3539458  3435579  3115871  3472522  3729034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [257]  3782193  3695750  3433844  3596180  3832892  3719323  3154354  2767316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [265]  2797144  1959041  2600844   339674   339674        1        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [273]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [281]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [289]        0        0        0        0        0        0        0        0</span>
@@ -135,10 +135,10 @@ this list we will use the <code>population</code> element.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [409]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [417]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [425]        0        0        0        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [433]  3239447  3539458  3435579  3115871  3472522  3729034  3782193  3695750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [441]  3433844  3596180  3832892  3719323  3154354  2767316  2797144  1959041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [449]  2600844   339674   339674        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [457]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [433]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [441]        0  3239447  3539458  3435579  3115871  3472522  3729034  3782193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [449]  3695750  3433844  3596180  3832892  3719323  3154354  2767316  2797144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [457]  1959041  2600844   339674   339674        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [465]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [473]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [481]        0        0        0        0        0        0        0        0</span>
@@ -159,8 +159,8 @@ this list we will use the <code>population</code> element.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [601]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [609]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [617]        0        0        0        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [625]        0        1        0        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [633]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [625]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [633]        0        0        1        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [641]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [649]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [657]        0        0        0        0        0        0        0        0</span>
@@ -284,7 +284,8 @@ this list we will use the <code>population</code> element.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1601]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1609]        0        0        0        0        0        0        0        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1617]        0        0        0        0        0        0        0        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1625]        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1625]        0        0        0        0        0        0        0        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1633]        0        0        0        0        0        0</span>
 </code></pre></div>
     </div>
   </div>
