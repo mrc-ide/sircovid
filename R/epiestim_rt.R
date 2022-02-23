@@ -143,7 +143,7 @@ lancelot_rt_trajectories_epiestim <- function(step, incidence, p,
     if (gt_distr[1] != 0) {
       stop("The first value of 'gt_distr' should be zero.")
     }
-    if (sum(gt_distr) != 1) {
+    if (abs(sum(gt_distr) - 1) > 1e-6) {
       stop("'gt_distr' should sum to 1.")
     }
 
