@@ -1,3 +1,7 @@
+# sircovid 0.13.2
+
+* Fit to REACT prevalence by age
+
 # sircovid 0.13.1
 
 * Fit to hospital admissions by age
