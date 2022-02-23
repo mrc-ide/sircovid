@@ -549,7 +549,6 @@ lancelot_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
   ret$N_tot_all <- sum(ret$N_tot)
   ret$N_tot_over25 <- sum(ret$N_tot[6:19])
-  ret$N_tot_react <- sum(ret$N_tot[2:18])
   ret$N_tot_under15 <- sum(ret$N_tot[1:3])
   ret$N_tot_15_24 <- sum(ret$N_tot[4:5])
   ## assume CHW [18] are equally distributed amongst 25-64 age bands
@@ -558,6 +557,15 @@ lancelot_parameters <- function(start_date, region,
   ## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
   ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
+  ## need sub-populations for fit to react data, assume CHR are evenly
+  ## distributed amongst 25-64 year-olds
+  ret$N_tot_react <- sum(ret$N_tot[2:18])
+  ret$N_5_24_react <- sum(ret$N_tot[2:5])
+  ret$N_25_34_react <- sum(ret$N_tot[6:7]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_35_44_react <- sum(ret$N_tot[8:9]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_45_54_react <- sum(ret$N_tot[10:11]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_55_64_react <- sum(ret$N_tot[12:13]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_65_plus_react <- sum(ret$N_tot[14:17])
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.223
@@ -823,7 +831,13 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   sympt_cases_80_plus_inc = index[["sympt_cases_80_plus_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
-                  react_pos = index[["react_pos"]])
+                  react_pos = index[["react_pos"]],
+                  react_5_24_pos = index[["react_5_24_pos"]],
+                  react_25_34_pos = index[["react_25_34_pos"]],
+                  react_35_44_pos = index[["react_35_44_pos"]],
+                  react_45_54_pos = index[["react_45_54_pos"]],
+                  react_55_64_pos = index[["react_55_64_pos"]],
+                  react_65_plus_pos = index[["react_65_plus_pos"]])
 
   ## Only incidence versions for the likelihood now. We add time here so it
   ## can be used in the compare, without having to save it.
@@ -856,7 +870,10 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                               "sympt_cases_50_64_inc", "sympt_cases_65_79_inc",
                               "sympt_cases_80_plus_inc",
                               "sympt_cases_non_variant_over25_inc",
-                              "react_pos")])
+                              "react_pos", "react_5_24_pos",
+                              "react_25_34_pos", "react_35_44_pos",
+                              "react_45_54_pos", "react_55_64_pos",
+                              "react_65_plus_pos")])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
@@ -1004,6 +1021,12 @@ lancelot_compare <- function(state, observed, pars) {
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
   model_react_pos <- state["react_pos", ]
+  model_react_5_24_pos <- state["react_5_24_pos", ]
+  model_react_25_34_pos <- state["react_25_34_pos", ]
+  model_react_35_44_pos <- state["react_35_44_pos", ]
+  model_react_45_54_pos <- state["react_45_54_pos", ]
+  model_react_55_64_pos <- state["react_55_64_pos", ]
+  model_react_65_plus_pos <- state["react_65_plus_pos", ]
 
   ## calculate test positive probabilities for the various test data streams
 
@@ -1130,6 +1153,59 @@ lancelot_compare <- function(state, observed, pars) {
                                         pars$react_sensitivity,
                                         pars$react_specificity,
                                         pars$exp_noise)
+
+  model_react_5_24_pos_capped <- pmin(model_react_5_24_pos, pars$N_5_24_react)
+  model_react_5_24_prob_pos <- test_prob_pos(model_react_5_24_pos_capped,
+                                             pars$N_5_24_react -
+                                               model_react_5_24_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_25_34_pos_capped <- pmin(model_react_25_34_pos,
+                                       pars$N_25_34_react)
+  model_react_25_34_prob_pos <- test_prob_pos(model_react_25_34_pos_capped,
+                                             pars$N_25_34_react -
+                                               model_react_25_34_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_35_44_pos_capped <- pmin(model_react_35_44_pos,
+                                       pars$N_35_44_react)
+  model_react_35_44_prob_pos <- test_prob_pos(model_react_35_44_pos_capped,
+                                             pars$N_35_44_react -
+                                               model_react_35_44_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_45_54_pos_capped <- pmin(model_react_45_54_pos,
+                                       pars$N_45_54_react)
+  model_react_45_54_prob_pos <- test_prob_pos(model_react_45_54_pos_capped,
+                                             pars$N_45_54_react -
+                                               model_react_45_54_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_55_64_pos_capped <- pmin(model_react_55_64_pos,
+                                       pars$N_55_64_react)
+  model_react_55_64_prob_pos <- test_prob_pos(model_react_55_64_pos_capped,
+                                             pars$N_55_64_react -
+                                               model_react_55_64_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_65_plus_pos_capped <- pmin(model_react_65_plus_pos,
+                                         pars$N_65_plus_react)
+  model_react_65_plus_prob_pos <- test_prob_pos(model_react_65_plus_pos_capped,
+                                             pars$N_65_plus_react -
+                                               model_react_65_plus_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
 
   ## serology assay 1
   ## It is possible that model_sero_pos_1 > pars$N_tot_15_64, so we cap it to
@@ -1393,6 +1469,30 @@ lancelot_compare <- function(state, observed, pars) {
                        observed$react_tot,
                        model_react_prob_pos)
 
+  ll_5_24_react <- ll_binom(observed$react_5_24_pos,
+                            observed$react_5_24_tot,
+                            model_react_5_24_prob_pos)
+
+  ll_25_34_react <- ll_binom(observed$react_25_34_pos,
+                             observed$react_25_34_tot,
+                             model_react_25_34_prob_pos)
+
+  ll_35_44_react <- ll_binom(observed$react_35_44_pos,
+                             observed$react_35_44_tot,
+                             model_react_35_44_prob_pos)
+
+  ll_45_54_react <- ll_binom(observed$react_45_54_pos,
+                             observed$react_45_54_tot,
+                             model_react_45_54_prob_pos)
+
+  ll_55_64_react <- ll_binom(observed$react_55_64_pos,
+                             observed$react_55_64_tot,
+                             model_react_55_64_prob_pos)
+
+  ll_65_plus_react <- ll_binom(observed$react_65_plus_pos,
+                               observed$react_65_plus_tot,
+                               model_react_65_plus_prob_pos)
+
   ll_strain <- ll_binom(observed$strain_non_variant,
                         observed$strain_tot,
                         model_strain_prob_pos)
@@ -1418,8 +1518,9 @@ lancelot_compare <- function(state, observed, pars) {
     ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
     ll_pillar2_over25_cases + ll_pillar2_under15_cases +
     ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
-    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_react + ll_strain +
-    ll_strain_over25
+    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_react +
+    ll_5_24_react + ll_25_34_react + ll_35_44_react + ll_45_54_react +
+    ll_55_64_react + ll_65_plus_react + ll_strain + ll_strain_over25
 }
 
 
@@ -2282,6 +2383,12 @@ lancelot_check_data <- function(data) {
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot",
+                "react_5_24_pos", "react_5_24_tot",
+                "react_25_34_pos", "react_25_34_tot",
+                "react_35_44_pos", "react_35_44_tot",
+                "react_45_54_pos", "react_45_54_tot",
+                "react_55_64_pos", "react_55_64_tot",
+                "react_65_plus_pos", "react_65_plus_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
                 "strain_over25_tot",
                 "pillar2_under15_cases", "pillar2_15_24_cases",
@@ -2357,6 +2464,13 @@ lancelot_check_data <- function(data) {
   if (err_deaths_comm) {
     stop(paste("Cannot fit to all ages aggregated for community deaths if",
                "fitting to any sub-groups"))
+  }
+
+  react_ages <- c("5_24", "25_34", "35_44", "55_64", "65_plus")
+  nms_react_ages <- paste0("react_", react_ages, "_pos")
+  err_react <- any(has$react_pos & has_any(nms_react_ages))
+  if (err_react) {
+    stop("Cannot fit to REACT by age and aggregate together!")
   }
 
   admission_ages <- c("0_9", "10_19", "20_29", "30_39", "40_49", "50_59",

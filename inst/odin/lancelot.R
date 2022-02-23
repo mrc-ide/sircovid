@@ -2033,6 +2033,28 @@ update(sympt_cases_80_plus_inc) <- (
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
+initial(react_5_24_pos) <- 0
+update(react_5_24_pos) <- sum(new_T_PCR_pos[2:5, , , ])
+
+initial(react_25_34_pos) <- 0
+update(react_25_34_pos) <- sum(new_T_PCR_pos[6:7, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_35_44_pos) <- 0
+update(react_35_44_pos) <- sum(new_T_PCR_pos[8:9, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_45_54_pos) <- 0
+update(react_45_54_pos) <- sum(new_T_PCR_pos[10:11, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_55_64_pos) <- 0
+update(react_55_64_pos) <- sum(new_T_PCR_pos[12:13, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_65_plus_pos) <- 0
+update(react_65_plus_pos) <- sum(new_T_PCR_pos[14:17, , , ])
+
 
 ## rel_foi_strain is probability of an infection in group i, vaccination class k
 ## being of strain j
