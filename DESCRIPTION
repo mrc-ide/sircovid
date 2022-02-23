@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.13.1
+Version: 0.13.2
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -70,7 +70,7 @@ Suggests:
     EpiEstim,
     distcrete,
     mockery,
-    odin (>= 1.1.12),
+    odin (>= 1.1.16),
     odin.dust (>= 0.2.15),
     testthat
 RoxygenNote: 7.1.2
