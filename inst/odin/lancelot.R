@@ -153,12 +153,15 @@ update(T_PCR_pre[, , , ]) <- new_T_PCR_pre[i, j, k, l]
 update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
 update(T_PCR_neg[, , ]) <- new_T_PCR_neg[i, j, k]
 
+# Confirmed admissions by age
 delta_admit_conf <-
   sum(n_I_C_2_to_H_D_conf) +
   sum(n_I_C_2_to_H_R_conf) +
   sum(n_I_C_2_to_ICU_pre_conf)
 update(cum_admit_conf) <- cum_admit_conf + delta_admit_conf
 
+
+# New in-hospital diagnoses by age
 delta_new_conf <-
   sum(n_H_D_unconf_to_conf) +
   sum(n_H_R_unconf_to_conf) +
@@ -170,8 +173,48 @@ delta_new_conf <-
   sum(n_W_D_unconf_to_conf)
 update(cum_new_conf) <- cum_new_conf + delta_new_conf
 
+
+delta_all_admission_0_9_conf <-
+  sum(delta_diagnoses_admitted[1:2, ])
+
+delta_all_admission_10_19_conf <-
+  sum(delta_diagnoses_admitted[3:4, ])
+
+delta_all_admission_20_29_conf <-
+  sum(delta_diagnoses_admitted[5:6, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 1 / 8
+
+delta_all_admission_30_39_conf <-
+  sum(delta_diagnoses_admitted[7:8, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+
+delta_all_admission_40_49_conf <-
+  sum(delta_diagnoses_admitted[9:10, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+
+delta_all_admission_50_59_conf <-
+  sum(delta_diagnoses_admitted[11:12, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+
+delta_all_admission_60_69_conf <-
+  sum(delta_diagnoses_admitted[13:14, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 1 / 8 +
+  sum(delta_diagnoses_admitted[19, ]) * 0.05
+
+delta_all_admission_70_79_conf <-
+  sum(delta_diagnoses_admitted[15:16, ]) +
+  sum(delta_diagnoses_admitted[19, ]) * 0.2
+
+delta_all_admission_80_plus_conf <-
+  sum(delta_diagnoses_admitted[17, ]) +
+  sum(delta_diagnoses_admitted[19, ]) * 0.75
+
 initial(diagnoses_admitted[, ]) <- 0
 update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
+  delta_diagnoses_admitted[i, j]
+dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
+
+delta_diagnoses_admitted[, ] <-
   sum(n_I_C_2_to_H_D_conf[i, , j]) +
   sum(n_I_C_2_to_H_R_conf[i, , j]) +
   sum(n_I_C_2_to_ICU_pre_conf[i, , j]) +
@@ -183,7 +226,7 @@ update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
   sum(n_ICU_W_D_unconf_to_conf[i, , , j]) +
   sum(n_W_R_unconf_to_conf[i, , , j]) +
   sum(n_W_D_unconf_to_conf[i, , , j])
-dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
+dim(delta_diagnoses_admitted) <- c(n_groups, n_vacc_classes)
 
 initial(cum_infections_disag[, ]) <- 0
 update(cum_infections_disag[, ]) <- cum_infections_disag[i, j] +
@@ -193,12 +236,58 @@ dim(cum_infections_disag) <- c(n_groups, n_vacc_classes)
 
 initial(admit_conf_inc) <- 0
 update(admit_conf_inc) <- if (step %% steps_per_day == 0)
-  delta_admit_conf else
-    admit_conf_inc + delta_admit_conf
+  delta_admit_conf else admit_conf_inc + delta_admit_conf
 
 initial(new_conf_inc) <- 0
 update(new_conf_inc) <- if (step %% steps_per_day == 0)
   delta_new_conf else new_conf_inc + delta_new_conf
+
+# Admissions + confirmed by age
+
+initial(all_admission_0_9_conf_inc) <- 0
+update(all_admission_0_9_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_0_9_conf else all_admission_0_9_conf_inc +
+  delta_all_admission_0_9_conf
+
+initial(all_admission_10_19_conf_inc) <- 0
+update(all_admission_10_19_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_10_19_conf else all_admission_10_19_conf_inc +
+  delta_all_admission_10_19_conf
+
+initial(all_admission_20_29_conf_inc) <- 0
+update(all_admission_20_29_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_20_29_conf else all_admission_20_29_conf_inc +
+  delta_all_admission_20_29_conf
+
+initial(all_admission_30_39_conf_inc) <- 0
+update(all_admission_30_39_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_30_39_conf else all_admission_30_39_conf_inc +
+  delta_all_admission_30_39_conf
+
+initial(all_admission_40_49_conf_inc) <- 0
+update(all_admission_40_49_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_40_49_conf else all_admission_40_49_conf_inc +
+  delta_all_admission_40_49_conf
+
+initial(all_admission_50_59_conf_inc) <- 0
+update(all_admission_50_59_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_50_59_conf else all_admission_50_59_conf_inc +
+  delta_all_admission_50_59_conf
+
+initial(all_admission_60_69_conf_inc) <- 0
+update(all_admission_60_69_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_60_69_conf else all_admission_60_69_conf_inc +
+  delta_all_admission_60_69_conf
+
+initial(all_admission_70_79_conf_inc) <- 0
+update(all_admission_70_79_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_70_79_conf else all_admission_70_79_conf_inc +
+  delta_all_admission_70_79_conf
+
+initial(all_admission_80_plus_conf_inc) <- 0
+update(all_admission_80_plus_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_80_plus_conf else all_admission_80_plus_conf_inc +
+  delta_all_admission_80_plus_conf
 
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_2_to_hosp[i, , ])
 

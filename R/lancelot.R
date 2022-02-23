@@ -791,6 +791,23 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   deaths_hosp_75_79_inc = index[["D_hosp_75_79_inc"]],
                   deaths_hosp_80_plus_inc = index[["D_hosp_80_plus_inc"]],
                   admitted_inc = index[["admit_conf_inc"]],
+                  all_admission_0_9_inc = index[["all_admission_0_9_conf_inc"]],
+                  all_admission_10_19_inc =
+                    index[["all_admission_10_19_conf_inc"]],
+                  all_admission_20_29_inc =
+                    index[["all_admission_20_29_conf_inc"]],
+                  all_admission_30_39_inc =
+                    index[["all_admission_30_39_conf_inc"]],
+                  all_admission_40_49_inc =
+                    index[["all_admission_40_49_conf_inc"]],
+                  all_admission_50_59_inc =
+                    index[["all_admission_50_59_conf_inc"]],
+                  all_admission_60_69_inc =
+                    index[["all_admission_60_69_conf_inc"]],
+                  all_admission_70_79_inc =
+                    index[["all_admission_70_79_conf_inc"]],
+                  all_admission_80_plus_inc =
+                    index[["all_admission_80_plus_conf_inc"]],
                   diagnoses_inc = index[["new_conf_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
@@ -822,8 +839,17 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                               "deaths_hosp_65_69_inc", "deaths_hosp_70_74_inc",
                               "deaths_hosp_75_79_inc",
                               "deaths_hosp_80_plus_inc", "admitted_inc",
-                              "diagnoses_inc", "sero_pos_1", "sero_pos_2",
-                              "sympt_cases_inc", "sympt_cases_non_variant_inc",
+                              "all_admission_0_9_inc",
+                              "all_admission_10_19_inc",
+                              "all_admission_20_29_inc",
+                              "all_admission_30_39_inc",
+                              "all_admission_40_49_inc",
+                              "all_admission_50_59_inc",
+                              "all_admission_60_69_inc",
+                              "all_admission_70_79_inc",
+                              "all_admission_80_plus_inc", "diagnoses_inc",
+                              "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                              "sympt_cases_non_variant_inc",
                               "sympt_cases_over25_inc",
                               "sympt_cases_under15_inc",
                               "sympt_cases_15_24_inc", "sympt_cases_25_49_inc",
@@ -955,6 +981,15 @@ lancelot_compare <- function(state, observed, pars) {
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
+  model_all_admission_0_9 <- state["all_admission_0_9_inc", ]
+  model_all_admission_10_19 <- state["all_admission_10_19_inc", ]
+  model_all_admission_20_29 <- state["all_admission_20_29_inc", ]
+  model_all_admission_30_39 <- state["all_admission_30_39_inc", ]
+  model_all_admission_40_49 <- state["all_admission_40_49_inc", ]
+  model_all_admission_50_59 <- state["all_admission_50_59_inc", ]
+  model_all_admission_60_69 <- state["all_admission_60_69_inc", ]
+  model_all_admission_70_79 <- state["all_admission_70_79_inc", ]
+  model_all_admission_80_plus <- state["all_admission_80_plus_inc", ]
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
@@ -1232,15 +1267,46 @@ lancelot_compare <- function(state, observed, pars) {
                            pars$phi_death_carehomes * model_deaths_carehomes +
                            pars$phi_death_comm * model_deaths_comm,
                          pars$kappa_death, exp_noise)
+
+  # Admissions and in-hospital diagnoses
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
                            pars$kappa_admitted, exp_noise)
   ll_diagnoses <- ll_nbinom(observed$diagnoses,
                             pars$phi_diagnoses * model_diagnoses,
                             pars$kappa_diagnoses, exp_noise)
+
   ll_all_admission <- ll_nbinom(observed$all_admission,
                                 pars$phi_all_admission * model_all_admission,
                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_0_9 <- ll_nbinom(observed$all_admission_0_9,
+                                 pars$phi_admitted * model_all_admission_0_9,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_10_19 <- ll_nbinom(observed$all_admission_10_19,
+                                 pars$phi_admitted * model_all_admission_10_19,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_20_29 <- ll_nbinom(observed$all_admission_20_29,
+                                 pars$phi_admitted * model_all_admission_20_29,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_30_39 <- ll_nbinom(observed$all_admission_30_39,
+                                 pars$phi_admitted * model_all_admission_30_39,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_40_49 <- ll_nbinom(observed$all_admission_40_49,
+                                 pars$phi_admitted * model_all_admission_40_49,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_50_59 <- ll_nbinom(observed$all_admission_50_59,
+                                 pars$phi_admitted * model_all_admission_50_59,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_60_69 <- ll_nbinom(observed$all_admission_60_69,
+                                 pars$phi_admitted * model_all_admission_60_69,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_70_79 <- ll_nbinom(observed$all_admission_70_79,
+                                 pars$phi_admitted * model_all_admission_70_79,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_80_plus <- ll_nbinom(observed$all_admission_80_plus,
+                                 pars$phi_admitted *
+                                   model_all_admission_80_plus,
+                                 pars$kappa_all_admission, exp_noise)
 
   ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
                             observed$sero_tot_15_64_1,
@@ -1336,13 +1402,16 @@ lancelot_compare <- function(state, observed, pars) {
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
+    ll_admitted + ll_diagnoses + ll_all_admission +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
     ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
     ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
     ll_deaths_hosp_80_plus + ll_deaths_comm_0_49 + ll_deaths_comm_50_54 +
     ll_deaths_comm_55_59 + ll_deaths_comm_60_64 + ll_deaths_comm_65_69 +
     ll_deaths_comm_70_74 + ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
-    ll_admitted + ll_diagnoses + ll_all_admission +
+    ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
+    ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
+    ll_all_admission_60_69 + ll_all_admission_70_79 + ll_all_admission_80_plus +
     ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_under15_tests +
     ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
@@ -2222,7 +2291,12 @@ lancelot_check_data <- function(data) {
                 "pillar2_50_64_tot", "pillar2_65_79_tot", "pillar2_80_plus_tot",
                 "pillar2_under15_pos", "pillar2_15_24_pos", "pillar2_25_49_pos",
                 "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos",
-                "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
+                "all_admission_0_9", "all_admission_10_19",
+                "all_admission_20_29", "all_admission_30_39",
+                "all_admission_40_49", "all_admission_50_59",
+                "all_admission_60_69", "all_admission_70_79",
+                "all_admission_80_plus", "deaths_hosp_0_49",
+                "deaths_hosp_50_54", "deaths_hosp_55_59",
                 "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
                 "deaths_hosp_75_79", "deaths_hosp_80_plus",
                 "deaths_comm_0_49", "deaths_comm_50_54", "deaths_comm_55_59",
@@ -2283,6 +2357,14 @@ lancelot_check_data <- function(data) {
   if (err_deaths_comm) {
     stop(paste("Cannot fit to all ages aggregated for community deaths if",
                "fitting to any sub-groups"))
+  }
+
+  admission_ages <- c("0_9", "10_19", "20_29", "30_39", "40_49", "50_59",
+                      "60_69", "70_79", "80_plus")
+  nms_admission_ages <- paste0("all_admission_", admission_ages)
+  err_admissions <- any(has$all_admission & has_any(nms_admission_ages))
+  if (err_admissions) {
+    stop("Cannot fit to admissions by age and aggregate together!")
   }
 
   P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
