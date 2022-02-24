@@ -1,6 +1,10 @@
-# sircovid 0.13.2
+# sircovid 0.13.4
 
 * Fit to REACT prevalence by age
+
+# sircovid 0.13.3
+
+* Fix compatibility with mac M1
 
 # sircovid 0.13.1
 
