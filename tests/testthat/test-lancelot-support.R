@@ -1034,6 +1034,36 @@ test_that("lancelot_check_data disallows double fitting to admissions", {
 })
 
 
+test_that("lancelot_check_data disallows double fitting to REACT", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## age-specific hospital admissions
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Expect no error
+  n <- nrow(data)
+  data[1:n - 1, "react_25_34_pos"] <- 1
+  data[n, "react_pos"] <- 4
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$react_25_34_pos <- 1
+  data$react_pos <- 4
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to REACT by age and aggregate together!")
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to REACT by age and aggregate together!")
+})
+
+
 test_that("lancelot_check_data prevents pillar 2 double fitting", {
   ## does not allow more than one pillar 2, strain data stream or
   ## pillar 2 double fitting
