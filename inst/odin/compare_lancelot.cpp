@@ -126,6 +126,18 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(pillar2_80_plus_cases = real_type)]]
 // [[odin.dust::compare_data(react_pos = real_type)]]
 // [[odin.dust::compare_data(react_tot = real_type)]]
+// [[odin.dust::compare_data(react_5_24_pos = real_type)]]
+// [[odin.dust::compare_data(react_5_24_tot = real_type)]]
+// [[odin.dust::compare_data(react_25_34_pos = real_type)]]
+// [[odin.dust::compare_data(react_25_34_tot = real_type)]]
+// [[odin.dust::compare_data(react_35_44_pos = real_type)]]
+// [[odin.dust::compare_data(react_35_44_tot = real_type)]]
+// [[odin.dust::compare_data(react_45_54_pos = real_type)]]
+// [[odin.dust::compare_data(react_45_54_tot = real_type)]]
+// [[odin.dust::compare_data(react_55_64_pos = real_type)]]
+// [[odin.dust::compare_data(react_55_64_tot = real_type)]]
+// [[odin.dust::compare_data(react_65_plus_pos = real_type)]]
+// [[odin.dust::compare_data(react_65_plus_tot = real_type)]]
 // [[odin.dust::compare_data(strain_non_variant = real_type)]]
 // [[odin.dust::compare_data(strain_tot = real_type)]]
 // [[odin.dust::compare_data(strain_over25_non_variant = real_type)]]
@@ -198,6 +210,12 @@ typename T::real_type
     const real_type model_sympt_cases_non_variant_over25 =
       odin(sympt_cases_non_variant_over25_inc);
     const real_type model_react_pos = odin(react_pos);
+    const real_type model_react_5_24_pos = odin(react_5_24_pos);
+    const real_type model_react_25_34_pos = odin(react_25_34_pos);
+    const real_type model_react_35_44_pos = odin(react_35_44_pos);
+    const real_type model_react_45_54_pos = odin(react_45_54_pos);
+    const real_type model_react_55_64_pos = odin(react_55_64_pos);
+    const real_type model_react_65_plus_pos = odin(react_65_plus_pos);
 
     const int time_p_3 = static_cast<int>(odin(time) + 3);
 
@@ -344,6 +362,66 @@ typename T::real_type
     const real_type model_react_prob_pos =
       test_prob_pos(model_react_pos_capped,
                     odin(N_tot_react) - model_react_pos_capped,
+                    odin(react_sensitivity),
+                    odin(react_specificity),
+                    odin(exp_noise),
+                    rng_state);
+
+    const real_type model_react_5_24_pos_capped =
+      min(model_react_5_24_pos, odin(N_5_24_react));
+    const real_type model_react_5_24_prob_pos =
+      test_prob_pos(model_react_5_24_pos_capped,
+                    odin(N_5_24_react) - model_react_5_24_pos_capped,
+                    odin(react_sensitivity),
+                    odin(react_specificity),
+                    odin(exp_noise),
+                    rng_state);
+
+    const real_type model_react_25_34_pos_capped =
+      min(model_react_25_34_pos, odin(N_25_34_react));
+    const real_type model_react_25_34_prob_pos =
+      test_prob_pos(model_react_25_34_pos_capped,
+                    odin(N_25_34_react) - model_react_25_34_pos_capped,
+                    odin(react_sensitivity),
+                    odin(react_specificity),
+                    odin(exp_noise),
+                    rng_state);
+
+    const real_type model_react_35_44_pos_capped =
+      min(model_react_35_44_pos, odin(N_35_44_react));
+    const real_type model_react_35_44_prob_pos =
+      test_prob_pos(model_react_35_44_pos_capped,
+                    odin(N_35_44_react) - model_react_35_44_pos_capped,
+                    odin(react_sensitivity),
+                    odin(react_specificity),
+                    odin(exp_noise),
+                    rng_state);
+
+    const real_type model_react_45_54_pos_capped =
+      min(model_react_45_54_pos, odin(N_45_54_react));
+    const real_type model_react_45_54_prob_pos =
+      test_prob_pos(model_react_45_54_pos_capped,
+                    odin(N_45_54_react) - model_react_45_54_pos_capped,
+                    odin(react_sensitivity),
+                    odin(react_specificity),
+                    odin(exp_noise),
+                    rng_state);
+
+    const real_type model_react_55_64_pos_capped =
+      min(model_react_55_64_pos, odin(N_55_64_react));
+    const real_type model_react_55_64_prob_pos =
+      test_prob_pos(model_react_55_64_pos_capped,
+                    odin(N_55_64_react) - model_react_55_64_pos_capped,
+                    odin(react_sensitivity),
+                    odin(react_specificity),
+                    odin(exp_noise),
+                    rng_state);
+
+    const real_type model_react_65_plus_pos_capped =
+      min(model_react_65_plus_pos, odin(N_65_plus_react));
+    const real_type model_react_65_plus_prob_pos =
+      test_prob_pos(model_react_65_plus_pos_capped,
+                    odin(N_65_plus_react) - model_react_65_plus_pos_capped,
                     odin(react_sensitivity),
                     odin(react_specificity),
                     odin(exp_noise),
@@ -612,6 +690,25 @@ typename T::real_type
     const real_type ll_react =
       ll_binom(data.react_pos, data.react_tot,
                model_react_prob_pos);
+    const real_type ll_5_24_react =
+      ll_binom(data.react_5_24_pos, data.react_5_24_tot,
+               model_react_5_24_prob_pos);
+    const real_type ll_25_34_react =
+      ll_binom(data.react_25_34_pos, data.react_25_34_tot,
+               model_react_25_34_prob_pos);
+    const real_type ll_35_44_react =
+      ll_binom(data.react_35_44_pos, data.react_35_44_tot,
+               model_react_35_44_prob_pos);
+    const real_type ll_45_54_react =
+      ll_binom(data.react_45_54_pos, data.react_45_54_tot,
+               model_react_45_54_prob_pos);
+    const real_type ll_55_64_react =
+      ll_binom(data.react_55_64_pos, data.react_55_64_tot,
+               model_react_55_64_prob_pos);
+    const real_type ll_65_plus_react =
+      ll_binom(data.react_65_plus_pos, data.react_65_plus_tot,
+               model_react_65_plus_prob_pos);
+
     const real_type ll_strain =
       ll_binom(data.strain_non_variant, data.strain_tot,
                model_strain_prob_pos);
@@ -638,5 +735,7 @@ typename T::real_type
       ll_pillar2_cases + ll_pillar2_over25_cases + ll_pillar2_under15_cases +
       ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
       ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases +
-      ll_react + ll_strain + ll_strain_over25;
+      ll_react + ll_5_24_react + ll_25_34_react + ll_35_44_react +
+      ll_45_54_react + ll_55_64_react + ll_65_plus_react + ll_strain +
+      ll_strain_over25;
   }

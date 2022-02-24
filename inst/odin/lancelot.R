@@ -2249,6 +2249,12 @@ N_tot_50_64 <- user() # ignore.unused
 N_tot_65_79 <- user() # ignore.unused
 N_tot_80_plus <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
+N_5_24_react <- user() # ignore.unused
+N_25_34_react <- user() # ignore.unused
+N_35_44_react <- user() # ignore.unused
+N_45_54_react <- user() # ignore.unused
+N_55_64_react <- user() # ignore.unused
+N_65_plus_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
 p_NC_under15 <- user() # ignore.unused

@@ -220,6 +220,18 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(pillar2_80_plus_cases = real_type)]]
 // [[odin.dust::compare_data(react_pos = real_type)]]
 // [[odin.dust::compare_data(react_tot = real_type)]]
+// [[odin.dust::compare_data(react_5_24_pos = real_type)]]
+// [[odin.dust::compare_data(react_5_24_tot = real_type)]]
+// [[odin.dust::compare_data(react_25_34_pos = real_type)]]
+// [[odin.dust::compare_data(react_25_34_tot = real_type)]]
+// [[odin.dust::compare_data(react_35_44_pos = real_type)]]
+// [[odin.dust::compare_data(react_35_44_tot = real_type)]]
+// [[odin.dust::compare_data(react_45_54_pos = real_type)]]
+// [[odin.dust::compare_data(react_45_54_tot = real_type)]]
+// [[odin.dust::compare_data(react_55_64_pos = real_type)]]
+// [[odin.dust::compare_data(react_55_64_tot = real_type)]]
+// [[odin.dust::compare_data(react_65_plus_pos = real_type)]]
+// [[odin.dust::compare_data(react_65_plus_tot = real_type)]]
 // [[odin.dust::compare_data(strain_non_variant = real_type)]]
 // [[odin.dust::compare_data(strain_tot = real_type)]]
 // [[odin.dust::compare_data(strain_over25_non_variant = real_type)]]
@@ -292,6 +304,12 @@ typename T::real_type
     const real_type model_sympt_cases_non_variant_over25 =
       state[70];
     const real_type model_react_pos = state[77];
+    const real_type model_react_5_24_pos = state[78];
+    const real_type model_react_25_34_pos = state[79];
+    const real_type model_react_35_44_pos = state[80];
+    const real_type model_react_45_54_pos = state[81];
+    const real_type model_react_55_64_pos = state[82];
+    const real_type model_react_65_plus_pos = state[83];
 
     const int time_p_3 = static_cast<int>(state[0] + 3);
 
@@ -438,6 +456,66 @@ typename T::real_type
     const real_type model_react_prob_pos =
       test_prob_pos(model_react_pos_capped,
                     shared->N_tot_react - model_react_pos_capped,
+                    shared->react_sensitivity,
+                    shared->react_specificity,
+                    shared->exp_noise,
+                    rng_state);
+
+    const real_type model_react_5_24_pos_capped =
+      min(model_react_5_24_pos, shared->N_5_24_react);
+    const real_type model_react_5_24_prob_pos =
+      test_prob_pos(model_react_5_24_pos_capped,
+                    shared->N_5_24_react - model_react_5_24_pos_capped,
+                    shared->react_sensitivity,
+                    shared->react_specificity,
+                    shared->exp_noise,
+                    rng_state);
+
+    const real_type model_react_25_34_pos_capped =
+      min(model_react_25_34_pos, shared->N_25_34_react);
+    const real_type model_react_25_34_prob_pos =
+      test_prob_pos(model_react_25_34_pos_capped,
+                    shared->N_25_34_react - model_react_25_34_pos_capped,
+                    shared->react_sensitivity,
+                    shared->react_specificity,
+                    shared->exp_noise,
+                    rng_state);
+
+    const real_type model_react_35_44_pos_capped =
+      min(model_react_35_44_pos, shared->N_35_44_react);
+    const real_type model_react_35_44_prob_pos =
+      test_prob_pos(model_react_35_44_pos_capped,
+                    shared->N_35_44_react - model_react_35_44_pos_capped,
+                    shared->react_sensitivity,
+                    shared->react_specificity,
+                    shared->exp_noise,
+                    rng_state);
+
+    const real_type model_react_45_54_pos_capped =
+      min(model_react_45_54_pos, shared->N_45_54_react);
+    const real_type model_react_45_54_prob_pos =
+      test_prob_pos(model_react_45_54_pos_capped,
+                    shared->N_45_54_react - model_react_45_54_pos_capped,
+                    shared->react_sensitivity,
+                    shared->react_specificity,
+                    shared->exp_noise,
+                    rng_state);
+
+    const real_type model_react_55_64_pos_capped =
+      min(model_react_55_64_pos, shared->N_55_64_react);
+    const real_type model_react_55_64_prob_pos =
+      test_prob_pos(model_react_55_64_pos_capped,
+                    shared->N_55_64_react - model_react_55_64_pos_capped,
+                    shared->react_sensitivity,
+                    shared->react_specificity,
+                    shared->exp_noise,
+                    rng_state);
+
+    const real_type model_react_65_plus_pos_capped =
+      min(model_react_65_plus_pos, shared->N_65_plus_react);
+    const real_type model_react_65_plus_prob_pos =
+      test_prob_pos(model_react_65_plus_pos_capped,
+                    shared->N_65_plus_react - model_react_65_plus_pos_capped,
                     shared->react_sensitivity,
                     shared->react_specificity,
                     shared->exp_noise,
@@ -706,6 +784,25 @@ typename T::real_type
     const real_type ll_react =
       ll_binom(data.react_pos, data.react_tot,
                model_react_prob_pos);
+    const real_type ll_5_24_react =
+      ll_binom(data.react_5_24_pos, data.react_5_24_tot,
+               model_react_5_24_prob_pos);
+    const real_type ll_25_34_react =
+      ll_binom(data.react_25_34_pos, data.react_25_34_tot,
+               model_react_25_34_prob_pos);
+    const real_type ll_35_44_react =
+      ll_binom(data.react_35_44_pos, data.react_35_44_tot,
+               model_react_35_44_prob_pos);
+    const real_type ll_45_54_react =
+      ll_binom(data.react_45_54_pos, data.react_45_54_tot,
+               model_react_45_54_prob_pos);
+    const real_type ll_55_64_react =
+      ll_binom(data.react_55_64_pos, data.react_55_64_tot,
+               model_react_55_64_prob_pos);
+    const real_type ll_65_plus_react =
+      ll_binom(data.react_65_plus_pos, data.react_65_plus_tot,
+               model_react_65_plus_prob_pos);
+
     const real_type ll_strain =
       ll_binom(data.strain_non_variant, data.strain_tot,
                model_strain_prob_pos);
@@ -732,7 +829,9 @@ typename T::real_type
       ll_pillar2_cases + ll_pillar2_over25_cases + ll_pillar2_under15_cases +
       ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
       ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases +
-      ll_react + ll_strain + ll_strain_over25;
+      ll_react + ll_5_24_react + ll_25_34_react + ll_35_44_react +
+      ll_45_54_react + ll_55_64_react + ll_65_plus_react + ll_strain +
+      ll_strain_over25;
   }
 // [[dust::class(lancelot)]]
 // [[dust::param(G_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -741,6 +840,12 @@ typename T::real_type
 // [[dust::param(I_C_1_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(I_C_2_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(I_P_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_25_34_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_35_44_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_45_54_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_55_64_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_5_24_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(N_65_plus_react, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_tot_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_tot_15_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_tot_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1010,6 +1115,18 @@ public:
     real_type pillar2_80_plus_cases;
     real_type react_pos;
     real_type react_tot;
+    real_type react_5_24_pos;
+    real_type react_5_24_tot;
+    real_type react_25_34_pos;
+    real_type react_25_34_tot;
+    real_type react_35_44_pos;
+    real_type react_35_44_tot;
+    real_type react_45_54_pos;
+    real_type react_45_54_tot;
+    real_type react_55_64_pos;
+    real_type react_55_64_tot;
+    real_type react_65_plus_pos;
+    real_type react_65_plus_tot;
     real_type strain_non_variant;
     real_type strain_tot;
     real_type strain_over25_non_variant;
@@ -1022,6 +1139,12 @@ public:
     real_type I_C_1_transmission;
     real_type I_C_2_transmission;
     real_type I_P_transmission;
+    real_type N_25_34_react;
+    real_type N_35_44_react;
+    real_type N_45_54_react;
+    real_type N_55_64_react;
+    real_type N_5_24_react;
+    real_type N_65_plus_react;
     real_type N_tot_15_24;
     real_type N_tot_15_64;
     real_type N_tot_25_49;
@@ -5718,6 +5841,12 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->I_C_1_transmission = NA_REAL;
   shared->I_C_2_transmission = NA_REAL;
   shared->I_P_transmission = NA_REAL;
+  shared->N_25_34_react = NA_REAL;
+  shared->N_35_44_react = NA_REAL;
+  shared->N_45_54_react = NA_REAL;
+  shared->N_55_64_react = NA_REAL;
+  shared->N_5_24_react = NA_REAL;
+  shared->N_65_plus_react = NA_REAL;
   shared->N_tot_15_24 = NA_REAL;
   shared->N_tot_15_64 = NA_REAL;
   shared->N_tot_25_49 = NA_REAL;
@@ -5853,6 +5982,12 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->I_C_1_transmission = user_get_scalar<real_type>(user, "I_C_1_transmission", shared->I_C_1_transmission, NA_REAL, NA_REAL);
   shared->I_C_2_transmission = user_get_scalar<real_type>(user, "I_C_2_transmission", shared->I_C_2_transmission, NA_REAL, NA_REAL);
   shared->I_P_transmission = user_get_scalar<real_type>(user, "I_P_transmission", shared->I_P_transmission, NA_REAL, NA_REAL);
+  shared->N_25_34_react = user_get_scalar<real_type>(user, "N_25_34_react", shared->N_25_34_react, NA_REAL, NA_REAL);
+  shared->N_35_44_react = user_get_scalar<real_type>(user, "N_35_44_react", shared->N_35_44_react, NA_REAL, NA_REAL);
+  shared->N_45_54_react = user_get_scalar<real_type>(user, "N_45_54_react", shared->N_45_54_react, NA_REAL, NA_REAL);
+  shared->N_55_64_react = user_get_scalar<real_type>(user, "N_55_64_react", shared->N_55_64_react, NA_REAL, NA_REAL);
+  shared->N_5_24_react = user_get_scalar<real_type>(user, "N_5_24_react", shared->N_5_24_react, NA_REAL, NA_REAL);
+  shared->N_65_plus_react = user_get_scalar<real_type>(user, "N_65_plus_react", shared->N_65_plus_react, NA_REAL, NA_REAL);
   shared->N_tot_15_24 = user_get_scalar<real_type>(user, "N_tot_15_24", shared->N_tot_15_24, NA_REAL, NA_REAL);
   shared->N_tot_15_64 = user_get_scalar<real_type>(user, "N_tot_15_64", shared->N_tot_15_64, NA_REAL, NA_REAL);
   shared->N_tot_25_49 = user_get_scalar<real_type>(user, "N_tot_25_49", shared->N_tot_25_49, NA_REAL, NA_REAL);
@@ -8592,6 +8727,18 @@ lancelot::data_type dust_data<lancelot>(cpp11::list data) {
       cpp11::as_cpp<real_type>(data["pillar2_80_plus_cases"]),
       cpp11::as_cpp<real_type>(data["react_pos"]),
       cpp11::as_cpp<real_type>(data["react_tot"]),
+      cpp11::as_cpp<real_type>(data["react_5_24_pos"]),
+      cpp11::as_cpp<real_type>(data["react_5_24_tot"]),
+      cpp11::as_cpp<real_type>(data["react_25_34_pos"]),
+      cpp11::as_cpp<real_type>(data["react_25_34_tot"]),
+      cpp11::as_cpp<real_type>(data["react_35_44_pos"]),
+      cpp11::as_cpp<real_type>(data["react_35_44_tot"]),
+      cpp11::as_cpp<real_type>(data["react_45_54_pos"]),
+      cpp11::as_cpp<real_type>(data["react_45_54_tot"]),
+      cpp11::as_cpp<real_type>(data["react_55_64_pos"]),
+      cpp11::as_cpp<real_type>(data["react_55_64_tot"]),
+      cpp11::as_cpp<real_type>(data["react_65_plus_pos"]),
+      cpp11::as_cpp<real_type>(data["react_65_plus_tot"]),
       cpp11::as_cpp<real_type>(data["strain_non_variant"]),
       cpp11::as_cpp<real_type>(data["strain_tot"]),
       cpp11::as_cpp<real_type>(data["strain_over25_non_variant"]),

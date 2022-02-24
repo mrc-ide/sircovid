@@ -28,6 +28,10 @@ reference_data_lancelot_mcmc <- function() {
            "pillar2_50_64_cases", "pillar2_65_79_pos", "pillar2_65_79_tot",
            "pillar2_65_79_cases", "pillar2_80_plus_pos", "pillar2_80_plus_tot",
            "pillar2_80_plus_cases", "react_pos", "react_tot",
+           "react_5_24_pos", "react_5_24_tot", "react_25_34_pos",
+           "react_25_34_tot", "react_35_44_pos", "react_35_44_tot",
+           "react_45_54_pos", "react_45_54_tot", "react_55_64_pos",
+           "react_55_64_tot", "react_65_plus_pos", "react_65_plus_tot",
            "strain_non_variant", "strain_tot",
            "strain_over25_non_variant", "strain_over25_tot")
     for (i in v) {
