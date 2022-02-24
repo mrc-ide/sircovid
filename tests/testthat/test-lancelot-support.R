@@ -660,15 +660,15 @@ test_that("lancelot_compare combines likelihood correctly", {
     pillar2_80_plus_tot = 400,
     react_pos = 3,
     react_tot = 500,
-    react_5_24_pos = 0,
+    react_5_24_pos = 1,
     react_5_24_tot = 50,
     react_25_34_pos = 1,
     react_25_34_tot = 50,
-    react_35_44_pos = 0,
+    react_35_44_pos = 1,
     react_35_44_tot = 100,
-    react_45_54_pos = 0,
+    react_45_54_pos = 1,
     react_45_54_tot = 100,
-    react_55_64_pos = 0,
+    react_55_64_pos = 1,
     react_55_64_tot = 100,
     react_65_plus_pos = 2,
     react_65_plus_tot = 100,
@@ -700,11 +700,13 @@ test_that("lancelot_compare combines likelihood correctly", {
   nms_pillar2_50_64 <- c("pillar2_50_64_pos", "pillar2_50_64_tot")
   nms_pillar2_65_79 <- c("pillar2_65_79_pos", "pillar2_65_79_tot")
   nms_pillar2_80_plus <- c("pillar2_80_plus_pos", "pillar2_80_plus_tot")
-  nms_react <- c("react_pos", "react_tot", "react_5_24_pos", "react_5_24_tot",
-                 "react_25_34_pos", "react_25_34_tot", "react_35_44_pos",
-                 "react_35_44_tot", "react_45_54_pos", "react_45_54_tot",
-                 "react_55_64_pos", "react_55_64_tot", "react_65_plus_pos",
-                 "react_65_plus_tot")
+  nms_react <- c("react_pos", "react_tot")
+  nms_react_5_24 <- c("react_5_24_pos", "react_5_24_tot")
+  nms_react_25_34 <- c("react_25_34_pos", "react_25_34_tot")
+  nms_react_35_44 <- c("react_35_44_pos", "react_35_44_tot")
+  nms_react_45_54 <- c("react_45_54_pos", "react_45_54_tot")
+  nms_react_55_64 <- c("react_55_64_pos", "react_55_64_tot")
+  nms_react_65_plus <- c("react_65_plus_pos", "react_65_plus_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
@@ -712,14 +714,20 @@ test_that("lancelot_compare combines likelihood correctly", {
                                nms_pillar2_over25, nms_pillar2_under15,
                                nms_pillar2_15_24, nms_pillar2_25_49,
                                nms_pillar2_50_64, nms_pillar2_65_79,
-                               nms_pillar2_80_plus, nms_react, nms_strain,
+                               nms_pillar2_80_plus, nms_react, nms_react_5_24,
+                               nms_react_25_34, nms_react_35_44,
+                               nms_react_45_54, nms_react_55_64,
+                               nms_react_65_plus, nms_strain,
                                nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
              list(nms_pillar2_over25), list(nms_pillar2_under15),
              list(nms_pillar2_15_24), list(nms_pillar2_25_49),
              list(nms_pillar2_50_64), list(nms_pillar2_65_79),
-             list(nms_pillar2_80_plus), list(nms_react), list(nms_strain),
-             list(nms_strain_over25))
+             list(nms_pillar2_80_plus), list(nms_react),
+             list(nms_react_5_24), list(nms_react_25_34),
+             list(nms_react_35_44), list(nms_react_45_54),
+             list(nms_react_55_64), list(nms_react_65_plus),
+             list(nms_strain), list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     lancelot_compare(state, observed_keep(x), pars))
