@@ -933,6 +933,13 @@ test_that("Disaggregated and aggregated data streams add up correctly", {
                             y$all_admission_60_69_conf_inc +
                             y$all_admission_70_79_conf_inc +
                             y$all_admission_80_plus_conf_inc)))
+  expect_true(all(round(y$react_pos) ==
+                    round(y$react_5_24_pos +
+                            y$react_25_34_pos +
+                            y$react_35_44_pos +
+                            y$react_45_54_pos +
+                            y$react_55_64_pos +
+                            y$react_65_plus_pos)))
 })
 
 

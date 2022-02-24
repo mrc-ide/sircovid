@@ -211,10 +211,12 @@ test_that("lancelot_parameters returns a list of parameters", {
       "strain_rel_p_hosp_if_sympt", "strain_rel_p_sympt", "N_tot_under15",
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
-      "N_tot_react", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "n_groups",
-      "initial_seed_size", "cross_immunity", "vacc_skip_from", "vacc_skip_to",
-      "vacc_skip_dose", "vacc_skip_progression_rate_base", "vacc_skip_weight"))
+      "N_tot_react", "N_5_24_react", "N_25_34_react", "N_35_44_react",
+      "N_45_54_react", "N_55_64_react", "N_65_plus_react", "I_A_transmission",
+      "I_P_transmission", "I_C_1_transmission", "I_C_2_transmission",
+      "n_groups", "initial_seed_size", "cross_immunity", "vacc_skip_from",
+      "vacc_skip_to", "vacc_skip_dose", "vacc_skip_progression_rate_base",
+      "vacc_skip_weight"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -436,7 +438,9 @@ test_that("lancelot_index identifies ICU and D_tot in real model", {
       "sympt_cases_under15_inc", "sympt_cases_15_24_inc",
       "sympt_cases_25_49_inc", "sympt_cases_50_64_inc",
       "sympt_cases_65_79_inc", "sympt_cases_80_plus_inc",
-      "sympt_cases_non_variant_over25_inc", "react_pos"))
+      "sympt_cases_non_variant_over25_inc", "react_pos",
+      "react_5_24_pos", "react_25_34_pos", "react_35_44_pos",
+      "react_45_54_pos", "react_55_64_pos", "react_65_plus_pos"))
 
   expect_equal(index$run[["time"]],
                which(names(info$index) == "time"))
@@ -582,7 +586,13 @@ test_that("lancelot_compare combines likelihood correctly", {
     sympt_cases_65_79_inc = 19:24,
     sympt_cases_80_plus_inc = 19:24,
     sympt_cases_non_variant_over25_inc = 60:65,
-    react_pos = 2:7)
+    react_pos = 2:7,
+    react_5_24_pos = 1:6,
+    react_25_34_pos = 1:6,
+    react_35_44_pos = 1:6,
+    react_45_54_pos = 1:6,
+    react_55_64_pos = 1:6,
+    react_65_plus_pos = 1:6)
   observed <- list(
     icu = 13,
     general = 23,
@@ -650,6 +660,18 @@ test_that("lancelot_compare combines likelihood correctly", {
     pillar2_80_plus_tot = 400,
     react_pos = 3,
     react_tot = 500,
+    react_5_24_pos = 1,
+    react_5_24_tot = 50,
+    react_25_34_pos = 1,
+    react_25_34_tot = 50,
+    react_35_44_pos = 1,
+    react_35_44_tot = 100,
+    react_45_54_pos = 1,
+    react_45_54_tot = 100,
+    react_55_64_pos = 1,
+    react_55_64_tot = 100,
+    react_65_plus_pos = 2,
+    react_65_plus_tot = 100,
     strain_non_variant = 40,
     strain_tot = 50,
     strain_over25_non_variant = 20,
@@ -679,6 +701,12 @@ test_that("lancelot_compare combines likelihood correctly", {
   nms_pillar2_65_79 <- c("pillar2_65_79_pos", "pillar2_65_79_tot")
   nms_pillar2_80_plus <- c("pillar2_80_plus_pos", "pillar2_80_plus_tot")
   nms_react <- c("react_pos", "react_tot")
+  nms_react_5_24 <- c("react_5_24_pos", "react_5_24_tot")
+  nms_react_25_34 <- c("react_25_34_pos", "react_25_34_tot")
+  nms_react_35_44 <- c("react_35_44_pos", "react_35_44_tot")
+  nms_react_45_54 <- c("react_45_54_pos", "react_45_54_tot")
+  nms_react_55_64 <- c("react_55_64_pos", "react_55_64_tot")
+  nms_react_65_plus <- c("react_65_plus_pos", "react_65_plus_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
@@ -686,14 +714,20 @@ test_that("lancelot_compare combines likelihood correctly", {
                                nms_pillar2_over25, nms_pillar2_under15,
                                nms_pillar2_15_24, nms_pillar2_25_49,
                                nms_pillar2_50_64, nms_pillar2_65_79,
-                               nms_pillar2_80_plus, nms_react, nms_strain,
+                               nms_pillar2_80_plus, nms_react, nms_react_5_24,
+                               nms_react_25_34, nms_react_35_44,
+                               nms_react_45_54, nms_react_55_64,
+                               nms_react_65_plus, nms_strain,
                                nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
              list(nms_pillar2_over25), list(nms_pillar2_under15),
              list(nms_pillar2_15_24), list(nms_pillar2_25_49),
              list(nms_pillar2_50_64), list(nms_pillar2_65_79),
-             list(nms_pillar2_80_plus), list(nms_react), list(nms_strain),
-             list(nms_strain_over25))
+             list(nms_pillar2_80_plus), list(nms_react),
+             list(nms_react_5_24), list(nms_react_25_34),
+             list(nms_react_35_44), list(nms_react_45_54),
+             list(nms_react_55_64), list(nms_react_65_plus),
+             list(nms_strain), list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     lancelot_compare(state, observed_keep(x), pars))
@@ -1005,6 +1039,36 @@ test_that("lancelot_check_data disallows double fitting to admissions", {
   expect_error(
     lancelot_check_data(data2),
     "london: Cannot fit to admissions by age and aggregate together!")
+})
+
+
+test_that("lancelot_check_data disallows double fitting to REACT", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## age-specific hospital admissions
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Expect no error
+  n <- nrow(data)
+  data[1:n - 1, "react_25_34_pos"] <- 1
+  data[n, "react_pos"] <- 4
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$react_25_34_pos <- 1
+  data$react_pos <- 4
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to REACT by age and aggregate together!")
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to REACT by age and aggregate together!")
 })
 
 
