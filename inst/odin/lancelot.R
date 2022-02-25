@@ -2113,6 +2113,15 @@ initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
 dim(prob_strain) <- n_real_strains
 
+## Calculate effective susceptibles to each strain
+dim(eff_S) <- c(n_groups, n_real_strains, n_vacc_classes)
+eff_S[, , ] <- (S[i, k] + cross_immunity[3 - j] * R[i, 3 - j, k]) *
+  rel_susceptibility[i, j, k]
+
+initial(effective_susceptible[]) <- 0
+update(effective_susceptible[]) <- sum(eff_S[, i, ])
+dim(effective_susceptible) <- n_real_strains
+
 ## Vaccination engine
 n_doses <- user()
 index_dose[] <- user(integer = TRUE)
