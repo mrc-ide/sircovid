@@ -284,4 +284,4 @@ rotate_strain_compartments <- c(
   ## those with dimension n_strains:
   "cum_infections_per_strain",
   ## those with dimension n_real_strains:
-  "prob_strain")
+  "prob_strain", "effective_susceptible")
