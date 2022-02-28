@@ -3721,7 +3721,7 @@ public:
     for (int i = 1; i <= shared->dim_eff_S_1; ++i) {
       for (int j = 1; j <= shared->dim_eff_S_2; ++j) {
         for (int k = 1; k <= shared->dim_eff_S_3; ++k) {
-          internal.eff_S[i - 1 + shared->dim_eff_S_1 * (j - 1) + shared->dim_eff_S_12 * (k - 1)] = (S[shared->dim_S_1 * (k - 1) + i - 1] + shared->cross_immunity[3 - j - 1] * R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (3 - j - 1) + i - 1]) * shared->rel_susceptibility[shared->dim_rel_susceptibility_12 * (k - 1) + shared->dim_rel_susceptibility_1 * (j - 1) + i - 1];
+          internal.eff_S[i - 1 + shared->dim_eff_S_1 * (j - 1) + shared->dim_eff_S_12 * (k - 1)] = (S[shared->dim_S_1 * (k - 1) + i - 1] + (1 - shared->cross_immunity[3 - j - 1]) * R[shared->dim_R_12 * (k - 1) + shared->dim_R_1 * (3 - j - 1) + i - 1]) * shared->rel_susceptibility[shared->dim_rel_susceptibility_12 * (k - 1) + shared->dim_rel_susceptibility_1 * (j - 1) + i - 1];
         }
       }
     }

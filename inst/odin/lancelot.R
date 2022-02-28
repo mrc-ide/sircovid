@@ -2115,7 +2115,7 @@ dim(prob_strain) <- n_real_strains
 
 ## Calculate effective susceptibles to each strain
 dim(eff_S) <- c(n_groups, n_real_strains, n_vacc_classes)
-eff_S[, , ] <- (S[i, k] + cross_immunity[3 - j] * R[i, 3 - j, k]) *
+eff_S[, , ] <- (S[i, k] + (1 - cross_immunity[3 - j]) * R[i, 3 - j, k]) *
   rel_susceptibility[i, j, k]
 
 initial(effective_susceptible[]) <- 0
