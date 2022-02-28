@@ -882,8 +882,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   deaths = index[["D_tot"]],
                   deaths_inc = index[["D_inc"]],
                   infections = index[["cum_infections"]],
-                  infections_inc = index[["infections_inc"]],
-                  effective_susceptible = index[["effective_susceptible"]])
+                  infections_inc = index[["infections_inc"]])
   suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
   ## NOTE: We do use the S category for the Rt calculation in some
   ## downstream work, so this is going to require some work to get
@@ -896,6 +895,11 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   } else {
     n_tot_strains <- 1
   }
+
+  index_effective_susceptible <-
+    calculate_index(index, "effective_susceptible", list(),
+                    seq_len(n_strains), "effective_susceptible_")
+  index_save <- c(index_save, index_effective_susceptible)
 
   ## age varying only
   index_cum_admit <- calculate_index(index, "cum_admit_by_age",
