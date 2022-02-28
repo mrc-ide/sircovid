@@ -179,7 +179,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(173, 11, 2, 32),
+    dat$trajectories$state, c(174, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -202,7 +202,7 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(173, 11, 2, 32),
+    dat$trajectories$state, c(174, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   v <- "icu"
@@ -217,7 +217,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(173, 11, 2, 32),
+    dat$trajectories$state, c(174, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, "icu")
