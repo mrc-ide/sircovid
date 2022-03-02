@@ -10,7 +10,8 @@ lancelot_index(
   cum_admit = TRUE,
   diagnoses_admitted = TRUE,
   cum_infections_disag = TRUE,
-  cum_n_vaccinated = TRUE
+  cum_n_vaccinated = TRUE,
+  cum_infections_per_strain = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ cumulative infections by age and vaccine class (default = TRUE)}
 \item{cum_n_vaccinated}{Logical, whether to output
 cumulative number vaccinated by age and vaccine class
 (default = TRUE)}
+
+\item{cum_infections_per_strain}{Logical, whether to output
+cumulative infections per strain (default = TRUE)}
 }
 \value{
 A list with element \code{run}, indicating the locations of (in
