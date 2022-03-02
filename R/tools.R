@@ -282,6 +282,6 @@ rotate_strain_compartments <- c(
   ## those with dimension c(n_groups, n_strains, n_vacc_classes):
   "R", "T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg", "I_weighted",
   ## those with dimension n_strains:
-  "cum_infections_per_strain",
+  "cum_infections_per_strain", "infections_inc_per_strain",
   ## those with dimension n_real_strains:
   "prob_strain", "effective_susceptible")

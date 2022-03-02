@@ -230,8 +230,7 @@ test_that("can compute incidence for a single variable - nested", {
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_inc <- grep("infections_inc", names(dat$predict$index))
-  inc <- dat$trajectories$state[index_inc, , ]
+  inc <- dat$trajectories$state["infections_inc", , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -255,8 +254,7 @@ test_that("can combine EpiEstim rt calculations over trajectories", {
 test_that("can combine EpiEstim rt over trajectories without reordering", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_inc <- grep("infections_inc", names(dat$predict$index))
-  inc <- dat$trajectories$state[index_inc, , ]
+  inc <- dat$trajectories$state["infections_inc", , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -280,8 +278,7 @@ test_that("can combine EpiEstim rt over trajectories without reordering", {
 test_that("Combining EpiEstim rt reject invalid inputs", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_inc <- grep("infections_inc", names(dat$predict$index))
-  inc <- dat$trajectories$state[index_inc, , ]
+  inc <- dat$trajectories$state["infections_inc", , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
