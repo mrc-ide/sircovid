@@ -689,13 +689,23 @@ update(infections_inc) <- if (step %% steps_per_day == 0)
   delta_infections else infections_inc + delta_infections
 
 initial(cum_infections_per_strain[]) <- 0
-update(cum_infections_per_strain[]) <-
-  cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
+delta_infections_per_strain[] <-
+  sum(n_S_progress[, i, ]) +
   (if (i > 2)
     (sum(n_RE[, i - 2, ]))
    else
      0)
+update(cum_infections_per_strain[]) <-
+  cum_infections_per_strain[i] + delta_infections_per_strain[i]
+dim(delta_infections_per_strain) <- n_strains
 dim(cum_infections_per_strain) <- n_strains
+
+initial(infections_inc_per_strain[]) <- 0
+update(infections_inc_per_strain[]) <-
+  if (step %% steps_per_day == 0)
+    delta_infections_per_strain[i] else
+      infections_inc_per_strain[i] + delta_infections_per_strain[i]
+dim(infections_inc_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
 new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) + sum(n_infected_to_S[i, , j]) -

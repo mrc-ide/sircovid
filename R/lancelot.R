@@ -754,8 +754,8 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'   cumulative number vaccinated by age and vaccine class
 ##'   (default = TRUE)
 ##'
-##' @param cum_infections_per_strain Logical, whether to output
-##'   cumulative infections per strain (default = TRUE)
+##' @param infections_inc_per_strain Logical, whether to output
+##'   infections incidence per strain (default = TRUE)
 ##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
@@ -777,7 +777,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                            diagnoses_admitted = TRUE,
                            cum_infections_disag = TRUE,
                            cum_n_vaccinated = TRUE,
-                           cum_infections_per_strain = TRUE) {
+                           infections_inc_per_strain = TRUE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -921,9 +921,9 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   index_save <- c(index_save, index_effective_susceptible)
 
   ## strain only
-  index_cum_infections_per_strain <-
-    calculate_index(index, "cum_infections_per_strain", list(),
-                    seq_len(n_tot_strains), "cum_infections_strain_")
+  index_infections_inc_per_strain <-
+    calculate_index(index, "infections_inc_per_strain", list(),
+                    seq_len(n_tot_strains), "infections_inc_strain_")
 
   ## age x (total) strain x vacc class
   index_R <- calculate_index(index, "R",
@@ -952,8 +952,8 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
     index_state <- c(index_state, index_cum_n_vaccinated)
   }
 
-  if (cum_infections_per_strain) {
-    index_state <- c(index_state, index_cum_infections_per_strain)
+  if (infections_inc_per_strain) {
+    index_state <- c(index_state, index_infections_inc_per_strain)
   }
 
 
