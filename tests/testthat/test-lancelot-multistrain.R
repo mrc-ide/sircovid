@@ -596,12 +596,16 @@ test_that("Swapping strains gives identical results with different index", {
   z2 <- mod2$transform_variables(res2)
 
   z2[["prob_strain"]] <- z2[["prob_strain"]][2:1, , drop = FALSE]
+  z2[["effective_susceptible"]] <-
+    z2[["effective_susceptible"]][2:1, , drop = FALSE]
   z2[["cum_sympt_cases_non_variant"]] <-
     z2[["cum_sympt_cases"]] - z2[["cum_sympt_cases_non_variant"]]
   z2[["cum_sympt_cases_non_variant_over25"]] <-
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[i, , drop = FALSE]
+  z2$infections_inc_per_strain <-
+    z2$infections_inc_per_strain[i, , drop = FALSE]
   ## This one can't easily be computed as it's not quite running
   ## incidence but over a sawtooth; the calculation relative to
   ## cum_infections_per_strain is confirmed elsewhere so here just
