@@ -754,6 +754,9 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'   cumulative number vaccinated by age and vaccine class
 ##'   (default = TRUE)
 ##'
+##' @param D_all Logical, whether to output death classes by 5yr age groups
+##'   (default = TRUE)
+##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
@@ -773,7 +776,7 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                             diagnoses_admitted = TRUE,
                             cum_infections_disag = TRUE,
-                            cum_n_vaccinated = TRUE) {
+                            cum_n_vaccinated = TRUE, D_all = TRUE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -902,12 +905,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
 
   ## age x vacc class
   index_S <- calculate_index(index, "S", list(n_vacc_classes), suffix)
-  index_diagnoses_admitted <- calculate_index(index, "diagnoses_admitted",
-                                              list(n_vacc_classes), suffix)
-  index_cum_infections_disag <- calculate_index(index, "cum_infections_disag",
-                                                list(n_vacc_classes), suffix)
-  index_cum_n_vaccinated <- calculate_index(index, "cum_n_vaccinated",
-                                            list(n_vacc_classes), suffix)
+
   ## (real) strain only
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
 
@@ -927,20 +925,29 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   }
 
   if (diagnoses_admitted) {
-    index_state <- c(index_state, index_diagnoses_admitted)
+    index_state <- c(index_state,
+      calculate_index(index, "diagnoses_admitted", list(n_vacc_classes),
+      suffix))
   }
 
   if (cum_infections_disag) {
-    index_state <- c(index_state, index_cum_infections_disag)
+    index_state <- c(index_state,
+      calculate_index(index, "cum_infections_disag", list(n_vacc_classes),
+      suffix))
   }
 
   if (cum_n_vaccinated) {
-    index_state <- c(index_state, index_cum_n_vaccinated)
+    index_state <- c(index_state,
+      calculate_index(index, "cum_n_vaccinated", list(n_vacc_classes), suffix))
+  }
+
+  if (D_all) {
+    index_state <- c(index_state,
+      calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all"))
   }
 
 
-  list(run = index_run,
-       state = index_state)
+  list(run = index_run, state = index_state)
 }
 
 
@@ -2601,7 +2608,9 @@ create_index_dose_inverse <- function(n_vacc_classes, index_dose) {
   index_dose_inverse
 }
 
-
+## Calculates the index of a given state and adds a suffix corresponding to
+##  how the state is disaggregated (e.g. _V1, _V2 for two vacc classes,
+##  or _S1V2 for strain 1 vaccine 2).
 calculate_index <- function(index, state, suffix_list, suffix0 = NULL,
                             state_name = state) {
   if (is.null(suffix0)) {
