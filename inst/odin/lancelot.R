@@ -1988,7 +1988,7 @@ new_sympt_cases_80_plus <- sum(n_EI_P[17, , ]) + (sum(n_EI_P[19, , ]) * 0.75)
 update(cum_sympt_cases_80_plus) <- cum_sympt_cases_80_plus +
   new_sympt_cases_80_plus
 
-## And incidence:
+## Symptomatic cases (n_EI_p) incidence:
 initial(sympt_cases_inc) <- 0
 update(sympt_cases_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases
@@ -2038,6 +2038,78 @@ initial(sympt_cases_80_plus_inc) <- 0
 update(sympt_cases_80_plus_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_80_plus
   else sympt_cases_80_plus_inc + new_sympt_cases_80_plus)
+
+## All cases (n_EI_P + n_EI_A) incidence by 10-year age bands:
+new_all_cases_0_9 <- sum(n_EI_P[1:2, , ]) + sum(n_EI_A[1:2, , ])
+
+new_all_cases_10_19 <- sum(n_EI_P[3:4, , ]) + sum(n_EI_A[3:4, , ])
+
+new_all_cases_20_29 <- sum(n_EI_P[5:6, , ]) + sum(n_EI_A[5:6, , ]) +
+  sum(n_EI_P[18, , ]) * 1 / 8 + sum(n_EI_A[18, , ]) * 1 / 8
+
+new_all_cases_30_39 <- sum(n_EI_P[7:8, , ]) + sum(n_EI_A[7:8, , ]) +
+  sum(n_EI_P[18, , ]) * 2 / 8 + sum(n_EI_A[18, , ]) * 2 / 8
+
+new_all_cases_40_49 <- sum(n_EI_P[9:10, , ]) + sum(n_EI_A[9:10, , ]) +
+  sum(n_EI_P[18, , ]) * 2 / 8 + sum(n_EI_A[18, , ]) * 2 / 8
+
+new_all_cases_50_59 <- sum(n_EI_P[11:12, , ]) + sum(n_EI_A[11:12, , ]) +
+  sum(n_EI_P[18, , ]) * 2 / 8 + sum(n_EI_A[18, , ]) * 2 / 8
+
+new_all_cases_60_69 <- sum(n_EI_P[13:14, , ]) + sum(n_EI_A[13:14, , ]) +
+  sum(n_EI_P[18, , ]) * 1 / 8 + sum(n_EI_A[18, , ]) * 1 / 8 +
+  sum(n_EI_P[19, , ]) * 0.05 + sum(n_EI_A[19, , ]) * 0.05
+
+new_all_cases_70_79 <- sum(n_EI_P[15:16, , ]) + sum(n_EI_A[15:16, , ]) +
+  sum(n_EI_P[19, , ]) * 0.2 + sum(n_EI_A[19, , ]) * 0.2
+
+new_all_cases_80_plus <- new_sympt_cases_80_plus +
+  sum(n_EI_A[17, , ]) + (sum(n_EI_A[19, , ]) * 0.75)
+
+initial(all_cases_0_9_inc) <- 0
+update(all_cases_0_9_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_0_9
+  else all_cases_0_9_inc + new_all_cases_0_9)
+
+initial(all_cases_10_19_inc) <- 0
+update(all_cases_10_19_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_10_19
+  else all_cases_10_19_inc + new_all_cases_10_19)
+
+initial(all_cases_20_29_inc) <- 0
+update(all_cases_20_29_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_20_29
+  else all_cases_20_29_inc + new_all_cases_20_29)
+
+initial(all_cases_30_39_inc) <- 0
+update(all_cases_30_39_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_30_39
+  else all_cases_30_39_inc + new_all_cases_30_39)
+
+initial(all_cases_40_49_inc) <- 0
+update(all_cases_40_49_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_40_49
+  else all_cases_40_49_inc + new_all_cases_40_49)
+
+initial(all_cases_50_59_inc) <- 0
+update(all_cases_50_59_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_50_59
+  else all_cases_50_59_inc + new_all_cases_50_59)
+
+initial(all_cases_60_69_inc) <- 0
+update(all_cases_60_69_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_60_69
+  else all_cases_60_69_inc + new_all_cases_60_69)
+
+initial(all_cases_70_79_inc) <- 0
+update(all_cases_70_79_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_70_79
+  else all_cases_70_79_inc + new_all_cases_70_79)
+
+initial(all_cases_80_plus_inc) <- 0
+update(all_cases_80_plus_inc) <- (
+  if (step %% steps_per_day == 0) new_all_cases_80_plus
+  else all_cases_80_plus_inc + new_all_cases_80_plus)
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
