@@ -11,7 +11,8 @@ lancelot_index(
   diagnoses_admitted = TRUE,
   cum_infections_disag = TRUE,
   cum_n_vaccinated = TRUE,
-  D_all = TRUE
+  D_all = TRUE,
+  infections_inc_per_strain = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ cumulative number vaccinated by age and vaccine class
 
 \item{D_all}{Logical, whether to output death classes by 5yr age groups
 (default = TRUE)}
+
+\item{infections_inc_per_strain}{Logical, whether to output
+infections incidence per strain (default = TRUE)}
 }
 \value{
 A list with element \code{run}, indicating the locations of (in

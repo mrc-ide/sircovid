@@ -179,7 +179,7 @@ test_that("can combine rt calculations over trajectories without reordering", {
 test_that("adding incidence adds appropriate states - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(192, 11, 2, 32),
+    dat$trajectories$state, c(194, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   res <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -202,7 +202,7 @@ test_that("adding incidence adds appropriate states - nested", {
 test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(192, 11, 2, 32),
+    dat$trajectories$state, c(194, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   v <- "icu"
@@ -217,7 +217,7 @@ test_that("add and remove trajectories from nested mcstate_pmcmc objects", {
 test_that("can compute incidence for a single variable - nested", {
   dat <- reference_data_lancelot_mcmc()
   dat$trajectories$state <- array(
-    dat$trajectories$state, c(192, 11, 2, 32),
+   dat$trajectories$state, c(194, 11, 2, 32),
     dimnames = c(list(dimnames(dat$trajectories$state)[[1]], NULL,
                       letters[1:2], NULL)))
   cmp <- add_trajectory_incidence(dat$trajectories, "icu")
@@ -230,8 +230,7 @@ test_that("can compute incidence for a single variable - nested", {
 test_that("can combine EpiEstim rt calculations over trajectories", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_inc <- grep("infections_inc", names(dat$predict$index))
-  inc <- dat$trajectories$state[index_inc, , ]
+  inc <- dat$trajectories$state["infections_inc", , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -255,8 +254,7 @@ test_that("can combine EpiEstim rt calculations over trajectories", {
 test_that("can combine EpiEstim rt over trajectories without reordering", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_inc <- grep("infections_inc", names(dat$predict$index))
-  inc <- dat$trajectories$state[index_inc, , ]
+  inc <- dat$trajectories$state["infections_inc", , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 
@@ -280,8 +278,7 @@ test_that("can combine EpiEstim rt over trajectories without reordering", {
 test_that("Combining EpiEstim rt reject invalid inputs", {
   dat <- reference_data_lancelot_trajectories()
 
-  index_inc <- grep("infections_inc", names(dat$predict$index))
-  inc <- dat$trajectories$state[index_inc, , ]
+  inc <- dat$trajectories$state["infections_inc", , ]
 
   p <- dat$predict$transform(dat$pars[1, ])
 

@@ -756,6 +756,9 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'
 ##' @param D_all Logical, whether to output death classes by 5yr age groups
 ##'   (default = TRUE)
+
+##' @param infections_inc_per_strain Logical, whether to output
+##'   infections incidence per strain (default = TRUE)
 ##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
@@ -776,7 +779,8 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                             diagnoses_admitted = TRUE,
                             cum_infections_disag = TRUE,
-                            cum_n_vaccinated = TRUE, D_all = TRUE) {
+                            cum_n_vaccinated = TRUE, D_all = TRUE,
+                            infections_inc_per_strain = TRUE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -909,6 +913,16 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   ## (real) strain only
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
 
+  index_effective_susceptible <-
+    calculate_index(index, "effective_susceptible", list(),
+                    seq_len(n_strains), "effective_susceptible_")
+  index_save <- c(index_save, index_effective_susceptible)
+
+  ## strain only
+  index_infections_inc_per_strain <-
+    calculate_index(index, "infections_inc_per_strain", list(),
+                    seq_len(n_tot_strains), "infections_inc_strain_")
+
   ## age x (total) strain x vacc class
   index_R <- calculate_index(index, "R",
                              list(S = n_tot_strains, V = n_vacc_classes),
@@ -944,6 +958,10 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   if (D_all) {
     index_state <- c(index_state,
       calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all"))
+  }
+
+  if (infections_inc_per_strain) {
+    index_state <- c(index_state, index_infections_inc_per_strain)
   }
 
 
