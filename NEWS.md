@@ -1,3 +1,7 @@
+# sircovid 0.13.6
+
+* Output all infections by age
+
 # sircovid 0.13.4
 
 * Fit to REACT prevalence by age
