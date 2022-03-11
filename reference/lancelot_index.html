@@ -18,7 +18,7 @@ conforms to the mcstate interface.'><meta property="og:image" content="/logo.png
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.6</span>
       </span>
     </div>
 
@@ -62,6 +62,7 @@ conforms to the mcstate interface.</p>
   diagnoses_admitted <span class="op">=</span> <span class="cn">TRUE</span>,
   cum_infections_disag <span class="op">=</span> <span class="cn">TRUE</span>,
   cum_n_vaccinated <span class="op">=</span> <span class="cn">TRUE</span>,
+  D_all <span class="op">=</span> <span class="cn">TRUE</span>,
   infections_inc_per_strain <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -87,6 +88,9 @@ cumulative infections by age and vaccine class (default = TRUE)</p></dd>
 <dt>cum_n_vaccinated</dt>
 <dd><p>Logical, whether to output
 cumulative number vaccinated by age and vaccine class
+(default = TRUE)</p></dd>
+<dt>D_all</dt>
+<dd><p>Logical, whether to output death classes by 5yr age groups
 (default = TRUE)</p></dd>
 <dt>infections_inc_per_strain</dt>
 <dd><p>Logical, whether to output
@@ -339,8 +343,26 @@ carehome workers and carehome residents respectively) and 17
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                389                                390 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               cum_n_vaccinated_CHW               cum_n_vaccinated_CHR </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                391                                392 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            infections_inc_strain_1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                200 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            D_all_0                            D_all_5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                431                                432 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_10                           D_all_15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                433                                434 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_20                           D_all_25 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                435                                436 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_30                           D_all_35 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                437                                438 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_40                           D_all_45 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                439                                440 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_50                           D_all_55 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                441                                442 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_60                           D_all_65 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                443                                444 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_70                           D_all_75 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                445                                446 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_80                          D_all_CHW </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                447                                448 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_all_CHR            infections_inc_strain_1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                449                                200 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
