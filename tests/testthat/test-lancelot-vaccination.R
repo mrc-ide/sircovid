@@ -11,7 +11,8 @@ test_that("No infections with perfect vaccine wrt rel_susceptibility", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -49,7 +50,8 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
                            rel_p_sympt = c(1, 0),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -84,7 +86,8 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 0),
                            rel_p_death = c(1, 1),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -116,7 +119,7 @@ test_that("No infections with perfect vaccine wrt rel_infectivity", {
   ## waning_rate default is 0, setting to a non-zero value so that this test
   ## passes with waning immunity
   p <- lancelot_parameters(0, "england", rel_infectivity = c(1, 0),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20, n_vacc_classes = 2)
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -159,7 +162,8 @@ test_that("No deaths with perfect vaccine wrt rel_p_death", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 0),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
 
@@ -207,7 +211,8 @@ test_that("Vaccination of susceptibles works", {
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -238,7 +243,8 @@ test_that("Vaccination of exposed individuals works", {
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   # stop disease progression after E
   p$gamma_E_step <- 0
@@ -300,7 +306,8 @@ test_that("Vaccination of asymptomatic infectious individuals works", {
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   # stop disease progression after I_A
   p$gamma_A_step <- 0
@@ -355,7 +362,8 @@ test_that("Vaccination of presymptomatic infectious individuals works", {
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   # stop disease progression after I_P
   p$gamma_P_step <- 0
@@ -411,7 +419,8 @@ test_that("Vaccination of recovered individuals works", {
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -456,7 +465,8 @@ test_that("Returning to unvaccinated stage works for exposed individuals", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, Inf))
+                           vaccine_progression_rate = c(0, Inf),
+                           n_vacc_classes = 2)
 
   # stop disease progression after E
   p$gamma_E_step <- 0
@@ -514,7 +524,8 @@ test_that("Returning to unvaccinated stage works for I_A individuals", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, Inf))
+                           vaccine_progression_rate = c(0, Inf),
+                           n_vacc_classes = 2)
 
   # stop disease progression after I_A
   p$gamma_A_step <- 0
@@ -565,7 +576,8 @@ test_that("Returning to unvaccinated stage works for I_P individuals", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, Inf))
+                           vaccine_progression_rate = c(0, Inf),
+                           n_vacc_classes = 2)
 
   # stop disease progression after I_P
   p$gamma_P_step <- 0
@@ -615,7 +627,8 @@ test_that("Returning to unvaccinated stage works for recovered individuals", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, Inf))
+                           vaccine_progression_rate = c(0, Inf),
+                           n_vacc_classes = 2)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -665,7 +678,8 @@ test_that("Vaccine progression through 3 classes works for susceptibles", {
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, Inf, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 3L)
+                           vaccine_index_dose2 = 3L,
+                           n_vacc_classes = 3)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -695,7 +709,8 @@ test_that("Vaccine progression through 12 classes works for susceptibles", {
                            vaccine_progression_rate =
                              c(0, rep(Inf, 10), 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 12L)
+                           vaccine_index_dose2 = 12L,
+                           n_vacc_classes = 12)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -720,7 +735,8 @@ test_that("Clinical progression within a vaccination class works", {
                              rel_p_hosp_if_sympt = c(1, 1, 1),
                              rel_p_death = c(1, 1, 1),
                              vaccine_progression_rate =
-                               c(0, 0, 0))
+                               c(0, 0, 0),
+                           n_vacc_classes = 3)
 
     # increase progression rates
     p[grep("^gamma", names(p))] <- 1e9
@@ -776,7 +792,8 @@ test_that("Returning to unvaccinated stage works for susceptibles", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, Inf))
+                           vaccine_progression_rate = c(0, Inf),
+                           n_vacc_classes = 2)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -830,7 +847,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
                            rel_susceptibility = c(1, 1),
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 1))
+                           rel_p_death = c(1, 1),
+                           n_vacc_classes = 2)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -855,7 +873,8 @@ test_that("Can calculate Rt with an (empty) vaccination class", {
                            rel_susceptibility = c(1, 1),
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 1))
+                           rel_p_death = c(1, 1),
+                           n_vacc_classes = 2)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -891,7 +910,8 @@ test_that("Effective Rt reduced by rel_susceptibility if all vaccinated", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -942,9 +962,11 @@ test_that("Effective Rt reduced by rel_infectivity if all vaccinated", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            rel_infectivity = c(1, reduced_infectivity),
                            rel_p_sympt = c(1, 1),
+                           rel_susceptibility = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
 
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -997,7 +1019,8 @@ test_that("Effective Rt modified if rel_p_sympt is not 1", {
                            rel_p_sympt = c(1, reduced_p_C),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 2)
 
   ## These are the same as the default values, but setting them again here in
   ## case defaults change as the below assumes mean duration is shorter for
@@ -1061,7 +1084,8 @@ test_that("N_tots stay constant with vaccination and no waning immunity", {
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0.01),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 3)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1092,7 +1116,8 @@ test_that("N_tot stays constant with vaccination and waning immunity, while
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0.01),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 3)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1123,7 +1148,8 @@ test_that("N_tots are constant with vaccination and k > 1, and without waning
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0.01),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 3)
 
   p[grep("k_", names(p))] <- 2
 
@@ -1156,7 +1182,8 @@ test_that("N_tot stays constant with vaccination and k > 1, and with waning
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0.01),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 3)
 
   p[grep("k_", names(p))] <- 2
 
@@ -1190,7 +1217,8 @@ test_that("N_tots stay constant with high rates of vaccination and without
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 50),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 3)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1225,7 +1253,8 @@ test_that(
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 50),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 3)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1251,7 +1280,8 @@ test_that("Outputed vaccination numbers make sense", {
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0.01),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 3)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -1289,7 +1319,8 @@ test_that("Outputed S vaccination numbers are what we expect", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   ## stop progression in I_A to avoid moves from I_A to R for initial infectives
   p$gamma_A_step <- 0
@@ -1327,7 +1358,8 @@ test_that("Outputed E vaccination numbers are what we expect", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   ## stop progression after E to avoid moves from E to I_A
   p$gamma_E_step <- 0
@@ -1377,7 +1409,8 @@ test_that("Outputed I_A vaccination numbers are what we expect", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   ## stop progression after I_A to avoid moves from I_A to R
   p$gamma_A_step <- 0
@@ -1418,7 +1451,8 @@ test_that("Outputed I_P vaccination numbers are what we expect", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   ## stop progression after I_A/I_P to avoid moves out of I_A/I_P
   p$gamma_A_step <- 0
@@ -1462,7 +1496,8 @@ test_that("Outputed R vaccination numbers are what we expect", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                           n_vacc_classes = 2)
 
   ## stop progression after I_A to avoid diagonal moves from I_A to R
   p$gamma_A_step <- 0
@@ -1607,14 +1642,16 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
     lancelot_parameters_vaccination(
       ntot,
       rel_susceptibility = c(1, 1, 1),
-      vaccine_progression_rate = c(1, 1, 1)),
+      vaccine_progression_rate = c(1, 1, 1),
+      n_vacc_classes = 3),
     "Column 1 of 'vaccine_progression_rate' must be zero (dose 1)",
     fixed = TRUE)
   expect_error(
     lancelot_parameters_vaccination(
       ntot,
       rel_susceptibility = c(1, 1, 1),
-      vaccine_progression_rate = matrix(c(1, 1, 1), 19, 3)),
+      vaccine_progression_rate = matrix(c(1, 1, 1), 19, 3),
+      n_vacc_classes = 3),
     "Column 1 of 'vaccine_progression_rate' must be zero (dose 1)",
     fixed = TRUE)
   expect_error(
@@ -1635,7 +1672,8 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       rel_susceptibility = c(1, 1, 1),
       vaccine_progression_rate = c(0, 1, 1),
       vaccine_index_dose2 = 2,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 3),
     "Column 2 of 'vaccine_progression_rate' must be zero (dose 2)",
     fixed = TRUE)
   expect_error(
@@ -1645,7 +1683,8 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       rel_susceptibility = c(1, 1, 1, 1),
       vaccine_progression_rate = c(0, 1, 1, 1),
       vaccine_index_dose2 = 3,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 4),
     "Column 3 of 'vaccine_progression_rate' must be zero (dose 2)",
     fixed = TRUE)
 
@@ -1657,7 +1696,8 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       vaccine_progression_rate = c(0, 1, 0, 1),
       vaccine_index_dose2 = 3,
       vaccine_index_booster = 4,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 4),
     "'n_doses' must be 3 as boosters are used",
     fixed = TRUE)
 
@@ -1671,7 +1711,8 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       vaccine_progression_rate = c(0, 1, 0, 1),
       n_doses = 3,
       vaccine_index_dose2 = 3,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 4),
     "'n_doses' must be 2 as boosters not used",
     fixed = TRUE)
 
@@ -1684,7 +1725,8 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       n_doses = 3,
       vaccine_index_booster = 10,
       vaccine_index_dose2 = 3,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 4),
     "Invalid value for 'vaccine_index_booster'",
     fixed = TRUE)
 })
@@ -1761,7 +1803,8 @@ test_that("run sensible vaccination schedule, catchup = 0", {
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
                            vaccine_index_dose2 = 2L,
-                           vaccine_catchup_fraction = 0)
+                           vaccine_catchup_fraction = 0,
+                           n_vacc_classes = 2)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, 1, seed = 1L)
@@ -1838,7 +1881,8 @@ test_that("run sensible vaccination schedule, catchup = 1", {
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
                            vaccine_index_dose2 = 2L,
-                           vaccine_catchup_fraction = 1)
+                           vaccine_catchup_fraction = 1,
+                           n_vacc_classes = 2)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, 1, seed = 1L)
@@ -1910,7 +1954,8 @@ test_that("can add vaccination to a set of model state", {
                                 rel_p_hosp_if_sympt = c(1, 1),
                                 rel_p_death = c(1, 1),
                                 vaccine_schedule = vaccine_schedule,
-                                vaccine_index_dose2 = 2L)
+                                vaccine_index_dose2 = 2L,
+                                n_vacc_classes = 2)
 
   mod_orig <- lancelot$new(p_orig, 0, 10, seed = 1L)
   mod_vacc <- lancelot$new(p_vacc, 0, 10, seed = 1L)
@@ -1970,7 +2015,8 @@ test_that("vaccine_index_dose2 must have valid value", {
       ntot,
       dt,
       vaccine_index_dose2 = 2L,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 1),
     "Invalid value for 'vaccine_index_dose2', must be in [1, 1]",
     fixed = TRUE)
 
@@ -1981,7 +2027,8 @@ test_that("vaccine_index_dose2 must have valid value", {
       rel_susceptibility = c(1, 1, 1, 1),
       vaccine_progression_rate = c(0, 1, 1, 1),
       vaccine_index_dose2 = 6L,
-      vaccine_schedule = schedule),
+      vaccine_schedule = schedule,
+      n_vacc_classes = 4),
     "Invalid value for 'vaccine_index_dose2', must be in [1, 4]",
     fixed = TRUE)
 })
@@ -2026,7 +2073,8 @@ test_that("can upgrade model state", {
                                 rel_p_hosp_if_sympt = c(1, 1),
                                 rel_p_death = c(1, 1),
                                 vaccine_schedule = vaccine_schedule,
-                                vaccine_index_dose2 = 2L)
+                                vaccine_index_dose2 = 2L,
+                                n_vacc_classes = 2)
 
   mod_vacc <- lancelot$new(p_vacc, 0, 10, seed = 1L)
   info_vacc <- mod_vacc$info()
@@ -2074,7 +2122,8 @@ test_that("Refuse to upgrade impossible model state", {
                                 rel_p_hosp_if_sympt = c(1, 1),
                                 rel_p_death = c(1, 1),
                                 vaccine_schedule = vaccine_schedule,
-                                vaccine_index_dose2 = 2L)
+                                vaccine_index_dose2 = 2L,
+                                n_vacc_classes = 2)
 
   mod_vacc <- lancelot$new(p_vacc, 0, 10, seed = 1L)
   info_vacc <- mod_vacc$info()
@@ -2097,7 +2146,8 @@ test_that("Can vaccinate given a schedule", {
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0),
                            waning_rate = 1 / 20,
-                           vaccine_catchup_fraction = 0)
+                           vaccine_catchup_fraction = 0,
+                           n_vacc_classes = 3)
   p$index_dose <- c(1L, 2L)
   p$index_dose_inverse <- create_index_dose_inverse(p$n_vacc_classes,
                                                     p$index_dose)
@@ -2183,7 +2233,8 @@ test_that("can create parameters with vaccination data", {
                            rel_p_death = c(1, 1, 1),
                            waning_rate = 1 / 20,
                            vaccine_index_dose2 = 2L,
-                           vaccine_schedule = schedule)
+                           vaccine_schedule = schedule,
+                            n_vacc_classes = 3)
   expect_equal(dim(p$vaccine_dose_step),
                c(19, 2, (date_start_vaccination + length(daily_doses)) * 4))
 })
@@ -2197,7 +2248,8 @@ test_that("Can vaccinate given a schedule with given uptake", {
                            rel_p_hosp_if_sympt = c(1, 1, 1),
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                            n_vacc_classes = 3)
   p$index_dose <- c(1L, 2L)
   p$index_dose_inverse <- create_index_dose_inverse(p$n_vacc_classes,
                                                     p$index_dose)
@@ -2244,7 +2296,8 @@ test_that("Can catch up on uptake given previous vaccination", {
                            rel_p_hosp_if_sympt = c(1, 1, 1),
                            rel_p_death = c(1, 1, 1),
                            vaccine_progression_rate = c(0, 0, 0),
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                           n_vacc_classes = 3)
 
   uptake_by_age <- test_example_uptake()
   n <- vaccine_priority_population(region, uptake_by_age)
@@ -2315,7 +2368,8 @@ test_that("Can catch up on doses not distributed", {
                            vaccine_catchup_fraction = 0,
                            vaccine_index_dose2 = 2L,
                            vaccine_schedule = vacc_schedule,
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                            n_vacc_classes = 3)
 
 
   ## set gamma_C_2 so individuals will spend long periods in a compartment where
@@ -2370,7 +2424,8 @@ test_that("Can catch up on doses not distributed with imperfect uptake", {
                            vaccine_catchup_fraction = 1,
                            vaccine_index_dose2 = 2L,
                            vaccine_schedule = vacc_schedule,
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                            n_vacc_classes = 3)
 
   ## check we are going far enough in time that we should vaccinate everyone:
   expect_true(all(abs(
@@ -2404,7 +2459,8 @@ test_that("Collect disaggregated deaths data", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 2)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -2443,7 +2499,8 @@ test_that("Can add missing state variables", {
                            rel_p_death = c(1, 1),
                            vaccine_progression_rate = c(0, 0),
                            vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
+                           vaccine_index_dose2 = 2L,
+                            n_vacc_classes = 2)
 
   mod <- lancelot$new(p, 0, 10, seed = 1L)
   info <- mod$info()
@@ -2554,7 +2611,8 @@ test_that("Can add lag to vaccine schedule", {
                            vaccine_catchup_fraction = 0,
                            vaccine_index_dose2 = 2L,
                            vaccine_schedule = vacc_schedule,
-                           waning_rate = 1 / 20)
+                           waning_rate = 1 / 20,
+                            n_vacc_classes = 3)
 
   ## set gamma_C_2 so individuals will spend long periods in a compartment where
   ## they are not a vaccination candidate
@@ -2617,7 +2675,8 @@ test_that("run sensible vaccination schedule with boosters", {
                            vaccine_index_booster = 3L,
                            vaccine_catchup_fraction = 0,
                            n_doses = 3,
-                           initial_seed_size = 0)
+                           initial_seed_size = 0,
+                            n_vacc_classes = 4)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2663,10 +2722,12 @@ test_that("run sensible vaccination schedule with boosters", {
 test_that("can inflate the number of vacc classes after running with 2", {
   ## two vacc classes
   p1 <- lancelot_parameters(0, "east_of_england",
-                            rel_susceptibility = c(1, 1))
+                            rel_susceptibility = c(1, 1),
+                            n_vacc_classes = 2)
   ## three vacc classes
   p2 <- lancelot_parameters(0, "east_of_england",
-                            rel_susceptibility = c(1, 1, 1))
+                            rel_susceptibility = c(1, 1, 1),
+                            n_vacc_classes = 3)
 
   np <- 4L
   mod1 <- lancelot$new(p1, 0, np, seed = 1L)
@@ -2805,7 +2866,8 @@ test_that("can't wane or boost without second dose", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = c(0, 0, 1, 0, 0),
                            n_doses = 3,
-                           initial_seed_size = 0)
+                           initial_seed_size = 0,
+                            n_vacc_classes = 5)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2856,7 +2918,8 @@ test_that("boosting and waning work as expected", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = progress,
                            n_doses = 3,
-                           initial_seed_size = 0)
+                           initial_seed_size = 0,
+                            n_vacc_classes = 5)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -2886,7 +2949,8 @@ test_that("boosting and waning work as expected", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = progress,
                            n_doses = 3,
-                           initial_seed_size = 0)
+                           initial_seed_size = 0,
+                            n_vacc_classes = 5)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)
@@ -2913,7 +2977,8 @@ test_that("boosting and waning work as expected", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = progress,
                            n_doses = 3,
-                           initial_seed_size = 0)
+                           initial_seed_size = 0,
+                            n_vacc_classes = 5)
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
   state <- lancelot_initial(info, 1, p)
@@ -2961,7 +3026,8 @@ test_that("run sensible vaccination schedule with waning and boosters", {
                            vaccine_catchup_fraction = 0,
                            vaccine_progression_rate = c(0, 0, 1 / 20, 0, 0),
                            n_doses = 3,
-                           initial_seed_size = 0)
+                           initial_seed_size = 0,
+                            n_vacc_classes = 5)
 
   ## Let's go:
   mod <- lancelot$new(p, 0, np, seed = 1L)
@@ -3009,39 +3075,46 @@ test_that("Can validate vaccine skip move inputs", {
                "There are 1 vaccine classes so 'vacc_skip_from' and")
 
   expect_error(lancelot_parameters(1, "london", vacc_skip_to = 4,
-                                   rel_susceptibility = c(1, 1, 1)),
+                                   rel_susceptibility = c(1, 1, 1),
+                                    n_vacc_classes = 3),
                "There are 3 vaccine classes so 'vacc_skip_from' and")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_progression_rate = rep(0, 19),
-                                   vacc_skip_from = 3L, vacc_skip_to = 2L),
+                                   vacc_skip_from = 3L, vacc_skip_to = 2L,
+                                    n_vacc_classes = 3),
                "Require vacc_skip_to = vacc_skip_from or vacc_skip_to >=")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_progression_rate = rep(1, 19),
-                                   vacc_skip_from = 2L, vacc_skip_to = 2L),
+                                   vacc_skip_from = 2L, vacc_skip_to = 2L,
+                                    n_vacc_classes = 3),
                "Require vacc_skip_progression_rate = 0 as vacc_skip_to =")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_progression_rate = rep(0, 19),
                                    vacc_skip_weight = 1,
-                                   vacc_skip_from = 2L, vacc_skip_to = 2L),
+                                   vacc_skip_from = 2L, vacc_skip_to = 2L,
+                                    n_vacc_classes = 3),
                "Require vacc_skip_weight = 0 as vacc_skip_to =")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_progression_rate = c(1, 1),
                                    vacc_skip_weight = 1,
-                                   vacc_skip_from = 1L, vacc_skip_to = 3L),
+                                   vacc_skip_from = 1L, vacc_skip_to = 3L,
+                                    n_vacc_classes = 3),
                "'vacc_skip_progression_rate' must be a scalar or a vector")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_from = 1L, vacc_skip_to = 3L,
-                                   vacc_skip_weight = 1.4),
+                                   vacc_skip_weight = 1.4,
+                                    n_vacc_classes = 3),
                "'vacc_skip_weight' must lie in")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
                                    vacc_skip_from = 1L, vacc_skip_to = 3L,
-                                   vacc_skip_weight = -1),
+                                   vacc_skip_weight = -1,
+                                    n_vacc_classes = 3),
                "'vacc_skip_weight' must lie in")
 })
 
@@ -3055,7 +3128,8 @@ test_that("vacc_skip_dose calculated correctly", {
                            vaccine_schedule = vaccine_schedule,
                            n_doses = 3L,
                            vacc_skip_from = 3L,
-                           vacc_skip_to = 5L)
+                           vacc_skip_to = 5L,
+                            n_vacc_classes = 5)
   expect_equal(p$vacc_skip_dose, 3L)
 
   p <- lancelot_parameters(1, "london",
@@ -3065,7 +3139,8 @@ test_that("vacc_skip_dose calculated correctly", {
                            vaccine_schedule = vaccine_schedule,
                            n_doses = 3L,
                            vacc_skip_from = 2L,
-                           vacc_skip_to = 4L)
+                           vacc_skip_to = 4L,
+                            n_vacc_classes = 5)
   expect_equal(p$vacc_skip_dose, 0)
 })
 
@@ -3084,7 +3159,8 @@ test_that("N_tots stay constant with vaccine skip moves", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_progression_rate = 0,
+                            n_vacc_classes = 5)
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -3117,7 +3193,8 @@ test_that("No vaccine skip moves when expected", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 0,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_progression_rate = 0,
+                            n_vacc_classes = 5)
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -3154,7 +3231,8 @@ test_that("Vaccine skip works in all compartments", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_progression_rate = 0,
+                            n_vacc_classes = 5)
 
   p$gamma_E_step <- 0
   p$gamma_A_step <- 0
@@ -3217,7 +3295,8 @@ test_that("Everyone vaccine skips if there is no waning", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = rep(0, 19))
+                           vacc_skip_progression_rate = rep(0, 19),
+                            n_vacc_classes = 5)
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -3263,7 +3342,8 @@ test_that("Equal vaccine skip weighting leads to equal distribution", {
                            vacc_skip_from = 3L,
                            vacc_skip_to = 5L,
                            vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_progression_rate = 0,
+                           n_vacc_classes = 5)
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()

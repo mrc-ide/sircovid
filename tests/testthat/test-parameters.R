@@ -225,3 +225,15 @@ test_that("can expand beta", {
   beta3 <- sircovid_parameters_expand_step(t3, beta)
   expect_equal(beta3, beta[1:65])
 })
+
+
+test_that("n_real_strains fails as expected", {
+  expect_error(
+    lancelot_parameters(
+      sircovid_date("2020-02-07"), "england",
+      strain_transmission = c(1, 1, 1),
+      n_real_strains = 3
+    ),
+    "too long"
+  )
+})
