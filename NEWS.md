@@ -1,3 +1,7 @@
+# sircovid 0.13.5
+
+* Add logical flag to turn on/off exporting all death classes by age
+
 # sircovid 0.13.4
 
 * Fit to REACT prevalence by age
@@ -28,10 +32,10 @@
 
 # sircovid 0.12.27
 
-* Have strain_rel_p_death, strain_rel_p_icu, 
+* Have strain_rel_p_death, strain_rel_p_icu,
 strain_rel_p_hosp_if_sympt and strain_rel_p_sympt
 as separate parameters in odin code to clarify effects of strains and vaccines
-on severity and so these parameters can be changed more easily without 
+on severity and so these parameters can be changed more easily without
 necessarily going through the `lancelot_parameters` function
 
 # sircovid 0.12.26
