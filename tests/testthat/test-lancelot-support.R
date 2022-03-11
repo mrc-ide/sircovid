@@ -212,10 +212,12 @@ test_that("lancelot_parameters returns a list of parameters", {
       "strain_rel_p_hosp_if_sympt", "strain_rel_p_sympt", "N_tot_under15",
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
       "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
-      "N_tot_react", "I_A_transmission", "I_P_transmission",
-      "I_C_1_transmission", "I_C_2_transmission", "n_groups",
-      "initial_seed_size", "cross_immunity", "vacc_skip_from", "vacc_skip_to",
-      "vacc_skip_dose", "vacc_skip_progression_rate_base", "vacc_skip_weight"))
+      "N_tot_react", "N_5_24_react", "N_25_34_react", "N_35_44_react",
+      "N_45_54_react", "N_55_64_react", "N_65_plus_react", "I_A_transmission",
+      "I_P_transmission", "I_C_1_transmission", "I_C_2_transmission",
+      "n_groups", "initial_seed_size", "cross_immunity", "vacc_skip_from",
+      "vacc_skip_to", "vacc_skip_dose", "vacc_skip_progression_rate_base",
+      "vacc_skip_weight"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -421,16 +423,25 @@ test_that("lancelot_index identifies ICU and D_tot in real model", {
   expect_equal(
     names(index$run),
     c("time", "icu", "general", "deaths_carehomes_inc", "deaths_comm_inc",
+      "deaths_comm_0_49_inc", "deaths_comm_50_54_inc", "deaths_comm_55_59_inc",
+      "deaths_comm_60_64_inc", "deaths_comm_65_69_inc", "deaths_comm_70_74_inc",
+      "deaths_comm_75_79_inc", "deaths_comm_80_plus_inc",
       "deaths_hosp_inc", "deaths_hosp_0_49_inc", "deaths_hosp_50_54_inc",
       "deaths_hosp_55_59_inc", "deaths_hosp_60_64_inc", "deaths_hosp_65_69_inc",
       "deaths_hosp_70_74_inc", "deaths_hosp_75_79_inc",
-      "deaths_hosp_80_plus_inc", "admitted_inc", "diagnoses_inc",
+      "deaths_hosp_80_plus_inc", "admitted_inc", "all_admission_0_9_inc",
+      "all_admission_10_19_inc", "all_admission_20_29_inc",
+      "all_admission_30_39_inc", "all_admission_40_49_inc",
+      "all_admission_50_59_inc", "all_admission_60_69_inc",
+      "all_admission_70_79_inc", "all_admission_80_plus_inc", "diagnoses_inc",
       "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
       "sympt_cases_non_variant_inc", "sympt_cases_over25_inc",
       "sympt_cases_under15_inc", "sympt_cases_15_24_inc",
       "sympt_cases_25_49_inc", "sympt_cases_50_64_inc",
       "sympt_cases_65_79_inc", "sympt_cases_80_plus_inc",
-      "sympt_cases_non_variant_over25_inc", "react_pos"))
+      "sympt_cases_non_variant_over25_inc", "react_pos",
+      "react_5_24_pos", "react_25_34_pos", "react_35_44_pos",
+      "react_45_54_pos", "react_55_64_pos", "react_65_plus_pos"))
 
   expect_equal(index$run[["time"]],
                which(names(info$index) == "time"))
@@ -536,6 +547,14 @@ test_that("lancelot_compare combines likelihood correctly", {
     general = 20:25,
     deaths_carehomes_inc = 2:7,
     deaths_comm_inc = 1:6,
+    deaths_comm_0_49_inc = 1:6,
+    deaths_comm_50_54_inc = 1:6,
+    deaths_comm_55_59_inc = 2:7,
+    deaths_comm_60_64_inc = 2:7,
+    deaths_comm_65_69_inc = 3:8,
+    deaths_comm_70_74_inc = 3:8,
+    deaths_comm_75_79_inc = 4:9,
+    deaths_comm_80_plus_inc = 4:9,
     deaths_hosp_inc = 3:8,
     deaths_hosp_0_49_inc = 1:6,
     deaths_hosp_50_54_inc = 1:6,
@@ -547,6 +566,15 @@ test_that("lancelot_compare combines likelihood correctly", {
     deaths_hosp_80_plus_inc = 4:9,
     admitted_inc = 50:55,
     diagnoses_inc = 60:65,
+    all_admission_0_9_inc = 1:6,
+    all_admission_10_19_inc = 1:6,
+    all_admission_20_29_inc = 1:6,
+    all_admission_30_39_inc = 1:6,
+    all_admission_40_49_inc = 9:14,
+    all_admission_50_59_inc = 12:17,
+    all_admission_60_69_inc = 17:22,
+    all_admission_70_79_inc = 20:25,
+    all_admission_80_plus_inc = 27:32,
     sero_pos_1 = 4:9,
     sero_pos_2 = 14:19,
     sympt_cases_inc = 100:105,
@@ -559,7 +587,13 @@ test_that("lancelot_compare combines likelihood correctly", {
     sympt_cases_65_79_inc = 19:24,
     sympt_cases_80_plus_inc = 19:24,
     sympt_cases_non_variant_over25_inc = 60:65,
-    react_pos = 2:7)
+    react_pos = 2:7,
+    react_5_24_pos = 1:6,
+    react_25_34_pos = 1:6,
+    react_35_44_pos = 1:6,
+    react_45_54_pos = 1:6,
+    react_55_64_pos = 1:6,
+    react_65_plus_pos = 1:6)
   observed <- list(
     icu = 13,
     general = 23,
@@ -575,11 +609,28 @@ test_that("lancelot_compare combines likelihood correctly", {
     deaths_hosp_75_79 = 7,
     deaths_hosp_80_plus = 8,
     deaths_comm = 3,
+    deaths_comm_0_49 = 1,
+    deaths_comm_50_54 = 2,
+    deaths_comm_55_59 = 3,
+    deaths_comm_60_64 = 4,
+    deaths_comm_65_69 = 5,
+    deaths_comm_70_74 = 6,
+    deaths_comm_75_79 = 7,
+    deaths_comm_80_plus = 8,
     deaths = 8,
     deaths_non_hosp = 6,
     admitted = 53,
     diagnoses = 63,
     all_admission = 116,
+    all_admission_0_9 = 2,
+    all_admission_10_19 = 4,
+    all_admission_20_29 = 5,
+    all_admission_30_39 = 5,
+    all_admission_40_49 = 10,
+    all_admission_50_59 = 15,
+    all_admission_60_69 = 20,
+    all_admission_70_79 = 25,
+    all_admission_80_plus = 30,
     sero_pos_15_64_1 = 43,
     sero_tot_15_64_1 = 83,
     sero_pos_15_64_2 = 58,
@@ -610,6 +661,18 @@ test_that("lancelot_compare combines likelihood correctly", {
     pillar2_80_plus_tot = 400,
     react_pos = 3,
     react_tot = 500,
+    react_5_24_pos = 1,
+    react_5_24_tot = 50,
+    react_25_34_pos = 1,
+    react_25_34_tot = 50,
+    react_35_44_pos = 1,
+    react_35_44_tot = 100,
+    react_45_54_pos = 1,
+    react_45_54_tot = 100,
+    react_55_64_pos = 1,
+    react_55_64_tot = 100,
+    react_65_plus_pos = 2,
+    react_65_plus_tot = 100,
     strain_non_variant = 40,
     strain_tot = 50,
     strain_over25_non_variant = 20,
@@ -639,6 +702,12 @@ test_that("lancelot_compare combines likelihood correctly", {
   nms_pillar2_65_79 <- c("pillar2_65_79_pos", "pillar2_65_79_tot")
   nms_pillar2_80_plus <- c("pillar2_80_plus_pos", "pillar2_80_plus_tot")
   nms_react <- c("react_pos", "react_tot")
+  nms_react_5_24 <- c("react_5_24_pos", "react_5_24_tot")
+  nms_react_25_34 <- c("react_25_34_pos", "react_25_34_tot")
+  nms_react_35_44 <- c("react_35_44_pos", "react_35_44_tot")
+  nms_react_45_54 <- c("react_45_54_pos", "react_45_54_tot")
+  nms_react_55_64 <- c("react_55_64_pos", "react_55_64_tot")
+  nms_react_65_plus <- c("react_65_plus_pos", "react_65_plus_tot")
   nms_strain <- c("strain_non_variant", "strain_tot")
   nms_strain_over25 <- c("strain_over25_non_variant", "strain_over25_tot")
   parts <- c(as.list(setdiff(names(observed),
@@ -646,14 +715,20 @@ test_that("lancelot_compare combines likelihood correctly", {
                                nms_pillar2_over25, nms_pillar2_under15,
                                nms_pillar2_15_24, nms_pillar2_25_49,
                                nms_pillar2_50_64, nms_pillar2_65_79,
-                               nms_pillar2_80_plus, nms_react, nms_strain,
+                               nms_pillar2_80_plus, nms_react, nms_react_5_24,
+                               nms_react_25_34, nms_react_35_44,
+                               nms_react_45_54, nms_react_55_64,
+                               nms_react_65_plus, nms_strain,
                                nms_strain_over25))),
              list(nms_sero_1), list(nms_sero_2), list(nms_pillar2),
              list(nms_pillar2_over25), list(nms_pillar2_under15),
              list(nms_pillar2_15_24), list(nms_pillar2_25_49),
              list(nms_pillar2_50_64), list(nms_pillar2_65_79),
-             list(nms_pillar2_80_plus), list(nms_react), list(nms_strain),
-             list(nms_strain_over25))
+             list(nms_pillar2_80_plus), list(nms_react),
+             list(nms_react_5_24), list(nms_react_25_34),
+             list(nms_react_35_44), list(nms_react_45_54),
+             list(nms_react_55_64), list(nms_react_65_plus),
+             list(nms_strain), list(nms_strain_over25))
 
   ll_parts <- lapply(parts, function(x)
     lancelot_compare(state, observed_keep(x), pars))
@@ -731,36 +806,154 @@ test_that("lancelot_population preserves population", {
 })
 
 
-test_that("lancelot_index returns S compartments", {
+test_that("lancelot_index switches work as expected", {
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
   mod <- lancelot$new(p, 0, 5, seed = 1L)
-  index <- lancelot_index(mod$info())
   info <- mod$info()
-  i <- seq_along(index$run)
+
+  index <- lancelot_index(info)
   expect_equal(
     unname(index$state[!names(index$state) %in% names(index$run)]),
-    c(info$index$D_comm_tot,
-      info$index$D_carehomes_tot,
-      info$index$D_hosp_tot,
+    c(info$index$hosp_tot,
       info$index$cum_admit_conf,
       info$index$cum_new_conf,
-      info$index$cum_sympt_cases,
-      info$index$cum_sympt_cases_non_variant,
-      info$index$cum_sympt_cases_over25,
-      info$index$cum_sympt_cases_non_variant_over25,
-      info$index$hosp_tot,
       info$index$D_tot,
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$effective_susceptible,
       info$index$S,
       info$index$R,
+      info$index$prob_strain,
       info$index$cum_admit_by_age,
-      info$index$D,
       info$index$diagnoses_admitted,
       info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$infections_inc_per_strain))
+
+  index_rt <- lancelot_index(info, rt = FALSE)
+  expect_equal(
+    unname(index_rt$state[!names(index_rt$state) %in% names(index_rt$run)]),
+     c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$infections_inc_per_strain))
+
+  index_cum_admit <- lancelot_index(info, cum_admit = FALSE)
+  expect_equal(
+    unname(index_cum_admit$state[!names(index_cum_admit$state) %in%
+    names(index_cum_admit$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
       info$index$prob_strain,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$infections_inc_per_strain))
+
+  index_diagnoses_admitted <- lancelot_index(info, diagnoses_admitted = FALSE)
+  expect_equal(
+    unname(
+      index_diagnoses_admitted$state[!names(index_diagnoses_admitted$state)
+      %in% names(index_diagnoses_admitted$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$infections_inc_per_strain))
+
+  index_cum_infections_disag <- lancelot_index(info,
+   cum_infections_disag = FALSE)
+  expect_equal(
+    unname(
+      index_cum_infections_disag$state[!names(index_cum_infections_disag$state)
+      %in% names(index_cum_infections_disag$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_n_vaccinated,
+      info$index$infections_inc_per_strain))
+
+  index_cum_n_vaccinated <- lancelot_index(info, cum_n_vaccinated = FALSE)
+  expect_equal(
+    unname(
+      index_cum_n_vaccinated$state[!names(index_cum_n_vaccinated$state)
+      %in% names(index_cum_n_vaccinated$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$infections_inc_per_strain))
+
+  index_inf_per_strain <-
+    lancelot_index(info, infections_inc_per_strain = FALSE)
+  expect_equal(
+    unname(
+      index_inf_per_strain$state[!names(index_inf_per_strain$state)
+                                   %in% names(index_inf_per_strain$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
       info$index$cum_n_vaccinated))
+
 })
 
 
@@ -782,19 +975,30 @@ test_that("lancelot_check_data requires consistent deaths", {
 })
 
 
-test_that("lancelot_check_data disallows double fitting to deaths", {
+test_that("lancelot_check_data disallows double fitting to hospital deaths", {
   ## Specifically, disallow double fitting to aggregated and
   ## disaggregated hospital deaths
   data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  data$deaths <- NA
+  data$deaths_hosp <- 10
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Allow age disaggregated and aggregated on different days
+  data$deaths_hosp[11:20] <- NA
+  data$deaths_hosp_60_64[11:20] <- 3
+  data$deaths_hosp_80_plus[11:20] <- 7
 
   expect_silent(lancelot_check_data(data))
 
   ## Throw error
   data$deaths_hosp_0_49 <- 1
-  data_deaths_hosp_65_69 <- 4
+  data$deaths_hosp_65_69 <- 4
   expect_error(
     lancelot_check_data(data),
-    "Cannot fit to all ages aggregated for deaths if fitting to any sub-groups")
+    paste0("Cannot fit to all ages aggregated for hospital deaths if fitting ",
+           "to any sub-groups"))
 
   ## Add populations and throw regional error
   data2 <- cbind(
@@ -803,7 +1007,103 @@ test_that("lancelot_check_data disallows double fitting to deaths", {
 
   expect_error(
     lancelot_check_data(data2),
-    "london: Cannot fit to all ages aggregated for deaths if")
+    "london: Cannot fit to all ages aggregated for hospital deaths if")
+})
+
+
+test_that("lancelot_check_data disallows double fitting to community deaths", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## disaggregated community deaths
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  data$deaths <- NA
+  data$deaths_comm <- 10
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Allow age disaggregated and aggregated on different days
+  data$deaths_comm[11:20] <- NA
+  data$deaths_comm_60_64[11:20] <- 3
+  data$deaths_comm_80_plus[11:20] <- 7
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$deaths_comm_0_49 <- 1
+  data$deaths_comm_65_69 <- 4
+  expect_error(
+    lancelot_check_data(data),
+    paste0("Cannot fit to all ages aggregated for community deaths if fitting ",
+           "to any sub-groups"))
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to all ages aggregated for community deaths if")
+})
+
+
+test_that("lancelot_check_data disallows double fitting to admissions", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## age-specific hospital admissions
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Expect no error
+  n <- nrow(data)
+  data[1:n - 1, "all_admission_60_69"] <- 1
+  data[n, "all_admission"] <- 4
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$all_admission_60_69 <- 1
+  data$all_admission <- 4
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to admissions by age and aggregate together!")
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to admissions by age and aggregate together!")
+})
+
+
+test_that("lancelot_check_data disallows double fitting to REACT", {
+  ## Specifically, disallow double fitting to aggregated and
+  ## age-specific hospital admissions
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Expect no error
+  n <- nrow(data)
+  data[1:n - 1, "react_25_34_pos"] <- 1
+  data[n, "react_pos"] <- 4
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$react_25_34_pos <- 1
+  data$react_pos <- 4
+  expect_error(
+    lancelot_check_data(data),
+    "Cannot fit to REACT by age and aggregate together!")
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to REACT by age and aggregate together!")
 })
 
 

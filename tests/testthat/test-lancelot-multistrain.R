@@ -614,12 +614,16 @@ test_that("Swapping strains gives identical results with different index", {
   z2 <- mod2$transform_variables(res2)
 
   z2[["prob_strain"]] <- z2[["prob_strain"]][2:1, , drop = FALSE]
+  z2[["effective_susceptible"]] <-
+    z2[["effective_susceptible"]][2:1, , drop = FALSE]
   z2[["cum_sympt_cases_non_variant"]] <-
     z2[["cum_sympt_cases"]] - z2[["cum_sympt_cases_non_variant"]]
   z2[["cum_sympt_cases_non_variant_over25"]] <-
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
   z2$cum_infections_per_strain <-
     z2$cum_infections_per_strain[i, , drop = FALSE]
+  z2$infections_inc_per_strain <-
+    z2$infections_inc_per_strain[i, , drop = FALSE]
   ## This one can't easily be computed as it's not quite running
   ## incidence but over a sawtooth; the calculation relative to
   ## cum_infections_per_strain is confirmed elsewhere so here just
@@ -1939,7 +1943,6 @@ test_that("strain_rel_p_death works as expected in lancelot_parameters", {
   # relative probability of death applied to all death pathways
   expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_H_D)
   expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_W_D)
-  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_G_D)
   # check strains are mirrored
   expect_equal(p$strain_rel_p_ICU_D[1:2], p$strain_rel_p_ICU_D[4:3])
 
@@ -1958,9 +1961,33 @@ test_that("strain_rel_p_death works as expected in lancelot_parameters", {
   expect_equal(p$strain_rel_p_ICU_D, strain_rel_p_death)
   expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_H_D)
   expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_W_D)
-  expect_equal(p$strain_rel_p_ICU_D, p$strain_rel_p_G_D)
   # check strains are NOT mirrored this time
   expect_false(any(p$strain_rel_p_ICU_D[1:2] == p$strain_rel_p_ICU_D[4:3]))
+})
+
+test_that("strain_rel_p_G_D works as expected in lancelot_parameters", {
+  strain_rel_p_G_D <- c(1, 0.5)
+  rel_p_death <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_G_D = strain_rel_p_G_D,
+                           rel_p_death = rel_p_death)
+  # check strains are mirrored
+  expect_equal(p$strain_rel_p_G_D[1:2], p$strain_rel_p_G_D[4:3])
+
+  ## same but where strain_rel_p_death is specified for each pseudostrain:
+
+  # second strain half as severe
+  # and previous infection reduces probability of death by 10%
+  strain_rel_p_G_D <- c(1, 0.5, 0.45, 0.9)
+  rel_p_death <- c(1, 0.6, 0.7)
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_p_G_D = strain_rel_p_G_D,
+                           rel_p_death = rel_p_death)
+  expect_equal(p$strain_rel_p_G_D, strain_rel_p_G_D)
+  # check strains are NOT mirrored this time
+  expect_false(any(p$strain_rel_p_G_D[1:2] == p$strain_rel_p_G_D[4:3]))
 })
 
 test_that("strain_rel_gamma works as expected in lancelot_parameters", {
@@ -2404,11 +2431,11 @@ test_that("G_D empty when p_G_D = 0", {
 })
 
 
-test_that("G_D strain 2 empty when p_G_D = c(1, 0)", {
+test_that("G_D strain 2 empty when rel_p_G_D = c(1, 0)", {
   np <- 3L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
-                           strain_rel_p_death = c(1, 0),
+                           strain_rel_p_G_D = c(1, 0),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),

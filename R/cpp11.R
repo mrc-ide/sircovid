@@ -60,8 +60,8 @@ dust_cpu_basic_compare_data <- function(ptr) {
   .Call(`_sircovid_dust_cpu_basic_compare_data`, ptr)
 }
 
-dust_cpu_basic_filter <- function(ptr, save_trajectories, step_snapshot) {
-  .Call(`_sircovid_dust_cpu_basic_filter`, ptr, save_trajectories, step_snapshot)
+dust_cpu_basic_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
+  .Call(`_sircovid_dust_cpu_basic_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
 }
 
 dust_cpu_basic_set_n_threads <- function(ptr, n_threads) {
@@ -132,8 +132,8 @@ dust_cpu_lancelot_compare_data <- function(ptr) {
   .Call(`_sircovid_dust_cpu_lancelot_compare_data`, ptr)
 }
 
-dust_cpu_lancelot_filter <- function(ptr, save_trajectories, step_snapshot) {
-  .Call(`_sircovid_dust_cpu_lancelot_filter`, ptr, save_trajectories, step_snapshot)
+dust_cpu_lancelot_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
+  .Call(`_sircovid_dust_cpu_lancelot_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
 }
 
 dust_cpu_lancelot_set_n_threads <- function(ptr, n_threads) {

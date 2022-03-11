@@ -153,6 +153,19 @@ NULL
 ##'   and strain 4 = 2.1). To ensure valid
 ##'   probabilities, p_death is upper-truncated at 1 after scaling.
 ##'
+##' @param strain_rel_p_G_D Vector of relative probabilities of death in the
+##'   coummunity for each strain modelled. If `1` all strains have same
+##'   probabilities of death. Otherwise vector of same length as
+##'   `strain_transmission`, where the first value should be 1 (for the first
+##'   strain) and subsequent values between 0 and 1. In this case parameters
+##'   will be "mirrored" for pseudostrains i.e. the relative probability of
+##'   death will be assume the same irrespective of previous infection with
+##'   another strain. Alternatively, a vector of twice the length of
+##'   `strain_transmission` can be provided to allow specifying directly
+##'   relative probability of death for each pseudostrain (with strain 3 - 1.2
+##'   and strain 4 = 2.1). To ensure valid
+##'   probabilities, p_G_D is upper-truncated at 1 after scaling.
+##'
 ##' @param rel_susceptibility A vector or array of values representing the
 ##'   relative susceptibility of individuals in different vaccination groups.
 ##'   If a vector, the first value should be 1 (for the non-vaccinated group)
@@ -462,6 +475,7 @@ lancelot_parameters <- function(start_date, region,
                                 strain_rel_p_hosp_if_sympt = 1,
                                 strain_rel_p_icu = 1,
                                 strain_rel_p_death = 1,
+                                strain_rel_p_G_D = 1,
                                 rel_susceptibility = 1,
                                 rel_p_sympt = 1,
                                 rel_p_hosp_if_sympt = 1,
@@ -552,7 +566,6 @@ lancelot_parameters <- function(start_date, region,
   ret$N_tot_15_64 <- sum(ret$N_tot[4:13])
   ret$N_tot_all <- sum(ret$N_tot)
   ret$N_tot_over25 <- sum(ret$N_tot[6:19])
-  ret$N_tot_react <- sum(ret$N_tot[2:18])
   ret$N_tot_under15 <- sum(ret$N_tot[1:3])
   ret$N_tot_15_24 <- sum(ret$N_tot[4:5])
   ## assume CHW [18] are equally distributed amongst 25-64 age bands
@@ -561,6 +574,15 @@ lancelot_parameters <- function(start_date, region,
   ## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
   ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
+  ## need sub-populations for fit to react data, assume CHR are evenly
+  ## distributed amongst 25-64 year-olds
+  ret$N_tot_react <- sum(ret$N_tot[2:18])
+  ret$N_5_24_react <- sum(ret$N_tot[2:5])
+  ret$N_25_34_react <- sum(ret$N_tot[6:7]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_35_44_react <- sum(ret$N_tot[8:9]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_45_54_react <- sum(ret$N_tot[10:11]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_55_64_react <- sum(ret$N_tot[12:13]) + sum(ret$N_tot[18]) * 2 / 8
+  ret$N_65_plus_react <- sum(ret$N_tot[14:17])
 
   ## relative transmissibility of various I compartments
   ret$I_A_transmission <- 0.223
@@ -642,7 +664,11 @@ lancelot_parameters <- function(start_date, region,
   ret$strain_rel_p_ICU_D <- strain_rel_p_death
   ret$strain_rel_p_H_D <- strain_rel_p_death
   ret$strain_rel_p_W_D <- strain_rel_p_death
-  ret$strain_rel_p_G_D <- strain_rel_p_death
+
+  strain_rel_p_G_D <- process_strain_rel_p(strain_rel_p_G_D,
+                                           strain$n_strains,
+                                           n_real_strains)
+  ret$strain_rel_p_G_D <- strain_rel_p_G_D
 
   strain_rel_p_icu <- process_strain_rel_p(strain_rel_p_icu,
                                            n_strains,
@@ -729,6 +755,26 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'
 ##' @inheritParams basic_index
 ##'
+##' @param rt Logical, whether to output trajectories required for
+##'   calculating Rt (default = TRUE)
+##'
+##' @param cum_admit Logical, whether to output cumulative
+##'   admissions by age (default = TRUE)
+##'
+##' @param diagnoses_admitted Logical, whether to output
+##'   cumulative combined confirmed admissions and inpatient
+##'   diagnoses by age and vaccine class (default = TRUE)
+##'
+##' @param cum_infections_disag Logical, whether to output
+##'   cumulative infections by age and vaccine class (default = TRUE)
+##'
+##' @param cum_n_vaccinated Logical, whether to output
+##'   cumulative number vaccinated by age and vaccine class
+##'   (default = TRUE)
+##'
+##' @param infections_inc_per_strain Logical, whether to output
+##'   infections incidence per strain (default = TRUE)
+##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
@@ -744,19 +790,27 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' p <- lancelot_parameters(sircovid_date("2020-02-07"), "england")
 ##' mod <- lancelot$new(p, 0, 10)
 ##' lancelot_index(mod$info())
-lancelot_index <- function(info) {
+
+lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
+                           diagnoses_admitted = TRUE,
+                           cum_infections_disag = TRUE,
+                           cum_n_vaccinated = TRUE,
+                           infections_inc_per_strain = TRUE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
   index_core <- c(icu = index[["ICU_tot"]],
                   general = index[["general_tot"]],
-                  deaths_comm = index[["D_comm_tot"]],
-                  deaths_carehomes = index[["D_carehomes_tot"]],
-                  deaths_hosp = index[["D_hosp_tot"]],
-                  admitted = index[["cum_admit_conf"]],
-                  diagnoses = index[["cum_new_conf"]],
                   deaths_carehomes_inc = index[["D_carehomes_inc"]],
                   deaths_comm_inc = index[["D_comm_inc"]],
+                  deaths_comm_0_49_inc = index[["D_comm_0_49_inc"]],
+                  deaths_comm_50_54_inc = index[["D_comm_50_54_inc"]],
+                  deaths_comm_55_59_inc = index[["D_comm_55_59_inc"]],
+                  deaths_comm_60_64_inc = index[["D_comm_60_64_inc"]],
+                  deaths_comm_65_69_inc = index[["D_comm_65_69_inc"]],
+                  deaths_comm_70_74_inc = index[["D_comm_70_74_inc"]],
+                  deaths_comm_75_79_inc = index[["D_comm_75_79_inc"]],
+                  deaths_comm_80_plus_inc = index[["D_comm_80_plus_inc"]],
                   deaths_hosp_inc = index[["D_hosp_inc"]],
                   deaths_hosp_0_49_inc = index[["D_hosp_0_49_inc"]],
                   deaths_hosp_50_54_inc = index[["D_hosp_50_54_inc"]],
@@ -767,15 +821,26 @@ lancelot_index <- function(info) {
                   deaths_hosp_75_79_inc = index[["D_hosp_75_79_inc"]],
                   deaths_hosp_80_plus_inc = index[["D_hosp_80_plus_inc"]],
                   admitted_inc = index[["admit_conf_inc"]],
+                  all_admission_0_9_inc = index[["all_admission_0_9_conf_inc"]],
+                  all_admission_10_19_inc =
+                    index[["all_admission_10_19_conf_inc"]],
+                  all_admission_20_29_inc =
+                    index[["all_admission_20_29_conf_inc"]],
+                  all_admission_30_39_inc =
+                    index[["all_admission_30_39_conf_inc"]],
+                  all_admission_40_49_inc =
+                    index[["all_admission_40_49_conf_inc"]],
+                  all_admission_50_59_inc =
+                    index[["all_admission_50_59_conf_inc"]],
+                  all_admission_60_69_inc =
+                    index[["all_admission_60_69_conf_inc"]],
+                  all_admission_70_79_inc =
+                    index[["all_admission_70_79_conf_inc"]],
+                  all_admission_80_plus_inc =
+                    index[["all_admission_80_plus_conf_inc"]],
                   diagnoses_inc = index[["new_conf_inc"]],
                   sero_pos_1 = index[["sero_pos_1"]],
                   sero_pos_2 = index[["sero_pos_2"]],
-                  sympt_cases = index[["cum_sympt_cases"]],
-                  sympt_cases_non_variant =
-                    index[["cum_sympt_cases_non_variant"]],
-                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
-                  sympt_cases_non_variant_over25 =
-                    index[["cum_sympt_cases_non_variant_over25"]],
                   sympt_cases_inc = index[["sympt_cases_inc"]],
                   sympt_cases_non_variant_inc =
                     index[["sympt_cases_non_variant_inc"]],
@@ -788,30 +853,54 @@ lancelot_index <- function(info) {
                   sympt_cases_80_plus_inc = index[["sympt_cases_80_plus_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
-                  react_pos = index[["react_pos"]])
+                  react_pos = index[["react_pos"]],
+                  react_5_24_pos = index[["react_5_24_pos"]],
+                  react_25_34_pos = index[["react_25_34_pos"]],
+                  react_35_44_pos = index[["react_35_44_pos"]],
+                  react_45_54_pos = index[["react_45_54_pos"]],
+                  react_55_64_pos = index[["react_55_64_pos"]],
+                  react_65_plus_pos = index[["react_65_plus_pos"]])
 
   ## Only incidence versions for the likelihood now. We add time here so it
-  ## can be used in the compare, without having to save it
+  ## can be used in the compare, without having to save it.
   index_run <- c(time = index[["time"]],
                  index_core[c("icu", "general", "deaths_carehomes_inc",
-                              "deaths_comm_inc", "deaths_hosp_inc",
+                              "deaths_comm_inc", "deaths_comm_0_49_inc",
+                              "deaths_comm_50_54_inc", "deaths_comm_55_59_inc",
+                              "deaths_comm_60_64_inc", "deaths_comm_65_69_inc",
+                              "deaths_comm_70_74_inc", "deaths_comm_75_79_inc",
+                              "deaths_comm_80_plus_inc", "deaths_hosp_inc",
                               "deaths_hosp_0_49_inc", "deaths_hosp_50_54_inc",
                               "deaths_hosp_55_59_inc", "deaths_hosp_60_64_inc",
                               "deaths_hosp_65_69_inc", "deaths_hosp_70_74_inc",
                               "deaths_hosp_75_79_inc",
                               "deaths_hosp_80_plus_inc", "admitted_inc",
-                              "diagnoses_inc", "sero_pos_1", "sero_pos_2",
-                              "sympt_cases_inc", "sympt_cases_non_variant_inc",
+                              "all_admission_0_9_inc",
+                              "all_admission_10_19_inc",
+                              "all_admission_20_29_inc",
+                              "all_admission_30_39_inc",
+                              "all_admission_40_49_inc",
+                              "all_admission_50_59_inc",
+                              "all_admission_60_69_inc",
+                              "all_admission_70_79_inc",
+                              "all_admission_80_plus_inc", "diagnoses_inc",
+                              "sero_pos_1", "sero_pos_2", "sympt_cases_inc",
+                              "sympt_cases_non_variant_inc",
                               "sympt_cases_over25_inc",
                               "sympt_cases_under15_inc",
                               "sympt_cases_15_24_inc", "sympt_cases_25_49_inc",
                               "sympt_cases_50_64_inc", "sympt_cases_65_79_inc",
                               "sympt_cases_80_plus_inc",
                               "sympt_cases_non_variant_over25_inc",
-                              "react_pos")])
+                              "react_pos", "react_5_24_pos",
+                              "react_25_34_pos", "react_35_44_pos",
+                              "react_45_54_pos", "react_55_64_pos",
+                              "react_65_plus_pos")])
 
   ## Variables that we want to save for post-processing
   index_save <- c(hosp = index[["hosp_tot"]],
+                  admitted = index[["cum_admit_conf"]],
+                  diagnoses = index[["cum_new_conf"]],
                   deaths = index[["D_tot"]],
                   deaths_inc = index[["D_inc"]],
                   infections = index[["cum_infections"]],
@@ -841,22 +930,53 @@ lancelot_index <- function(info) {
                                                 list(n_vacc_classes), suffix)
   index_cum_n_vaccinated <- calculate_index(index, "cum_n_vaccinated",
                                             list(n_vacc_classes), suffix)
-  index_D <- calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all")
-
   ## (real) strain only
   index_prob_strain <- calculate_index(index, "prob_strain", list(n_strains))
+
+  index_effective_susceptible <-
+    calculate_index(index, "effective_susceptible", list(),
+                    seq_len(n_strains), "effective_susceptible_")
+  index_save <- c(index_save, index_effective_susceptible)
+
+  ## strain only
+  index_infections_inc_per_strain <-
+    calculate_index(index, "infections_inc_per_strain", list(),
+                    seq_len(n_tot_strains), "infections_inc_strain_")
 
   ## age x (total) strain x vacc class
   index_R <- calculate_index(index, "R",
                              list(S = n_tot_strains, V = n_vacc_classes),
                              suffix)
 
+  index_state <- c(index_core, index_save)
+
+  if (rt) {
+    index_state <- c(index_state, index_S, index_R, index_prob_strain)
+  }
+
+  if (cum_admit) {
+      index_state <- c(index_state, index_cum_admit)
+  }
+
+  if (diagnoses_admitted) {
+    index_state <- c(index_state, index_diagnoses_admitted)
+  }
+
+  if (cum_infections_disag) {
+    index_state <- c(index_state, index_cum_infections_disag)
+  }
+
+  if (cum_n_vaccinated) {
+    index_state <- c(index_state, index_cum_n_vaccinated)
+  }
+
+  if (infections_inc_per_strain) {
+    index_state <- c(index_state, index_infections_inc_per_strain)
+  }
+
+
   list(run = index_run,
-       state = c(index_core, index_save, index_S, index_R,
-                 index_cum_admit, index_D,
-                 index_diagnoses_admitted, index_cum_infections_disag,
-                 index_prob_strain, index_cum_n_vaccinated
-       ))
+       state = index_state)
 }
 
 
@@ -894,6 +1014,14 @@ lancelot_compare <- function(state, observed, pars) {
   model_hosp <- model_icu + model_general
   model_deaths_carehomes <- state["deaths_carehomes_inc", ]
   model_deaths_comm <- state["deaths_comm_inc", ]
+  model_deaths_comm_0_49 <- state["deaths_comm_0_49_inc", ]
+  model_deaths_comm_50_54 <- state["deaths_comm_50_54_inc", ]
+  model_deaths_comm_55_59 <- state["deaths_comm_55_59_inc", ]
+  model_deaths_comm_60_64 <- state["deaths_comm_60_64_inc", ]
+  model_deaths_comm_65_69 <- state["deaths_comm_65_69_inc", ]
+  model_deaths_comm_70_74 <- state["deaths_comm_70_74_inc", ]
+  model_deaths_comm_75_79 <- state["deaths_comm_75_79_inc", ]
+  model_deaths_comm_80_plus <- state["deaths_comm_80_plus_inc", ]
   model_deaths_hosp <- state["deaths_hosp_inc", ]
   model_deaths_hosp_0_49 <- state["deaths_hosp_0_49_inc", ]
   model_deaths_hosp_50_54 <- state["deaths_hosp_50_54_inc", ]
@@ -906,6 +1034,15 @@ lancelot_compare <- function(state, observed, pars) {
   model_admitted <- state["admitted_inc", ]
   model_diagnoses <- state["diagnoses_inc", ]
   model_all_admission <- model_admitted + model_diagnoses
+  model_all_admission_0_9 <- state["all_admission_0_9_inc", ]
+  model_all_admission_10_19 <- state["all_admission_10_19_inc", ]
+  model_all_admission_20_29 <- state["all_admission_20_29_inc", ]
+  model_all_admission_30_39 <- state["all_admission_30_39_inc", ]
+  model_all_admission_40_49 <- state["all_admission_40_49_inc", ]
+  model_all_admission_50_59 <- state["all_admission_50_59_inc", ]
+  model_all_admission_60_69 <- state["all_admission_60_69_inc", ]
+  model_all_admission_70_79 <- state["all_admission_70_79_inc", ]
+  model_all_admission_80_plus <- state["all_admission_80_plus_inc", ]
   model_sero_pos_1 <- state["sero_pos_1", ]
   model_sero_pos_2 <- state["sero_pos_2", ]
   model_sympt_cases <- state["sympt_cases_inc", ]
@@ -920,6 +1057,12 @@ lancelot_compare <- function(state, observed, pars) {
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
   model_react_pos <- state["react_pos", ]
+  model_react_5_24_pos <- state["react_5_24_pos", ]
+  model_react_25_34_pos <- state["react_25_34_pos", ]
+  model_react_35_44_pos <- state["react_35_44_pos", ]
+  model_react_45_54_pos <- state["react_45_54_pos", ]
+  model_react_55_64_pos <- state["react_55_64_pos", ]
+  model_react_65_plus_pos <- state["react_65_plus_pos", ]
 
   ## calculate test positive probabilities for the various test data streams
 
@@ -1047,6 +1190,59 @@ lancelot_compare <- function(state, observed, pars) {
                                         pars$react_specificity,
                                         pars$exp_noise)
 
+  model_react_5_24_pos_capped <- pmin(model_react_5_24_pos, pars$N_5_24_react)
+  model_react_5_24_prob_pos <- test_prob_pos(model_react_5_24_pos_capped,
+                                             pars$N_5_24_react -
+                                               model_react_5_24_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_25_34_pos_capped <- pmin(model_react_25_34_pos,
+                                       pars$N_25_34_react)
+  model_react_25_34_prob_pos <- test_prob_pos(model_react_25_34_pos_capped,
+                                             pars$N_25_34_react -
+                                               model_react_25_34_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_35_44_pos_capped <- pmin(model_react_35_44_pos,
+                                       pars$N_35_44_react)
+  model_react_35_44_prob_pos <- test_prob_pos(model_react_35_44_pos_capped,
+                                             pars$N_35_44_react -
+                                               model_react_35_44_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_45_54_pos_capped <- pmin(model_react_45_54_pos,
+                                       pars$N_45_54_react)
+  model_react_45_54_prob_pos <- test_prob_pos(model_react_45_54_pos_capped,
+                                             pars$N_45_54_react -
+                                               model_react_45_54_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_55_64_pos_capped <- pmin(model_react_55_64_pos,
+                                       pars$N_55_64_react)
+  model_react_55_64_prob_pos <- test_prob_pos(model_react_55_64_pos_capped,
+                                             pars$N_55_64_react -
+                                               model_react_55_64_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
+  model_react_65_plus_pos_capped <- pmin(model_react_65_plus_pos,
+                                         pars$N_65_plus_react)
+  model_react_65_plus_prob_pos <- test_prob_pos(model_react_65_plus_pos_capped,
+                                             pars$N_65_plus_react -
+                                               model_react_65_plus_pos_capped,
+                                             pars$react_sensitivity,
+                                             pars$react_specificity,
+                                             pars$exp_noise)
+
   ## serology assay 1
   ## It is possible that model_sero_pos_1 > pars$N_tot_15_64, so we cap it to
   ## avoid probabilities > 1 here
@@ -1129,9 +1325,43 @@ lancelot_compare <- function(state, observed, pars) {
                                    pars$phi_death_carehomes *
                                      model_deaths_carehomes,
                                    pars$kappa_death_carehomes, exp_noise)
+
   ll_deaths_comm <- ll_nbinom(observed$deaths_comm,
                               pars$phi_death_comm * model_deaths_comm,
                               pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_0_49 <-
+    ll_nbinom(observed$deaths_comm_0_49,
+              pars$phi_death_comm * model_deaths_comm_0_49,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_50_54 <-
+    ll_nbinom(observed$deaths_comm_50_54,
+              pars$phi_death_comm * model_deaths_comm_50_54,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_55_59 <-
+    ll_nbinom(observed$deaths_comm_55_59,
+              pars$phi_death_comm * model_deaths_comm_55_59,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_60_64 <-
+    ll_nbinom(observed$deaths_comm_60_64,
+              pars$phi_death_comm * model_deaths_comm_60_64,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_65_69 <-
+    ll_nbinom(observed$deaths_comm_65_69,
+              pars$phi_death_comm * model_deaths_comm_65_69,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_70_74 <-
+    ll_nbinom(observed$deaths_comm_70_74,
+              pars$phi_death_comm * model_deaths_comm_70_74,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_75_79 <-
+    ll_nbinom(observed$deaths_comm_75_79,
+              pars$phi_death_comm * model_deaths_comm_75_79,
+              pars$kappa_death_comm, exp_noise)
+  ll_deaths_comm_80_plus <-
+    ll_nbinom(observed$deaths_comm_80_plus,
+              pars$phi_death_comm * model_deaths_comm_80_plus,
+              pars$kappa_death_comm, exp_noise)
+
   ll_deaths_non_hosp <- ll_nbinom(observed$deaths_non_hosp,
                                   pars$phi_death_comm * model_deaths_comm +
                                     pars$phi_death_carehomes *
@@ -1149,15 +1379,46 @@ lancelot_compare <- function(state, observed, pars) {
                            pars$phi_death_carehomes * model_deaths_carehomes +
                            pars$phi_death_comm * model_deaths_comm,
                          pars$kappa_death, exp_noise)
+
+  # Admissions and in-hospital diagnoses
   ll_admitted <- ll_nbinom(observed$admitted,
                            pars$phi_admitted * model_admitted,
                            pars$kappa_admitted, exp_noise)
   ll_diagnoses <- ll_nbinom(observed$diagnoses,
                             pars$phi_diagnoses * model_diagnoses,
                             pars$kappa_diagnoses, exp_noise)
+
   ll_all_admission <- ll_nbinom(observed$all_admission,
                                 pars$phi_all_admission * model_all_admission,
                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_0_9 <- ll_nbinom(observed$all_admission_0_9,
+                                 pars$phi_admitted * model_all_admission_0_9,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_10_19 <- ll_nbinom(observed$all_admission_10_19,
+                                 pars$phi_admitted * model_all_admission_10_19,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_20_29 <- ll_nbinom(observed$all_admission_20_29,
+                                 pars$phi_admitted * model_all_admission_20_29,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_30_39 <- ll_nbinom(observed$all_admission_30_39,
+                                 pars$phi_admitted * model_all_admission_30_39,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_40_49 <- ll_nbinom(observed$all_admission_40_49,
+                                 pars$phi_admitted * model_all_admission_40_49,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_50_59 <- ll_nbinom(observed$all_admission_50_59,
+                                 pars$phi_admitted * model_all_admission_50_59,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_60_69 <- ll_nbinom(observed$all_admission_60_69,
+                                 pars$phi_admitted * model_all_admission_60_69,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_70_79 <- ll_nbinom(observed$all_admission_70_79,
+                                 pars$phi_admitted * model_all_admission_70_79,
+                                 pars$kappa_all_admission, exp_noise)
+  ll_all_admission_80_plus <- ll_nbinom(observed$all_admission_80_plus,
+                                 pars$phi_admitted *
+                                   model_all_admission_80_plus,
+                                 pars$kappa_all_admission, exp_noise)
 
   ll_serology_1 <- ll_binom(observed$sero_pos_15_64_1,
                             observed$sero_tot_15_64_1,
@@ -1244,6 +1505,30 @@ lancelot_compare <- function(state, observed, pars) {
                        observed$react_tot,
                        model_react_prob_pos)
 
+  ll_5_24_react <- ll_binom(observed$react_5_24_pos,
+                            observed$react_5_24_tot,
+                            model_react_5_24_prob_pos)
+
+  ll_25_34_react <- ll_binom(observed$react_25_34_pos,
+                             observed$react_25_34_tot,
+                             model_react_25_34_prob_pos)
+
+  ll_35_44_react <- ll_binom(observed$react_35_44_pos,
+                             observed$react_35_44_tot,
+                             model_react_35_44_prob_pos)
+
+  ll_45_54_react <- ll_binom(observed$react_45_54_pos,
+                             observed$react_45_54_tot,
+                             model_react_45_54_prob_pos)
+
+  ll_55_64_react <- ll_binom(observed$react_55_64_pos,
+                             observed$react_55_64_tot,
+                             model_react_55_64_prob_pos)
+
+  ll_65_plus_react <- ll_binom(observed$react_65_plus_pos,
+                               observed$react_65_plus_tot,
+                               model_react_65_plus_prob_pos)
+
   ll_strain <- ll_binom(observed$strain_non_variant,
                         observed$strain_tot,
                         model_strain_prob_pos)
@@ -1253,18 +1538,25 @@ lancelot_compare <- function(state, observed, pars) {
                                model_strain_over25_prob_pos)
 
   ll_icu + ll_general + ll_hosp + ll_deaths_hosp + ll_deaths_carehomes +
+    ll_admitted + ll_diagnoses + ll_all_admission +
     ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
     ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
     ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
-    ll_deaths_hosp_80_plus + ll_admitted + ll_diagnoses + ll_all_admission +
+    ll_deaths_hosp_80_plus + ll_deaths_comm_0_49 + ll_deaths_comm_50_54 +
+    ll_deaths_comm_55_59 + ll_deaths_comm_60_64 + ll_deaths_comm_65_69 +
+    ll_deaths_comm_70_74 + ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
+    ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
+    ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
+    ll_all_admission_60_69 + ll_all_admission_70_79 + ll_all_admission_80_plus +
     ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
     ll_pillar2_over25_tests + ll_pillar2_under15_tests +
     ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
     ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
     ll_pillar2_over25_cases + ll_pillar2_under15_cases +
     ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
-    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_react + ll_strain +
-    ll_strain_over25
+    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_react +
+    ll_5_24_react + ll_25_34_react + ll_35_44_react + ll_45_54_react +
+    ll_55_64_react + ll_65_plus_react + ll_strain + ll_strain_over25
 }
 
 
@@ -2127,6 +2419,12 @@ lancelot_check_data <- function(data) {
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
                 "pillar2_over25_cases", "react_pos", "react_tot",
+                "react_5_24_pos", "react_5_24_tot",
+                "react_25_34_pos", "react_25_34_tot",
+                "react_35_44_pos", "react_35_44_tot",
+                "react_45_54_pos", "react_45_54_tot",
+                "react_55_64_pos", "react_55_64_tot",
+                "react_65_plus_pos", "react_65_plus_tot",
                 "strain_non_variant", "strain_tot", "strain_over25_non_variant",
                 "strain_over25_tot",
                 "pillar2_under15_cases", "pillar2_15_24_cases",
@@ -2136,9 +2434,17 @@ lancelot_check_data <- function(data) {
                 "pillar2_50_64_tot", "pillar2_65_79_tot", "pillar2_80_plus_tot",
                 "pillar2_under15_pos", "pillar2_15_24_pos", "pillar2_25_49_pos",
                 "pillar2_50_64_pos", "pillar2_65_79_pos", "pillar2_80_plus_pos",
-                "deaths_hosp_0_49", "deaths_hosp_50_54", "deaths_hosp_55_59",
+                "all_admission_0_9", "all_admission_10_19",
+                "all_admission_20_29", "all_admission_30_39",
+                "all_admission_40_49", "all_admission_50_59",
+                "all_admission_60_69", "all_admission_70_79",
+                "all_admission_80_plus", "deaths_hosp_0_49",
+                "deaths_hosp_50_54", "deaths_hosp_55_59",
                 "deaths_hosp_60_64", "deaths_hosp_65_69", "deaths_hosp_70_74",
-                "deaths_hosp_75_79", "deaths_hosp_80_plus")
+                "deaths_hosp_75_79", "deaths_hosp_80_plus",
+                "deaths_comm_0_49", "deaths_comm_50_54", "deaths_comm_55_59",
+                "deaths_comm_60_64", "deaths_comm_65_69", "deaths_comm_70_74",
+                "deaths_comm_75_79", "deaths_comm_80_plus")
   assert_is(data, "data.frame")
   verify_names(data, required, allow_extra = TRUE)
 
@@ -2159,42 +2465,61 @@ lancelot_check_data <- function(data) {
     apply(has[nms], 1, any)
   }
 
+  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
+                   "75_79", "80_plus")
+  nms_deaths_hosp_ages <- paste0("deaths_hosp_", deaths_ages)
+  nms_deaths_comm_ages <- paste0("deaths_comm_", deaths_ages)
+
   nms_deaths_split <- c("deaths_comm", "deaths_hosp", "deaths_carehomes",
-                        "deaths_non_hosp")
-  err_deaths <- has$deaths & has_any(nms_deaths_split)
-  if (any(has$deaths & has_any(nms_deaths_split))) {
+                        "deaths_non_hosp", nms_deaths_hosp_ages,
+                        nms_deaths_comm_ages)
+  err_deaths <- any(has$deaths & has_any(nms_deaths_split))
+  if (err_deaths) {
     stop(paste("Deaths are not consistently split into total vs",
                "hospital/non-hospital or hospital/care homes/community"))
   }
 
-  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes")
-  if (any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))) {
+  nms_deaths_non_hosp <- c("deaths_comm", "deaths_carehomes",
+                           nms_deaths_comm_ages)
+  err_deaths_non_hosp <- any(has$deaths_non_hosp & has_any(nms_deaths_non_hosp))
+  if (err_deaths_non_hosp) {
     stop(paste("Non-hospital deaths are not consistently split into total vs",
                "care homes/community"))
   }
 
-  deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
-                   "75_79", "80_plus")
-  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
-  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
-  P2_all <- c("", P2_all_ages)
-
-  ## NOTE: I (RGF) think that nms_deaths_aggr might really be deaths
-  ## and nms_deaths_split more completely, but practically I expect
-  ## this is equivalent.
-  ##
-  ## NOTE: This is asserted at the level of the _entire_ time series,
-  ## not per day; that might be overly strict?
-  nms_deaths_ages <- paste0("deaths_hosp_", deaths_ages)
-  nms_deaths_aggr <- c("deaths", "deaths_hosp")
-  err_deaths <- any(has_any(nms_deaths_ages)) && any(has_any(nms_deaths_aggr))
-  if (err_deaths) {
+  err_deaths_hosp <- any(has$deaths_hosp & has_any(nms_deaths_hosp_ages))
+  if (err_deaths_hosp) {
     ## Perhaps it's just me, but I am not sure that would find this
     ## actionable; we probably need to indicate the appropriate
     ## columns.
-    stop(paste("Cannot fit to all ages aggregated for deaths if fitting",
-               "to any sub-groups"))
+    stop(paste("Cannot fit to all ages aggregated for hospital deaths if",
+               "fitting to any sub-groups"))
   }
+
+  err_deaths_comm <- any(has$deaths_comm & has_any(nms_deaths_comm_ages))
+  if (err_deaths_comm) {
+    stop(paste("Cannot fit to all ages aggregated for community deaths if",
+               "fitting to any sub-groups"))
+  }
+
+  react_ages <- c("5_24", "25_34", "35_44", "55_64", "65_plus")
+  nms_react_ages <- paste0("react_", react_ages, "_pos")
+  err_react <- any(has$react_pos & has_any(nms_react_ages))
+  if (err_react) {
+    stop("Cannot fit to REACT by age and aggregate together!")
+  }
+
+  admission_ages <- c("0_9", "10_19", "20_29", "30_39", "40_49", "50_59",
+                      "60_69", "70_79", "80_plus")
+  nms_admission_ages <- paste0("all_admission_", admission_ages)
+  err_admissions <- any(has$all_admission & has_any(nms_admission_ages))
+  if (err_admissions) {
+    stop("Cannot fit to admissions by age and aggregate together!")
+  }
+
+  P2_over25_ages <- c("_25_49", "_50_64", "_65_79", "_80_plus")
+  P2_all_ages <- c("_under15", "_15_24", "_over25", P2_over25_ages)
+  P2_all <- c("", P2_all_ages)
 
   nms_pillar2_pos <- sprintf("pillar2%s_pos", P2_all)
   nms_pillar2_tot <- sprintf("pillar2%s_tot", P2_all)
@@ -2206,8 +2531,8 @@ lancelot_check_data <- function(data) {
   }
 
   err_strain_stream <-
-    any(has_any(c("strain_non_variant", "strain_tot"))) &&
-    any(has_any(c("strain_over25_non_variant", "strain_over25_tot")))
+    any(has_any(c("strain_non_variant", "strain_tot")) &
+          has_any(c("strain_over25_non_variant", "strain_over25_tot")))
   if (err_strain_stream) {
     stop("Cannot fit to more than one strain data stream")
   }
@@ -2219,10 +2544,10 @@ lancelot_check_data <- function(data) {
                                      "pillar2_over25_tot",
                                      "pillar2_over25_cases")
   err_pillar2_over25 <-
-    any(has_any(nms_pillar2_over25_aggregated)) &&
-    any(has_any(c(nms_pillar2_over25_pos,
-                  nms_pillar2_over25_tot,
-                  nms_pillar2_over25_cases)))
+    any(has_any(nms_pillar2_over25_aggregated) &
+          has_any(c(nms_pillar2_over25_pos,
+                    nms_pillar2_over25_tot,
+                    nms_pillar2_over25_cases)))
   if (err_pillar2_over25) {
     stop(paste("Cannot fit to over 25s for pillar 2 if fitting to any over 25",
                "sub-groups"))
@@ -2235,10 +2560,10 @@ lancelot_check_data <- function(data) {
                                      "pillar2_tot",
                                      "pillar2_cases")
   err_pillar2_all_ages <-
-    any(has_any(nms_pillar2_all_ages_aggregated)) &&
-    any(has_any(c(nms_pillar2_all_ages_pos,
-                  nms_pillar2_all_ages_tot,
-                  nms_pillar2_all_ages_cases)))
+    any(has_any(nms_pillar2_all_ages_aggregated) &
+          has_any(c(nms_pillar2_all_ages_pos,
+                    nms_pillar2_all_ages_tot,
+                    nms_pillar2_all_ages_cases)))
   if (err_pillar2_all_ages) {
     stop(paste("Cannot fit to all ages aggregated for pillar 2",
                "if fitting to any sub-groups"))

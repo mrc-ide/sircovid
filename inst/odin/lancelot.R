@@ -153,12 +153,15 @@ update(T_PCR_pre[, , , ]) <- new_T_PCR_pre[i, j, k, l]
 update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
 update(T_PCR_neg[, , ]) <- new_T_PCR_neg[i, j, k]
 
+# Confirmed admissions by age
 delta_admit_conf <-
   sum(n_I_C_2_to_H_D_conf) +
   sum(n_I_C_2_to_H_R_conf) +
   sum(n_I_C_2_to_ICU_pre_conf)
 update(cum_admit_conf) <- cum_admit_conf + delta_admit_conf
 
+
+# New in-hospital diagnoses by age
 delta_new_conf <-
   sum(n_H_D_unconf_to_conf) +
   sum(n_H_R_unconf_to_conf) +
@@ -170,8 +173,48 @@ delta_new_conf <-
   sum(n_W_D_unconf_to_conf)
 update(cum_new_conf) <- cum_new_conf + delta_new_conf
 
+
+delta_all_admission_0_9_conf <-
+  sum(delta_diagnoses_admitted[1:2, ])
+
+delta_all_admission_10_19_conf <-
+  sum(delta_diagnoses_admitted[3:4, ])
+
+delta_all_admission_20_29_conf <-
+  sum(delta_diagnoses_admitted[5:6, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 1 / 8
+
+delta_all_admission_30_39_conf <-
+  sum(delta_diagnoses_admitted[7:8, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+
+delta_all_admission_40_49_conf <-
+  sum(delta_diagnoses_admitted[9:10, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+
+delta_all_admission_50_59_conf <-
+  sum(delta_diagnoses_admitted[11:12, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+
+delta_all_admission_60_69_conf <-
+  sum(delta_diagnoses_admitted[13:14, ]) +
+  sum(delta_diagnoses_admitted[18, ]) * 1 / 8 +
+  sum(delta_diagnoses_admitted[19, ]) * 0.05
+
+delta_all_admission_70_79_conf <-
+  sum(delta_diagnoses_admitted[15:16, ]) +
+  sum(delta_diagnoses_admitted[19, ]) * 0.2
+
+delta_all_admission_80_plus_conf <-
+  sum(delta_diagnoses_admitted[17, ]) +
+  sum(delta_diagnoses_admitted[19, ]) * 0.75
+
 initial(diagnoses_admitted[, ]) <- 0
 update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
+  delta_diagnoses_admitted[i, j]
+dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
+
+delta_diagnoses_admitted[, ] <-
   sum(n_I_C_2_to_H_D_conf[i, , j]) +
   sum(n_I_C_2_to_H_R_conf[i, , j]) +
   sum(n_I_C_2_to_ICU_pre_conf[i, , j]) +
@@ -183,7 +226,7 @@ update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
   sum(n_ICU_W_D_unconf_to_conf[i, , , j]) +
   sum(n_W_R_unconf_to_conf[i, , , j]) +
   sum(n_W_D_unconf_to_conf[i, , , j])
-dim(diagnoses_admitted) <- c(n_groups, n_vacc_classes)
+dim(delta_diagnoses_admitted) <- c(n_groups, n_vacc_classes)
 
 initial(cum_infections_disag[, ]) <- 0
 update(cum_infections_disag[, ]) <- cum_infections_disag[i, j] +
@@ -193,12 +236,58 @@ dim(cum_infections_disag) <- c(n_groups, n_vacc_classes)
 
 initial(admit_conf_inc) <- 0
 update(admit_conf_inc) <- if (step %% steps_per_day == 0)
-  delta_admit_conf else
-    admit_conf_inc + delta_admit_conf
+  delta_admit_conf else admit_conf_inc + delta_admit_conf
 
 initial(new_conf_inc) <- 0
 update(new_conf_inc) <- if (step %% steps_per_day == 0)
   delta_new_conf else new_conf_inc + delta_new_conf
+
+# Admissions + confirmed by age
+
+initial(all_admission_0_9_conf_inc) <- 0
+update(all_admission_0_9_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_0_9_conf else all_admission_0_9_conf_inc +
+  delta_all_admission_0_9_conf
+
+initial(all_admission_10_19_conf_inc) <- 0
+update(all_admission_10_19_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_10_19_conf else all_admission_10_19_conf_inc +
+  delta_all_admission_10_19_conf
+
+initial(all_admission_20_29_conf_inc) <- 0
+update(all_admission_20_29_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_20_29_conf else all_admission_20_29_conf_inc +
+  delta_all_admission_20_29_conf
+
+initial(all_admission_30_39_conf_inc) <- 0
+update(all_admission_30_39_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_30_39_conf else all_admission_30_39_conf_inc +
+  delta_all_admission_30_39_conf
+
+initial(all_admission_40_49_conf_inc) <- 0
+update(all_admission_40_49_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_40_49_conf else all_admission_40_49_conf_inc +
+  delta_all_admission_40_49_conf
+
+initial(all_admission_50_59_conf_inc) <- 0
+update(all_admission_50_59_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_50_59_conf else all_admission_50_59_conf_inc +
+  delta_all_admission_50_59_conf
+
+initial(all_admission_60_69_conf_inc) <- 0
+update(all_admission_60_69_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_60_69_conf else all_admission_60_69_conf_inc +
+  delta_all_admission_60_69_conf
+
+initial(all_admission_70_79_conf_inc) <- 0
+update(all_admission_70_79_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_70_79_conf else all_admission_70_79_conf_inc +
+  delta_all_admission_70_79_conf
+
+initial(all_admission_80_plus_conf_inc) <- 0
+update(all_admission_80_plus_conf_inc) <- if (step %% steps_per_day == 0)
+  delta_all_admission_80_plus_conf else all_admission_80_plus_conf_inc +
+  delta_all_admission_80_plus_conf
 
 update(cum_admit_by_age[]) <- cum_admit_by_age[i] + sum(n_I_C_2_to_hosp[i, , ])
 
@@ -600,13 +689,23 @@ update(infections_inc) <- if (step %% steps_per_day == 0)
   delta_infections else infections_inc + delta_infections
 
 initial(cum_infections_per_strain[]) <- 0
-update(cum_infections_per_strain[]) <-
-  cum_infections_per_strain[i] + sum(n_S_progress[, i, ]) +
+delta_infections_per_strain[] <-
+  sum(n_S_progress[, i, ]) +
   (if (i > 2)
     (sum(n_RE[, i - 2, ]))
    else
      0)
+update(cum_infections_per_strain[]) <-
+  cum_infections_per_strain[i] + delta_infections_per_strain[i]
+dim(delta_infections_per_strain) <- n_strains
 dim(cum_infections_per_strain) <- n_strains
+
+initial(infections_inc_per_strain[]) <- 0
+update(infections_inc_per_strain[]) <-
+  if (step %% steps_per_day == 0)
+    delta_infections_per_strain[i] else
+      infections_inc_per_strain[i] + delta_infections_per_strain[i]
+dim(infections_inc_per_strain) <- n_strains
 
 ## Work out the new S (i for age, j for vaccination status)
 new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) + sum(n_infected_to_S[i, , j]) -
@@ -1717,6 +1816,47 @@ initial(D_comm_inc) <- 0
 update(D_comm_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_tot else D_comm_inc + delta_D_comm_tot
 
+initial(D_comm_0_49_inc) <- 0
+delta_D_comm_0_49 <- sum(delta_D_non_hosp[1:10]) + delta_D_non_hosp[18] * 3 / 8
+update(D_comm_0_49_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_0_49 else D_comm_0_49_inc + delta_D_comm_0_49
+
+initial(D_comm_50_54_inc) <- 0
+delta_D_comm_50_54 <- delta_D_non_hosp[11] + delta_D_non_hosp[18] * 1 / 8
+update(D_comm_50_54_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_50_54 else D_comm_50_54_inc + delta_D_comm_50_54
+
+initial(D_comm_55_59_inc) <- 0
+delta_D_comm_55_59 <- delta_D_non_hosp[12] + delta_D_non_hosp[18] * 2 / 8
+update(D_comm_55_59_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_55_59 else D_comm_55_59_inc + delta_D_comm_55_59
+
+initial(D_comm_60_64_inc) <- 0
+delta_D_comm_60_64 <- delta_D_non_hosp[13] + delta_D_non_hosp[18] * 2 / 8
+update(D_comm_60_64_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_60_64 else D_comm_60_64_inc + delta_D_comm_60_64
+
+initial(D_comm_65_69_inc) <- 0
+delta_D_comm_65_69 <- delta_D_non_hosp[14]
+update(D_comm_65_69_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_65_69 else D_comm_65_69_inc + delta_D_comm_65_69
+
+initial(D_comm_70_74_inc) <- 0
+delta_D_comm_70_74 <- delta_D_non_hosp[15]
+update(D_comm_70_74_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_70_74 else D_comm_70_74_inc + delta_D_comm_70_74
+
+initial(D_comm_75_79_inc) <- 0
+delta_D_comm_75_79 <- delta_D_non_hosp[16]
+update(D_comm_75_79_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_75_79 else D_comm_75_79_inc + delta_D_comm_75_79
+
+initial(D_comm_80_plus_inc) <- 0
+delta_D_comm_80_plus <- delta_D_non_hosp[17]
+update(D_comm_80_plus_inc) <- if (step %% steps_per_day == 0)
+  delta_D_comm_80_plus else D_comm_80_plus_inc + delta_D_comm_80_plus
+
+
 ## carehome deaths are non-hospital deaths in group 19
 initial(D_carehomes_tot) <- 0
 delta_D_carehomes_tot <- delta_D_non_hosp[19]
@@ -1903,6 +2043,28 @@ update(sympt_cases_80_plus_inc) <- (
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
 
+initial(react_5_24_pos) <- 0
+update(react_5_24_pos) <- sum(new_T_PCR_pos[2:5, , , ])
+
+initial(react_25_34_pos) <- 0
+update(react_25_34_pos) <- sum(new_T_PCR_pos[6:7, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_35_44_pos) <- 0
+update(react_35_44_pos) <- sum(new_T_PCR_pos[8:9, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_45_54_pos) <- 0
+update(react_45_54_pos) <- sum(new_T_PCR_pos[10:11, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_55_64_pos) <- 0
+update(react_55_64_pos) <- sum(new_T_PCR_pos[12:13, , , ]) +
+  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+
+initial(react_65_plus_pos) <- 0
+update(react_65_plus_pos) <- sum(new_T_PCR_pos[14:17, , , ])
+
 
 ## rel_foi_strain is probability of an infection in group i, vaccination class k
 ## being of strain j
@@ -1960,6 +2122,21 @@ initial(prob_strain[1:n_real_strains]) <- 0
 initial(prob_strain[1]) <- 1
 update(prob_strain[]) <- if (i == 1) prob_strain_1 else 1 - prob_strain_1
 dim(prob_strain) <- n_real_strains
+
+## Calculate effective susceptibles to each strain
+## Weight each person in S/R by their relative susceptibility
+## Note that for those in R we further account for cross immunity
+## to strains. Those recovered from strain 3 - j will be (partially)
+## susceptible to strain j
+dim(eff_S) <- c(n_groups, n_real_strains, n_vacc_classes)
+eff_S[, , ] <- if (n_real_strains == 1)
+  S[i, k] * rel_susceptibility[i, j, k] else
+    (S[i, k] + (1 - cross_immunity[3 - j]) * R[i, 3 - j, k]) *
+  rel_susceptibility[i, j, k]
+
+initial(effective_susceptible[]) <- 0
+update(effective_susceptible[]) <- sum(eff_S[, i, ])
+dim(effective_susceptible) <- n_real_strains
 
 ## Vaccination engine
 n_doses <- user()
@@ -2097,6 +2274,12 @@ N_tot_50_64 <- user() # ignore.unused
 N_tot_65_79 <- user() # ignore.unused
 N_tot_80_plus <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
+N_5_24_react <- user() # ignore.unused
+N_25_34_react <- user() # ignore.unused
+N_35_44_react <- user() # ignore.unused
+N_45_54_react <- user() # ignore.unused
+N_55_64_react <- user() # ignore.unused
+N_65_plus_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
 p_NC_under15 <- user() # ignore.unused

@@ -1,6 +1,22 @@
-# sircovid 0.12.36
+# sircovid 0.13.6
 
 * Added params `n_real_strains` and `n_vacc_classes` to `lancelot_parameters` to explicitly state the number of strains and vaccination classes (instead of just inferring them)
+
+# sircovid 0.13.4
+
+* Fit to REACT prevalence by age
+
+# sircovid 0.13.3
+
+* Fix compatibility with mac M1
+
+# sircovid 0.13.1
+
+* Fit to hospital admissions by age
+
+# sircovid 0.13.0
+
+* Fit to deaths in the community by age
 
 # sircovid 0.12.35
 
