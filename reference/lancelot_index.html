@@ -18,7 +18,7 @@ conforms to the mcstate interface.'><meta property="og:image" content="/logo.png
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.7</span>
       </span>
     </div>
 
@@ -63,6 +63,7 @@ conforms to the mcstate interface.</p>
   cum_infections_disag <span class="op">=</span> <span class="cn">TRUE</span>,
   cum_n_vaccinated <span class="op">=</span> <span class="cn">TRUE</span>,
   D_all <span class="op">=</span> <span class="cn">TRUE</span>,
+  D_hosp <span class="op">=</span> <span class="cn">TRUE</span>,
   infections_inc_per_strain <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -90,7 +91,10 @@ cumulative infections by age and vaccine class (default = TRUE)</p></dd>
 cumulative number vaccinated by age and vaccine class
 (default = TRUE)</p></dd>
 <dt>D_all</dt>
-<dd><p>Logical, whether to output death classes by 5yr age groups
+<dd><p>Logical, whether to output all deaths by age and vaccine class
+(default = TRUE)</p></dd>
+<dt>D_hosp</dt>
+<dd><p>Logical, whether to output hospital deaths by age
 (default = TRUE)</p></dd>
 <dt>infections_inc_per_strain</dt>
 <dd><p>Logical, whether to output
@@ -361,8 +365,28 @@ carehome workers and carehome residents respectively) and 17
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                445                                446 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_80                          D_all_CHW </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                447                                448 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_all_CHR            infections_inc_strain_1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                449                                200 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_all_CHR                           D_hosp_0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                449                                201 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           D_hosp_5                          D_hosp_10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                202                                203 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_15                          D_hosp_20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                204                                205 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_25                          D_hosp_30 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                206                                207 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_35                          D_hosp_40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                208                                209 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_45                          D_hosp_50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                210                                211 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_55                          D_hosp_60 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                212                                213 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_65                          D_hosp_70 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                214                                215 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_75                          D_hosp_80 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                216                                217 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         D_hosp_CHW                         D_hosp_CHR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                218                                219 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            infections_inc_strain_1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                200 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
