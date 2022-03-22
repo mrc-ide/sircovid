@@ -12,6 +12,7 @@ lancelot_index(
   cum_infections_disag = TRUE,
   cum_n_vaccinated = TRUE,
   D_all = TRUE,
+  D_hosp = TRUE,
   infections_inc_per_strain = TRUE
 )
 }
@@ -36,7 +37,10 @@ cumulative infections by age and vaccine class (default = TRUE)}
 cumulative number vaccinated by age and vaccine class
 (default = TRUE)}
 
-\item{D_all}{Logical, whether to output death classes by 5yr age groups
+\item{D_all}{Logical, whether to output all deaths by age and vaccine class
+(default = TRUE)}
+
+\item{D_hosp}{Logical, whether to output hospital deaths by age
 (default = TRUE)}
 
 \item{infections_inc_per_strain}{Logical, whether to output

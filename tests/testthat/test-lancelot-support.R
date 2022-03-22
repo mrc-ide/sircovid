@@ -829,6 +829,7 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
   index_rt <- lancelot_index(info, rt = FALSE)
@@ -847,6 +848,7 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
 
@@ -869,6 +871,7 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
   index_diagnoses_admitted <- lancelot_index(info, diagnoses_admitted = FALSE)
@@ -891,6 +894,7 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
   index_cum_infections_disag <- lancelot_index(info,
@@ -914,6 +918,7 @@ test_that("lancelot_index switches work as expected", {
       info$index$diagnoses_admitted,
       info$index$cum_n_vaccinated,
       info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
   index_cum_n_vaccinated <- lancelot_index(info, cum_n_vaccinated = FALSE)
@@ -936,6 +941,7 @@ test_that("lancelot_index switches work as expected", {
       info$index$diagnoses_admitted,
       info$index$cum_infections_disag,
       info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
   index_inf_per_strain <-
@@ -959,7 +965,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$diagnoses_admitted,
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
-      info$index$D))
+      info$index$D,
+      info$index$D_hosp))
 
   index_D <- lancelot_index(info, D_all = FALSE)
   expect_equal(
@@ -981,6 +988,30 @@ test_that("lancelot_index switches work as expected", {
       info$index$diagnoses_admitted,
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
+      info$index$D_hosp,
+      info$index$infections_inc_per_strain))
+
+  index_D_hosp <- lancelot_index(info, D_hosp = FALSE)
+  expect_equal(
+    unname(
+      index_D_hosp$state[!names(index_D_hosp$state)
+                         %in% names(index_D_hosp$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$D,
       info$index$infections_inc_per_strain))
 })
 

@@ -754,9 +754,12 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##'   cumulative number vaccinated by age and vaccine class
 ##'   (default = TRUE)
 ##'
-##' @param D_all Logical, whether to output death classes by 5yr age groups
+##' @param D_all Logical, whether to output all deaths by age and vaccine class
 ##'   (default = TRUE)
-
+##'
+##' @param D_hosp Logical, whether to output hospital deaths by age
+##'   (default = TRUE)
+##'
 ##' @param infections_inc_per_strain Logical, whether to output
 ##'   infections incidence per strain (default = TRUE)
 ##'
@@ -777,10 +780,10 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' lancelot_index(mod$info())
 
 lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
-                            diagnoses_admitted = TRUE,
-                            cum_infections_disag = TRUE,
-                            cum_n_vaccinated = TRUE, D_all = TRUE,
-                            infections_inc_per_strain = TRUE) {
+                           diagnoses_admitted = TRUE,
+                           cum_infections_disag = TRUE,
+                           cum_n_vaccinated = TRUE, D_all = TRUE,
+                           D_hosp = TRUE, infections_inc_per_strain = TRUE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -958,6 +961,11 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   if (D_all) {
     index_state <- c(index_state,
       calculate_index(index, "D", list(n_vacc_classes), suffix, "D_all"))
+  }
+
+  if (D_hosp) {
+    index_state <- c(index_state, calculate_index(index, "D_hosp", list(),
+                                                  suffix, "D_hosp"))
   }
 
   if (infections_inc_per_strain) {
