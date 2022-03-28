@@ -284,13 +284,18 @@ vaccine_priority_population <- function(region,
                                         uptake,
                                         prop_hcw = NULL,
                                         prop_very_vulnerable = NULL,
-                                        prop_underlying_condition = NULL) {
+                                        prop_underlying_condition = NULL,
+                                        carehomes = TRUE) {
   p <- vaccine_priority_proportion(uptake,
                                    prop_hcw,
                                    prop_very_vulnerable,
                                    prop_underlying_condition)
   ## TODO: it would be nice to make this easier
-  pop <- lancelot_parameters(1, region)$N_tot
+  if (carehomes) {
+    pop <- lancelot_parameters(1, region)$N_tot
+  } else {
+    pop <- lancelot_parameters(1, region, carehome_beds = 0)$N_tot
+  }
   pop_mat <- matrix(rep(pop, ncol(p)), nrow = nrow(p))
   round(p * pop_mat)
 }
@@ -518,9 +523,12 @@ vaccine_schedule <- function(date, doses, n_doses = 2L) {
 ##'   number of doses. The (i,j)th entry gives the fractional uptake
 ##'   of dose j for group i. Should be non-increasing across rows
 ##'
+##' @param carehomes Logical parameter, whether or not we have carehomes in
+##'   the model. Default is TRUE
+##'
 ##' @return A [vaccine_schedule] object
 ##' @export
-vaccine_schedule_from_data <- function(data, region, uptake) {
+vaccine_schedule_from_data <- function(data, region, uptake, carehomes = TRUE) {
   assert_is(data, "data.frame")
   dose_cols <- grep("dose[0-9]", names(data), value = TRUE)
   n_doses <- length(dose_cols)
@@ -604,7 +612,8 @@ vaccine_schedule_from_data <- function(data, region, uptake) {
   ## We have 19 groups, 12 priority groups
   priority_population <-
     vapply(seq_len(n_doses),
-           function(j) vaccine_priority_population(region, uptake[, j]),
+           function(j) vaccine_priority_population(region, uptake[, j],
+                                                   carehomes = carehomes),
            array(0, c(19, 12)))
   n_carehomes <- priority_population[18:19, 1, ]
 

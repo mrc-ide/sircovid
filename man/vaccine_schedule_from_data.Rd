@@ -4,7 +4,7 @@
 \alias{vaccine_schedule_from_data}
 \title{Create historical vaccine schedule}
 \usage{
-vaccine_schedule_from_data(data, region, uptake)
+vaccine_schedule_from_data(data, region, uptake, carehomes = TRUE)
 }
 \arguments{
 \item{data}{A data.frame with columns \code{date}, \code{age_band_min},
@@ -20,6 +20,9 @@ all age-specific doses have already been dealt with}
 \item{uptake}{A matrix of 19 rows, and number of columns equal to
 number of doses. The (i,j)th entry gives the fractional uptake
 of dose j for group i. Should be non-increasing across rows}
+
+\item{carehomes}{Logical parameter, whether or not we have carehomes in
+the model. Default is TRUE}
 }
 \value{
 A \link{vaccine_schedule} object

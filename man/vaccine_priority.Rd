@@ -17,7 +17,8 @@ vaccine_priority_population(
   uptake,
   prop_hcw = NULL,
   prop_very_vulnerable = NULL,
-  prop_underlying_condition = NULL
+  prop_underlying_condition = NULL,
+  carehomes = TRUE
 )
 }
 \arguments{
