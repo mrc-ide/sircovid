@@ -278,6 +278,9 @@ vaccine_priority_proportion <- function(uptake,
 
 ##' @param region Region to use to get total population numbers
 ##'
+##' @param carehomes Logical parameter, whether or not we have carehomes in
+##'   the model. Default is TRUE
+##'
 ##' @rdname vaccine_priority
 ##' @export
 vaccine_priority_population <- function(region,
