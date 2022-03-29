@@ -17,7 +17,8 @@ vaccine_priority_population(
   uptake,
   prop_hcw = NULL,
   prop_very_vulnerable = NULL,
-  prop_underlying_condition = NULL
+  prop_underlying_condition = NULL,
+  carehomes = TRUE
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ condition" in each group (length 19) - if \code{NULL} we use a
 default that is a guess with hopefully the right general shape.}
 
 \item{region}{Region to use to get total population numbers}
+
+\item{carehomes}{Logical parameter, whether or not we have carehomes in
+the model. Default is TRUE}
 }
 \value{
 A matrix with n_groups rows (19) and columns representing

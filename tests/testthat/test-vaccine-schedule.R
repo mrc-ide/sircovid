@@ -103,6 +103,43 @@ test_that("vaccine_priority_population adds to correct pop - full uptake", {
 })
 
 
+test_that("can exclude carehomes in vaccine_priority_population", {
+  ## Expecting rows to equal population size * uptake
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  n_carehomes <- vaccine_priority_population(region, uptake_by_age)
+  expect_vector_gt(rowSums(n_carehomes)[18:19], 0)
+
+  n_no_carehomes <- vaccine_priority_population(region, uptake_by_age,
+                                                carehomes = FALSE)
+  expect_vector_equal(rowSums(n_no_carehomes)[18:19], 0)
+
+  ## check that n to vaccinate adds up to uptake * population
+  pop_by_age_no_carehomes <-
+    lancelot_parameters(1, region, carehome_beds = 0)$N_tot
+  expect_vector_equal(rowSums(n_no_carehomes),
+                      uptake_by_age * pop_by_age_no_carehomes, tol = 2)
+})
+
+
+test_that("can exclude carehomes in vaccine_priority_population -
+          full uptake", {
+  ## Expecting rows to equal population size * uptake
+  region <- "london"
+  n_carehomes <- vaccine_priority_population(region, NULL)
+  expect_vector_gt(rowSums(n_carehomes)[18:19], 0)
+
+  n_no_carehomes <- vaccine_priority_population(region, NULL,
+                                                carehomes = FALSE)
+  expect_vector_equal(rowSums(n_no_carehomes)[18:19], 0)
+
+  ## check that n to vaccinate adds up to uptake * population
+  pop_by_age_no_carehomes <-
+    lancelot_parameters(1, region, carehome_beds = 0)$N_tot
+  expect_vector_equal(rowSums(n_no_carehomes), pop_by_age_no_carehomes, tol = 2)
+})
+
+
 test_that("Can append a schedule", {
   region <- "london"
   uptake_by_age <- test_example_uptake()
@@ -203,6 +240,25 @@ test_that("can input data with 3 doses", {
 
   expect_equal(data_schedule$n_doses, 3)
   expect_equal(dim(data_schedule$doses), c(19, 3, 25))
+})
+
+
+test_that("can create data without carehomes", {
+  data <- test_vaccine_data()
+
+  region <- "london"
+  uptake_by_age <- test_example_uptake()
+  uptake_by_age <- array(uptake_by_age, c(length(uptake_by_age), 2))
+
+  ## with carehomes
+  data_schedule <- vaccine_schedule_from_data(data, region, uptake_by_age)
+  expect_vector_gt(rowSums(data_schedule$doses)[18:19], 0)
+
+  ## without carehomes
+  data_schedule_no_carehomes <-
+    vaccine_schedule_from_data(data, region, uptake_by_age, carehomes = FALSE)
+  expect_vector_equal(rowSums(data_schedule_no_carehomes$doses)[18:19], 0)
+  expect_equal(sum(data_schedule$doses), sum(data_schedule_no_carehomes$doses))
 })
 
 
