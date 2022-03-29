@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.9</span>
       </span>
     </div>
 
@@ -65,7 +65,8 @@
   <span class="va">uptake</span>,
   prop_hcw <span class="op">=</span> <span class="cn">NULL</span>,
   prop_very_vulnerable <span class="op">=</span> <span class="cn">NULL</span>,
-  prop_underlying_condition <span class="op">=</span> <span class="cn">NULL</span>
+  prop_underlying_condition <span class="op">=</span> <span class="cn">NULL</span>,
+  carehomes <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -89,6 +90,9 @@ condition" in each group (length 19) - if <code>NULL</code> we use a
 default that is a guess with hopefully the right general shape.</p></dd>
 <dt>region</dt>
 <dd><p>Region to use to get total population numbers</p></dd>
+<dt>carehomes</dt>
+<dd><p>Logical parameter, whether or not we have carehomes in
+the model. Default is TRUE</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

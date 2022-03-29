@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.9</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_schedule_from_data</span><span class="op">(</span><span class="va">data</span>, <span class="va">region</span>, <span class="va">uptake</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_schedule_from_data</span><span class="op">(</span><span class="va">data</span>, <span class="va">region</span>, <span class="va">uptake</span>, carehomes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -72,6 +72,9 @@ all age-specific doses have already been dealt with</p></dd>
 <dd><p>A matrix of 19 rows, and number of columns equal to
 number of doses. The (i,j)th entry gives the fractional uptake
 of dose j for group i. Should be non-increasing across rows</p></dd>
+<dt>carehomes</dt>
+<dd><p>Logical parameter, whether or not we have carehomes in
+the model. Default is TRUE</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
