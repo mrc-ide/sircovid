@@ -479,8 +479,7 @@ lancelot_parameters <- function(start_date, region,
                                 vaccine_catchup_fraction = 1,
                                 n_doses = 2L,
                                 vacc_skip_progression_rate = 0,
-                                vacc_skip_from = 1L,
-                                vacc_skip_to = 1L,
+                                vacc_skip_to = 0L,
                                 vacc_skip_weight = 0,
                                 waning_rate = 0,
                                 exp_noise = 1e6,
@@ -602,43 +601,13 @@ lancelot_parameters <- function(start_date, region,
                                                  n_doses)
 
   ## vacc_skip parameters
-  vacc_classes <- seq_len(vaccination$n_vacc_classes)
-  if (!vacc_skip_from %in% vacc_classes || !vacc_skip_to %in% vacc_classes) {
-    stop(sprintf("There are %s vaccine classes so 'vacc_skip_from' and
-                 'vacc_skip_to' must each be one of: %s",
-                 vaccination$n_vacc_classes,
-                 paste(vacc_classes, collapse = ", ")))
-  }
-  if (vacc_skip_to != vacc_skip_from && vacc_skip_to < vacc_skip_from + 2) {
-    stop("Require vacc_skip_to = vacc_skip_from or vacc_skip_to >=
-         vacc_skip_from + 2")
-  }
-  if (vacc_skip_to == vacc_skip_from && vacc_skip_weight != 0) {
-    stop("Require vacc_skip_weight = 0 as vacc_skip_to = vacc_skip_from")
-  }
-  if (vacc_skip_to == vacc_skip_from && any(vacc_skip_progression_rate != 0)) {
-    stop("Require vacc_skip_progression_rate = 0 as vacc_skip_to =
-         vacc_skip_from")
-  }
-  if (length(vacc_skip_progression_rate) == 1) {
-    ret$vacc_skip_progression_rate_base <-
-      rep(vacc_skip_progression_rate, ret$n_groups)
-  } else {
-    if (length(vacc_skip_progression_rate) != ret$n_groups) {
-      stop(sprintf("'vacc_skip_progression_rate' must be a scalar or a vector of
-                   length %s", ret$n_groups))
-    } else {
-      ret$vacc_skip_progression_rate_base <- vacc_skip_progression_rate
-    }
-  }
-  ret$vacc_skip_to <- vacc_skip_to
-  ret$vacc_skip_from <- vacc_skip_from
-  ret$vacc_skip_weight <- assert_proportion(vacc_skip_weight)
-  if (vacc_skip_to == 1) {
-    ret$vacc_skip_dose <- 0
-  } else {
-    ret$vacc_skip_dose <- vaccination$index_dose_inverse[vacc_skip_to - 1]
-  }
+  vacc_skip <- lancelot_parameters_vacc_skip(vacc_skip_to,
+                                             vacc_skip_progression_rate,
+                                             vacc_skip_weight,
+                                             vaccination$n_vacc_classes,
+                                             n_doses,
+                                             vaccination$index_dose_inverse)
+
 
   strain_rel_p_death <- process_strain_rel_p(strain_rel_p_death,
                                              strain$n_strains,
@@ -1959,6 +1928,87 @@ lancelot_parameters_vaccination <- function(N_tot,
 
   ret
 }
+
+
+lancelot_parameters_vacc_skip <- function(vacc_skip_to,
+                                          vacc_skip_progression_rate,
+                                          vacc_skip_weight,
+                                          n_vacc_classes,
+                                          n_doses,
+                                          index_dose_inverse) {
+
+  n_vacc_classes <- n_vacc_classes
+  vacc_classes <- seq_len(n_vacc_classes)
+  if (length(vacc_skip_to) != n_vacc_classes) {
+    stop(sprintf("There are %s vaccine classes so 'vacc_skip_to' must be of
+                 length %s", n_vacc_classes, n_vacc_classes))
+  }
+  if (length(vacc_skip_weight) != n_vacc_classes) {
+    stop(sprintf("There are %s vaccine classes so 'vacc_skip_weight' must be of
+                 length %s", n_vacc_classes, n_vacc_classes))
+  }
+  if (!all(vacc_skip_to %in% vacc_classes | vacc_skip_to == 0)) {
+    stop(sprintf("There are %s vaccine classes so the values in 'vacc_skip_to'
+                 must be 0 or one of: %s",
+                 n_vacc_classes,
+                 paste(vacc_classes, collapse = ", ")))
+  }
+  if (any(vacc_skip_to == 0 & vacc_skip_weight != 0)) {
+    stop("Require 0 values in 'vacc_skip_weight' for vaccine strata that have 0
+         values in 'vacc_skip_to'")
+  }
+  if (any(vacc_skip_to == 0 & vacc_skip_progression_rate != 0)) {
+    stop("Require 0 values in 'vacc_skip_progression_rate' for vaccine strata
+         that have 0 values in 'vacc_skip_to'")
+  }
+  if (vacc_skip_to == vacc_skip_from && any(vacc_skip_progression_rate != 0)) {
+    stop("Require vacc_skip_progression_rate = 0 as vacc_skip_to =
+         vacc_skip_from")
+  }
+  if (any(vacc_skip_to != 0 & vacc_skip_to <= vacc_classes + 1)) {
+    stop('Require vacc_skip_to[j] = 0 or vacc_skip_to[j] > j + 1')
+  }
+  if (length(unique(vacc_skip_to != 0)) != length(vacc_skip_to != 0)) {
+    stop('Cannot have more than one vaccine skip move to the same stratum')
+  }
+
+  assert_proportion(vacc_skip_weight)
+
+  vacc_skip_moves <- which(vacc_skip_to > 0)
+  vacc_skip_from <- rep(0, n_vacc_classes)
+  vacc_skip_from[vacc_skip_to[vacc_skip_moves]] <- vacc_skip_moves
+  vacc_skip_dose_inverse <- rep(0, n_vacc_classes)
+  vacc_skip_dose_inverse[vacc_skip_moves] <-
+    index_dose_inverse[vacc_skip_to[vacc_skip_moves] - 1]
+  vacc_skip_dose <- rep(0, n_doses)
+  vacc_skip_dose[vacc_skip_dose_inverse[vacc_skip_moves]] <- vacc_skip_moves
+  vacc_skipped <- rep(0, n_vacc_classes)
+  if (length(vacc_skip_moves) > 0) {
+    for (i in vacc_classes) {
+      skipped_from <- which(vacc_classes < i & vacc_skip_to > i)
+      if (length(skipped_from) > 1) {
+        stop('Cannot have more than one vaccine skip move skipping over the same
+             stratum')
+      } else if (length(skipped_from) == 1) {
+        vacc_skipped[i] <- skipped_from
+      }
+    }
+  }
+  vacc_skip_dose_weight <- rep(0, n_doses)
+  vacc_skip_dose_weight[vacc_skip_dose_inverse[vacc_skip_moves]] <-
+    vacc_skip_weight[vacc_skip_moves]
+
+  ret$vacc_skip_to <- vacc_skip_to
+  ret$vacc_skip_from <- vacc_skip_from
+  ret$vacc_skip_dose_weight <- vacc_skip_dose_weight
+  ret$vacc_skip_dose <- vacc_skip_dose
+  ret$vacc_skip_dose_inverse <- vacc_skip_dose_inverse
+  ret$vacc_skipped <- vacc_skipped
+  ret$vacc_skip_progression_rate_base <- vacc_skip_progression_rate
+
+  ret
+}
+
 
 lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
                                        strain_seed_size, strain_seed_pattern,

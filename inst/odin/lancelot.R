@@ -2193,7 +2193,7 @@ dim(total_attempted_doses) <- c(n_groups, n_doses)
 ## skip are weighted here, with remaining doses made available to the vaccine
 ## skip move below.
 ##
-## Note that since we require vacc_skip_weight <= 1, it is not possible for
+## Note that since we require vacc_skip_dose_weight <= 1, it is not possible for
 ## there to be an excess of doses for vaccine skip moves while having not
 ## enough doses for the next vaccine class candidates.
 vaccine_attempted_doses[, ] <-
@@ -2201,13 +2201,13 @@ vaccine_attempted_doses[, ] <-
      else
        min(vaccine_n_candidates[i, j] /
              (vaccine_n_candidates[i, j] +
-                vacc_skip_weight[j] * vacc_skip_n_candidates[i, j])
+                vacc_skip_dose_weight[j] * vacc_skip_n_candidates[i, j])
            * total_attempted_doses[i, j],
            vaccine_n_candidates[i, j]))
 dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 
 vacc_skip_attempted_doses[, ] <-
-  (if (vacc_skip_weight[j] > 0)
+  (if (vacc_skip_dose_weight[j] > 0)
     (if (vacc_skip_dose_inverse[j] > 0)
       total_attempted_doses[i, j] -
        vaccine_attempted_doses[i, j]
@@ -2263,11 +2263,11 @@ dim(vacc_skip_to) <- n_vacc_classes
 vacc_skipped[] <- user(integer = TRUE)
 dim(vacc_skipped) <- n_vacc_classes
 vacc_skip_dose[] <- user(integer = TRUE)
-dim(vacc_skip_dose) <- n_vacc_classes
+dim(vacc_skip_dose) <- n_doses
 vacc_skip_dose_inverse[] <- user(integer = TRUE)
-dim(vacc_skip_dose_inverse) <- n_doses
-vacc_skip_weight[] <- user()
-dim(vacc_skip_weight) <- n_doses
+dim(vacc_skip_dose_inverse) <- n_vacc_classes
+vacc_skip_dose_weight[] <- user()
+dim(vacc_skip_dose_weight) <- n_doses
 
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these

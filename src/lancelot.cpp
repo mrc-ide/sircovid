@@ -1031,10 +1031,10 @@ typename T::real_type
 // [[dust::param(strain_transmission, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_dose, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_dose_inverse, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vacc_skip_dose_weight, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_from, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_to, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vacc_skip_weight, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skipped, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_dose_step, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2617,6 +2617,7 @@ public:
     int dim_vacc_skip_attempted_doses_2;
     int dim_vacc_skip_dose;
     int dim_vacc_skip_dose_inverse;
+    int dim_vacc_skip_dose_weight;
     int dim_vacc_skip_from;
     int dim_vacc_skip_n_candidates;
     int dim_vacc_skip_n_candidates_1;
@@ -2628,7 +2629,6 @@ public:
     int dim_vacc_skip_progression_rate_base_1;
     int dim_vacc_skip_progression_rate_base_2;
     int dim_vacc_skip_to;
-    int dim_vacc_skip_weight;
     int dim_vacc_skipped;
     int dim_vaccine_attempted_doses;
     int dim_vaccine_attempted_doses_1;
@@ -3047,10 +3047,10 @@ public:
     std::vector<real_type> strain_transmission;
     std::vector<int> vacc_skip_dose;
     std::vector<int> vacc_skip_dose_inverse;
+    std::vector<real_type> vacc_skip_dose_weight;
     std::vector<int> vacc_skip_from;
     std::vector<real_type> vacc_skip_progression_rate_base;
     std::vector<int> vacc_skip_to;
-    std::vector<real_type> vacc_skip_weight;
     std::vector<int> vacc_skipped;
     real_type vaccine_catchup_fraction;
     std::vector<real_type> vaccine_dose_step;
@@ -4033,7 +4033,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_vaccine_attempted_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vaccine_attempted_doses_2; ++j) {
-        internal.vaccine_attempted_doses[i - 1 + shared->dim_vaccine_attempted_doses_1 * (j - 1)] = ((internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] == 0 ? 0 : std::min(internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] / (real_type) (internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] + shared->vacc_skip_weight[j - 1] * internal.vacc_skip_n_candidates[shared->dim_vacc_skip_n_candidates_1 * (j - 1) + i - 1]) * internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1], internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1])));
+        internal.vaccine_attempted_doses[i - 1 + shared->dim_vaccine_attempted_doses_1 * (j - 1)] = ((internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] == 0 ? 0 : std::min(internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] / (real_type) (internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1] + shared->vacc_skip_dose_weight[j - 1] * internal.vacc_skip_n_candidates[shared->dim_vacc_skip_n_candidates_1 * (j - 1) + i - 1]) * internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1], internal.vaccine_n_candidates[shared->dim_vaccine_n_candidates_1 * (j - 1) + i - 1])));
       }
     }
     for (int i = 1; i <= shared->dim_aux_H_D_conf_1; ++i) {
@@ -4238,7 +4238,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_vacc_skip_attempted_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vacc_skip_attempted_doses_2; ++j) {
-        internal.vacc_skip_attempted_doses[i - 1 + shared->dim_vacc_skip_attempted_doses_1 * (j - 1)] = ((shared->vacc_skip_weight[j - 1] > 0 ? ((shared->vacc_skip_dose_inverse[j - 1] > 0 ? internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] : 0)) : 0));
+        internal.vacc_skip_attempted_doses[i - 1 + shared->dim_vacc_skip_attempted_doses_1 * (j - 1)] = ((shared->vacc_skip_dose_weight[j - 1] > 0 ? ((shared->vacc_skip_dose_inverse[j - 1] > 0 ? internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] : 0)) : 0));
       }
     }
     for (int i = 1; i <= shared->dim_vaccine_probability_doses_1; ++i) {
@@ -7124,8 +7124,9 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_total_attempted_doses_2 = shared->n_doses;
   shared->dim_vacc_skip_attempted_doses_1 = shared->n_groups;
   shared->dim_vacc_skip_attempted_doses_2 = shared->n_doses;
-  shared->dim_vacc_skip_dose = shared->n_vacc_classes;
-  shared->dim_vacc_skip_dose_inverse = shared->n_doses;
+  shared->dim_vacc_skip_dose = shared->n_doses;
+  shared->dim_vacc_skip_dose_inverse = shared->n_vacc_classes;
+  shared->dim_vacc_skip_dose_weight = shared->n_doses;
   shared->dim_vacc_skip_from = shared->n_vacc_classes;
   shared->dim_vacc_skip_n_candidates_1 = shared->n_groups;
   shared->dim_vacc_skip_n_candidates_2 = shared->n_doses;
@@ -7134,7 +7135,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_vacc_skip_progression_rate_base_1 = shared->n_groups;
   shared->dim_vacc_skip_progression_rate_base_2 = shared->n_vacc_classes;
   shared->dim_vacc_skip_to = shared->n_vacc_classes;
-  shared->dim_vacc_skip_weight = shared->n_doses;
   shared->dim_vacc_skipped = shared->n_vacc_classes;
   shared->dim_vaccine_attempted_doses_1 = shared->n_groups;
   shared->dim_vaccine_attempted_doses_2 = shared->n_doses;
@@ -7846,9 +7846,9 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->strain_transmission = user_get_array_fixed<real_type, 1>(user, "strain_transmission", shared->strain_transmission, {shared->dim_strain_transmission}, NA_REAL, NA_REAL);
   shared->vacc_skip_dose = user_get_array_fixed<int, 1>(user, "vacc_skip_dose", shared->vacc_skip_dose, {shared->dim_vacc_skip_dose}, NA_INTEGER, NA_INTEGER);
   shared->vacc_skip_dose_inverse = user_get_array_fixed<int, 1>(user, "vacc_skip_dose_inverse", shared->vacc_skip_dose_inverse, {shared->dim_vacc_skip_dose_inverse}, NA_INTEGER, NA_INTEGER);
+  shared->vacc_skip_dose_weight = user_get_array_fixed<real_type, 1>(user, "vacc_skip_dose_weight", shared->vacc_skip_dose_weight, {shared->dim_vacc_skip_dose_weight}, NA_REAL, NA_REAL);
   shared->vacc_skip_from = user_get_array_fixed<int, 1>(user, "vacc_skip_from", shared->vacc_skip_from, {shared->dim_vacc_skip_from}, NA_INTEGER, NA_INTEGER);
   shared->vacc_skip_to = user_get_array_fixed<int, 1>(user, "vacc_skip_to", shared->vacc_skip_to, {shared->dim_vacc_skip_to}, NA_INTEGER, NA_INTEGER);
-  shared->vacc_skip_weight = user_get_array_fixed<real_type, 1>(user, "vacc_skip_weight", shared->vacc_skip_weight, {shared->dim_vacc_skip_weight}, NA_REAL, NA_REAL);
   shared->vacc_skipped = user_get_array_fixed<int, 1>(user, "vacc_skipped", shared->vacc_skipped, {shared->dim_vacc_skipped}, NA_INTEGER, NA_INTEGER);
   shared->waning_rate = user_get_array_fixed<real_type, 1>(user, "waning_rate", shared->waning_rate, {shared->dim_waning_rate}, NA_REAL, NA_REAL);
   internal.I_with_diff_trans = std::vector<real_type>(shared->dim_I_with_diff_trans);
