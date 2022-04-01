@@ -303,10 +303,10 @@ p_I_P_next_vacc_class[, , , ] <- vaccine_probability[i, l]
 p_R_next_vacc_class[, , ] <- vaccine_probability[i, k]
 
 p_S_vacc_skip[, ] <- vacc_skip_probability[i, j]
-p_E_vacc_skip[, , , ] <- vacc_skip_probability[i, j]
-p_I_A_vacc_skip[, , , ] <- vacc_skip_probability[i, j]
-p_I_P_vacc_skip[, , , ] <- vacc_skip_probability[i, j]
-p_R_vacc_skip[, , ] <- vacc_skip_probability[i, j]
+p_E_vacc_skip[, , , ] <- vacc_skip_probability[i, l]
+p_I_A_vacc_skip[, , , ] <- vacc_skip_probability[i, l]
+p_I_P_vacc_skip[, , , ] <- vacc_skip_probability[i, l]
+p_R_vacc_skip[, , ] <- vacc_skip_probability[i, k]
 
 ## clinical progression
 p_SE[, ] <- 1 - exp(- sum(lambda_susc[i, , j]) * dt) # S to I age/vacc dependent
