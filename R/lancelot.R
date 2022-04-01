@@ -1962,11 +1962,11 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
          that have 0 values in 'vacc_skip_to'")
   }
   if (any(vacc_skip_to != 0 & vacc_skip_to <= vacc_classes + 1)) {
-    stop('Require vacc_skip_to[j] = 0 or vacc_skip_to[j] > j + 1')
+    stop("Require vacc_skip_to[j] = 0 or vacc_skip_to[j] > j + 1")
   }
   vacc_skip_moves <- which(vacc_skip_to > 0)
   if (length(unique(vacc_skip_moves)) != length(vacc_skip_moves)) {
-    stop('Cannot have more than one vaccine skip move to the same stratum')
+    stop("Cannot have more than one vaccine skip move to the same stratum")
   }
 
   assert_proportion(vacc_skip_weight)
