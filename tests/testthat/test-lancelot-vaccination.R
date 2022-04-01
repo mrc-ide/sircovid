@@ -3246,8 +3246,10 @@ test_that("Everyone vaccine skips if there is no waning", {
 
   ## All booster moves are via vaccine skip
   expect_true(any(y$cum_n_vacc_skip > 0))
-  expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 3, , ])
-  expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 4, , ])
+  expect_true(all(y$cum_n_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+
+  expect_equal(y$cum_n_vacc_skip[, 3, , ], y$cum_n_vaccinated[, 3, , ])
+  expect_equal(y$cum_n_vacc_skip[, 3, , ], y$cum_n_vaccinated[, 4, , ])
 })
 
 
