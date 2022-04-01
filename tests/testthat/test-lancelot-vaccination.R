@@ -3299,19 +3299,19 @@ test_that("Equal vaccine skip weighting leads to equal distribution", {
   expect_true(any(y$cum_n_R_vacc_skip > 0))
 
   ## vaccine skip moves should be around half of all the moves into booster
-  expect_approx_equal(colSums(y$cum_n_S_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_S_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_S_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_E_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_E_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_E_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_I_A_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_I_A_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_I_A_vaccinated[, 4, , 200]),
                       rep(0.5, 3), rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_I_P_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_I_P_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_I_P_vaccinated[, 4, , 200]),
                       rep(0.5, 3), rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_R_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_R_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_R_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
 })
