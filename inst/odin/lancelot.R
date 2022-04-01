@@ -748,7 +748,7 @@ aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else
     n_I_A_next_vacc_class[i, j, k, l - 1]) -
   (if (vacc_skip_to[l] > 0) n_I_A_vacc_skip[i, j, k, l] else 0) +
   (if (vacc_skip_from[l] > 0)
-    n_I_A_vacc_skip[i, j, k, vacc_skip_from[l]]else 0)
+    n_I_A_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
 new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
 

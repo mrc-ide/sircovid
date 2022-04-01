@@ -1997,6 +1997,7 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
 
   list(vacc_skip_to = vacc_skip_to,
        vacc_skip_from = vacc_skip_from,
+       vacc_skip_weight = vacc_skip_weight,
        vacc_skip_dose_weight = vacc_skip_dose_weight,
        vacc_skip_dose = vacc_skip_dose,
        vacc_skip_dose_inverse = vacc_skip_dose_inverse,
