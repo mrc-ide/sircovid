@@ -1033,7 +1033,7 @@ typename T::real_type
 // [[dust::param(vacc_skip_dose_inverse, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_dose_weight, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_from, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vacc_skip_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vacc_skip_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skip_to, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_skipped, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_dose_step, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
@@ -2626,8 +2626,6 @@ public:
     int dim_vacc_skip_probability_1;
     int dim_vacc_skip_probability_2;
     int dim_vacc_skip_progression_rate_base;
-    int dim_vacc_skip_progression_rate_base_1;
-    int dim_vacc_skip_progression_rate_base_2;
     int dim_vacc_skip_to;
     int dim_vacc_skipped;
     int dim_vaccine_attempted_doses;
@@ -4434,7 +4432,7 @@ public:
     state_next[56] = odin_sum4<real_type>(internal.new_T_sero_pos_2.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2_2, 0, shared->dim_new_T_sero_pos_2_3, 0, shared->dim_new_T_sero_pos_2_4, shared->dim_new_T_sero_pos_2_1, shared->dim_new_T_sero_pos_2_12, shared->dim_new_T_sero_pos_2_123);
     for (int i = 1; i <= shared->dim_vacc_skip_probability_1; ++i) {
       for (int j = 1; j <= shared->dim_vacc_skip_probability_2; ++j) {
-        internal.vacc_skip_probability[i - 1 + shared->dim_vacc_skip_probability_1 * (j - 1)] = ((shared->vacc_skip_dose_inverse[j - 1] > 0 ? ((internal.vacc_skip_n_candidates[shared->dim_vacc_skip_n_candidates_1 * (shared->vacc_skip_dose_inverse[j - 1] - 1) + i - 1] > 0 ? std::min(internal.vacc_skip_attempted_doses[shared->dim_vacc_skip_attempted_doses_1 * (shared->vacc_skip_dose_inverse[j - 1] - 1) + i - 1] / (real_type) internal.vacc_skip_n_candidates[shared->dim_vacc_skip_n_candidates_1 * (shared->vacc_skip_dose_inverse[j - 1] - 1) + i - 1], static_cast<real_type>(1)) : 0)) : 1 - std::exp(- shared->vacc_skip_progression_rate_base[shared->dim_vacc_skip_progression_rate_base_1 * (j - 1) + i - 1] * shared->dt)));
+        internal.vacc_skip_probability[i - 1 + shared->dim_vacc_skip_probability_1 * (j - 1)] = ((shared->vacc_skip_dose_inverse[j - 1] > 0 ? ((internal.vacc_skip_n_candidates[shared->dim_vacc_skip_n_candidates_1 * (shared->vacc_skip_dose_inverse[j - 1] - 1) + i - 1] > 0 ? std::min(internal.vacc_skip_attempted_doses[shared->dim_vacc_skip_attempted_doses_1 * (shared->vacc_skip_dose_inverse[j - 1] - 1) + i - 1] / (real_type) internal.vacc_skip_n_candidates[shared->dim_vacc_skip_n_candidates_1 * (shared->vacc_skip_dose_inverse[j - 1] - 1) + i - 1], static_cast<real_type>(1)) : 0)) : 1 - std::exp(- shared->vacc_skip_progression_rate_base[j - 1] * shared->dt)));
       }
     }
     for (int i = 1; i <= shared->dim_vaccine_probability_1; ++i) {
@@ -7132,8 +7130,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_vacc_skip_n_candidates_2 = shared->n_doses;
   shared->dim_vacc_skip_probability_1 = shared->n_groups;
   shared->dim_vacc_skip_probability_2 = shared->n_vacc_classes;
-  shared->dim_vacc_skip_progression_rate_base_1 = shared->n_groups;
-  shared->dim_vacc_skip_progression_rate_base_2 = shared->n_vacc_classes;
+  shared->dim_vacc_skip_progression_rate_base = shared->n_vacc_classes;
   shared->dim_vacc_skip_to = shared->n_vacc_classes;
   shared->dim_vacc_skipped = shared->n_vacc_classes;
   shared->dim_vaccine_attempted_doses_1 = shared->n_groups;
@@ -7763,7 +7760,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_vacc_skip_attempted_doses = shared->dim_vacc_skip_attempted_doses_1 * shared->dim_vacc_skip_attempted_doses_2;
   shared->dim_vacc_skip_n_candidates = shared->dim_vacc_skip_n_candidates_1 * shared->dim_vacc_skip_n_candidates_2;
   shared->dim_vacc_skip_probability = shared->dim_vacc_skip_probability_1 * shared->dim_vacc_skip_probability_2;
-  shared->dim_vacc_skip_progression_rate_base = shared->dim_vacc_skip_progression_rate_base_1 * shared->dim_vacc_skip_progression_rate_base_2;
   shared->dim_vaccine_attempted_doses = shared->dim_vaccine_attempted_doses_1 * shared->dim_vaccine_attempted_doses_2;
   shared->dim_vaccine_dose_step_12 = shared->dim_vaccine_dose_step_1 * shared->dim_vaccine_dose_step_2;
   shared->dim_vaccine_missed_doses = shared->dim_vaccine_missed_doses_1 * shared->dim_vaccine_missed_doses_2;
@@ -7848,6 +7844,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->vacc_skip_dose_inverse = user_get_array_fixed<int, 1>(user, "vacc_skip_dose_inverse", shared->vacc_skip_dose_inverse, {shared->dim_vacc_skip_dose_inverse}, NA_INTEGER, NA_INTEGER);
   shared->vacc_skip_dose_weight = user_get_array_fixed<real_type, 1>(user, "vacc_skip_dose_weight", shared->vacc_skip_dose_weight, {shared->dim_vacc_skip_dose_weight}, NA_REAL, NA_REAL);
   shared->vacc_skip_from = user_get_array_fixed<int, 1>(user, "vacc_skip_from", shared->vacc_skip_from, {shared->dim_vacc_skip_from}, NA_INTEGER, NA_INTEGER);
+  shared->vacc_skip_progression_rate_base = user_get_array_fixed<real_type, 1>(user, "vacc_skip_progression_rate_base", shared->vacc_skip_progression_rate_base, {shared->dim_vacc_skip_progression_rate_base}, NA_REAL, NA_REAL);
   shared->vacc_skip_to = user_get_array_fixed<int, 1>(user, "vacc_skip_to", shared->vacc_skip_to, {shared->dim_vacc_skip_to}, NA_INTEGER, NA_INTEGER);
   shared->vacc_skipped = user_get_array_fixed<int, 1>(user, "vacc_skipped", shared->vacc_skipped, {shared->dim_vacc_skipped}, NA_INTEGER, NA_INTEGER);
   shared->waning_rate = user_get_array_fixed<real_type, 1>(user, "waning_rate", shared->waning_rate, {shared->dim_waning_rate}, NA_REAL, NA_REAL);
@@ -8552,7 +8549,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->rel_p_hosp_if_sympt = user_get_array_fixed<real_type, 3>(user, "rel_p_hosp_if_sympt", shared->rel_p_hosp_if_sympt, {shared->dim_rel_p_hosp_if_sympt_1, shared->dim_rel_p_hosp_if_sympt_2, shared->dim_rel_p_hosp_if_sympt_3}, NA_REAL, NA_REAL);
   shared->rel_p_sympt = user_get_array_fixed<real_type, 3>(user, "rel_p_sympt", shared->rel_p_sympt, {shared->dim_rel_p_sympt_1, shared->dim_rel_p_sympt_2, shared->dim_rel_p_sympt_3}, NA_REAL, NA_REAL);
   shared->rel_susceptibility = user_get_array_fixed<real_type, 3>(user, "rel_susceptibility", shared->rel_susceptibility, {shared->dim_rel_susceptibility_1, shared->dim_rel_susceptibility_2, shared->dim_rel_susceptibility_3}, NA_REAL, NA_REAL);
-  shared->vacc_skip_progression_rate_base = user_get_array_fixed<real_type, 2>(user, "vacc_skip_progression_rate_base", shared->vacc_skip_progression_rate_base, {shared->dim_vacc_skip_progression_rate_base_1, shared->dim_vacc_skip_progression_rate_base_2}, NA_REAL, NA_REAL);
   shared->vaccine_progression_rate_base = user_get_array_fixed<real_type, 2>(user, "vaccine_progression_rate_base", shared->vaccine_progression_rate_base, {shared->dim_vaccine_progression_rate_base_1, shared->dim_vaccine_progression_rate_base_2}, NA_REAL, NA_REAL);
   internal.eff_S = std::vector<real_type>(shared->dim_eff_S);
   internal.lambda = std::vector<real_type>(shared->dim_lambda);

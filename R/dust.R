@@ -470,7 +470,7 @@ lancelot <- R6::R6Class(
      vacc_skip_dose_inverse = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      vacc_skip_dose_weight = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      vacc_skip_from = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
-     vacc_skip_progression_rate_base = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     vacc_skip_progression_rate_base = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      vacc_skip_to = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      vacc_skipped = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      vaccine_dose_step = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),

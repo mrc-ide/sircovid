@@ -46,10 +46,9 @@ lancelot_parameters(
   vaccine_index_booster = NULL,
   vaccine_catchup_fraction = 1,
   n_doses = 2L,
-  vacc_skip_progression_rate = 0,
-  vacc_skip_from = 1L,
-  vacc_skip_to = 1L,
-  vacc_skip_weight = 0,
+  vacc_skip_progression_rate = NULL,
+  vacc_skip_to = NULL,
+  vacc_skip_weight = NULL,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1
@@ -363,10 +362,6 @@ to 1 by default}
 the base progression rate for "vaccine skip moves" for each group, or a
 scalar representing the base progression rate for all groups. Must be 0
 (which is the default) if \code{vacc_skip_to == vacc_skip_from}}
-
-\item{vacc_skip_from}{An integer, the vaccine stratum index from which we
-allow a "vaccine skip move", which enables individuals to progress through
-more than one vaccine class in a single step. Default is 1}
 
 \item{vacc_skip_to}{An integer, the vaccine stratum index representing the
 vaccine stratum an individual in stratum \code{vacc_skip_from} can move to in a

@@ -2250,11 +2250,11 @@ vacc_skip_probability[, ] <- (
           as.numeric(1))
     else 0)
   else
-    1 - exp(-vacc_skip_progression_rate_base[i, j] * dt))
+    1 - exp(-vacc_skip_progression_rate_base[j] * dt))
 dim(vacc_skip_probability) <- c(n_groups, n_vacc_classes)
 
-vacc_skip_progression_rate_base[, ] <- user()
-dim(vacc_skip_progression_rate_base) <- c(n_groups, n_vacc_classes)
+vacc_skip_progression_rate_base[] <- user()
+dim(vacc_skip_progression_rate_base) <- n_vacc_classes
 
 vacc_skip_from[] <- user(integer = TRUE)
 dim(vacc_skip_from) <- n_vacc_classes
