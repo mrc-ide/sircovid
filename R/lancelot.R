@@ -1984,8 +1984,8 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
     for (i in vacc_classes) {
       skipped_from <- which(vacc_classes <= i & vacc_skip_to > i)
       if (length(skipped_from) > 1) {
-        stop('Cannot have more than one vaccine skip move skipping over the same
-             stratum')
+        stop("Cannot have more than one vaccine skip move skipping over the same
+             stratum")
       } else if (length(skipped_from) == 1) {
         vacc_skipped[i] <- skipped_from
       }
