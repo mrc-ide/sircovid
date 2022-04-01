@@ -4172,7 +4172,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_vacc_skip_attempted_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vacc_skip_attempted_doses_2; ++j) {
-        internal.vacc_skip_attempted_doses[i - 1 + shared->dim_vacc_skip_attempted_doses_1 * (j - 1)] = ((shared->vacc_skip_dose_weight[j - 1] > 0 ? ((shared->vacc_skip_dose_inverse[j - 1] > 0 ? internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] : 0)) : 0));
+        internal.vacc_skip_attempted_doses[i - 1 + shared->dim_vacc_skip_attempted_doses_1 * (j - 1)] = ((shared->vacc_skip_dose_weight[j - 1] > 0 ? ((shared->vacc_skip_dose[j - 1] > 0 ? internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] : 0)) : 0));
       }
     }
     for (int i = 1; i <= shared->dim_vaccine_probability_doses_1; ++i) {

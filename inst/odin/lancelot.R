@@ -2208,7 +2208,7 @@ dim(vaccine_attempted_doses) <- c(n_groups, n_doses)
 
 vacc_skip_attempted_doses[, ] <-
   (if (vacc_skip_dose_weight[j] > 0)
-    (if (vacc_skip_dose_inverse[j] > 0)
+    (if (vacc_skip_dose[j] > 0)
       total_attempted_doses[i, j] -
        vaccine_attempted_doses[i, j]
      else 0)
