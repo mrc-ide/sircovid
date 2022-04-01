@@ -5067,7 +5067,7 @@ public:
     }
     for (int i = 1; i <= shared->dim_n_I_A_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_n_I_A_vaccinated_2; ++j) {
-        internal.n_I_A_vaccinated[i - 1 + shared->dim_n_I_A_vaccinated_1 * (j - 1)] = odin_sum4<real_type>(internal.n_I_A_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_I_A_next_vacc_class_2, 0, shared->dim_n_I_A_next_vacc_class_3, 0, shared->dim_n_I_A_next_vacc_class_4, shared->dim_n_I_A_next_vacc_class_1, shared->dim_n_I_A_next_vacc_class_12, shared->dim_n_I_A_next_vacc_class_123) + ((shared->vacc_skipped[j - 1] > 0 ? odin_sum4<real_type>(internal.n_I_A_vacc_skip.data(), i - 1, i, 0, shared->dim_n_I_A_vacc_skip_2, 0, shared->dim_n_I_A_vacc_skip_3, shared->vacc_skipped[j - 1] - 1, shared->vacc_skipped[j - 1], shared->dim_n_I_A_vacc_skip_1, shared->dim_n_I_A_vacc_skip_12, shared->dim_n_I_A_vacc_skip_123) : 0));
+        internal.n_I_A_vaccinated[i - 1 + shared->dim_n_I_A_vaccinated_1 * (j - 1)] = odin_sum4<real_type>(internal.n_I_A_next_vacc_class.data(), i - 1, i, 0, shared->dim_n_I_A_next_vacc_class_2, 0, shared->dim_n_I_A_next_vacc_class_3, j - 1, j, shared->dim_n_I_A_next_vacc_class_1, shared->dim_n_I_A_next_vacc_class_12, shared->dim_n_I_A_next_vacc_class_123) + ((shared->vacc_skipped[j - 1] > 0 ? odin_sum4<real_type>(internal.n_I_A_vacc_skip.data(), i - 1, i, 0, shared->dim_n_I_A_vacc_skip_2, 0, shared->dim_n_I_A_vacc_skip_3, shared->vacc_skipped[j - 1] - 1, shared->vacc_skipped[j - 1], shared->dim_n_I_A_vacc_skip_1, shared->dim_n_I_A_vacc_skip_12, shared->dim_n_I_A_vacc_skip_123) : 0));
       }
     }
     for (int i = 1; i <= shared->dim_n_I_C_2_to_H_D_1; ++i) {

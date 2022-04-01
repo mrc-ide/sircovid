@@ -34,7 +34,7 @@ n_E_vaccinated[, ] <- sum(n_E_next_vacc_class[i, , , j]) +
   (if (vacc_skipped[j] > 0) sum(n_E_vacc_skip[i, , , vacc_skipped[j]])
    else 0)
 dim(n_E_vaccinated) <- c(n_groups, n_vacc_classes)
-n_I_A_vaccinated[, ] <- sum(n_I_A_next_vacc_class[i, , , ]) +
+n_I_A_vaccinated[, ] <- sum(n_I_A_next_vacc_class[i, , , j]) +
   (if (vacc_skipped[j] > 0) sum(n_I_A_vacc_skip[i, , , vacc_skipped[j]])
    else 0)
 dim(n_I_A_vaccinated) <- c(n_groups, n_vacc_classes)
