@@ -260,7 +260,7 @@ NULL
 ##'
 ##' @param vaccine_index_dose2 The index to use for the second dose
 ##'
-##' @param vaccine_index_booster The index to use for the booster dose
+##' @param vaccine_index_booster The indices to use for the booster doses
 ##'
 ##' @param vaccine_catchup_fraction A value between 0 and 1 indicating the
 ##'   proportion of doses not distributed according to schedule (e.g. because
@@ -1894,10 +1894,12 @@ lancelot_parameters_vaccination <- function(N_tot,
         stop("'n_doses' must be 2 as boosters not used")
       }
     } else {
-      if (n_doses != 3L) {
-        stop("'n_doses' must be 3 as boosters are used")
+      if (n_doses != 2L + length(vaccine_index_booster)) {
+        stop(sprintf(
+          "'n_doses' must be %d as %d boosters are used",
+          2L + length(vaccine_index_booster), length(vaccine_index_booster)))
       }
-      if (vaccine_index_booster > n_vacc_classes) {
+      if (any(vaccine_index_booster > n_vacc_classes)) {
         stop(sprintf(
           "Invalid value for 'vaccine_index_booster', must be in [1, %d]",
           n_vacc_classes))

@@ -345,7 +345,7 @@ people to be vaccinated by group over time}
 
 \item{vaccine_index_dose2}{The index to use for the second dose}
 
-\item{vaccine_index_booster}{The index to use for the booster dose}
+\item{vaccine_index_booster}{The indices to use for the booster doses}
 
 \item{vaccine_catchup_fraction}{A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because

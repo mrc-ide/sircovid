@@ -1658,7 +1658,7 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       vaccine_index_dose2 = 3,
       vaccine_index_booster = 4,
       vaccine_schedule = schedule),
-    "'n_doses' must be 3 as boosters are used",
+    "'n_doses' must be 3 as 1 boosters are used",
     fixed = TRUE)
 
   schedule <- vaccine_schedule(date = 1L,
