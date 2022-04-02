@@ -270,24 +270,26 @@ NULL
 ##'   value of 1 means we try to catch up for all missed doses. This is set
 ##'   to 1 by default
 ##'
-##' @param vacc_skip_to An integer, the vaccine stratum index representing the
-##'   vaccine stratum an individual in stratum `vacc_skip_from` can move to in a
-##'   "vaccine skip move". Must be either equal to `vacc_skip_from` (to allow
-##'   the vaccine skip move to be switched "off"), or greater than or equal to
-##'   `vacc_skip_from + 2` (we already account for moves between successive
-##'   vaccine strata). Default is 1
+##' @param vacc_skip_to A vector of integers of length equal to the number of
+##'   vaccine strata. The value of `vacc_skip_to[j]` represents the vaccine
+##'   stratum an individual in vaccine stratum `j` can move to in a
+##'   "vaccine skip move". Values can be 0 (which mean there is no vaccine skip
+##'   move from that stratum), or greater than or equal to `j + 2` (we already
+##'   account for moves between successive vaccine strata). Overlapping vaccine
+##'   skip moves are not allowed. Default is a vector of 0s
 ##'
-##' @param vacc_skip_progression_rate Either a vector of length 19 representing
-##'   the base progression rate for "vaccine skip moves" for each group, or a
-##'   scalar representing the base progression rate for all groups. Must be 0
-##'   (which is the default) if `vacc_skip_to == vacc_skip_from`
+##' @param vacc_skip_progression_rate A vector of length equal to the number of
+##'   vaccine strata. Represents the base progression rate for "vaccine skip
+##'   moves" from each strata. Must be 0 for all `j` for which
+##'   `vacc_skip[j] = 0`. Default is a vector of 0s
 ##'
-##' @param vacc_skip_weight A scalar weight. If movement into `vacc_skip_to`
-##'   from `vacc_skip_to - 1` is controlled by doses, then the "vaccine skip
-##'   move" is too, and the weight represents how much those in `vacc_skip_from`
-##'   are weighted in dose distribution relative to those in `vacc_skip_to - 1`.
-##'   Must be between 0 and 1. Must be 0 (which is the default) if
-##'   `vacc_skip_to == vacc_skip_from`
+##' @param vacc_skip_weight A vector of weights of length equal to the number
+##'   of vaccine strata. If movement into `vacc_skip_to[j]` from
+##'   `vacc_skip_to[j] - 1` is controlled by doses, then the "vaccine skip move"
+##'   is too, and the weight represents how much those in strata `j` are
+##'   weighted in dose distribution relative to those in `vacc_skip_to - 1`.
+##'   Must be between 0 and 1. Must be 0 for any `j` for which
+##'   `vacc_skip_to = 0`. Default is a vector of 0s
 ##'
 ##' @param n_doses Number of doses given out, including boosters. Default is
 ##'   2.
@@ -1947,6 +1949,10 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
     stop(sprintf("There are %s vaccine classes so 'vacc_skip_weight' must be of
                  length %s", n_vacc_classes, n_vacc_classes))
   }
+  if (length(vacc_skip_progression_rate) != n_vacc_classes) {
+    stop(sprintf("There are %s vaccine classes so 'vacc_skip_progression_rate'
+                 must be of length %s", n_vacc_classes, n_vacc_classes))
+  }
   if (!all(vacc_skip_to %in% vacc_classes | vacc_skip_to == 0)) {
     stop(sprintf("There are %s vaccine classes so the values in 'vacc_skip_to'
                  must be 0 or one of: %s",
@@ -1965,7 +1971,8 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
     stop("Require vacc_skip_to[j] = 0 or vacc_skip_to[j] > j + 1")
   }
   vacc_skip_moves <- which(vacc_skip_to > 0)
-  if (length(unique(vacc_skip_moves)) != length(vacc_skip_moves)) {
+  vacc_skip_to_moves <- vacc_skip_to[vacc_skip_moves]
+  if (length(unique(vacc_skip_to_moves)) != length(vacc_skip_to_moves)) {
     stop("Cannot have more than one vaccine skip move to the same stratum")
   }
 
@@ -1984,8 +1991,7 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
     for (i in vacc_classes) {
       skipped_from <- which(vacc_classes <= i & vacc_skip_to > i)
       if (length(skipped_from) > 1) {
-        stop("Cannot have more than one vaccine skip move skipping over the same
-             stratum")
+        stop("Cannot have overlapping vaccine skip moves")
       } else if (length(skipped_from) == 1) {
         vacc_skipped[i] <- skipped_from
       }

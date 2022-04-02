@@ -358,24 +358,26 @@ to 1 by default}
 \item{n_doses}{Number of doses given out, including boosters. Default is
 2.}
 
-\item{vacc_skip_progression_rate}{Either a vector of length 19 representing
-the base progression rate for "vaccine skip moves" for each group, or a
-scalar representing the base progression rate for all groups. Must be 0
-(which is the default) if \code{vacc_skip_to == vacc_skip_from}}
+\item{vacc_skip_progression_rate}{A vector of length equal to the number of
+vaccine strata. Represents the base progression rate for "vaccine skip
+moves" from each strata. Must be 0 for all \code{j} for which
+\code{vacc_skip[j] = 0}. Default is a vector of 0s}
 
-\item{vacc_skip_to}{An integer, the vaccine stratum index representing the
-vaccine stratum an individual in stratum \code{vacc_skip_from} can move to in a
-"vaccine skip move". Must be either equal to \code{vacc_skip_from} (to allow
-the vaccine skip move to be switched "off"), or greater than or equal to
-\code{vacc_skip_from + 2} (we already account for moves between successive
-vaccine strata). Default is 1}
+\item{vacc_skip_to}{A vector of integers of length equal to the number of
+vaccine strata. The value of \code{vacc_skip_to[j]} represents the vaccine
+stratum an individual in vaccine stratum \code{j} can move to in a
+"vaccine skip move". Values can be 0 (which mean there is no vaccine skip
+move from that stratum), or greater than or equal to \code{j + 2} (we already
+account for moves between successive vaccine strata). Overlapping vaccine
+skip moves are not allowed. Default is a vector of 0s}
 
-\item{vacc_skip_weight}{A scalar weight. If movement into \code{vacc_skip_to}
-from \code{vacc_skip_to - 1} is controlled by doses, then the "vaccine skip
-move" is too, and the weight represents how much those in \code{vacc_skip_from}
-are weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
-Must be between 0 and 1. Must be 0 (which is the default) if
-\code{vacc_skip_to == vacc_skip_from}}
+\item{vacc_skip_weight}{A vector of weights of length equal to the number
+of vaccine strata. If movement into \code{vacc_skip_to[j]} from
+\code{vacc_skip_to[j] - 1} is controlled by doses, then the "vaccine skip move"
+is too, and the weight represents how much those in strata \code{j} are
+weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
+Must be between 0 and 1. Must be 0 for any \code{j} for which
+\code{vacc_skip_to = 0}. Default is a vector of 0s}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
