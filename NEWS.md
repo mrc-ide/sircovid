@@ -1,3 +1,7 @@
+# sircovid 0.13.10
+
+* Multiple vaccine skip moves now allowed and `lancelot_parameters` now allows multiple boosters 
+
 # sircovid 0.13.5
 
 * Add logical flag to turn on/off exporting all death classes by age
