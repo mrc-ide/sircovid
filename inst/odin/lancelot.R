@@ -2253,21 +2253,41 @@ vacc_skip_probability[, ] <- (
     1 - exp(-vacc_skip_progression_rate_base[j] * dt))
 dim(vacc_skip_probability) <- c(n_groups, n_vacc_classes)
 
-vacc_skip_progression_rate_base[] <- user()
-dim(vacc_skip_progression_rate_base) <- n_vacc_classes
+## Vaccine skip inputs
+## 1. vacc_skip_to[j] is the vaccine stratum that the vaccine skip move
+##    from stratum j goes to (0 represents no vaccine skip move from j)
+## 2. vacc_skip_from[j] is the vaccine stratum that the vaccine skip move
+##    to stratum j comes from (0 represents no vaccine skip move to j)
+## 3. vacc_skip_progression_rate_base[j] is the progression rate used for
+##    the vaccine skip from stratum j (unless the vaccine skip move is
+##    controlled by doses)
+## 4. vacc_skip_dose[j] is the vaccine stratum that the vaccine skip move comes
+##    moves from that is controlled by dose j (0 represents no vaccine skip
+##    move controlled by dose j)
+## 5. vacc_skip_dose_inverse[j] is the dose that the vaccine skip move from
+##    stratum j is controlled by (0 represents that no dose controls the vaccine
+##    skip move)
+## 6. vacc_skip_dose_weight[j] represents how much vaccine skip candidates are
+##    weighted for distribution of dose j relative to standard vaccine
+##    candidates for that dose
+## 7. vacc_skipped is used for bookkeeping - vacc_skipped[j] is the vaccine
+##    stratum a vaccine skip move goes from that either starts at j or skips
+##    over j (if there is no such move then the vacc_skipped[j] is 0)
 
-vacc_skip_from[] <- user(integer = TRUE)
-dim(vacc_skip_from) <- n_vacc_classes
 vacc_skip_to[] <- user(integer = TRUE)
 dim(vacc_skip_to) <- n_vacc_classes
-vacc_skipped[] <- user(integer = TRUE)
-dim(vacc_skipped) <- n_vacc_classes
+vacc_skip_from[] <- user(integer = TRUE)
+dim(vacc_skip_from) <- n_vacc_classes
+vacc_skip_progression_rate_base[] <- user()
+dim(vacc_skip_progression_rate_base) <- n_vacc_classes
 vacc_skip_dose[] <- user(integer = TRUE)
 dim(vacc_skip_dose) <- n_doses
 vacc_skip_dose_inverse[] <- user(integer = TRUE)
 dim(vacc_skip_dose_inverse) <- n_vacc_classes
 vacc_skip_dose_weight[] <- user()
 dim(vacc_skip_dose_weight) <- n_doses
+vacc_skipped[] <- user(integer = TRUE)
+dim(vacc_skipped) <- n_vacc_classes
 
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
