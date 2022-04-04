@@ -763,6 +763,9 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' @param infections_inc_per_strain Logical, whether to output
 ##'   infections incidence per strain (default = TRUE)
 ##'
+##' @param severity Logical, whether to output severity calculations
+##'   (default = FALSE)
+##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
@@ -783,7 +786,8 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                            diagnoses_admitted = TRUE,
                            cum_infections_disag = TRUE,
                            cum_n_vaccinated = TRUE, D_all = TRUE,
-                           D_hosp = TRUE, infections_inc_per_strain = TRUE) {
+                           D_hosp = TRUE, infections_inc_per_strain = TRUE,
+                           severity = FALSE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -970,6 +974,12 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
 
   if (infections_inc_per_strain) {
     index_state <- c(index_state, index_infections_inc_per_strain)
+  }
+
+  if (severity) {
+    index_severity <- c(ifr = index[["ifr"]], ihr = index[["ihr"]],
+                        hfr = index[["hfr"]])
+    index_state <- c(index_state, index_severity)
   }
 
 
