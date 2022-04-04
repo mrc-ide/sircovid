@@ -1107,3 +1107,76 @@ test_that("Severity probabilities correctly capped at 1", {
   helper("p_R")
 
 })
+
+
+test_that("Severity outputs are correctly calculated", {
+
+  helper <- function(prob_C, prob_H, prob_G_D,
+                     prob_ICU, prob_ICU_D, prob_H_D, prob_W_D,
+                     ihr, ifr, hfr) {
+
+    p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+    p$p_C_step[, ] <- prob_C %||% p$p_C_step
+    p$p_H_step[, ] <- prob_H %||% p$p_H_step
+    p$p_G_D_step[, ] <- prob_G_D %||% p$p_G_D_step
+    p$p_ICU_step[, ] <- prob_ICU %||% p$p_ICU_step
+    p$p_ICU_D_step[, ] <- prob_ICU_D %||% p$p_ICU_D_step
+    p$p_H_D_step[, ] <- prob_H_D %||% p$p_H_D_step
+    p$p_W_D_step[, ] <- prob_W_D %||% p$p_W_D_step
+
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
+    mod$update_state(state = lancelot_initial(info, 1, p))
+    y <- mod$transform_variables(
+      drop(mod$simulate(seq(0, 400, by = 4))))
+
+    mod_ifr <- y$ifr[!is.na(y$ifr)][-1]
+    mod_ihr <- y$ihr[!is.na(y$ihr)][-1]
+    mod_hfr <- y$hfr[!is.na(y$hfr)][-1]
+
+    if (length(mod_ifr) > 0) {
+      expect_vector_equal(mod_ifr, ifr)
+    }
+    if (length(mod_ihr) > 0) {
+      expect_vector_equal(mod_ihr, ihr)
+    }
+    if (length(mod_hfr) > 0) {
+      expect_vector_equal(mod_hfr, hfr)
+    }
+  }
+
+  # Test p_C = 0
+  helper(0, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0)
+
+  # Test p_C = 1 & p_H = 0
+  helper(1, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, 0)
+
+  # Test p_C = 1 & p_H = 1 & p_G_D = 1
+  helper(1, 1, 1, NULL, NULL, NULL, NULL, 0, 1, 0)
+
+  # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 0 & p_H_D = 0
+  helper(1, 1, 0, 0, NULL, 0, NULL, 1, 0, 0)
+
+  # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 0 & p_H_D = 1
+  helper(1, 1, 0, 0, NULL, 1, NULL, 1, 1, 1)
+
+  # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 0 & p_W_D = 1
+  helper(1, 1, 0, 1, 0, NULL, 1, 1, 1, 1)
+
+  # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 0 & p_W_D = 0
+  helper(1, 1, 0, 1, 0, NULL, 0, 1, 0, 0)
+
+  # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 1
+  helper(1, 1, 0, 1, 1, NULL, NULL, 1, 1, 1)
+})
+
+
+
+
+
+
+
+
+
+
+
