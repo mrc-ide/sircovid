@@ -2259,6 +2259,36 @@ vacc_skip_to <- user(integer = TRUE)
 vacc_skip_dose <- user(integer = TRUE)
 vacc_skip_weight <- user()
 
+## Severity outputs by age - vacc class - infection class
+dim(new_inf) <- c(n_groups, n_strains, n_vacc_classes)
+dim(IHR_disag) <- c(n_groups, n_strains, n_vacc_classes)
+dim(IHR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+dim(HFR_disag) <- c(n_groups, n_strains, n_vacc_classes)
+dim(HFR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+dim(IFR_disag) <- c(n_groups, n_strains, n_vacc_classes)
+dim(IFR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+
+new_inf[, , ] <- n_S_progress[i, j, k] +
+  (if (j > 2) n_RE[i, j - 2, k] else 0)
+
+IHR_disag[, , ] <- p_C[i, j, k] * p_H[i, j, k] * (1 - p_G_D[i, j, k])
+IHR_disag_weighted[, , ] <- IHR_disag[i, j, k] * new_inf[i, j, k]
+initial(ihr) <- 0
+update(ihr) <- sum(IHR_disag_weighted) / sum(new_inf)
+
+HFR_disag[, , ] <- (1 - p_ICU[i, j, k]) * p_H_D[i, j, k] +
+  p_ICU[i, j, k] * p_ICU_D[i, j, k] +
+  p_ICU[i, j, k] * (1 - p_ICU_D[i, j, k]) * p_W_D[i, j, k]
+HFR_disag_weighted[, , ] <- HFR_disag[i, j, k] * n_I_C_2_to_hosp[i, j, k]
+initial(hfr) <- 0
+update(hfr) <- sum(HFR_disag_weighted) / sum(n_I_C_2_to_hosp)
+
+IFR_disag[, , ] <- IHR_disag[i, j , k] * HFR_disag[i, j, k] +
+  p_C[i, j, k] * p_H[i, j, k] * p_G_D[i, j, k]
+IFR_disag_weighted[, , ] <- IFR_disag[i, j, k] * new_inf[i, j, k]
+initial(ifr) <- 0
+update(ifr) <- sum(IFR_disag_weighted) / sum(new_inf)
+
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
 ## do not appear in any odin equation we mark them as "ignore.unused"
