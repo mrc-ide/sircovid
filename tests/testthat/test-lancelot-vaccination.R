@@ -3203,23 +3203,23 @@ test_that("Vaccine skip works in all compartments", {
   ## cum_n_X_vacc_skip[, 3, , ] should be equal to the totals in vaccine class 5
   ## but there should be no other vacc skip moves
   expect_true(any(y$cum_n_S_vacc_skip > 0))
-  expect_true(any(y$cum_n_S_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_true(all(y$cum_n_S_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
   expect_equal(y$cum_n_S_vacc_skip[, 3, , ],
                apply(y$S[, 5, , , drop = FALSE], c(1, 3, 4), sum))
   expect_true(any(y$cum_n_E_vacc_skip > 0))
-  expect_true(any(y$cum_n_E_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_true(all(y$cum_n_E_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
   expect_equal(y$cum_n_E_vacc_skip[, 3, , ],
                apply(y$E[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
   expect_true(any(y$cum_n_I_A_vacc_skip > 0))
-  expect_true(any(y$cum_n_I_A_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_true(all(y$cum_n_I_A_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
   expect_equal(y$cum_n_I_A_vacc_skip[, 3, , ],
                apply(y$I_A[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
   expect_true(any(y$cum_n_I_P_vacc_skip > 0))
-  expect_true(any(y$cum_n_I_P_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_true(all(y$cum_n_I_P_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
   expect_equal(y$cum_n_I_P_vacc_skip[, 3, , ],
                apply(y$I_P[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
   expect_true(any(y$cum_n_R_vacc_skip > 0))
-  expect_true(any(y$cum_n_R_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_true(all(y$cum_n_R_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
   expect_equal(y$cum_n_R_vacc_skip[, 3, , ],
                apply(y$R[, , 5, , , drop = FALSE], c(1, 4, 5), sum))
 })
