@@ -1941,7 +1941,6 @@ lancelot_parameters_vacc_skip <- function(vacc_skip_to,
                                           n_doses,
                                           index_dose_inverse) {
 
-  n_vacc_classes <- n_vacc_classes
   vacc_classes <- seq_len(n_vacc_classes)
   if (length(vacc_skip_to) != n_vacc_classes) {
     stop(sprintf("There are %s vaccine classes so 'vacc_skip_to' must be of
