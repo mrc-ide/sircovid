@@ -360,16 +360,23 @@ to 1 by default}
 
 \item{vacc_skip_progression_rate}{A vector of length equal to the number of
 vaccine strata. Represents the base progression rate for "vaccine skip
-moves" from each strata. Must be 0 for all \code{j} for which
-\code{vacc_skip[j] = 0}. Default is a vector of 0s}
+moves" from each strata. The rate is assumed to be the same across all age
+groups. Must be 0 for all \code{j} for which \code{vacc_skip[j] = 0}. Default is a
+vector of 0s}
 
 \item{vacc_skip_to}{A vector of integers of length equal to the number of
 vaccine strata. The value of \code{vacc_skip_to[j]} represents the vaccine
 stratum an individual in vaccine stratum \code{j} can move to in a
 "vaccine skip move". Values can be 0 (which mean there is no vaccine skip
 move from that stratum), or greater than or equal to \code{j + 2} (we already
-account for moves between successive vaccine strata). Overlapping vaccine
-skip moves are not allowed. Default is a vector of 0s}
+account for moves between successive vaccine strata). More than one
+vaccine skip move to the same vaccine stratum is not allowed, so all
+non-zero values in \code{vacc_skip_to} must be unique. Overlapping vaccine
+skip moves are also not allowed - if a there is a vaccine skip move from
+\code{i} to \code{j} there can be no vaccine skip moves from stratum \code{k} where
+\verb{i < k < j}. For example, having vaccine skip moves from 2 to 4 and 3 to 5
+would not be allowed, but moves from 2 to 4 and 4 to 6 would be allowed.
+Default is a vector of 0s}
 
 \item{vacc_skip_weight}{A vector of weights of length equal to the number
 of vaccine strata. If movement into \code{vacc_skip_to[j]} from
