@@ -46,10 +46,9 @@ lancelot_parameters(
   vaccine_index_booster = NULL,
   vaccine_catchup_fraction = 1,
   n_doses = 2L,
-  vacc_skip_progression_rate = 0,
-  vacc_skip_from = 1L,
-  vacc_skip_to = 1L,
-  vacc_skip_weight = 0,
+  vacc_skip_progression_rate = NULL,
+  vacc_skip_to = NULL,
+  vacc_skip_weight = NULL,
   waning_rate = 0,
   exp_noise = 1e+06,
   cross_immunity = 1
@@ -346,7 +345,7 @@ people to be vaccinated by group over time}
 
 \item{vaccine_index_dose2}{The index to use for the second dose}
 
-\item{vaccine_index_booster}{The index to use for the booster dose}
+\item{vaccine_index_booster}{The indices to use for the booster doses}
 
 \item{vaccine_catchup_fraction}{A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because
@@ -359,28 +358,33 @@ to 1 by default}
 \item{n_doses}{Number of doses given out, including boosters. Default is
 2.}
 
-\item{vacc_skip_progression_rate}{Either a vector of length 19 representing
-the base progression rate for "vaccine skip moves" for each group, or a
-scalar representing the base progression rate for all groups. Must be 0
-(which is the default) if \code{vacc_skip_to == vacc_skip_from}}
+\item{vacc_skip_progression_rate}{A vector of length equal to the number of
+vaccine strata. Represents the base progression rate for "vaccine skip
+moves" from each strata. The rate is assumed to be the same across all age
+groups. Must be 0 for all \code{j} for which \code{vacc_skip[j] = 0}. Default is a
+vector of 0s}
 
-\item{vacc_skip_from}{An integer, the vaccine stratum index from which we
-allow a "vaccine skip move", which enables individuals to progress through
-more than one vaccine class in a single step. Default is 1}
+\item{vacc_skip_to}{A vector of integers of length equal to the number of
+vaccine strata. The value of \code{vacc_skip_to[j]} represents the vaccine
+stratum an individual in vaccine stratum \code{j} can move to in a
+"vaccine skip move". Values can be 0 (which mean there is no vaccine skip
+move from that stratum), or greater than or equal to \code{j + 2} (we already
+account for moves between successive vaccine strata). More than one
+vaccine skip move to the same vaccine stratum is not allowed, so all
+non-zero values in \code{vacc_skip_to} must be unique. Overlapping vaccine
+skip moves are also not allowed - if a there is a vaccine skip move from
+\code{i} to \code{j} there can be no vaccine skip moves from stratum \code{k} where
+\verb{i < k < j}. For example, having vaccine skip moves from 2 to 4 and 3 to 5
+would not be allowed, but moves from 2 to 4 and 4 to 6 would be allowed.
+Default is a vector of 0s}
 
-\item{vacc_skip_to}{An integer, the vaccine stratum index representing the
-vaccine stratum an individual in stratum \code{vacc_skip_from} can move to in a
-"vaccine skip move". Must be either equal to \code{vacc_skip_from} (to allow
-the vaccine skip move to be switched "off"), or greater than or equal to
-\code{vacc_skip_from + 2} (we already account for moves between successive
-vaccine strata). Default is 1}
-
-\item{vacc_skip_weight}{A scalar weight. If movement into \code{vacc_skip_to}
-from \code{vacc_skip_to - 1} is controlled by doses, then the "vaccine skip
-move" is too, and the weight represents how much those in \code{vacc_skip_from}
-are weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
-Must be between 0 and 1. Must be 0 (which is the default) if
-\code{vacc_skip_to == vacc_skip_from}}
+\item{vacc_skip_weight}{A vector of weights of length equal to the number
+of vaccine strata. If movement into \code{vacc_skip_to[j]} from
+\code{vacc_skip_to[j] - 1} is controlled by doses, then the "vaccine skip move"
+is too, and the weight represents how much those in strata \code{j} are
+weighted in dose distribution relative to those in \code{vacc_skip_to - 1}.
+Must be between 0 and 1. Must be 0 for any \code{j} for which
+\code{vacc_skip_to = 0}. Default is a vector of 0s}
 
 \item{waning_rate}{A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
