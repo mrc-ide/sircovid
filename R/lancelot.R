@@ -765,7 +765,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                            cum_infections_disag = TRUE,
                            cum_n_vaccinated = TRUE, D_all = TRUE,
                            D_hosp = TRUE, infections_inc_per_strain = TRUE,
-                           severity = TRUE) {
+                           severity = FALSE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
