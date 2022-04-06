@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.10</span>
       </span>
     </div>
 
@@ -95,10 +95,9 @@
   vaccine_index_booster <span class="op">=</span> <span class="cn">NULL</span>,
   vaccine_catchup_fraction <span class="op">=</span> <span class="fl">1</span>,
   n_doses <span class="op">=</span> <span class="fl">2L</span>,
-  vacc_skip_progression_rate <span class="op">=</span> <span class="fl">0</span>,
-  vacc_skip_from <span class="op">=</span> <span class="fl">1L</span>,
-  vacc_skip_to <span class="op">=</span> <span class="fl">1L</span>,
-  vacc_skip_weight <span class="op">=</span> <span class="fl">0</span>,
+  vacc_skip_progression_rate <span class="op">=</span> <span class="cn">NULL</span>,
+  vacc_skip_to <span class="op">=</span> <span class="cn">NULL</span>,
+  vacc_skip_weight <span class="op">=</span> <span class="cn">NULL</span>,
   waning_rate <span class="op">=</span> <span class="fl">0</span>,
   exp_noise <span class="op">=</span> <span class="fl">1e+06</span>,
   cross_immunity <span class="op">=</span> <span class="fl">1</span>
@@ -398,7 +397,7 @@ people to be vaccinated by group over time</p></dd>
 <dt>vaccine_index_dose2</dt>
 <dd><p>The index to use for the second dose</p></dd>
 <dt>vaccine_index_booster</dt>
-<dd><p>The index to use for the booster dose</p></dd>
+<dd><p>The indices to use for the booster doses</p></dd>
 <dt>vaccine_catchup_fraction</dt>
 <dd><p>A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because
@@ -411,28 +410,33 @@ to 1 by default</p></dd>
 <dd><p>Number of doses given out, including boosters. Default is
 2.</p></dd>
 <dt>vacc_skip_progression_rate</dt>
-<dd><p>Either a vector of length 19 representing
-the base progression rate for "vaccine skip moves" for each group, or a
-scalar representing the base progression rate for all groups. Must be 0
-(which is the default) if <code>vacc_skip_to == vacc_skip_from</code></p></dd>
-<dt>vacc_skip_from</dt>
-<dd><p>An integer, the vaccine stratum index from which we
-allow a "vaccine skip move", which enables individuals to progress through
-more than one vaccine class in a single step. Default is 1</p></dd>
+<dd><p>A vector of length equal to the number of
+vaccine strata. Represents the base progression rate for "vaccine skip
+moves" from each strata. The rate is assumed to be the same across all age
+groups. Must be 0 for all <code>j</code> for which <code>vacc_skip[j] = 0</code>. Default is a
+vector of 0s</p></dd>
 <dt>vacc_skip_to</dt>
-<dd><p>An integer, the vaccine stratum index representing the
-vaccine stratum an individual in stratum <code>vacc_skip_from</code> can move to in a
-"vaccine skip move". Must be either equal to <code>vacc_skip_from</code> (to allow
-the vaccine skip move to be switched "off"), or greater than or equal to
-<code>vacc_skip_from + 2</code> (we already account for moves between successive
-vaccine strata). Default is 1</p></dd>
+<dd><p>A vector of integers of length equal to the number of
+vaccine strata. The value of <code>vacc_skip_to[j]</code> represents the vaccine
+stratum an individual in vaccine stratum <code>j</code> can move to in a
+"vaccine skip move". Values can be 0 (which mean there is no vaccine skip
+move from that stratum), or greater than or equal to <code>j + 2</code> (we already
+account for moves between successive vaccine strata). More than one
+vaccine skip move to the same vaccine stratum is not allowed, so all
+non-zero values in <code>vacc_skip_to</code> must be unique. Overlapping vaccine
+skip moves are also not allowed - if a there is a vaccine skip move from
+<code>i</code> to <code>j</code> there can be no vaccine skip moves from stratum <code>k</code> where
+<code>i &lt; k &lt; j</code>. For example, having vaccine skip moves from 2 to 4 and 3 to 5
+would not be allowed, but moves from 2 to 4 and 4 to 6 would be allowed.
+Default is a vector of 0s</p></dd>
 <dt>vacc_skip_weight</dt>
-<dd><p>A scalar weight. If movement into <code>vacc_skip_to</code>
-from <code>vacc_skip_to - 1</code> is controlled by doses, then the "vaccine skip
-move" is too, and the weight represents how much those in <code>vacc_skip_from</code>
-are weighted in dose distribution relative to those in <code>vacc_skip_to - 1</code>.
-Must be between 0 and 1. Must be 0 (which is the default) if
-<code>vacc_skip_to == vacc_skip_from</code></p></dd>
+<dd><p>A vector of weights of length equal to the number
+of vaccine strata. If movement into <code>vacc_skip_to[j]</code> from
+<code>vacc_skip_to[j] - 1</code> is controlled by doses, then the "vaccine skip move"
+is too, and the weight represents how much those in strata <code>j</code> are
+weighted in dose distribution relative to those in <code>vacc_skip_to - 1</code>.
+Must be between 0 and 1. Must be 0 for any <code>j</code> for which
+<code>vacc_skip_to = 0</code>. Default is a vector of 0s</p></dd>
 <dt>waning_rate</dt>
 <dd><p>A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
