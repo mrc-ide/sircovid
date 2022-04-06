@@ -18,7 +18,7 @@ conforms to the mcstate interface.'><meta property="og:image" content="/logo.png
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.11</span>
       </span>
     </div>
 
@@ -64,7 +64,8 @@ conforms to the mcstate interface.</p>
   cum_n_vaccinated <span class="op">=</span> <span class="cn">TRUE</span>,
   D_all <span class="op">=</span> <span class="cn">TRUE</span>,
   D_hosp <span class="op">=</span> <span class="cn">TRUE</span>,
-  infections_inc_per_strain <span class="op">=</span> <span class="cn">TRUE</span>
+  infections_inc_per_strain <span class="op">=</span> <span class="cn">TRUE</span>,
+  severity <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -99,6 +100,9 @@ cumulative number vaccinated by age and vaccine class
 <dt>infections_inc_per_strain</dt>
 <dd><p>Logical, whether to output
 infections incidence per strain (default = TRUE)</p></dd>
+<dt>severity</dt>
+<dd><p>Logical, whether to output severity calculations
+(default = FALSE)</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -232,161 +236,161 @@ carehome workers and carehome residents respectively) and 17
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         infections                     infections_inc </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 13                                 14 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            effective_susceptible_1                                S_0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                164                                450 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                167                                453 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                S_5                               S_10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                451                                452 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                454                                455 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_15                               S_20 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                453                                454 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                456                                457 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_25                               S_30 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                455                                456 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                458                                459 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_35                               S_40 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                457                                458 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                460                                461 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_45                               S_50 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                459                                460 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                462                                463 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_55                               S_60 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                461                                462 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                464                                465 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_65                               S_70 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                463                                464 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                466                                467 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               S_75                               S_80 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                465                                466 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                468                                469 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              S_CHW                              S_CHR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                467                                468 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                470                                471 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                R_0                                R_5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                602                                603 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                605                                606 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_10                               R_15 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                604                                605 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                607                                608 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_20                               R_25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                606                                607 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                609                                610 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_30                               R_35 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                608                                609 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                611                                612 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_40                               R_45 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                610                                611 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                613                                614 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_50                               R_55 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                612                                613 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                615                                616 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_60                               R_65 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                614                                615 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                617                                618 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_70                               R_75 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                616                                617 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                619                                620 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               R_80                              R_CHW </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                618                                619 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                621                                622 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                              R_CHR                        prob_strain </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                620                                163 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                623                                166 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        cum_admit_0                        cum_admit_5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                125                                126 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                128                                129 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_10                       cum_admit_15 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                127                                128 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                130                                131 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_20                       cum_admit_25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                129                                130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                132                                133 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_30                       cum_admit_35 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                131                                132 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                134                                135 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_40                       cum_admit_45 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                133                                134 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                136                                137 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_50                       cum_admit_55 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                135                                136 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                138                                139 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_60                       cum_admit_65 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                137                                138 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                140                                141 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_70                       cum_admit_75 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                139                                140 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                142                                143 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       cum_admit_80                      cum_admit_CHW </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                141                                142 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                144                                145 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      cum_admit_CHR               diagnoses_admitted_0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                143                                393 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                146                                396 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               diagnoses_admitted_5              diagnoses_admitted_10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                394                                395 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                397                                398 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_15              diagnoses_admitted_20 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                396                                397 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                399                                400 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_25              diagnoses_admitted_30 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                398                                399 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                401                                402 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_35              diagnoses_admitted_40 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                400                                401 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                403                                404 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_45              diagnoses_admitted_50 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                402                                403 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                405                                406 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_55              diagnoses_admitted_60 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                404                                405 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                407                                408 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_65              diagnoses_admitted_70 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                406                                407 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                409                                410 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              diagnoses_admitted_75              diagnoses_admitted_80 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                408                                409 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                411                                412 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             diagnoses_admitted_CHW             diagnoses_admitted_CHR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                410                                411 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                413                                414 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             cum_infections_disag_0             cum_infections_disag_5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                412                                413 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                415                                416 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_10            cum_infections_disag_15 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                414                                415 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                417                                418 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_20            cum_infections_disag_25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                416                                417 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                419                                420 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_30            cum_infections_disag_35 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                418                                419 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                421                                422 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_40            cum_infections_disag_45 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                420                                421 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                423                                424 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_50            cum_infections_disag_55 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                422                                423 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                425                                426 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_60            cum_infections_disag_65 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                424                                425 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                427                                428 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_70            cum_infections_disag_75 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                426                                427 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                429                                430 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            cum_infections_disag_80           cum_infections_disag_CHW </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                428                                429 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           cum_infections_disag_CHR                 cum_n_vaccinated_0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                430                                260 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 cum_n_vaccinated_5                cum_n_vaccinated_10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                261                                262 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_15                cum_n_vaccinated_20 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                263                                264 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_25                cum_n_vaccinated_30 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                265                                266 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_35                cum_n_vaccinated_40 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                267                                268 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_45                cum_n_vaccinated_50 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                269                                270 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_55                cum_n_vaccinated_60 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                271                                272 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_65                cum_n_vaccinated_70 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                273                                274 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_75                cum_n_vaccinated_80 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                275                                276 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               cum_n_vaccinated_CHW               cum_n_vaccinated_CHR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                277                                278 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                            D_all_0                            D_all_5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                431                                432 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           cum_infections_disag_CHR                 cum_n_vaccinated_0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                433                                263 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 cum_n_vaccinated_5                cum_n_vaccinated_10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                264                                265 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_15                cum_n_vaccinated_20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                266                                267 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_25                cum_n_vaccinated_30 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                268                                269 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_35                cum_n_vaccinated_40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                270                                271 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_45                cum_n_vaccinated_50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                272                                273 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_55                cum_n_vaccinated_60 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                274                                275 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_65                cum_n_vaccinated_70 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                276                                277 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                cum_n_vaccinated_75                cum_n_vaccinated_80 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                278                                279 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               cum_n_vaccinated_CHW               cum_n_vaccinated_CHR </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                280                                281 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            D_all_0                            D_all_5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                434                                435 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_10                           D_all_15 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                433                                434 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                436                                437 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_20                           D_all_25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                435                                436 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                438                                439 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_30                           D_all_35 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                437                                438 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                440                                441 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_40                           D_all_45 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                439                                440 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                442                                443 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_50                           D_all_55 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                441                                442 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                444                                445 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_60                           D_all_65 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                443                                444 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                446                                447 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_70                           D_all_75 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                445                                446 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                448                                449 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_all_80                          D_all_CHW </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                447                                448 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                450                                451 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_all_CHR                           D_hosp_0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                449                                 87 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                452                                 90 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           D_hosp_5                          D_hosp_10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 88                                 89 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 91                                 92 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_15                          D_hosp_20 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 90                                 91 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 93                                 94 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_25                          D_hosp_30 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 92                                 93 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 95                                 96 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_35                          D_hosp_40 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 94                                 95 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 97                                 98 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_45                          D_hosp_50 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 96                                 97 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 99                                100 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_55                          D_hosp_60 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 98                                 99 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                101                                102 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_65                          D_hosp_70 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                100                                101 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                103                                104 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          D_hosp_75                          D_hosp_80 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                102                                103 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                105                                106 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         D_hosp_CHW                         D_hosp_CHR </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                104                                105 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                107                                108 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            infections_inc_strain_1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 86 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 89 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

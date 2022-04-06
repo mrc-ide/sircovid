@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.11</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">combine_rt</span><span class="op">(</span><span class="va">rt</span>, <span class="va">samples</span>, rank <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">combine_rt</span><span class="op">(</span><span class="va">rt</span>, <span class="va">samples</span>, rank <span class="op">=</span> <span class="cn">TRUE</span>, weight <span class="op">=</span> <span class="st">"infections_inc"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -67,6 +67,9 @@ confirms to this will work)</p></dd>
 <dt>rank</dt>
 <dd><p>A boolean deciding whether to rank trajectories by increasing
 incidence or not before combining Rt estimates</p></dd>
+<dt>weight</dt>
+<dd><p>A string specifying what trajectory to use for weighting,
+defaults to "infections_inc" (used for Rt calculation)</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
