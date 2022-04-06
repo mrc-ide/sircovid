@@ -4,7 +4,7 @@
 \alias{combine_rt}
 \title{Combine Rt estimates}
 \usage{
-combine_rt(rt, samples, rank = TRUE)
+combine_rt(rt, samples, rank = TRUE, weight = "infections_inc")
 }
 \arguments{
 \item{rt}{A list of Rt calculations from
@@ -15,6 +15,9 @@ confirms to this will work)}
 
 \item{rank}{A boolean deciding whether to rank trajectories by increasing
 incidence or not before combining Rt estimates}
+
+\item{weight}{A string specifying what trajectory to use for weighting,
+defaults to "infections_inc" (used for Rt calculation)}
 }
 \value{
 A list of Rt output in the same structure as the first
