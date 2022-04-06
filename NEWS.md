@@ -1,3 +1,7 @@
+# sircovid 0.13.10
+
+* Add logical flag to turn on/off exporting of severity outcomes
+
 # sircovid 0.13.5
 
 * Add logical flag to turn on/off exporting all death classes by age
