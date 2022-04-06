@@ -1094,7 +1094,7 @@ test_that("Severity probabilities correctly capped at 1", {
     mod$update_state(state = lancelot_initial(info, 1, p))
     y2 <- mod$simulate(seq(0, 400, by = 4))
 
-    expect_true(all(y == y2))
+    expect_true(all(y == y2, na.rm = TRUE))
   }
 
   helper("p_C")
