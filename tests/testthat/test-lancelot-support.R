@@ -836,6 +836,32 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_n_vaccinated,
       info$index$D,
       info$index$D_hosp,
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
+
+  index_severity <- lancelot_index(info, severity = FALSE)
+  expect_equal(
+    unname(index_severity$state[
+      !names(index_severity$state) %in% names(index_severity$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$D,
+      info$index$D_hosp,
       info$index$infections_inc_per_strain))
 
   index_rt <- lancelot_index(info, rt = FALSE)
@@ -855,7 +881,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_n_vaccinated,
       info$index$D,
       info$index$D_hosp,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
 
   index_cum_admit <- lancelot_index(info, cum_admit = FALSE)
@@ -878,7 +907,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_n_vaccinated,
       info$index$D,
       info$index$D_hosp,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
   index_diagnoses_admitted <- lancelot_index(info, diagnoses_admitted = FALSE)
   expect_equal(
@@ -901,7 +933,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_n_vaccinated,
       info$index$D,
       info$index$D_hosp,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
   index_cum_infections_disag <- lancelot_index(info,
    cum_infections_disag = FALSE)
@@ -925,7 +960,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_n_vaccinated,
       info$index$D,
       info$index$D_hosp,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
   index_cum_n_vaccinated <- lancelot_index(info, cum_n_vaccinated = FALSE)
   expect_equal(
@@ -948,7 +986,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$D,
       info$index$D_hosp,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
   index_inf_per_strain <-
     lancelot_index(info, infections_inc_per_strain = FALSE)
@@ -972,7 +1013,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D,
-      info$index$D_hosp))
+      info$index$D_hosp,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
   index_D <- lancelot_index(info, D_all = FALSE)
   expect_equal(
@@ -995,7 +1039,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D_hosp,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 
   index_D_hosp <- lancelot_index(info, D_hosp = FALSE)
   expect_equal(
@@ -1018,7 +1065,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$cum_infections_disag,
       info$index$cum_n_vaccinated,
       info$index$D,
-      info$index$infections_inc_per_strain))
+      info$index$infections_inc_per_strain,
+      info$index$ifr,
+      info$index$ihr,
+      info$index$hfr))
 })
 
 
