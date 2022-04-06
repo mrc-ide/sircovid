@@ -2313,7 +2313,7 @@ HFR_disag_weighted[, , ] <- HFR_disag[i, j, k] * n_I_C_2_to_hosp[i, j, k]
 initial(hfr) <- 0
 update(hfr) <- sum(HFR_disag_weighted) / sum(n_I_C_2_to_hosp)
 
-IFR_disag[, , ] <- IHR_disag[i, j , k] * HFR_disag[i, j, k] +
+IFR_disag[, , ] <- IHR_disag[i, j, k] * HFR_disag[i, j, k] +
   p_C[i, j, k] * p_H[i, j, k] * p_G_D[i, j, k]
 IFR_disag_weighted[, , ] <- IFR_disag[i, j, k] * new_inf[i, j, k]
 initial(ifr) <- 0

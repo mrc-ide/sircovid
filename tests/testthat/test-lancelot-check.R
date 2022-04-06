@@ -1169,14 +1169,3 @@ test_that("Severity outputs are correctly calculated", {
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 1
   helper(1, 1, 0, 1, 1, NULL, NULL, 1, 1, 1)
 })
-
-
-
-
-
-
-
-
-
-
-
