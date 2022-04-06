@@ -1,6 +1,10 @@
-# sircovid 0.13.10
+# sircovid 0.13.11
 
 * Add logical flag to turn on/off exporting of severity outcomes
+
+# sircovid 0.13.10
+
+* Multiple vaccine skip moves now allowed and `lancelot_parameters` now allows multiple boosters 
 
 # sircovid 0.13.5
 

@@ -1658,7 +1658,7 @@ test_that("build_vaccine_progression_rate rejects insensible inputs", {
       vaccine_index_dose2 = 3,
       vaccine_index_booster = 4,
       vaccine_schedule = schedule),
-    "'n_doses' must be 3 as boosters are used",
+    "'n_doses' must be 3 as 1 boosters are used",
     fixed = TRUE)
 
   schedule <- vaccine_schedule(date = 1L,
@@ -3005,58 +3005,70 @@ test_that("run sensible vaccination schedule with waning and boosters", {
 })
 
 test_that("Can validate vaccine skip move inputs", {
-  expect_error(lancelot_parameters(1, "london", vacc_skip_from = 2),
-               "There are 1 vaccine classes so 'vacc_skip_from' and")
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
+                                   vacc_skip_to = c(1, 3)),
+               "There are 3 vaccine classes so 'vacc_skip_to' must be of")
 
-  expect_error(lancelot_parameters(1, "london", vacc_skip_to = 4,
-                                   rel_susceptibility = c(1, 1, 1)),
-               "There are 3 vaccine classes so 'vacc_skip_from' and")
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1),
+                                   vacc_skip_weight = c(0, 1, 1)),
+               "There are 2 vaccine classes so 'vacc_skip_weight' must be of")
+
+  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1),
+                                   vacc_skip_progression_rate = c(0, 0, 0)),
+               "There are 2 vaccine classes so 'vacc_skip_progression_rate'")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_progression_rate = rep(0, 19),
-                                   vacc_skip_from = 3L, vacc_skip_to = 2L),
-               "Require vacc_skip_to = vacc_skip_from or vacc_skip_to >=")
+                                   vacc_skip_to = c(4, 0, 0)),
+               "There are 3 vaccine classes so the values in 'vacc_skip_to'")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_progression_rate = rep(1, 19),
-                                   vacc_skip_from = 2L, vacc_skip_to = 2L),
-               "Require vacc_skip_progression_rate = 0 as vacc_skip_to =")
+                                   vacc_skip_to = c(3, 0, 0),
+                                   vacc_skip_weight = c(1, 1, 0)),
+               "Require 0 values in 'vacc_skip_weight' for vaccine strata that")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_progression_rate = rep(0, 19),
-                                   vacc_skip_weight = 1,
-                                   vacc_skip_from = 2L, vacc_skip_to = 2L),
-               "Require vacc_skip_weight = 0 as vacc_skip_to =")
+                                   vacc_skip_to = c(3, 0, 0),
+                                   vacc_skip_progression_rate = c(1, 1, 0)),
+               "Require 0 values in 'vacc_skip_progression_rate' for vaccine")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_progression_rate = c(1, 1),
-                                   vacc_skip_weight = 1,
-                                   vacc_skip_from = 1L, vacc_skip_to = 3L),
-               "'vacc_skip_progression_rate' must be a scalar or a vector")
+                                   vacc_skip_to = c(2, 0, 0)),
+               "Require vacc_skip_to")
+
+  expect_error(lancelot_parameters(1, "london",
+                                   rel_susceptibility = c(1, 1, 1, 1),
+                                   vacc_skip_to = c(4, 4, 0, 0)),
+               "Cannot have more than one vaccine skip move to the same")
 
   expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_from = 1L, vacc_skip_to = 3L,
-                                   vacc_skip_weight = 1.4),
+                                   vacc_skip_to = c(3, 0, 0),
+                                   vacc_skip_weight = c(1.5, 0, 0)),
                "'vacc_skip_weight' must lie in")
 
-  expect_error(lancelot_parameters(1, "london", rel_susceptibility = c(1, 1, 1),
-                                   vacc_skip_from = 1L, vacc_skip_to = 3L,
-                                   vacc_skip_weight = -1),
-               "'vacc_skip_weight' must lie in")
+  expect_error(lancelot_parameters(1, "london",
+                                   rel_susceptibility = c(1, 1, 1, 1),
+                                   vacc_skip_to = c(3, 4, 0, 0)),
+               "Cannot have overlapping vaccine skip moves")
 })
 
-test_that("vacc_skip_dose calculated correctly", {
+test_that("vacc_skip outputs calculated correctly", {
   vaccine_schedule <- test_vaccine_schedule(booster_daily_doses = 10000)
 
   p <- lancelot_parameters(1, "london",
-                           rel_susceptibility = rep(1, 5),
-                           vaccine_index_dose2 = 2L,
-                           vaccine_index_booster = 4L,
+                           rel_susceptibility = rep(1, 6),
+                           vaccine_index_dose2 = 3L,
+                           vaccine_index_booster = 5L,
                            vaccine_schedule = vaccine_schedule,
                            n_doses = 3L,
-                           vacc_skip_from = 3L,
-                           vacc_skip_to = 5L)
-  expect_equal(p$vacc_skip_dose, 3L)
+                           vacc_skip_to = c(0, 4L, 0, 6L, 0, 0),
+                           vacc_skip_weight = c(0, 0.5, 0, 1, 0, 0),
+                           vacc_skip_progression_rate = rep(0, 6))
+  expect_equal(p$vacc_skip_dose, c(0L, 2L, 4L))
+  expect_equal(p$vacc_skip_dose_inverse, c(0L, 2L, 0L, 3L, 0L, 0L))
+  expect_equal(p$vacc_skip_dose_weight, c(0, 0.5, 1))
+  expect_equal(p$vacc_skip_from, c(0L, 0L, 0L, 2L, 0L, 4L))
+  expect_equal(p$vacc_skip_progression_rate_base, rep(0, 6))
+  expect_equal(p$vacc_skipped, c(0L, 2L, 2L, 4L, 4L, 0L))
 
   p <- lancelot_parameters(1, "london",
                            rel_susceptibility = rep(1, 5),
@@ -3064,9 +3076,15 @@ test_that("vacc_skip_dose calculated correctly", {
                            vaccine_index_booster = 4L,
                            vaccine_schedule = vaccine_schedule,
                            n_doses = 3L,
-                           vacc_skip_from = 2L,
-                           vacc_skip_to = 4L)
-  expect_equal(p$vacc_skip_dose, 0)
+                           vacc_skip_to = c(0L, 4L, 0L, 0L, 0L),
+                           vacc_skip_weight = rep(0, 5),
+                           vacc_skip_progression_rate = c(0, 2, 0, 0, 0))
+  expect_equal(p$vacc_skip_dose, integer(3))
+  expect_equal(p$vacc_skip_dose_inverse, integer(5))
+  expect_equal(p$vacc_skip_dose_weight, rep(0, 3))
+  expect_equal(p$vacc_skip_from, c(0L, 0L, 0L, 2L, 0L))
+  expect_equal(p$vacc_skip_progression_rate_base, c(0, 2, 0, 0, 0))
+  expect_equal(p$vacc_skipped, c(0L, 2L, 2L, 0L, 0L))
 })
 
 
@@ -3081,10 +3099,9 @@ test_that("N_tots stay constant with vaccine skip moves", {
                            vaccine_schedule = vaccine_schedule,
                            vaccine_progression_rate = c(0, 0, 1 / 10, 0, 0),
                            n_doses = 3,
-                           vacc_skip_from = 3L,
-                           vacc_skip_to = 5L,
-                           vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_to = c(0L, 0L, 5L, 0L, 0L),
+                           vacc_skip_weight = c(0, 0, 1, 0, 0),
+                           vacc_skip_progression_rate = rep(0, 5))
 
   mod <- lancelot$new(p, 0, 1, seed = 1L)
   info <- mod$info()
@@ -3114,10 +3131,9 @@ test_that("No vaccine skip moves when expected", {
                            vaccine_schedule = vaccine_schedule,
                            vaccine_progression_rate = c(0, 0, 1 / 10, 0, 0),
                            n_doses = 3,
-                           vacc_skip_from = 3L,
-                           vacc_skip_to = 5L,
-                           vacc_skip_weight = 0,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_to = c(0L, 0L, 5L, 0L, 0L),
+                           vacc_skip_weight = c(0, 0, 0, 0, 0),
+                           vacc_skip_progression_rate = rep(0, 5))
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -3131,7 +3147,7 @@ test_that("No vaccine skip moves when expected", {
   y <- mod$transform_variables(drop(y))
 
   ## no vaccine skip moves (boosting before waning)
-  expect_vector_equal(y$cum_n_vacc_skip[, , 220], 0)
+  expect_vector_equal(y$cum_n_vacc_skip[, , , 220], 0)
   ## but lots of people getting third doses
   expect_true(sum(y$cum_n_vaccinated[, 4, , 220]) > 1e6)
 })
@@ -3151,10 +3167,9 @@ test_that("Vaccine skip works in all compartments", {
                            vaccine_schedule = vaccine_schedule,
                            vaccine_progression_rate = c(0, 0, 0, 0, 0),
                            n_doses = 3,
-                           vacc_skip_from = 3L,
-                           vacc_skip_to = 5L,
-                           vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_to = c(0L, 0L, 5L, 0L, 0L),
+                           vacc_skip_weight = c(0, 0, 1, 0, 0),
+                           vacc_skip_progression_rate = rep(0, 5))
 
   p$gamma_E_step <- 0
   p$gamma_A_step <- 0
@@ -3185,21 +3200,27 @@ test_that("Vaccine skip works in all compartments", {
   y <- mod$simulate(1:200 * 4)
   y <- mod$transform_variables(drop(y))
 
-  ## cum_n_X_vacc_skip should be equal to the totals in vaccine class 5
+  ## cum_n_X_vacc_skip[, 3, , ] should be equal to the totals in vaccine class 5
+  ## but there should be no other vacc skip moves
   expect_true(any(y$cum_n_S_vacc_skip > 0))
-  expect_equal(y$cum_n_S_vacc_skip,
+  expect_true(all(y$cum_n_S_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_equal(y$cum_n_S_vacc_skip[, 3, , ],
                apply(y$S[, 5, , , drop = FALSE], c(1, 3, 4), sum))
   expect_true(any(y$cum_n_E_vacc_skip > 0))
-  expect_equal(y$cum_n_E_vacc_skip,
+  expect_true(all(y$cum_n_E_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_equal(y$cum_n_E_vacc_skip[, 3, , ],
                apply(y$E[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
   expect_true(any(y$cum_n_I_A_vacc_skip > 0))
-  expect_equal(y$cum_n_I_A_vacc_skip,
+  expect_true(all(y$cum_n_I_A_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_equal(y$cum_n_I_A_vacc_skip[, 3, , ],
                apply(y$I_A[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
   expect_true(any(y$cum_n_I_P_vacc_skip > 0))
-  expect_equal(y$cum_n_I_P_vacc_skip,
+  expect_true(all(y$cum_n_I_P_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_equal(y$cum_n_I_P_vacc_skip[, 3, , ],
                apply(y$I_P[, , , 5, , , drop = FALSE], c(1, 5, 6), sum))
   expect_true(any(y$cum_n_R_vacc_skip > 0))
-  expect_equal(y$cum_n_R_vacc_skip,
+  expect_true(all(y$cum_n_R_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+  expect_equal(y$cum_n_R_vacc_skip[, 3, , ],
                apply(y$R[, , 5, , , drop = FALSE], c(1, 4, 5), sum))
 })
 
@@ -3214,10 +3235,9 @@ test_that("Everyone vaccine skips if there is no waning", {
                            vaccine_schedule = vaccine_schedule,
                            vaccine_progression_rate = c(0, 0, 0, 0, 0),
                            n_doses = 3,
-                           vacc_skip_from = 3L,
-                           vacc_skip_to = 5L,
-                           vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = rep(0, 19))
+                           vacc_skip_to = c(0L, 0L, 5L, 0L, 0L),
+                           vacc_skip_weight = c(0, 0, 1, 0, 0),
+                           vacc_skip_progression_rate = rep(0, 5))
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -3244,8 +3264,10 @@ test_that("Everyone vaccine skips if there is no waning", {
 
   ## All booster moves are via vaccine skip
   expect_true(any(y$cum_n_vacc_skip > 0))
-  expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 3, , ])
-  expect_equal(y$cum_n_vacc_skip, y$cum_n_vaccinated[, 4, , ])
+  expect_true(all(y$cum_n_vacc_skip[, c(1, 2, 4, 5), , ] == 0))
+
+  expect_equal(y$cum_n_vacc_skip[, 3, , ], y$cum_n_vaccinated[, 3, , ])
+  expect_equal(y$cum_n_vacc_skip[, 3, , ], y$cum_n_vaccinated[, 4, , ])
 })
 
 
@@ -3260,10 +3282,9 @@ test_that("Equal vaccine skip weighting leads to equal distribution", {
                            vaccine_schedule = vaccine_schedule,
                            vaccine_progression_rate = c(0, 0, 0, 0, 0),
                            n_doses = 3,
-                           vacc_skip_from = 3L,
-                           vacc_skip_to = 5L,
-                           vacc_skip_weight = 1,
-                           vacc_skip_progression_rate = 0)
+                           vacc_skip_to = c(0L, 0L, 5L, 0L, 0L),
+                           vacc_skip_weight = c(0, 0, 1, 0, 0),
+                           vacc_skip_progression_rate = rep(0, 5))
   np <- 3L
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
@@ -3296,19 +3317,19 @@ test_that("Equal vaccine skip weighting leads to equal distribution", {
   expect_true(any(y$cum_n_R_vacc_skip > 0))
 
   ## vaccine skip moves should be around half of all the moves into booster
-  expect_approx_equal(colSums(y$cum_n_S_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_S_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_S_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_E_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_E_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_E_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_I_A_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_I_A_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_I_A_vaccinated[, 4, , 200]),
                       rep(0.5, 3), rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_I_P_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_I_P_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_I_P_vaccinated[, 4, , 200]),
                       rep(0.5, 3), rel_tol = 0.1)
-  expect_approx_equal(colSums(y$cum_n_R_vacc_skip[, , 200])
+  expect_approx_equal(colSums(y$cum_n_R_vacc_skip[, 3, , 200])
                       / colSums(y$cum_n_R_vaccinated[, 4, , 200]), rep(0.5, 3),
                       rel_tol = 0.1)
 })

@@ -168,6 +168,14 @@ test_that("lancelot_parameters returns a list of parameters", {
     p$vaccine_progression_rate_base)
   expect_identical(p[names(vaccination)], vaccination)
 
+  vacc_skip <- lancelot_parameters_vacc_skip(p$vacc_skip_to,
+                                             p$vacc_skip_progression_rate_base,
+                                             p$vacc_skip_weight,
+                                             p$n_vacc_classes,
+                                             p$n_doses,
+                                             p$index_dose_inverse)
+  expect_identical(p[names(vacc_skip)], vacc_skip)
+
   strain <- lancelot_parameters_strain(p$strain_transmission,
                                        strain_seed_date = NULL,
                                        strain_seed_size = NULL,
@@ -195,8 +203,8 @@ test_that("lancelot_parameters returns a list of parameters", {
   extra <- setdiff(names(p),
                    c("m", names(observation),
                      names(shared), names(progression), names(severity),
-                     names(strain), names(vaccination), names(waning),
-                     names(sens_and_spec)))
+                     names(strain), names(vaccination), names(vacc_skip),
+                     names(waning), names(sens_and_spec)))
   expect_setequal(
     extra,
     c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
@@ -214,9 +222,7 @@ test_that("lancelot_parameters returns a list of parameters", {
       "N_tot_react", "N_5_24_react", "N_25_34_react", "N_35_44_react",
       "N_45_54_react", "N_55_64_react", "N_65_plus_react", "I_A_transmission",
       "I_P_transmission", "I_C_1_transmission", "I_C_2_transmission",
-      "n_groups", "initial_seed_size", "cross_immunity", "vacc_skip_from",
-      "vacc_skip_to", "vacc_skip_dose", "vacc_skip_progression_rate_base",
-      "vacc_skip_weight"))
+      "n_groups", "initial_seed_size", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
