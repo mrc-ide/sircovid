@@ -13,7 +13,8 @@ lancelot_index(
   cum_n_vaccinated = TRUE,
   D_all = TRUE,
   D_hosp = TRUE,
-  infections_inc_per_strain = TRUE
+  infections_inc_per_strain = TRUE,
+  severity = FALSE
 )
 }
 \arguments{
@@ -45,6 +46,9 @@ cumulative number vaccinated by age and vaccine class
 
 \item{infections_inc_per_strain}{Logical, whether to output
 infections incidence per strain (default = TRUE)}
+
+\item{severity}{Logical, whether to output severity calculations
+(default = FALSE)}
 }
 \value{
 A list with element \code{run}, indicating the locations of (in
