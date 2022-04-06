@@ -14,7 +14,7 @@ lancelot_index(
   D_all = TRUE,
   D_hosp = TRUE,
   infections_inc_per_strain = TRUE,
-  severity = TRUE
+  severity = FALSE
 )
 }
 \arguments{
