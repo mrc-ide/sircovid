@@ -475,17 +475,20 @@ reorder_rt_ifr <- function(x, rank) {
 ##' @param rank A boolean deciding whether to rank trajectories by increasing
 ##' incidence or not before combining Rt estimates
 ##'
+##' @param weight A string specifying what trajectory to use for weighting,
+##'   defaults to "infections_inc" (used for Rt calculation)
+##'
 ##' @return A list of Rt output in the same structure as the first
 ##'   element of `rt`. All Rt estimates will be aggregated across
 ##'   regions (or whatever else you are aggregating on) based on the
 ##'   parameters in `samples`.
 ##'
 ##' @export
-combine_rt <- function(rt, samples, rank = TRUE) {
+combine_rt <- function(rt, samples, rank = TRUE, weight = "infections_inc") {
   ## Ensure all trajectories are the same length
   ret <- rt[[1L]]
   what <- setdiff(names(ret), c("date", "step"))
-  ret[what] <- lapply(what, combine_rt1, rt, samples, rank)
+  ret[what] <- lapply(what, combine_rt1, rt, samples, rank, weight)
   ret
 }
 
@@ -528,7 +531,7 @@ combine_rt_epiestim <- function(rt, samples, q = NULL, rank = TRUE) {
 }
 
 
-combine_rt1 <- function(what, rt, samples, rank) {
+combine_rt1 <- function(what, rt, samples, rank, weight) {
   dates <- lapply(samples, function(x) x$trajectories$date)
   dates_keep <- dates[[1]]
   for (i in seq_along(dates)[-1]) {
@@ -538,7 +541,7 @@ combine_rt1 <- function(what, rt, samples, rank) {
   idx <- lapply(seq_along(samples), function(i) dates[[i]] %in% dates_keep)
 
   incidence <- Map(function(s, i)
-    t(s$trajectories$state["infections_inc", , i]), samples, idx)
+    t(s$trajectories$state[weight, , i]), samples, idx)
     rt_what <- Map(function(r, i) r[[what]][i, ], rt, idx)
 
   if (rank) {
