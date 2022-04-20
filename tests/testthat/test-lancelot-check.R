@@ -1113,7 +1113,8 @@ test_that("Severity outputs are correctly calculated", {
 
   helper <- function(prob_C, prob_H, prob_G_D,
                      prob_ICU, prob_ICU_D, prob_H_D, prob_W_D,
-                     ihr, ifr, hfr) {
+                     ihr, ifr, hfr,
+                     ihr_strain, ifr_strain, hfr_strain) {
 
     p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
     p$p_C_step[, ] <- prob_C %||% p$p_C_step
@@ -1134,6 +1135,10 @@ test_that("Severity outputs are correctly calculated", {
     mod_ihr <- y$ihr[!is.na(y$ihr)][-1]
     mod_hfr <- y$hfr[!is.na(y$hfr)][-1]
 
+    mod_ihr_strain <- y$ihr_strain[!is.na(y$ihr_strain)][-1]
+    mod_ifr_strain <- y$ifr_strain[!is.na(y$ifr_strain)][-1]
+    mod_hfr_strain <- y$hfr_strain[!is.na(y$hfr_strain)][-1]
+
     if (length(mod_ifr) > 0) {
       expect_vector_equal(mod_ifr, ifr)
     }
@@ -1143,29 +1148,38 @@ test_that("Severity outputs are correctly calculated", {
     if (length(mod_hfr) > 0) {
       expect_vector_equal(mod_hfr, hfr)
     }
+    if (length(mod_ifr_strain) > 0) {
+      expect_vector_equal(mod_ifr_strain, ifr_strain)
+    }
+    if (length(mod_ihr_strain) > 0) {
+      expect_vector_equal(mod_ihr_strain, ihr_strain)
+    }
+    if (length(mod_hfr_strain) > 0) {
+      expect_vector_equal(mod_hfr_strain, hfr_strain)
+    }
   }
 
   # Test p_C = 0
-  helper(0, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0)
+  helper(0, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0)
 
   # Test p_C = 1 & p_H = 0
-  helper(1, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, 0)
+  helper(1, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0)
 
   # Test p_C = 1 & p_H = 1 & p_G_D = 1
-  helper(1, 1, 1, NULL, NULL, NULL, NULL, 0, 1, 0)
+  helper(1, 1, 1, NULL, NULL, NULL, NULL, 0, 1, 0, 0, 1, 0)
 
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 0 & p_H_D = 0
-  helper(1, 1, 0, 0, NULL, 0, NULL, 1, 0, 0)
+  helper(1, 1, 0, 0, NULL, 0, NULL, 1, 0, 0, 1, 0, 0)
 
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 0 & p_H_D = 1
-  helper(1, 1, 0, 0, NULL, 1, NULL, 1, 1, 1)
+  helper(1, 1, 0, 0, NULL, 1, NULL, 1, 1, 1, 1, 1, 1)
 
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 0 & p_W_D = 1
-  helper(1, 1, 0, 1, 0, NULL, 1, 1, 1, 1)
+  helper(1, 1, 0, 1, 0, NULL, 1, 1, 1, 1, 1, 1, 1)
 
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 0 & p_W_D = 0
-  helper(1, 1, 0, 1, 0, NULL, 0, 1, 0, 0)
+  helper(1, 1, 0, 1, 0, NULL, 0, 1, 0, 0, 1, 0, 0)
 
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 1
-  helper(1, 1, 0, 1, 1, NULL, NULL, 1, 1, 1)
+  helper(1, 1, 0, 1, 1, NULL, NULL, 1, 1, 1, 1, 1, 1)
 })

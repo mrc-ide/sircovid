@@ -2319,6 +2319,20 @@ IFR_disag_weighted[, , ] <- IFR_disag[i, j, k] * new_inf[i, j, k]
 initial(ifr) <- 0
 update(ifr) <- sum(IFR_disag_weighted) / sum(new_inf)
 
+## By strain
+initial(ifr_strain[]) <- 0
+update(ifr_strain[]) <- sum(IFR_disag_weighted[, i, ]) / sum(new_inf[, i, ])
+dim(ifr_strain) <- n_real_strains
+
+initial(ihr_strain[]) <- 0
+update(ihr_strain[]) <- sum(IHR_disag_weighted[, i, ]) / sum(new_inf[, i, ])
+dim(ihr_strain) <- n_real_strains
+
+initial(hfr_strain[]) <- 0
+update(hfr_strain[]) <- sum(HFR_disag_weighted[, i, ]) /
+  sum(n_I_C_2_to_hosp[, i, ])
+dim(hfr_strain) <- n_real_strains
+
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
 ## do not appear in any odin equation we mark them as "ignore.unused"

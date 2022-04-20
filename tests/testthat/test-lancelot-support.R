@@ -862,7 +862,10 @@ test_that("lancelot_index switches work as expected", {
       info$index$infections_inc_per_strain,
       info$index$ifr,
       info$index$ihr,
-      info$index$hfr))
+      info$index$hfr,
+      info$index$ifr_strain,
+      info$index$ihr_strain,
+      info$index$hfr_strain))
 
   index_rt <- lancelot_index(info, rt = FALSE)
   expect_equal(
