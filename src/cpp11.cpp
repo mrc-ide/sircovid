@@ -98,10 +98,10 @@ extern "C" SEXP _sircovid_dust_cpu_basic_set_rng_state(SEXP ptr, SEXP rng_state)
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_set_data(SEXP ptr, cpp11::list data);
-extern "C" SEXP _sircovid_dust_cpu_basic_set_data(SEXP ptr, SEXP data) {
+SEXP dust_cpu_basic_set_data(SEXP ptr, cpp11::list data, bool shared);
+extern "C" SEXP _sircovid_dust_cpu_basic_set_data(SEXP ptr, SEXP data, SEXP shared) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data)));
+    return cpp11::as_sexp(dust_cpu_basic_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data), cpp11::as_cpp<cpp11::decay_t<bool>>(shared)));
   END_CPP11
 }
 // basic.cpp
@@ -226,10 +226,10 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_set_rng_state(SEXP ptr, SEXP rng_sta
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_set_data(SEXP ptr, cpp11::list data);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_set_data(SEXP ptr, SEXP data) {
+SEXP dust_cpu_lancelot_set_data(SEXP ptr, cpp11::list data, bool shared);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_set_data(SEXP ptr, SEXP data, SEXP shared) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data)));
+    return cpp11::as_sexp(dust_cpu_lancelot_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data), cpp11::as_cpp<cpp11::decay_t<bool>>(shared)));
   END_CPP11
 }
 // lancelot.cpp
@@ -274,7 +274,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_basic_resample",         (DL_FUNC) &_sircovid_dust_cpu_basic_resample,         2},
     {"_sircovid_dust_cpu_basic_rng_state",        (DL_FUNC) &_sircovid_dust_cpu_basic_rng_state,        3},
     {"_sircovid_dust_cpu_basic_run",              (DL_FUNC) &_sircovid_dust_cpu_basic_run,              2},
-    {"_sircovid_dust_cpu_basic_set_data",         (DL_FUNC) &_sircovid_dust_cpu_basic_set_data,         2},
+    {"_sircovid_dust_cpu_basic_set_data",         (DL_FUNC) &_sircovid_dust_cpu_basic_set_data,         3},
     {"_sircovid_dust_cpu_basic_set_index",        (DL_FUNC) &_sircovid_dust_cpu_basic_set_index,        2},
     {"_sircovid_dust_cpu_basic_set_n_threads",    (DL_FUNC) &_sircovid_dust_cpu_basic_set_n_threads,    2},
     {"_sircovid_dust_cpu_basic_set_rng_state",    (DL_FUNC) &_sircovid_dust_cpu_basic_set_rng_state,    2},
@@ -290,7 +290,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_lancelot_resample",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_resample,      2},
     {"_sircovid_dust_cpu_lancelot_rng_state",     (DL_FUNC) &_sircovid_dust_cpu_lancelot_rng_state,     3},
     {"_sircovid_dust_cpu_lancelot_run",           (DL_FUNC) &_sircovid_dust_cpu_lancelot_run,           2},
-    {"_sircovid_dust_cpu_lancelot_set_data",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_data,      2},
+    {"_sircovid_dust_cpu_lancelot_set_data",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_data,      3},
     {"_sircovid_dust_cpu_lancelot_set_index",     (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_index,     2},
     {"_sircovid_dust_cpu_lancelot_set_n_threads", (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_n_threads, 2},
     {"_sircovid_dust_cpu_lancelot_set_rng_state", (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_rng_state, 2},
