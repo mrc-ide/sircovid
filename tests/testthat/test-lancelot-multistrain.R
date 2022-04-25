@@ -595,9 +595,10 @@ test_that("Swapping strains gives identical results with different index", {
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
 
-  z2[["prob_strain"]] <- z2[["prob_strain"]][2:1, , drop = FALSE]
-  z2[["effective_susceptible"]] <-
-    z2[["effective_susceptible"]][2:1, , drop = FALSE]
+  for (nm in c("prob_strain", "effective_susceptible",
+               "ifr_strain", "ihr_strain", "hfr_strain")) {
+    z2[[nm]] <- z2[[nm]][2:1, , drop = FALSE]
+  }
   z2[["cum_sympt_cases_non_variant"]] <-
     z2[["cum_sympt_cases"]] - z2[["cum_sympt_cases_non_variant"]]
   z2[["cum_sympt_cases_non_variant_over25"]] <-
