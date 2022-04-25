@@ -1,4 +1,4 @@
-# sircovid 0.13.12
+# sircovid 0.13.13
 
 * Add severity outputs by strain
 
