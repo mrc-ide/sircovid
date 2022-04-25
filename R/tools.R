@@ -286,4 +286,3 @@ rotate_strain_compartments <- c(
   ## those with dimension n_real_strains:
   "prob_strain", "effective_susceptible", "ifr_strain", "ihr_strain",
   "hfr_strain")
-
