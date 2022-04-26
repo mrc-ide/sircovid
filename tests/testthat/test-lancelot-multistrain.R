@@ -3593,7 +3593,6 @@ test_that("Vaccine and cross immunity have expected effect on
     y <- mod$transform_variables(
       drop(mod$simulate(seq(0, 400, by = 4))))
 
-    # browser()
     sum(mean(y$ifr_strain[1, ], na.rm = TRUE) >
           mean(y$ifr_strain[2, ], na.rm = TRUE),
         mean(y$ihr_strain[1, ], na.rm = TRUE) >
