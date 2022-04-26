@@ -2321,16 +2321,24 @@ update(ifr) <- sum(IFR_disag_weighted) / sum(new_inf)
 
 ## By strain
 initial(ifr_strain[]) <- 0
-update(ifr_strain[]) <- sum(IFR_disag_weighted[, i, ]) / sum(new_inf[, i, ])
+update(ifr_strain[]) <- if (n_real_strains == 1)
+  sum(IFR_disag_weighted[, 1, ]) / sum(new_inf[, 1, ]) else
+    (sum(IFR_disag_weighted[, i, ]) + sum(IFR_disag_weighted[, 5 - i, ])) /
+  (sum(new_inf[, i, ]) + sum(new_inf[, 5 - i, ]))
 dim(ifr_strain) <- n_real_strains
 
 initial(ihr_strain[]) <- 0
-update(ihr_strain[]) <- sum(IHR_disag_weighted[, i, ]) / sum(new_inf[, i, ])
+update(ihr_strain[]) <- if (n_real_strains == 1)
+  sum(IHR_disag_weighted[, 1, ]) / sum(new_inf[, 1, ]) else
+    (sum(IHR_disag_weighted[, i, ]) + sum(IHR_disag_weighted[, 5 - i, ])) /
+  (sum(new_inf[, i, ]) + sum(new_inf[, 5 - i, ]))
 dim(ihr_strain) <- n_real_strains
 
 initial(hfr_strain[]) <- 0
-update(hfr_strain[]) <- sum(HFR_disag_weighted[, i, ]) /
-  sum(n_I_C_2_to_hosp[, i, ])
+update(hfr_strain[]) <- if (n_real_strains == 1)
+  sum(HFR_disag_weighted[, 1, ]) / sum(n_I_C_2_to_hosp[, 1, ]) else
+    (sum(HFR_disag_weighted[, i, ]) + sum(HFR_disag_weighted[, 5 - i, ])) /
+  (sum(n_I_C_2_to_hosp[, i, ]) + sum(n_I_C_2_to_hosp[, 5 - i, ]))
 dim(hfr_strain) <- n_real_strains
 
 config(compare) <- "compare_lancelot.cpp"
