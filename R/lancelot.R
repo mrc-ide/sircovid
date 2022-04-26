@@ -960,11 +960,11 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
 
     index_state <- c(index_state, index_severity,
                      calculate_index(index, "ifr_strain", list(),
-                                     seq_len(n_tot_strains), "ifr_strain_"),
+                                     seq_len(n_strains), "ifr_strain_"),
                      calculate_index(index, "ihr_strain", list(),
-                                     seq_len(n_tot_strains), "ihr_strain_"),
+                                     seq_len(n_strains), "ihr_strain_"),
                      calculate_index(index, "hfr_strain", list(),
-                                     seq_len(n_tot_strains), "hfr_strain_"))
+                                     seq_len(n_strains), "hfr_strain_"))
   }
 
 
