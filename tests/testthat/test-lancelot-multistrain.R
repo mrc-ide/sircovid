@@ -3518,7 +3518,8 @@ test_that("rotate strain uses correct variables", {
 })
 
 
-test_that("Transmission, vaccine efficacy and cross immunity have expected severity", {
+test_that("Transmission, vaccine efficacy and cross immunity have
+          expected severity", {
 
   # Seeding parameters
   n_seeded_new_strain_inf <- 10
