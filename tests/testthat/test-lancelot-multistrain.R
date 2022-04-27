@@ -3518,152 +3518,160 @@ test_that("rotate strain uses correct variables", {
 })
 
 
-test_that("A more virulent strain drives severity", {
-  np <- 10
-  n_seeded_new_strain_inf <- 10
-  start_date <- sircovid_date("2020-02-07")
-  date_seeding <- start_date # seed both strains on same day
+test_that("Transmission, vaccine efficacy and cross immunity have expected severity", {
 
-  ## mean severity with 2nd strain > with 1st strain
+  # Seeding parameters
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-01-31")
+  date_seeding <- start_date # seed both strains on same day
+  eval_date <- start_date + 34 # check tests 5 weeks into the epidemic
+
+  # Helper function that runs model with p parameters
+  helper <- function(p) {
+    np <- 10
+    mod <- lancelot$new(p, 0, np, seed = 1L)
+    info <- mod$info()
+    y0 <- lancelot_initial(info, 1, p)
+    mod$update_state(state = y0)
+    y <- mod$transform_variables(
+      drop(mod$simulate(seq(0, 400, by = 4))))
+
+    y
+  }
+
+  # Initial params (2nd strain more transmissible only)
   p <- lancelot_parameters(start_date, "england",
                            strain_transmission = c(1, 10),
                            strain_seed_date = date_seeding,
                            strain_seed_size = n_seeded_new_strain_inf,
                            strain_seed_pattern = rep(1, 4))
+  dim <- dim(p$rel_susceptibility)
 
-  mod <- lancelot$new(p, 0, np, seed = 1L)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)
-  mod$update_state(state = y0)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
-
-  ## mean severity with 2nd strain > with 1st strain
-  expect_true(mean(y$ifr_strain[2, , ], na.rm = TRUE) >
-                mean(y$ifr_strain[1, , ], na.rm = TRUE))
-
-  expect_true(mean(y$ihr_strain[2, , ], na.rm = TRUE) >
-                mean(y$ihr_strain[1, , ], na.rm = TRUE))
-
-  expect_true(mean(y$hfr_strain[2, , ], na.rm = TRUE) >
-                mean(y$hfr_strain[1, , ], na.rm = TRUE))
-
-
-  ## mean severity with 1st strain > with 2nd strain
-  p <- lancelot_parameters(start_date, "england",
-                           strain_transmission = c(1, 0.1),
-                           strain_seed_date = date_seeding,
-                           strain_seed_size = n_seeded_new_strain_inf,
-                           strain_seed_pattern = rep(1, 4))
-
-  mod <- lancelot$new(p, 0, np, seed = 1L)
-  info <- mod$info()
-  y0 <- lancelot_initial(info, 1, p)
-  mod$update_state(state = y0)
-  y <- mod$transform_variables(
-    drop(mod$simulate(seq(0, 400, by = 4))))
-
-  ## mean severity with 2nd strain > with 1st strain
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) >
+  ## More transmissible 2nd strain takes over and drives severity
+  y <- helper(p)
+  expect_false(mean(y$ifr_strain[1, , ], na.rm = TRUE) >
                 mean(y$ifr_strain[2, , ], na.rm = TRUE))
 
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) >
+  expect_false(mean(y$ihr_strain[1, , ], na.rm = TRUE) >
                 mean(y$ihr_strain[2, , ], na.rm = TRUE))
 
+  expect_false(mean(y$hfr_strain[1, , ], na.rm = TRUE) >
+                mean(y$hfr_strain[2, , ], na.rm = TRUE))
+
+
+  ## More transmissible 1st strain takes over and drives severity
+  p$strain_transmission <- c(2, 1, 1, 2)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) >
+                mean(y$ifr_strain[2, , ], na.rm = TRUE))
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) >
+                mean(y$ihr_strain[2, , ], na.rm = TRUE))
   expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) >
                 mean(y$hfr_strain[2, , ], na.rm = TRUE))
-})
 
 
-test_that("Vaccine and cross immunity have expected effect on
-          strain severity", {
+  ## Cross-immunity protects against strain 1
+  p$cross_immunity <- c(0.5, 1)
+  p$strain_transmission <- rep(1, 4)
+  y <- helper(p)
+  expect_false(mean(y$ifr_strain[1, , ], na.rm = TRUE) >
+                 mean(y$ifr_strain[2, , ], na.rm = TRUE))
+  expect_false(mean(y$ihr_strain[1, , ], na.rm = TRUE) >
+                 mean(y$ihr_strain[2, , ], na.rm = TRUE))
+  expect_false(mean(y$hfr_strain[1, , ], na.rm = TRUE) >
+                 mean(y$hfr_strain[2, , ], na.rm = TRUE))
 
-  helper <- function(p) {
-
-    set.seed(1)
-    mod <- lancelot$new(p, 0, 1)
-    info <- mod$info()
-
-    state <- lancelot_initial(info, 1, p)
-
-    index_E <- array(info$index$E, info$dim$E)
-    state[index_E[4, 2, 1, 1]] <- 10 # seed infections with second strain
-
-    mod$update_state(state = state)
-    y <- mod$transform_variables(
-      drop(mod$simulate(seq(0, 400, by = 4))))
-
-    sum(mean(y$ifr_strain[1, ], na.rm = TRUE) >
-          mean(y$ifr_strain[2, ], na.rm = TRUE),
-        mean(y$ihr_strain[1, ], na.rm = TRUE) >
-          mean(y$ihr_strain[2, ], na.rm = TRUE),
-        mean(y$hfr_strain[1, ], na.rm = TRUE) >
-          mean(y$hfr_strain[2, ], na.rm = TRUE))
-  }
-
-  # Cross-immunity protects against strain 1
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_susceptibility = c(1, 1),
-                           cross_immunity = c(1, 0))
-  expect_equal(2, helper(p))
 
   # Cross-immunity protects against strain 2
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_susceptibility = c(1, 1),
-                           cross_immunity = c(0, 1))
-  expect_equal(1, helper(p))
+  p$cross_immunity <- c(1, 0.5)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) >
+                mean(y$ifr_strain[2, , ], na.rm = TRUE))
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) >
+                mean(y$ihr_strain[2, , ], na.rm = TRUE))
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) >
+                mean(y$hfr_strain[2, , ], na.rm = TRUE))
 
-  # Vaccine protects against both strains transmission
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_susceptibility = c(0, 0))
-  expect_equal(0, helper(p))
 
-  # Vaccine protects against strain 1 transmission
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_susceptibility = c(1, 0))
-  expect_equal(3, helper(p))
+  # Perfect VE vs strain 1 infection protects only against strain 1
+  p$rel_susceptibility <- array(matrix(c(0, 1, 1, 0),
+                                       nrow = dim[1], ncol = dim[2],
+                                       byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
+                 mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) == 0 &&
+                 mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
+                 mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
 
-  # Vaccine protects against strain 2 transmission
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_susceptibility = c(0, 1))
-  expect_equal(0, helper(p))
 
-  # Vaccine protects against strain 1 hospitalisation
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_infectivity = c(1, 1),
-                           rel_susceptibility = c(1, 1),
-                           rel_p_hosp_if_sympt = c(0, 1))
-  expect_equal(0, helper(p))
+  # Perfect VE vs strain 2 infection protects only against strain 2
+  p$rel_susceptibility <- array(matrix(c(1, 0, 0, 1),
+                                       nrow = dim[1], ncol = dim[2],
+                                       byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
+                # we have small numbers for strain 2, from seeded cases
+                 mean(y$ifr_strain[2, , ], na.rm = TRUE) < 0.001)
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
+                 mean(y$ihr_strain[2, , ], na.rm = TRUE) < 0.001)
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
+                 mean(y$hfr_strain[2, , ], na.rm = TRUE) < 0.001)
 
-  # Vaccine protects against strain 2 hospitalisation
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_infectivity = c(1, 1),
-                           rel_susceptibility = c(1, 1),
-                           rel_p_hosp_if_sympt = c(1, 0))
-  expect_equal(3, helper(p))
 
-  # Vaccine protects against strain 1 death
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_infectivity = c(1, 1),
-                           rel_susceptibility = c(1, 1),
-                           rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(0, 1))
-  expect_equal(1, helper(p))
+  # Perfect VE vs strain 1 hospitalisation only
+  p$rel_susceptibility <- array(1, dim = dim)
+  p$rel_p_hosp_if_sympt <- array(matrix(c(0, 1, 1, 0),
+                                        nrow = dim[1], ncol = dim[2],
+                                        byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
+                mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) == 0 &&
+              mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
+                mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
 
-  # Vaccine protects against strain 2 death
-  p <- lancelot_parameters(0, "england",
-                           strain_transmission = c(1, 1),
-                           rel_infectivity = c(1, 1),
-                           rel_susceptibility = c(1, 1),
-                           rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 0))
-  expect_equal(3, helper(p))
+
+  # Perfect VE vs strain 2 hospitalisation only
+  p$rel_p_hosp_if_sympt <- array(matrix(c(1, 0, 0, 1),
+                                        nrow = dim[1], ncol = dim[2],
+                                        byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$ihr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
+
+
+  # Perfect VE vs strain 1 death only
+  # this is having no effect whatsoever on ifr and hfr!!
+  p$rel_p_hosp_if_sympt <- array(1, dim = dim)
+  p$rel_p_death <- array(matrix(c(0, 1, 1, 0),
+                                nrow = dim[1], ncol = dim[2],
+                                byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
+                mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
+                mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
+
+  # Perfect VE vs strain 2 death only
+  # this is having no effect whatsoever on ifr and hfr!!
+  p$rel_p_death <- array(matrix(c(1, 0, 0, 1),
+                                nrow = dim[1], ncol = dim[2],
+                                byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
+                mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
+
 })
