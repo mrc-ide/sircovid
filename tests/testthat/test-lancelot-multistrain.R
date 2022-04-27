@@ -3518,8 +3518,7 @@ test_that("rotate strain uses correct variables", {
 })
 
 
-test_that("Transmission, vaccine efficacy and cross immunity have
-          expected severity", {
+test_that("Multistrain severity has expected behaviour", {
 
   # Seeding parameters
   n_seeded_new_strain_inf <- 10
@@ -3558,7 +3557,7 @@ test_that("Transmission, vaccine efficacy and cross immunity have
                  mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
 
 
-  # Perfect VE vs strain 1 infection only
+  # Immunity vs strain 1 infection only
   p$rel_p_sympt <- array(matrix(c(0, 1, 1, 0),
                                 nrow = dim[1], ncol = dim[2],
                                 byrow = TRUE), dim = dim)
@@ -3571,33 +3570,32 @@ test_that("Transmission, vaccine efficacy and cross immunity have
                  mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
 
 
-  # Perfect VE vs strain 2 infection only
+  # Immunity vs strain 2 infection only
   p$rel_p_sympt <- array(matrix(c(1, 0, 0, 1),
                                 nrow = dim[1], ncol = dim[2],
                                 byrow = TRUE), dim = dim)
   y <- helper(p)
   expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
-                # we have small numbers for strain 2, from seeded cases
-                 mean(y$ifr_strain[2, , ], na.rm = TRUE) < 0.001)
+                 mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
   expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
-                 mean(y$ihr_strain[2, , ], na.rm = TRUE) < 0.001)
+                 mean(y$ihr_strain[2, , ], na.rm = TRUE) == 0)
   expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
-                 mean(y$hfr_strain[2, , ], na.rm = TRUE) < 0.001)
+                 mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
 
 
-  # Perfect VE vs both strains
+  # Immunity vs both strains
   p$rel_p_sympt <- array(0, dim = dim)
   y <- helper(p)
   expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
                 # we have small numbers for strain 2, from seeded cases
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) < 0.001)
+                mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
   expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$ihr_strain[2, , ], na.rm = TRUE) < 0.001)
+                mean(y$ihr_strain[2, , ], na.rm = TRUE) == 0)
   expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$hfr_strain[2, , ], na.rm = TRUE) < 0.001)
+                mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
 
 
-  # Perfect VE vs strain 1 hospitalisation only
+  # Immunity vs strain 1 hospitalisation only
   p$rel_p_sympt <- array(1, dim = dim)
   p$rel_p_hosp_if_sympt <- array(matrix(c(0, 1, 1, 0),
                                         nrow = dim[1], ncol = dim[2],
@@ -3611,7 +3609,7 @@ test_that("Transmission, vaccine efficacy and cross immunity have
                 mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
 
 
-  # Perfect VE vs strain 2 hospitalisation only
+  # Immunity vs strain 2 hospitalisation only
   p$rel_p_hosp_if_sympt <- array(matrix(c(1, 0, 0, 1),
                                         nrow = dim[1], ncol = dim[2],
                                         byrow = TRUE), dim = dim)
@@ -3624,7 +3622,7 @@ test_that("Transmission, vaccine efficacy and cross immunity have
                 mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
 
 
-  # Perfect VE vs strain 1 death only
+  # Immunity vs strain 1 death only
   p_deaths <- c("rel_p_death", "rel_p_G_D", "rel_p_H_D", "rel_p_W_D",
                 "rel_p_ICU_D")
   p$rel_p_hosp_if_sympt <- array(1, dim = dim)
@@ -3642,7 +3640,7 @@ test_that("Transmission, vaccine efficacy and cross immunity have
                 mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
 
 
-  # Perfect VE vs strain 2 death only
+  # Immunity vs strain 2 death only
   for (i in p_deaths) {
     p[[i]] <- array(matrix(c(1, 0, 0, 1),
                            nrow = dim[1], ncol = dim[2],
