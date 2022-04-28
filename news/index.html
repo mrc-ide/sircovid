@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.13</span>
       </span>
     </div>
 
@@ -48,120 +48,96 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.13.13" id="sircovid-01313">sircovid 0.13.13<a class="anchor" aria-label="anchor" href="#sircovid-01313"></a></h2>
+<ul><li>Add severity outputs by strain</li></ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.11" id="sircovid-01311">sircovid 0.13.11<a class="anchor" aria-label="anchor" href="#sircovid-01311"></a></h2>
-<ul><li>Add logical flag to turn on/off exporting of severity outcomes and weight parameter in <code>combine_rt</code> function, to use more flexibly for Rt and severity aggregation</li>
-</ul></div>
+<ul><li>Add logical flag to turn on/off exporting of severity outcomes and weight parameter in <code>combine_rt</code> function, to use more flexibly for Rt and severity aggregation</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.10" id="sircovid-01310">sircovid 0.13.10<a class="anchor" aria-label="anchor" href="#sircovid-01310"></a></h2>
-<ul><li>Multiple vaccine skip moves now allowed and <code>lancelot_parameters</code> now allows multiple boosters</li>
-</ul></div>
+<ul><li>Multiple vaccine skip moves now allowed and <code>lancelot_parameters</code> now allows multiple boosters</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.5" id="sircovid-0135">sircovid 0.13.5<a class="anchor" aria-label="anchor" href="#sircovid-0135"></a></h2>
-<ul><li>Add logical flag to turn on/off exporting all death classes by age</li>
-</ul></div>
+<ul><li>Add logical flag to turn on/off exporting all death classes by age</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.4" id="sircovid-0134">sircovid 0.13.4<a class="anchor" aria-label="anchor" href="#sircovid-0134"></a></h2>
-<ul><li>Fit to REACT prevalence by age</li>
-</ul></div>
+<ul><li>Fit to REACT prevalence by age</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.3" id="sircovid-0133">sircovid 0.13.3<a class="anchor" aria-label="anchor" href="#sircovid-0133"></a></h2>
-<ul><li>Fix compatibility with mac M1</li>
-</ul></div>
+<ul><li>Fix compatibility with mac M1</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.1" id="sircovid-0131">sircovid 0.13.1<a class="anchor" aria-label="anchor" href="#sircovid-0131"></a></h2>
-<ul><li>Fit to hospital admissions by age</li>
-</ul></div>
+<ul><li>Fit to hospital admissions by age</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.13.0" id="sircovid-0130">sircovid 0.13.0<a class="anchor" aria-label="anchor" href="#sircovid-0130"></a></h2>
-<ul><li>Fit to deaths in the community by age</li>
-</ul></div>
+<ul><li>Fit to deaths in the community by age</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.35" id="sircovid-01235">sircovid 0.12.35<a class="anchor" aria-label="anchor" href="#sircovid-01235"></a></h2>
-<ul><li>gamma_U is now time-varying</li>
-</ul></div>
+<ul><li>gamma_U is now time-varying</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.31" id="sircovid-01231">sircovid 0.12.31<a class="anchor" aria-label="anchor" href="#sircovid-01231"></a></h2>
-<ul><li>IFR post-processing calculation removed</li>
-</ul></div>
+<ul><li>IFR post-processing calculation removed</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.28" id="sircovid-01228">sircovid 0.12.28<a class="anchor" aria-label="anchor" href="#sircovid-01228"></a></h2>
-<ul><li>Fit to deaths in hospital by age</li>
-</ul></div>
+<ul><li>Fit to deaths in hospital by age</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.27" id="sircovid-01227">sircovid 0.12.27<a class="anchor" aria-label="anchor" href="#sircovid-01227"></a></h2>
-<ul><li>Have strain_rel_p_death, strain_rel_p_icu, strain_rel_p_hosp_if_sympt and strain_rel_p_sympt as separate parameters in odin code to clarify effects of strains and vaccines on severity and so these parameters can be changed more easily without necessarily going through the <code>lancelot_parameters</code> function</li>
-</ul></div>
+<ul><li>Have strain_rel_p_death, strain_rel_p_icu, strain_rel_p_hosp_if_sympt and strain_rel_p_sympt as separate parameters in odin code to clarify effects of strains and vaccines on severity and so these parameters can be changed more easily without necessarily going through the <code>lancelot_parameters</code> function</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.26" id="sircovid-01226">sircovid 0.12.26<a class="anchor" aria-label="anchor" href="#sircovid-01226"></a></h2>
-<ul><li>Remove vestiges of “initial step” control, now we do this directly from the particle filter data</li>
-</ul></div>
+<ul><li>Remove vestiges of “initial step” control, now we do this directly from the particle filter data</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.24" id="sircovid-01224">sircovid 0.12.24<a class="anchor" aria-label="anchor" href="#sircovid-01224"></a></h2>
 <ul><li>Add ability to change duration of latency period (E) for strain 2 in <code>lancelot_parameters</code>
-</li>
-</ul></div>
+</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.23" id="sircovid-01223">sircovid 0.12.23<a class="anchor" aria-label="anchor" href="#sircovid-01223"></a></h2>
-<ul><li>Add new function <code>vaccine_eligibility</code> for computing <code>lancelot</code>-compatible vaccine eligibility vectors based on a minimum age.</li>
-</ul></div>
+<ul><li>Add new function <code>vaccine_eligibility</code> for computing <code>lancelot</code>-compatible vaccine eligibility vectors based on a minimum age.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.22" id="sircovid-01222">sircovid 0.12.22<a class="anchor" aria-label="anchor" href="#sircovid-01222"></a></h2>
-<ul><li>Support for the multistage particle filter added</li>
-</ul></div>
+<ul><li>Support for the multistage particle filter added</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.20" id="sircovid-01220">sircovid 0.12.20<a class="anchor" aria-label="anchor" href="#sircovid-01220"></a></h2>
-<ul><li>New function <code>rotate_strains</code> to allow cycling of strains</li>
-</ul></div>
+<ul><li>New function <code>rotate_strains</code> to allow cycling of strains</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.17" id="sircovid-01217">sircovid 0.12.17<a class="anchor" aria-label="anchor" href="#sircovid-01217"></a></h2>
 <ul><li>
-<code>modify_severity</code> now caps at 1 for all vaccine strata</li>
-</ul></div>
+<code>modify_severity</code> now caps at 1 for all vaccine strata</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.16" id="sircovid-01216">sircovid 0.12.16<a class="anchor" aria-label="anchor" href="#sircovid-01216"></a></h2>
-<ul><li>Corrected implementation of cross immunity in effective Rt calculation</li>
-</ul></div>
+<ul><li>Corrected implementation of cross immunity in effective Rt calculation</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.15" id="sircovid-01215">sircovid 0.12.15<a class="anchor" aria-label="anchor" href="#sircovid-01215"></a></h2>
-<ul><li>Fixed issue <a href="https://github.com/mrc-ide/sircovid/issues/365" class="external-link">#365</a> and simulation to the UK level is now restored</li>
-</ul></div>
+<ul><li>Fixed issue <a href="https://github.com/mrc-ide/sircovid/issues/365" class="external-link">#365</a> and simulation to the UK level is now restored</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.13" id="sircovid-01213">sircovid 0.12.13<a class="anchor" aria-label="anchor" href="#sircovid-01213"></a></h2>
-<ul><li>Fixed initial seeding of the epidemic replace by a Poisson seeding</li>
-</ul></div>
+<ul><li>Fixed initial seeding of the epidemic replace by a Poisson seeding</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.12" id="sircovid-01212">sircovid 0.12.12<a class="anchor" aria-label="anchor" href="#sircovid-01212"></a></h2>
-<ul><li>Add an extra vaccination move between vaccine strata <code>vacc_skip_from</code> and <code>vacc_skip_to</code>, for the purpose of allowing boosting before waning</li>
-</ul></div>
+<ul><li>Add an extra vaccination move between vaccine strata <code>vacc_skip_from</code> and <code>vacc_skip_to</code>, for the purpose of allowing boosting before waning</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.11" id="sircovid-01211">sircovid 0.12.11<a class="anchor" aria-label="anchor" href="#sircovid-01211"></a></h2>
 <ul><li>Ensure <code>booster_population_left</code> is rounded in <code>vaccine_schedule_future</code>
-</li>
-</ul></div>
+</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.10" id="sircovid-01210">sircovid 0.12.10<a class="anchor" aria-label="anchor" href="#sircovid-01210"></a></h2>
 <ul><li>
-<code>vaccine_schedule_from_data</code> function refactored to deal with flexible number of doses</li>
-</ul></div>
+<code>vaccine_schedule_from_data</code> function refactored to deal with flexible number of doses</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.9" id="sircovid-0129">sircovid 0.12.9<a class="anchor" aria-label="anchor" href="#sircovid-0129"></a></h2>
 <ul><li>
-<code>carehomes</code> model removed from the package</li>
-</ul></div>
+<code>carehomes</code> model removed from the package</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.7" id="sircovid-0127">sircovid 0.12.7<a class="anchor" aria-label="anchor" href="#sircovid-0127"></a></h2>
 <ul><li>
-<code>D_inc</code> now returned as a state from odin for daily deaths (<code>deaths_inc</code>)</li>
-</ul></div>
+<code>D_inc</code> now returned as a state from odin for daily deaths (<code>deaths_inc</code>)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.4" id="sircovid-0124">sircovid 0.12.4<a class="anchor" aria-label="anchor" href="#sircovid-0124"></a></h2>
 <ul><li>
-<code>p_NC</code> and <code>phi_pillar2_cases</code> now must be age-specific for <code>lancelot</code> model, including when fitting to aggregated Pillar 2 data.</li>
-</ul></div>
+<code>p_NC</code> and <code>phi_pillar2_cases</code> now must be age-specific for <code>lancelot</code> model, including when fitting to aggregated Pillar 2 data.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.3" id="sircovid-0123">sircovid 0.12.3<a class="anchor" aria-label="anchor" href="#sircovid-0123"></a></h2>
-<ul><li>Default value of <code>I_A_transmission</code> updated to actual value currently used</li>
-</ul></div>
+<ul><li>Default value of <code>I_A_transmission</code> updated to actual value currently used</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.2" id="sircovid-0122">sircovid 0.12.2<a class="anchor" aria-label="anchor" href="#sircovid-0122"></a></h2>
 <ul><li>
@@ -170,153 +146,116 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.12.0" id="sircovid-0120">sircovid 0.12.0<a class="anchor" aria-label="anchor" href="#sircovid-0120"></a></h2>
-<ul><li>Introduce <code>lancelot</code> model. Initially a clone of the <code>carehomes</code> model with the added flexibility to fit to positivity or cases (pillar 2) by age. Respectively, <code>p_NC</code> and <code>phi_pillar2_cases</code> parameters can be generic or age-specific for fitting to aggregate or age stratified data.</li>
-</ul></div>
+<ul><li>Introduce <code>lancelot</code> model. Initially a clone of the <code>carehomes</code> model with the added flexibility to fit to positivity or cases (pillar 2) by age. Respectively, <code>p_NC</code> and <code>phi_pillar2_cases</code> parameters can be generic or age-specific for fitting to aggregate or age stratified data.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.32" id="sircovid-01132">sircovid 0.11.32<a class="anchor" aria-label="anchor" href="#sircovid-01132"></a></h2>
-<ul><li>England NHS region populations now obtained directly from mid-2020 ONS CCG-level estimates</li>
-</ul></div>
+<ul><li>England NHS region populations now obtained directly from mid-2020 ONS CCG-level estimates</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.27" id="sircovid-01127">sircovid 0.11.27<a class="anchor" aria-label="anchor" href="#sircovid-01127"></a></h2>
-<ul><li>Introduced <code>phi_pillar2_cases_weekend</code>, which is used instead of <code>phi_pillar2_cases</code> on weekends</li>
-</ul></div>
+<ul><li>Introduced <code>phi_pillar2_cases_weekend</code>, which is used instead of <code>phi_pillar2_cases</code> on weekends</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.28" id="sircovid-01128">sircovid 0.11.28<a class="anchor" aria-label="anchor" href="#sircovid-01128"></a></h2>
-<ul><li>Can now choose between a random sample or thinned sample in <code>carehomes_forecast</code> via the <code>random_sample</code> logical input</li>
-</ul></div>
+<ul><li>Can now choose between a random sample or thinned sample in <code>carehomes_forecast</code> via the <code>random_sample</code> logical input</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.27" id="sircovid-01127-1">sircovid 0.11.27<a class="anchor" aria-label="anchor" href="#sircovid-01127-1"></a></h2>
-<ul><li>Introduced <code>p_NC_weekend</code>, which is used instead of <code>p_NC</code> on weekends</li>
-</ul></div>
+<ul><li>Introduced <code>p_NC_weekend</code>, which is used instead of <code>p_NC</code> on weekends</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.26" id="sircovid-01126">sircovid 0.11.26<a class="anchor" aria-label="anchor" href="#sircovid-01126"></a></h2>
-<ul><li>Increase code coverage</li>
-</ul></div>
+<ul><li>Increase code coverage</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.23" id="sircovid-01123">sircovid 0.11.23<a class="anchor" aria-label="anchor" href="#sircovid-01123"></a></h2>
-<ul><li>NHS regions populations updated to ONS mid-2020 estimates</li>
-</ul></div>
+<ul><li>NHS regions populations updated to ONS mid-2020 estimates</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.22" id="sircovid-01122">sircovid 0.11.22<a class="anchor" aria-label="anchor" href="#sircovid-01122"></a></h2>
-<ul><li>Added <code>p_R</code>, the probability a non-fatal infection leads to post-infection immunity, otherwise the individual instantly becomes susceptible again post-infection</li>
-</ul></div>
+<ul><li>Added <code>p_R</code>, the probability a non-fatal infection leads to post-infection immunity, otherwise the individual instantly becomes susceptible again post-infection</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.21" id="sircovid-01121">sircovid 0.11.21<a class="anchor" aria-label="anchor" href="#sircovid-01121"></a></h2>
 <ul><li>Added <code>beta_type</code> option to <code>carehomes_parameters</code>, now allowing it to be <code>"piecewise-linear"</code> or <code>"piecewise-constant"</code>
-</li>
-</ul></div>
+</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.20" id="sircovid-01120">sircovid 0.11.20<a class="anchor" aria-label="anchor" href="#sircovid-01120"></a></h2>
-<ul><li>Fix bug in <code>modify_severity</code> for single strain model</li>
-</ul></div>
+<ul><li>Fix bug in <code>modify_severity</code> for single strain model</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.19" id="sircovid-01119">sircovid 0.11.19<a class="anchor" aria-label="anchor" href="#sircovid-01119"></a></h2>
-<ul><li>Add <code>modify_severity</code> function to modify severity and transmission params of a VOC from VE assumptions</li>
-</ul></div>
+<ul><li>Add <code>modify_severity</code> function to modify severity and transmission params of a VOC from VE assumptions</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.18" id="sircovid-01118">sircovid 0.11.18<a class="anchor" aria-label="anchor" href="#sircovid-01118"></a></h2>
-<ul><li>Relax checks on relative vaccination parameters so only first vacc class of first strain needs to be <code>1</code> for all age groups</li>
-</ul></div>
+<ul><li>Relax checks on relative vaccination parameters so only first vacc class of first strain needs to be <code>1</code> for all age groups</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.17" id="sircovid-01117">sircovid 0.11.17<a class="anchor" aria-label="anchor" href="#sircovid-01117"></a></h2>
-<ul><li>prob_strain now measures the proportion of total I_weighted (the number of infectives weighted by the infectivity of their compartment) for each strain</li>
-</ul></div>
+<ul><li>prob_strain now measures the proportion of total I_weighted (the number of infectives weighted by the infectivity of their compartment) for each strain</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.16" id="sircovid-01116">sircovid 0.11.16<a class="anchor" aria-label="anchor" href="#sircovid-01116"></a></h2>
-<ul><li>IFR calculation now works fully for a multistrain model</li>
-</ul></div>
+<ul><li>IFR calculation now works fully for a multistrain model</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.14" id="sircovid-01114">sircovid 0.11.14<a class="anchor" aria-label="anchor" href="#sircovid-01114"></a></h2>
-<ul><li>Can now account for vaccine efficacy against death</li>
-</ul></div>
+<ul><li>Can now account for vaccine efficacy against death</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.11" id="sircovid-01111">sircovid 0.11.11<a class="anchor" aria-label="anchor" href="#sircovid-01111"></a></h2>
-<ul><li>Can now also output ALOS (average length of stay) from carehomes_ifr_t</li>
-</ul></div>
+<ul><li>Can now also output ALOS (average length of stay) from carehomes_ifr_t</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.10" id="sircovid-01110">sircovid 0.11.10<a class="anchor" aria-label="anchor" href="#sircovid-01110"></a></h2>
-<ul><li>Fix coverage hole in Rt</li>
-</ul></div>
+<ul><li>Fix coverage hole in Rt</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.9" id="sircovid-0119">sircovid 0.11.9<a class="anchor" aria-label="anchor" href="#sircovid-0119"></a></h2>
-<ul><li>Fixes bug in calculating Rt when only one time-point is non-NA in prob_strain</li>
-</ul></div>
+<ul><li>Fixes bug in calculating Rt when only one time-point is non-NA in prob_strain</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.8" id="sircovid-0118">sircovid 0.11.8<a class="anchor" aria-label="anchor" href="#sircovid-0118"></a></h2>
-<ul><li>Fixes bug in calculating Rt for multiple strains when the prob_strain matrix is all NA</li>
-</ul></div>
+<ul><li>Fixes bug in calculating Rt for multiple strains when the prob_strain matrix is all NA</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.6" id="sircovid-0116">sircovid 0.11.6<a class="anchor" aria-label="anchor" href="#sircovid-0116"></a></h2>
-<ul><li>Can now fit to variant data for all ages (previously just for over 25s)</li>
-</ul></div>
+<ul><li>Can now fit to variant data for all ages (previously just for over 25s)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.5" id="sircovid-0115">sircovid 0.11.5<a class="anchor" aria-label="anchor" href="#sircovid-0115"></a></h2>
-<ul><li>Booster doses can now be added to a vaccine schedule with parameters to determine which groups get boosters</li>
-</ul></div>
+<ul><li>Booster doses can now be added to a vaccine schedule with parameters to determine which groups get boosters</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.4" id="sircovid-0114">sircovid 0.11.4<a class="anchor" aria-label="anchor" href="#sircovid-0114"></a></h2>
-<ul><li>Fix Rt calculations for multistrain models when including interpolation</li>
-</ul></div>
+<ul><li>Fix Rt calculations for multistrain models when including interpolation</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.11.3" id="sircovid-0113">sircovid 0.11.3<a class="anchor" aria-label="anchor" href="#sircovid-0113"></a></h2>
-<ul><li>For simplicity, it is now assumed that individuals that progress through model compartments at a given time step cannot also move vaccine classes in that same step</li>
-</ul></div>
+<ul><li>For simplicity, it is now assumed that individuals that progress through model compartments at a given time step cannot also move vaccine classes in that same step</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.53" id="sircovid-01053">sircovid 0.10.53<a class="anchor" aria-label="anchor" href="#sircovid-01053"></a></h2>
-<ul><li>carehomes_Rt now only returns NA when prob_strain is NA and weight_Rt is TRUE</li>
-</ul></div>
+<ul><li>carehomes_Rt now only returns NA when prob_strain is NA and weight_Rt is TRUE</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.52" id="sircovid-01052">sircovid 0.10.52<a class="anchor" aria-label="anchor" href="#sircovid-01052"></a></h2>
-<ul><li>Can now input <code>population</code> and <code>carehome_beds</code> to <code>carehomes_parameters</code> to allow use for regions where these are not included in the package</li>
-</ul></div>
+<ul><li>Can now input <code>population</code> and <code>carehome_beds</code> to <code>carehomes_parameters</code> to allow use for regions where these are not included in the package</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.51" id="sircovid-01051">sircovid 0.10.51<a class="anchor" aria-label="anchor" href="#sircovid-01051"></a></h2>
-<ul><li>rel vacc params can now be less than one in unvaccinated classes for second infections (strains 3 and 4)</li>
-</ul></div>
+<ul><li>rel vacc params can now be less than one in unvaccinated classes for second infections (strains 3 and 4)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.50" id="sircovid-01050">sircovid 0.10.50<a class="anchor" aria-label="anchor" href="#sircovid-01050"></a></h2>
-<ul><li>Fix Rt calculations for multistrain models with cross-immunity</li>
-</ul></div>
+<ul><li>Fix Rt calculations for multistrain models with cross-immunity</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.49" id="sircovid-01049">sircovid 0.10.49<a class="anchor" aria-label="anchor" href="#sircovid-01049"></a></h2>
-<ul><li>Add <code>lag_groups</code> and <code>lag_days</code> parameters to <code>vaccine_schedule_future</code> to manually add lags for given age groups to the vaccine schedule</li>
-</ul></div>
+<ul><li>Add <code>lag_groups</code> and <code>lag_days</code> parameters to <code>vaccine_schedule_future</code> to manually add lags for given age groups to the vaccine schedule</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.47" id="sircovid-01047">sircovid 0.10.47<a class="anchor" aria-label="anchor" href="#sircovid-01047"></a></h2>
-<ul><li>New function <code><a href="../reference/inflate_state_strains.html">sircovid::inflate_state_strains</a></code> for adding empty strain compartments to a model state that was run without multiple strains</li>
-</ul></div>
+<ul><li>New function <code><a href="../reference/inflate_state_strains.html">sircovid::inflate_state_strains</a></code> for adding empty strain compartments to a model state that was run without multiple strains</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.46" id="sircovid-01046">sircovid 0.10.46<a class="anchor" aria-label="anchor" href="#sircovid-01046"></a></h2>
-<ul><li>Added <code>carehomes_check_severity</code> to check all severity probabilities lie in [0, 1] after transformation and all relative parameters are mirrored as expected</li>
-</ul></div>
+<ul><li>Added <code>carehomes_check_severity</code> to check all severity probabilities lie in [0, 1] after transformation and all relative parameters are mirrored as expected</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.45" id="sircovid-01045">sircovid 0.10.45<a class="anchor" aria-label="anchor" href="#sircovid-01045"></a></h2>
-<ul><li>Deaths and admissions by age and vaccination class compartments exported as predicted samples</li>
-</ul></div>
+<ul><li>Deaths and admissions by age and vaccination class compartments exported as predicted samples</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.44" id="sircovid-01044">sircovid 0.10.44<a class="anchor" aria-label="anchor" href="#sircovid-01044"></a></h2>
-<ul><li>Improve efficiency of Rt calculation for single strains when supplying multistrain parameters</li>
-</ul></div>
+<ul><li>Improve efficiency of Rt calculation for single strains when supplying multistrain parameters</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.43" id="sircovid-01043">sircovid 0.10.43<a class="anchor" aria-label="anchor" href="#sircovid-01043"></a></h2>
-<ul><li>Fix multistrain Rt calculation for single particle case</li>
-</ul></div>
+<ul><li>Fix multistrain Rt calculation for single particle case</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.41" id="sircovid-01041">sircovid 0.10.41<a class="anchor" aria-label="anchor" href="#sircovid-01041"></a></h2>
-<ul><li>Fix IFR_t calculation for multi-strain models</li>
-</ul></div>
+<ul><li>Fix IFR_t calculation for multi-strain models</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.40" id="sircovid-01040">sircovid 0.10.40<a class="anchor" aria-label="anchor" href="#sircovid-01040"></a></h2>
-<ul><li>New function <code><a href="../reference/inflate_state_strains.html">sircovid::inflate_state_strains</a></code> for adding empty strain compartments to a model state that was run without multiple strains</li>
-</ul></div>
+<ul><li>New function <code><a href="../reference/inflate_state_strains.html">sircovid::inflate_state_strains</a></code> for adding empty strain compartments to a model state that was run without multiple strains</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.39" id="sircovid-01039">sircovid 0.10.39<a class="anchor" aria-label="anchor" href="#sircovid-01039"></a></h2>
-<ul><li>R compartment now exported as part of predicted samples</li>
-</ul></div>
+<ul><li>R compartment now exported as part of predicted samples</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.39" id="sircovid-01039-1">sircovid 0.10.39<a class="anchor" aria-label="anchor" href="#sircovid-01039-1"></a></h2>
-<ul><li>Added ability to fit 2nd serology assay with different serology parameters</li>
-</ul></div>
+<ul><li>Added ability to fit 2nd serology assay with different serology parameters</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.37" id="sircovid-01037">sircovid 0.10.37<a class="anchor" aria-label="anchor" href="#sircovid-01037"></a></h2>
 <ul><li>Added ability to directly set time-varying severity and progression parameters in <code>carehomes_parameters_progression</code> and <code>carehomes_parameters_severity</code>.</li>
@@ -326,8 +265,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.36" id="sircovid-01036">sircovid 0.10.36<a class="anchor" aria-label="anchor" href="#sircovid-01036"></a></h2>
-<ul><li>Fixed Rt calculation for multistrain so that Rt is NA only in the steps where prob_strain is NA (previously all Rt set to NA if any prob_strain was NA)</li>
-</ul></div>
+<ul><li>Fixed Rt calculation for multistrain so that Rt is NA only in the steps where prob_strain is NA (previously all Rt set to NA if any prob_strain was NA)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.34" id="sircovid-01034">sircovid 0.10.34<a class="anchor" aria-label="anchor" href="#sircovid-01034"></a></h2>
 <ul><li>Fixed <code>carehomes_rt</code> function to have flexibility for multiple dimensions, given strains, age categories and vaccinations classes.</li>
@@ -335,8 +273,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.33" id="sircovid-01033">sircovid 0.10.33<a class="anchor" aria-label="anchor" href="#sircovid-01033"></a></h2>
-<ul><li>Can now input a list of observation parameters into the <code>carehomes_parameters</code> function instead of taking the default observation parameters.</li>
-</ul></div>
+<ul><li>Can now input a list of observation parameters into the <code>carehomes_parameters</code> function instead of taking the default observation parameters.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.31" id="sircovid-01031">sircovid 0.10.31<a class="anchor" aria-label="anchor" href="#sircovid-01031"></a></h2>
 <ul><li>Add <code>cross_immunity</code> to control the amount of immunity conferred by one strain that decreases the probability of immediately being exposed to the other strain (ignored in single strain model).</li>
@@ -344,40 +281,31 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.30" id="sircovid-01030">sircovid 0.10.30<a class="anchor" aria-label="anchor" href="#sircovid-01030"></a></h2>
-<ul><li>Parameters describing vaccine efficacy (<code>rel_susceptibility</code>, <code>rel_p_sympt</code>, <code>rel_p_hosp_if_sympt</code> and <code>rel_infectivity</code>) can now take array values for varying across age groups, vaccination classes, and pathogen strains.</li>
-</ul></div>
+<ul><li>Parameters describing vaccine efficacy (<code>rel_susceptibility</code>, <code>rel_p_sympt</code>, <code>rel_p_hosp_if_sympt</code> and <code>rel_infectivity</code>) can now take array values for varying across age groups, vaccination classes, and pathogen strains.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.29" id="sircovid-01029">sircovid 0.10.29<a class="anchor" aria-label="anchor" href="#sircovid-01029"></a></h2>
-<ul><li>Multi-strain model now allows for ‘super-infections’, after recovering from strain 1 or 2, one can now be immediately infected with the ‘other’ strain. This can be turned on with <code>model_super_infection</code>.</li>
-</ul></div>
+<ul><li>Multi-strain model now allows for ‘super-infections’, after recovering from strain 1 or 2, one can now be immediately infected with the ‘other’ strain. This can be turned on with <code>model_super_infection</code>.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.28" id="sircovid-01028">sircovid 0.10.28<a class="anchor" aria-label="anchor" href="#sircovid-01028"></a></h2>
-<ul><li>Relaxed restrictions on waning immunity - the number of recovered individuals losing immunity is no longer capped by the number of individuals in the <code>T_sero_neg</code> or <code>T_PCR_neg</code> compartments.</li>
-</ul></div>
+<ul><li>Relaxed restrictions on waning immunity - the number of recovered individuals losing immunity is no longer capped by the number of individuals in the <code>T_sero_neg</code> or <code>T_PCR_neg</code> compartments.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.26" id="sircovid-01026">sircovid 0.10.26<a class="anchor" aria-label="anchor" href="#sircovid-01026"></a></h2>
-<ul><li>Add parameter <code>strain_rel_severity</code> for varying the probabilities of <code>p_G_D</code>, <code>p_H_D</code>, <code>p_W_D</code> and <code>p_ICU_D</code> by strain.</li>
-</ul></div>
+<ul><li>Add parameter <code>strain_rel_severity</code> for varying the probabilities of <code>p_G_D</code>, <code>p_H_D</code>, <code>p_W_D</code> and <code>p_ICU_D</code> by strain.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.25" id="sircovid-01025">sircovid 0.10.25<a class="anchor" aria-label="anchor" href="#sircovid-01025"></a></h2>
-<ul><li>Add additional disaggregated outputs for deaths and diagnosed admissions</li>
-</ul></div>
+<ul><li>Add additional disaggregated outputs for deaths and diagnosed admissions</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.24" id="sircovid-01024">sircovid 0.10.24<a class="anchor" aria-label="anchor" href="#sircovid-01024"></a></h2>
-<ul><li>New set of parameter <code>strain_rel_gamma_</code> for varying <code>gamma_A</code>, <code>gamma_P</code>, <code>gamma_C_1</code>, and <code>gamma_C_2</code> by strain.</li>
-</ul></div>
+<ul><li>New set of parameter <code>strain_rel_gamma_</code> for varying <code>gamma_A</code>, <code>gamma_P</code>, <code>gamma_C_1</code>, and <code>gamma_C_2</code> by strain.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.23" id="sircovid-01023">sircovid 0.10.23<a class="anchor" aria-label="anchor" href="#sircovid-01023"></a></h2>
-<ul><li>Support to allow catch up of vaccine doses that could not be delivered (e.g. when people were infected at the time they should have been vaccinated)</li>
-</ul></div>
+<ul><li>Support to allow catch up of vaccine doses that could not be delivered (e.g. when people were infected at the time they should have been vaccinated)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.22" id="sircovid-01022">sircovid 0.10.22<a class="anchor" aria-label="anchor" href="#sircovid-01022"></a></h2>
-<ul><li>Added support for time-varying hospital durations</li>
-</ul></div>
+<ul><li>Added support for time-varying hospital durations</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.20" id="sircovid-01020">sircovid 0.10.20<a class="anchor" aria-label="anchor" href="#sircovid-01020"></a></h2>
-<ul><li>Output cumulative numbers vaccinated</li>
-</ul></div>
+<ul><li>Output cumulative numbers vaccinated</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.19" id="sircovid-01019">sircovid 0.10.19<a class="anchor" aria-label="anchor" href="#sircovid-01019"></a></h2>
 <ul><li>Changed fixed <code>strain_seed_value</code> to stochastic <code>strain_seed_rate</code> vector</li>
@@ -386,40 +314,31 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.18" id="sircovid-01018">sircovid 0.10.18<a class="anchor" aria-label="anchor" href="#sircovid-01018"></a></h2>
-<ul><li>EpiEstim now allows age-varying p_C</li>
-</ul></div>
+<ul><li>EpiEstim now allows age-varying p_C</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.17" id="sircovid-01017">sircovid 0.10.17<a class="anchor" aria-label="anchor" href="#sircovid-01017"></a></h2>
-<ul><li>New function <code><a href="../reference/compile_gpu.html">sircovid::compile_gpu</a></code> which compiles sircovid to run on a GPU (<a href="https://github.com/mrc-ide/sircovid/issues/237" class="external-link">#237</a>)</li>
-</ul></div>
+<ul><li>New function <code><a href="../reference/compile_gpu.html">sircovid::compile_gpu</a></code> which compiles sircovid to run on a GPU (<a href="https://github.com/mrc-ide/sircovid/issues/237" class="external-link">#237</a>)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.16" id="sircovid-01016">sircovid 0.10.16<a class="anchor" aria-label="anchor" href="#sircovid-01016"></a></h2>
-<ul><li>New functions to support reordering samples in mcstate_pmcmc objects</li>
-</ul></div>
+<ul><li>New functions to support reordering samples in mcstate_pmcmc objects</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.12" id="sircovid-01012">sircovid 0.10.12<a class="anchor" aria-label="anchor" href="#sircovid-01012"></a></h2>
-<ul><li>Fix corner case in vaccination exposed by recent dust updates</li>
-</ul></div>
+<ul><li>Fix corner case in vaccination exposed by recent dust updates</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.8" id="sircovid-0108">sircovid 0.10.8<a class="anchor" aria-label="anchor" href="#sircovid-0108"></a></h2>
-<ul><li>New functions to estimate effective Rt using EpiEstim</li>
-</ul></div>
+<ul><li>New functions to estimate effective Rt using EpiEstim</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.7" id="sircovid-0107">sircovid 0.10.7<a class="anchor" aria-label="anchor" href="#sircovid-0107"></a></h2>
-<ul><li>Added utils for nested pmcmc</li>
-</ul></div>
+<ul><li>Added utils for nested pmcmc</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.5" id="sircovid-0105">sircovid 0.10.5<a class="anchor" aria-label="anchor" href="#sircovid-0105"></a></h2>
-<ul><li>Can control the number of initial infected individuals used in seeding</li>
-</ul></div>
+<ul><li>Can control the number of initial infected individuals used in seeding</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.3" id="sircovid-0103">sircovid 0.10.3<a class="anchor" aria-label="anchor" href="#sircovid-0103"></a></h2>
-<ul><li>Predefined vaccination schedule implemented</li>
-</ul></div>
+<ul><li>Predefined vaccination schedule implemented</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.1" id="sircovid-0101">sircovid 0.10.1<a class="anchor" aria-label="anchor" href="#sircovid-0101"></a></h2>
-<ul><li>Rt corrected for restructured model</li>
-</ul></div>
+<ul><li>Rt corrected for restructured model</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.0" id="sircovid-0100">sircovid 0.10.0<a class="anchor" aria-label="anchor" href="#sircovid-0100"></a></h2>
 <ul><li>Carehomes model restructured</li>
@@ -429,50 +348,39 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.28" id="sircovid-0928">sircovid 0.9.28<a class="anchor" aria-label="anchor" href="#sircovid-0928"></a></h2>
-<ul><li>Output deaths by age</li>
-</ul></div>
+<ul><li>Output deaths by age</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.27" id="sircovid-0927">sircovid 0.9.27<a class="anchor" aria-label="anchor" href="#sircovid-0927"></a></h2>
-<ul><li>Can now fit non-hospital deaths as two separate streams: community deaths and care home deaths</li>
-</ul></div>
+<ul><li>Can now fit non-hospital deaths as two separate streams: community deaths and care home deaths</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.23" id="sircovid-0923">sircovid 0.9.23<a class="anchor" aria-label="anchor" href="#sircovid-0923"></a></h2>
 <ul><li>Allow vector of absolute values in <code>future_Rt()</code>
-</li>
-</ul></div>
+</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.22" id="sircovid-0922">sircovid 0.9.22<a class="anchor" aria-label="anchor" href="#sircovid-0922"></a></h2>
-<ul><li>Faster Rt calculation (<a href="https://github.com/mrc-ide/sircovid/issues/209" class="external-link">#209</a>)</li>
-</ul></div>
+<ul><li>Faster Rt calculation (<a href="https://github.com/mrc-ide/sircovid/issues/209" class="external-link">#209</a>)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.17" id="sircovid-0917">sircovid 0.9.17<a class="anchor" aria-label="anchor" href="#sircovid-0917"></a></h2>
-<ul><li>IFR calculation added for carehomes model</li>
-</ul></div>
+<ul><li>IFR calculation added for carehomes model</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.14" id="sircovid-0914">sircovid 0.9.14<a class="anchor" aria-label="anchor" href="#sircovid-0914"></a></h2>
-<ul><li>Allow a subset of Rt types to be calculated, perhaps in parallel</li>
-</ul></div>
+<ul><li>Allow a subset of Rt types to be calculated, perhaps in parallel</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.12" id="sircovid-0912">sircovid 0.9.12<a class="anchor" aria-label="anchor" href="#sircovid-0912"></a></h2>
-<ul><li>Enables daily vaccine doses to be time-varying</li>
-</ul></div>
+<ul><li>Enables daily vaccine doses to be time-varying</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.11" id="sircovid-0911">sircovid 0.9.11<a class="anchor" aria-label="anchor" href="#sircovid-0911"></a></h2>
-<ul><li>Fixed Rt calculation for multistrain so that Rt is NA when prob_strain is NA</li>
-</ul></div>
+<ul><li>Fixed Rt calculation for multistrain so that Rt is NA when prob_strain is NA</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.7" id="sircovid-097">sircovid 0.9.7<a class="anchor" aria-label="anchor" href="#sircovid-097"></a></h2>
 <ul><li>Allow specification of Rt calculation in <code>add_future_betas()</code>
-</li>
-</ul></div>
+</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.4" id="sircovid-094">sircovid 0.9.4<a class="anchor" aria-label="anchor" href="#sircovid-094"></a></h2>
-<ul><li>Add over 25 strain data stream to likelihood</li>
-</ul></div>
+<ul><li>Add over 25 strain data stream to likelihood</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.3" id="sircovid-093">sircovid 0.9.3<a class="anchor" aria-label="anchor" href="#sircovid-093"></a></h2>
-<ul><li>Corrected calculation of NGM for multistrain model</li>
-</ul></div>
+<ul><li>Corrected calculation of NGM for multistrain model</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.2" id="sircovid-092">sircovid 0.9.2<a class="anchor" aria-label="anchor" href="#sircovid-092"></a></h2>
 <ul><li>Added different infectivity levels depending on vaccination stage</li>
@@ -480,12 +388,10 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.1" id="sircovid-091">sircovid 0.9.1<a class="anchor" aria-label="anchor" href="#sircovid-091"></a></h2>
-<ul><li>Rename compartments and parameters to match paper notation</li>
-</ul></div>
+<ul><li>Rename compartments and parameters to match paper notation</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.9.0" id="sircovid-090">sircovid 0.9.0<a class="anchor" aria-label="anchor" href="#sircovid-090"></a></h2>
-<ul><li>Multistrain model: ability to model 2 strains (and flexibility for more in the future) with strain-specific transmissibility. 2nd strain can be seeded over a number of pre-specified days at a pre-specified seeding level.</li>
-</ul></div>
+<ul><li>Multistrain model: ability to model 2 strains (and flexibility for more in the future) with strain-specific transmissibility. 2nd strain can be seeded over a number of pre-specified days at a pre-specified seeding level.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.8.2" id="sircovid-082">sircovid 0.8.2<a class="anchor" aria-label="anchor" href="#sircovid-082"></a></h2>
 <ul><li>Added functions <code>add_future_betas</code> and <code>future_Rt</code> for constructing future transmission scenarios</li>
@@ -494,24 +400,19 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.8.0" id="sircovid-080">sircovid 0.8.0<a class="anchor" aria-label="anchor" href="#sircovid-080"></a></h2>
-<ul><li>Move vaccination process inside odin code</li>
-</ul></div>
+<ul><li>Move vaccination process inside odin code</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.4" id="sircovid-074">sircovid 0.7.4<a class="anchor" aria-label="anchor" href="#sircovid-074"></a></h2>
-<ul><li>Now drawing equal numbers of care home workers across worker age groups.</li>
-</ul></div>
+<ul><li>Now drawing equal numbers of care home workers across worker age groups.</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.3" id="sircovid-073">sircovid 0.7.3<a class="anchor" aria-label="anchor" href="#sircovid-073"></a></h2>
-<ul><li>Correct Rt calculation accounting for vaccination</li>
-</ul></div>
+<ul><li>Correct Rt calculation accounting for vaccination</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.2" id="sircovid-072">sircovid 0.7.2<a class="anchor" aria-label="anchor" href="#sircovid-072"></a></h2>
-<ul><li>I_mild compartment removed from both models and I_ILI renamed to I_sympt</li>
-</ul></div>
+<ul><li>I_mild compartment removed from both models and I_ILI renamed to I_sympt</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.0" id="sircovid-070">sircovid 0.7.0<a class="anchor" aria-label="anchor" href="#sircovid-070"></a></h2>
-<ul><li>Extended model structure for vaccination modelling</li>
-</ul></div>
+<ul><li>Extended model structure for vaccination modelling</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.10" id="sircovid-0610">sircovid 0.6.10<a class="anchor" aria-label="anchor" href="#sircovid-0610"></a></h2>
 <ul><li>Deaths in stepdown now incorporated in carehomes model</li>
@@ -519,12 +420,10 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.9" id="sircovid-069">sircovid 0.6.9<a class="anchor" aria-label="anchor" href="#sircovid-069"></a></h2>
-<ul><li>Implement trajectory and Rt aggregation (e.g., across regions)</li>
-</ul></div>
+<ul><li>Implement trajectory and Rt aggregation (e.g., across regions)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.8" id="sircovid-068">sircovid 0.6.8<a class="anchor" aria-label="anchor" href="#sircovid-068"></a></h2>
-<ul><li>Support for vaccination modelling, with vaccination affecting only levels of susceptibility (age-specific)</li>
-</ul></div>
+<ul><li>Support for vaccination modelling, with vaccination affecting only levels of susceptibility (age-specific)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.5" id="sircovid-065">sircovid 0.6.5<a class="anchor" aria-label="anchor" href="#sircovid-065"></a></h2>
 <ul><li>Parameter <code>N_age</code> was split into <code>n_age_groups</code> (both models) and <code>n_groups</code> (carehomes)</li>
@@ -532,12 +431,10 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.4" id="sircovid-064">sircovid 0.6.4<a class="anchor" aria-label="anchor" href="#sircovid-064"></a></h2>
-<ul><li>Implement preliminary support for seroreversion</li>
-</ul></div>
+<ul><li>Implement preliminary support for seroreversion</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.3" id="sircovid-063">sircovid 0.6.3<a class="anchor" aria-label="anchor" href="#sircovid-063"></a></h2>
-<ul><li>Implement preliminary support for vaccination modelling</li>
-</ul></div>
+<ul><li>Implement preliminary support for vaccination modelling</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.2" id="sircovid-062">sircovid 0.6.2<a class="anchor" aria-label="anchor" href="#sircovid-062"></a></h2>
 <ul><li>Support for probability of positive calculation directly in the package</li>
@@ -546,8 +443,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.1" id="sircovid-061">sircovid 0.6.1<a class="anchor" aria-label="anchor" href="#sircovid-061"></a></h2>
-<ul><li>Add REACT to log-likelihood</li>
-</ul></div>
+<ul><li>Add REACT to log-likelihood</li></ul></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -562,7 +458,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
