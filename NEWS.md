@@ -1,3 +1,7 @@
+# sircovid 0.13.13
+
+* Add severity outputs by strain
+
 # sircovid 0.13.11
 
 * Add logical flag to turn on/off exporting of severity outcomes and weight parameter in `combine_rt` function, to use more flexibly for Rt and severity aggregation
