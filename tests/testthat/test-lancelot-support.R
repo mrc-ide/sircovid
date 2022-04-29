@@ -218,7 +218,7 @@ test_that("lancelot_parameters returns a list of parameters", {
       "strain_rel_p_icu",
       "strain_rel_p_hosp_if_sympt", "strain_rel_p_sympt", "N_tot_under15",
       "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
-      "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25",
+      "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_ons",
       "N_tot_react", "N_5_24_react", "N_25_34_react", "N_35_44_react",
       "N_45_54_react", "N_55_64_react", "N_65_plus_react", "I_A_transmission",
       "I_P_transmission", "I_C_1_transmission", "I_C_2_transmission",
@@ -444,7 +444,7 @@ test_that("lancelot_index identifies ICU and D_tot in real model", {
       "sympt_cases_under15_inc", "sympt_cases_15_24_inc",
       "sympt_cases_25_49_inc", "sympt_cases_50_64_inc",
       "sympt_cases_65_79_inc", "sympt_cases_80_plus_inc",
-      "sympt_cases_non_variant_over25_inc", "react_pos",
+      "sympt_cases_non_variant_over25_inc", "ons_pos", "react_pos",
       "react_5_24_pos", "react_25_34_pos", "react_35_44_pos",
       "react_45_54_pos", "react_55_64_pos", "react_65_plus_pos"))
 
@@ -592,6 +592,7 @@ test_that("lancelot_compare combines likelihood correctly", {
     sympt_cases_65_79_inc = 19:24,
     sympt_cases_80_plus_inc = 19:24,
     sympt_cases_non_variant_over25_inc = 60:65,
+    ons_pos = 2:7,
     react_pos = 2:7,
     react_5_24_pos = 1:6,
     react_25_34_pos = 1:6,
@@ -664,6 +665,8 @@ test_that("lancelot_compare combines likelihood correctly", {
     pillar2_50_64_tot = 400,
     pillar2_65_79_tot = 400,
     pillar2_80_plus_tot = 400,
+    ons_pos = 4,
+    ons_tot = 600,
     react_pos = 3,
     react_tot = 500,
     react_5_24_pos = 1,
@@ -706,6 +709,7 @@ test_that("lancelot_compare combines likelihood correctly", {
   nms_pillar2_50_64 <- c("pillar2_50_64_pos", "pillar2_50_64_tot")
   nms_pillar2_65_79 <- c("pillar2_65_79_pos", "pillar2_65_79_tot")
   nms_pillar2_80_plus <- c("pillar2_80_plus_pos", "pillar2_80_plus_tot")
+  nms_ons <- c("ons_pos", "ons_tot")
   nms_react <- c("react_pos", "react_tot")
   nms_react_5_24 <- c("react_5_24_pos", "react_5_24_tot")
   nms_react_25_34 <- c("react_25_34_pos", "react_25_34_tot")
@@ -720,7 +724,8 @@ test_that("lancelot_compare combines likelihood correctly", {
                                nms_pillar2_over25, nms_pillar2_under15,
                                nms_pillar2_15_24, nms_pillar2_25_49,
                                nms_pillar2_50_64, nms_pillar2_65_79,
-                               nms_pillar2_80_plus, nms_react, nms_react_5_24,
+                               nms_pillar2_80_plus, nms_ons,
+                               nms_react, nms_react_5_24,
                                nms_react_25_34, nms_react_35_44,
                                nms_react_45_54, nms_react_55_64,
                                nms_react_65_plus, nms_strain,
@@ -729,7 +734,7 @@ test_that("lancelot_compare combines likelihood correctly", {
              list(nms_pillar2_over25), list(nms_pillar2_under15),
              list(nms_pillar2_15_24), list(nms_pillar2_25_49),
              list(nms_pillar2_50_64), list(nms_pillar2_65_79),
-             list(nms_pillar2_80_plus), list(nms_react),
+             list(nms_pillar2_80_plus), list(nms_ons), list(nms_react),
              list(nms_react_5_24), list(nms_react_25_34),
              list(nms_react_35_44), list(nms_react_45_54),
              list(nms_react_55_64), list(nms_react_65_plus),
