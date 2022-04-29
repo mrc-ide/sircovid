@@ -124,6 +124,8 @@ real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
 // [[odin.dust::compare_data(pillar2_80_plus_pos = real_type)]]
 // [[odin.dust::compare_data(pillar2_80_plus_tot = real_type)]]
 // [[odin.dust::compare_data(pillar2_80_plus_cases = real_type)]]
+// [[odin.dust::compare_data(ons_pos = real_type)]]
+// [[odin.dust::compare_data(ons_tot = real_type)]]
 // [[odin.dust::compare_data(react_pos = real_type)]]
 // [[odin.dust::compare_data(react_tot = real_type)]]
 // [[odin.dust::compare_data(react_5_24_pos = real_type)]]
@@ -209,6 +211,7 @@ typename T::real_type
       odin(sympt_cases_non_variant_inc);
     const real_type model_sympt_cases_non_variant_over25 =
       odin(sympt_cases_non_variant_over25_inc);
+    const real_type model_ons_pos = odin(ons_pos);
     const real_type model_react_pos = odin(react_pos);
     const real_type model_react_5_24_pos = odin(react_5_24_pos);
     const real_type model_react_25_34_pos = odin(react_25_34_pos);
@@ -356,6 +359,16 @@ typename T::real_type
     const real_type model_pillar2_cases =
       model_pillar2_under15_cases + model_pillar2_15_24_cases +
       model_pillar2_over25_cases;
+
+    const real_type model_ons_pos_capped =
+      min(model_ons_pos, odin(N_tot_ons));
+    const real_type model_ons_prob_pos =
+      test_prob_pos(model_ons_pos_capped,
+                    odin(N_tot_ons) - model_ons_pos_capped,
+                    odin(ons_sensitivity),
+                    odin(ons_specificity),
+                    odin(exp_noise),
+                    rng_state);
 
     const real_type model_react_pos_capped =
       min(model_react_pos, odin(N_tot_react));
@@ -687,6 +700,10 @@ typename T::real_type
                 model_pillar2_cases,
                 odin(kappa_pillar2_cases), odin(exp_noise), rng_state);
 
+    const real_type ll_ons =
+      ll_binom(data.ons_pos, data.ons_tot,
+               model_ons_prob_pos);
+
     const real_type ll_react =
       ll_binom(data.react_pos, data.react_tot,
                model_react_prob_pos);
@@ -735,7 +752,7 @@ typename T::real_type
       ll_pillar2_cases + ll_pillar2_over25_cases + ll_pillar2_under15_cases +
       ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
       ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases +
-      ll_react + ll_5_24_react + ll_25_34_react + ll_35_44_react +
+      ll_ons + ll_react + ll_5_24_react + ll_25_34_react + ll_35_44_react +
       ll_45_54_react + ll_55_64_react + ll_65_plus_react + ll_strain +
       ll_strain_over25;
   }
