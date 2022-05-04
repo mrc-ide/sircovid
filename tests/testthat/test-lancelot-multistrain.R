@@ -543,6 +543,7 @@ test_that("different strains are equivalent", {
                  sero_pos = index[["sero_pos"]],
                  sympt_cases = index[["cum_sympt_cases"]],
                  sympt_cases_over25 = index[["cum_sympt_cases_over25"]],
+                 ons_pos = index[["ons_pos"]],
                  react_pos = index[["react_pos"]],
                  infections = index[["cum_infections"]])
 

@@ -1,6 +1,10 @@
-# sircovid 0.13.14
+# sircovid 0.13.15
 
 * Add severity outputs by vaccine class and age
+
+# sircovid 0.13.14
+
+* Can now fit to ONS prevalence data
 
 # sircovid 0.13.13
 

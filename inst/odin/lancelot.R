@@ -2043,6 +2043,11 @@ update(sympt_cases_80_plus_inc) <- (
   if (step %% steps_per_day == 0) new_sympt_cases_80_plus
   else sympt_cases_80_plus_inc + new_sympt_cases_80_plus)
 
+## For ONS we exclude the 0-1 (40% of 1) and CHR (19) groups
+initial(ons_pos) <- 0
+update(ons_pos) <- sum(new_T_PCR_pos[1, , , ]) * 3 / 5 +
+  sum(new_T_PCR_pos[2:18, , , ])
+
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_pos) <- 0
 update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
@@ -2372,6 +2377,7 @@ N_tot_25_49 <- user() # ignore.unused
 N_tot_50_64 <- user() # ignore.unused
 N_tot_65_79 <- user() # ignore.unused
 N_tot_80_plus <- user() # ignore.unused
+N_tot_ons <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
 N_5_24_react <- user() # ignore.unused
 N_25_34_react <- user() # ignore.unused
@@ -2395,6 +2401,8 @@ p_NC_80_plus <- user() # ignore.unused
 p_NC_weekend_80_plus <- user() # ignore.unused
 pillar2_sensitivity <- user() # ignore.unused
 pillar2_specificity <- user() # ignore.unused
+ons_sensitivity <- user() # ignore.unused
+ons_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused
 react_specificity <- user() # ignore.unused
 sero_sensitivity_1 <- user() # ignore.unused
