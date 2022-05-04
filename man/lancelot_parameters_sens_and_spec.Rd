@@ -11,6 +11,8 @@ lancelot_parameters_sens_and_spec(
   sero_sensitivity_2 = 0.99,
   pillar2_specificity = 0.99,
   pillar2_sensitivity = 0.99,
+  ons_specificity = 0.99,
+  ons_sensitivity = 0.99,
   react_specificity = 0.99,
   react_sensitivity = 0.99
 )
@@ -27,6 +29,10 @@ lancelot_parameters_sens_and_spec(
 \item{pillar2_specificity}{Specificity of the Pillar 2 test}
 
 \item{pillar2_sensitivity}{Sensitivity of the Pillar 2 test}
+
+\item{ons_specificity}{Specificity of the ONS test}
+
+\item{ons_sensitivity}{Sensitivity of the ONS test}
 
 \item{react_specificity}{Specificity of the REACT test}
 

@@ -1,3 +1,7 @@
+# sircovid 0.13.14
+
+* Can now fit to ONS prevalence data
+
 # sircovid 0.13.13
 
 * Add severity outputs by strain

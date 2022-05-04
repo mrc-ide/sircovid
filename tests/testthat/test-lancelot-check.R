@@ -877,6 +877,8 @@ test_that("tots all summed correctly ", {
   expect_true(all(y$sero_pos_1 == apply(y$T_sero_pos_1[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$sero_pos_2 == apply(y$T_sero_pos_2[4:13, , , 1, ], 3, sum)))
   expect_true(all(y$react_pos == apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
+  expect_true(all(y$ons_pos == apply(y$T_PCR_pos[1, , , 1, ], 2, sum) * 3 / 5 +
+                    apply(y$T_PCR_pos[2:18, , , 1, ], 3, sum)))
 })
 
 

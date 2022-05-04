@@ -561,7 +561,9 @@ lancelot_parameters <- function(start_date, region,
   ## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
   ret$N_tot_65_79 <- sum(ret$N_tot[14:16]) + sum(ret$N_tot[19]) * 0.25
   ret$N_tot_80_plus <- sum(ret$N_tot[17]) + sum(ret$N_tot[19]) * 0.75
-  ## need sub-populations for fit to react data, assume CHR are evenly
+  ## Population for ONS is 2+ (assume 0-1 are 40% of 0-4) and exclude CHR
+  ret$N_tot_ons <- ret$N_tot[1] * 3 / 5 + sum(ret$N_tot[2:18])
+  ## need sub-populations for fit to react data, assume CHW are evenly
   ## distributed amongst 25-64 year-olds
   ret$N_tot_react <- sum(ret$N_tot[2:18])
   ret$N_5_24_react <- sum(ret$N_tot[2:5])
@@ -823,6 +825,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   sympt_cases_80_plus_inc = index[["sympt_cases_80_plus_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
+                  ons_pos = index[["ons_pos"]],
                   react_pos = index[["react_pos"]],
                   react_5_24_pos = index[["react_5_24_pos"]],
                   react_25_34_pos = index[["react_25_34_pos"]],
@@ -862,7 +865,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                               "sympt_cases_50_64_inc", "sympt_cases_65_79_inc",
                               "sympt_cases_80_plus_inc",
                               "sympt_cases_non_variant_over25_inc",
-                              "react_pos", "react_5_24_pos",
+                              "ons_pos", "react_pos", "react_5_24_pos",
                               "react_25_34_pos", "react_35_44_pos",
                               "react_45_54_pos", "react_55_64_pos",
                               "react_65_plus_pos")])
@@ -1048,6 +1051,7 @@ lancelot_compare <- function(state, observed, pars) {
   model_sympt_cases_80_plus <- state["sympt_cases_80_plus_inc", ]
   model_sympt_cases_non_variant_over25 <-
     state["sympt_cases_non_variant_over25_inc", ]
+  model_ons_pos <- state["ons_pos", ]
   model_react_pos <- state["react_pos", ]
   model_react_5_24_pos <- state["react_5_24_pos", ]
   model_react_25_34_pos <- state["react_25_34_pos", ]
@@ -1169,6 +1173,18 @@ lancelot_compare <- function(state, observed, pars) {
     model_pillar2_65_79_cases + model_pillar2_80_plus_cases
   model_pillar2_cases <- model_pillar2_under15_cases +
     model_pillar2_15_24_cases + model_pillar2_over25_cases
+
+
+  ## ONS (Note that for ONS we exclude 40% of group 1 (0-1) and 19 (CHR))
+  ## It is possible that model_ons_pos > pars$N_tot_ons, so we cap it to
+  ## avoid probabilities > 1 here
+  model_ons_pos_capped <- pmin(model_ons_pos, pars$N_tot_ons)
+  model_ons_prob_pos <- test_prob_pos(model_ons_pos_capped,
+                                      pars$N_tot_ons -
+                                        model_ons_pos_capped,
+                                      pars$ons_sensitivity,
+                                      pars$ons_specificity,
+                                      pars$exp_noise)
 
 
   ## REACT (Note that for REACT we exclude group 1 (0-4) and 19 (CHR))
@@ -1493,6 +1509,10 @@ lancelot_compare <- function(state, observed, pars) {
                                 model_pillar2_cases,
                                 pars$kappa_pillar2_cases, exp_noise)
 
+  ll_ons <- ll_binom(observed$ons_pos,
+                     observed$ons_tot,
+                     model_ons_prob_pos)
+
   ll_react <- ll_binom(observed$react_pos,
                        observed$react_tot,
                        model_react_prob_pos)
@@ -1546,7 +1566,7 @@ lancelot_compare <- function(state, observed, pars) {
     ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
     ll_pillar2_over25_cases + ll_pillar2_under15_cases +
     ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
-    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_react +
+    ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_ons + ll_react +
     ll_5_24_react + ll_25_34_react + ll_35_44_react + ll_45_54_react +
     ll_55_64_react + ll_65_plus_react + ll_strain + ll_strain_over25
 }
@@ -2414,6 +2434,10 @@ lancelot_parameters_observation <- function(exp_noise = 1e6) {
 ##'
 ##' @param pillar2_sensitivity Sensitivity of the Pillar 2 test
 ##'
+##' @param ons_specificity Specificity of the ONS test
+##'
+##' @param ons_sensitivity Sensitivity of the ONS test
+##'
 ##' @param react_specificity Specificity of the REACT test
 ##'
 ##' @param react_sensitivity Sensitivity of the REACT test
@@ -2425,6 +2449,8 @@ lancelot_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
                                               sero_sensitivity_2 = 0.99,
                                               pillar2_specificity = 0.99,
                                               pillar2_sensitivity = 0.99,
+                                              ons_specificity = 0.99,
+                                              ons_sensitivity = 0.99,
                                               react_specificity = 0.99,
                                               react_sensitivity = 0.99) {
   ret <- list(
@@ -2436,6 +2462,9 @@ lancelot_parameters_sens_and_spec <- function(sero_specificity_1 = 0.9,
     ## Specificity and sensitivity for Pillar 2 testing
     pillar2_specificity = pillar2_specificity,
     pillar2_sensitivity = pillar2_sensitivity,
+    ## Specificity and sensitivity for ONS testing
+    ons_specificity = ons_specificity,
+    ons_sensitivity = ons_sensitivity,
     ## Specificity and sensitivity for REACT testing
     react_specificity = react_specificity,
     react_sensitivity = react_sensitivity)
@@ -2493,7 +2522,8 @@ lancelot_check_data <- function(data) {
                 "sero_tot_15_64_1",  "sero_pos_15_64_2", "sero_tot_15_64_2",
                 "pillar2_pos", "pillar2_tot", "pillar2_cases",
                 "pillar2_over25_pos", "pillar2_over25_tot",
-                "pillar2_over25_cases", "react_pos", "react_tot",
+                "pillar2_over25_cases", "ons_pos", "ons_tot",
+                "react_pos", "react_tot",
                 "react_5_24_pos", "react_5_24_tot",
                 "react_25_34_pos", "react_25_34_tot",
                 "react_35_44_pos", "react_35_44_tot",
