@@ -3011,9 +3011,11 @@ test_that("can inflate the number of strains after running with 1", {
   expect_equal(dim(y2), c(info2$len, 3))
   expect_equal(sum(y2), sum(y1))
 
-  expect_equal(sort(y2[, 1], decreasing = TRUE)[seq_len(info1$len)],
-               sort(y1[, 1], decreasing = TRUE))
-  expect_equal(sort(y2[, 1], decreasing = TRUE)[-seq_len(info1$len)],
+  expect_equal(sort(y2[, 1], decreasing = TRUE,
+                    na.last = FALSE)[seq_len(info1$len)],
+               sort(y1[, 1], decreasing = TRUE, na.last = FALSE))
+  expect_equal(sort(y2[, 1], decreasing = TRUE,
+                    na.last = FALSE)[-seq_len(info1$len)],
                rep(0, info2$len - info1$len))
 
   ## examples of the different types of conversions:
