@@ -2362,6 +2362,22 @@ initial(hfr_age[]) <- 0
 update(hfr_age[]) <- sum(HFR_disag_weighted[i, , ]) /
   sum(n_I_C_2_to_hosp[i, , ])
 
+## By age and vaccine class
+dim(ifr_disag) <- c(n_groups, n_vacc_classes)
+initial(ifr_disag[, ]) <- 0
+update(ifr_disag[, ]) <- sum(IFR_disag_weighted[i, , j]) /
+  sum(new_inf[i, , j])
+
+dim(ihr_disag) <- c(n_groups, n_vacc_classes)
+initial(ihr_disag[, ]) <- 0
+update(ihr_disag[, ]) <- sum(IHR_disag_weighted[i, , j]) /
+  sum(new_inf[i, , j])
+
+dim(hfr_disag) <- c(n_groups, n_vacc_classes)
+initial(hfr_disag[, ]) <- 0
+update(hfr_disag[, ]) <- sum(HFR_disag_weighted[i, , j]) /
+  sum(n_I_C_2_to_hosp[i, , j])
+
 
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
