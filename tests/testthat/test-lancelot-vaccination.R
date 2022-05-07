@@ -3351,3 +3351,87 @@ test_that("Can create vaccine eligibility vector", {
     vaccine_eligibility(500),
     rep(c(0, 1), c(17, 2)))
 })
+
+
+test_that("Vaccination has expected behaviour against severity", {
+
+  # Helper function that runs model with p parameters and
+  # returns disag severity state i
+  helper <- function(p, i) {
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
+    state <- lancelot_initial(info, 1, p)
+
+    index_i <- array(info$index[[i]], info$dim[[i]])
+
+    mod$update_state(state = state)
+    mod$set_index(info$index[[i]])
+
+    y <- mod$simulate(seq(0, 400, by = 4))
+
+    expect_equal(length(y), prod(info$dim[[i]]) * 101)
+
+    y <- array(y, c(info$dim[[i]], 101))
+  }
+
+  # Initial params - no vaccine = no effect on severity
+  p <- lancelot_parameters(0, "london",
+                           rel_susceptibility = c(1, 1),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 1))
+
+  # Sanity check - none changed compartment, all severity occurs in class 1
+  y <- helper(p, "ifr_disag")
+  expect_true(all(y[, 2, ] == y[, 2, 1], na.rm = TRUE))
+  expect_true(mean(y[, 1, ], na.rm = TRUE) > 0 &&
+                mean(y[, 2, ], na.rm = TRUE) == 0)
+
+
+  ## Vaccine is perfect against susceptibility - i.e. no severity
+  vaccine_schedule <- test_vaccine_schedule(500000, "london")
+  p <- lancelot_parameters(0, "london",
+                           rel_susceptibility = c(1, 0),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 1),
+                           vaccine_progression_rate = c(0, Inf)
+                           # vaccine_schedule = vaccine_schedule,
+                           # vaccine_index_dose2 = 2L
+  )
+  y <- helper(p, "ifr_disag")
+  # TODO: I'm expecting 0 for both here
+  mean(y[, 1, ], na.rm = TRUE); mean(y[, 2, ], na.rm = TRUE)
+  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
+                mean(y[, 1, ], na.rm = TRUE) == 0)
+
+  y <- helper(p, "ihr_disag")
+  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
+                mean(y[, 1, ], na.rm = TRUE) == 0)
+
+  y <- helper(p, "hfr_disag")
+  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
+                mean(y[, 1, ], na.rm = TRUE) == 0)
+
+
+  ## Vaccine is perfect against death only
+  p <- lancelot_parameters(0, "london",
+                           beta_value = 0,
+                           rel_susceptibility = c(1, 1),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 0),
+                           vaccine_progression_rate = c(0, Inf))
+  # TODO: 'm expecting the below
+  y <- helper(p, "ifr_disag")
+  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
+                mean(y[, 1, ], na.rm = TRUE) == 0)
+
+  y <- helper(p, "ihr_disag")
+  expect_false(mean(y[, 2, ], na.rm = TRUE) > 0 &&
+                 mean(y[, 1, ], na.rm = TRUE) > 0)
+
+  y <- helper(p, "hfr_disag")
+  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
+                mean(y[, 1, ], na.rm = TRUE) == 0)
+})
