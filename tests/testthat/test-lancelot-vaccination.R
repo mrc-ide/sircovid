@@ -3388,30 +3388,17 @@ test_that("Vaccination has expected behaviour against severity", {
                 mean(y[, 2, ], na.rm = TRUE) == 0)
 
 
-  ## Vaccine is perfect against susceptibility - i.e. no severity
-  vaccine_schedule <- test_vaccine_schedule(500000, "london")
+  ## VE 50% vs susceptibility - i.e. reduced severity in class 2
   p <- lancelot_parameters(0, "london",
-                           rel_susceptibility = c(1, 0),
+                           rel_susceptibility = c(1, 0.5),
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, Inf)
-                           # vaccine_schedule = vaccine_schedule,
-                           # vaccine_index_dose2 = 2L
-  )
+                           vaccine_progression_rate = c(0, 5))
   y <- helper(p, "ifr_disag")
-  # TODO: I'm expecting 0 for both here
+  # TODO: I'm expecting > 0 for both here & class 1 > class 2
   mean(y[, 1, ], na.rm = TRUE); mean(y[, 2, ], na.rm = TRUE)
-  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) == 0)
 
-  y <- helper(p, "ihr_disag")
-  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) == 0)
-
-  y <- helper(p, "hfr_disag")
-  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) == 0)
 
 
   ## Vaccine is perfect against death only
@@ -3421,11 +3408,11 @@ test_that("Vaccination has expected behaviour against severity", {
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 0),
-                           vaccine_progression_rate = c(0, Inf))
+                           vaccine_progression_rate = c(0, 5))
   # TODO: 'm expecting the below
   y <- helper(p, "ifr_disag")
   expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) == 0)
+                mean(y[, 1, ], na.rm = TRUE) > 0)
 
   y <- helper(p, "ihr_disag")
   expect_false(mean(y[, 2, ], na.rm = TRUE) > 0 &&
@@ -3433,5 +3420,5 @@ test_that("Vaccination has expected behaviour against severity", {
 
   y <- helper(p, "hfr_disag")
   expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) == 0)
+                mean(y[, 1, ], na.rm = TRUE) > 0)
 })
