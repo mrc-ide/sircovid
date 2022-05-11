@@ -81,15 +81,21 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
 
   calc_type <- function(type) {
     ## This will output an object of dim: n_steps x n_real_strains x n_pars
-    vapply(seq_len(n_pars),
-           function (i_pars)
-             vapply(seq_len(n_real_strains),
-                    function(i_strain)
-                      vnapply(seq_along(step),
-                              function(i_step)
-                                weight_ifr(i_strain, i_step, i_pars, type)),
-                  numeric(length(step))),
-           array(0, c(length(step), n_real_strains)))
+    out <-
+      vapply(seq_len(n_pars),
+             function (i_pars)
+               vapply(seq_len(n_real_strains),
+                      function(i_strain)
+                        vnapply(seq_along(step),
+                                function(i_step)
+                                  weight_ifr(i_strain, i_step, i_pars, type)),
+                    numeric(length(step))),
+            array(0, c(length(step), n_real_strains)))
+
+    if (sum(c(length(step), n_real_strains, n_pars) == 1) >= 2) {
+      out <- array(out, c(length(step), n_real_strains, n_pars))
+    }
+    out
 
   }
 
