@@ -9,11 +9,11 @@
 ##' @export
 lancelot_ifr_excl_immunity <- function(step, pars) {
 
-  if (unique(unlist(lapply(pars, function(x) x$n_strains))) > 1) {
+  if (length(unique(unlist(lapply(pars, function(x) x$n_strains)))) > 1) {
     stop("All parameter sets must have the same number of strains")
   }
-  if (unique(unlist(lapply(pars, function(x) x$n_groups))) > 1) {
-    stop("All parameter sets must have the same number of groups")
+  if (length(unique(unlist(lapply(pars, function(x) x$n_age_groups)))) > 1) {
+    stop("All parameter sets must have the same number of age groups")
   }
 
   if (pars[[1]]$n_strains == 1) {
@@ -21,8 +21,10 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
   } else {
     n_real_strains <- 2
   }
-  n_groups <- pars[[1]]$n_groups
+  n_age_groups <- pars[[1]]$n_age_groups
   n_pars <- length(pars)
+
+  gen_pop <- seq_len(n_age_groups)
 
   compute_ifr_weighting_strain <- function(p, i_strain) {
     if (sum(p$hosp_transmission, p$ICU_transmission, p$G_D_transmission) > 0) {
@@ -35,30 +37,32 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
 
     ifr_weight_step <- function(t) {
       ## We want unvaccinated only so set 1 in 3rd dimension
-      ngm <- p$m * tcrossprod(mean_duration[, i_strain, 1, t], p$N_tot)
+      ngm <- p$m[gen_pop, gen_pop] *
+        tcrossprod(mean_duration[gen_pop, i_strain, 1, t], p$N_tot[gen_pop])
 
-      weighting <- rep(0, p$n_groups)
+      weighting <- rep(0, p$n_age_groups)
       ## We need to exclude empty groups from the eigenvector calculation
       ## They will be weighted 0
-      k <- which(p$N_tot != 0)
-      weighting[groups_with_pop] <- eigen(ngm[k, k])$vectors[, 1]
+      k <- which(p$N_tot[gen_pop] != 0)
+      weighting[k] <- eigen(ngm[k, k])$vectors[, 1]
 
       weighting
     }
 
-    vapply(seq_along(step), ifr_weight_step, numeric(n_groups))
+    vapply(seq_along(step), ifr_weight_step, numeric(n_age_groups))
   }
 
   compute_ifr_weighting <- function(p) {
     out <- vapply(seq_len(n_real_strains),
                   function (i) compute_ifr_weighting_strain(p, i),
-                  array(0, c(n_groups, length(step))))
+                  array(0, c(n_age_groups, length(step))))
     out <- aperm(out, c(1, 3, 2))
     out
   }
 
-  ifr_weighting <- vapply(pars, compute_ifr_weighting,
-                          array(0, c(n_groups, n_real_strains, length(step))))
+  ifr_weighting <-
+    vapply(pars, compute_ifr_weighting,
+           array(0, c(n_age_groups, n_real_strains, length(step))))
 
   ifr_unweighted <-
     lapply(pars, function (p) lancelot_ifr_by_group_strain_vacc_class(step, p))
@@ -67,11 +71,12 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
     if (type == "HFR") {
       ## for HFR, need to weight further by IHR
       w <- ifr_weighting[, i_strain, i_step, i_pars] *
-        ifr_unweighted[[i_pars]]$IHR[, i_strain, 1, i_step]
+        ifr_unweighted[[i_pars]]$IHR[gen_pop, i_strain, 1, i_step]
     } else {
       w <- ifr_weighting[, i_strain, i_step, i_pars]
     }
-    weighted.mean(ifr_unweighted[[i_pars]][[type]][, i_strain, 1, i_step], w)
+    weighted.mean(
+      ifr_unweighted[[i_pars]][[type]][gen_pop, i_strain, 1, i_step], w)
   }
 
   calc_type <- function(type) {
