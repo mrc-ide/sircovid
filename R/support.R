@@ -629,6 +629,12 @@ combine_steps_groups <- function(step, n_groups, n_time_steps, n_strains,
     array(0, c(n_time_steps, n_strains, n_vacc_classes))
   )
 
+  ## If these dimensions are all 1 then the above reduces to a vector
+  ## rather than an array, so here we just reshape into an array
+  if (all(c(n_time_steps, n_strains, n_vacc_classes) == 1)) {
+    ret <- array(ret, c(1, 1, 1, length(ret)))
+  }
+
   ret <- pmin(ret, 1)
   ret <- aperm(ret, c(4, 2, 3, 1))
 
