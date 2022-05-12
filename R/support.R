@@ -13,8 +13,8 @@
 ##' sircovid::regions("england")
 regions <- function(type) {
   regions_england <- c("east_of_england",
-                       "midlands",
                        "london",
+                       "midlands",
                        "north_east_and_yorkshire",
                        "north_west",
                        "south_east",
