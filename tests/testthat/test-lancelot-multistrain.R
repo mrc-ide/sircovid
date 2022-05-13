@@ -3527,7 +3527,6 @@ test_that("Multistrain severity has expected behaviour", {
   n_seeded_new_strain_inf <- 10
   start_date <- sircovid_date("2020-01-31")
   date_seeding <- start_date # seed both strains on same day
-  eval_date <- start_date + 34 # check tests 5 weeks into the epidemic
 
   # Helper function that runs model with p parameters
   helper <- function(p) {

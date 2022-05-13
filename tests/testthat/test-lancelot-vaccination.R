@@ -3388,37 +3388,63 @@ test_that("Vaccination has expected behaviour against severity", {
                 mean(y[, 2, ], na.rm = TRUE) == 0)
 
 
-  ## VE 50% vs susceptibility - i.e. reduced severity in class 2
-  p <- lancelot_parameters(0, "london",
-                           rel_susceptibility = c(1, 0.5),
+  ## Now for the proper tests
+
+  # Vaccine schedule
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf,
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+
+
+  ## Everyone changed vacc_class, all severity in class 2
+  p <- lancelot_parameters(0, region,
+                           rel_susceptibility = c(1, 1),
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
-                           vaccine_progression_rate = c(0, 5))
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
   y <- helper(p, "ifr_disag")
-  # TODO: I'm expecting > 0 for both here & class 1 > class 2
-  mean(y[, 1, ], na.rm = TRUE); mean(y[, 2, ], na.rm = TRUE)
+  expect_true(mean(y[, 1, ], na.rm = TRUE) == 0 &&
+                mean(y[, 2, ], na.rm = TRUE) > 0)
 
+
+  ## VE 90% vs susceptibility = lower IFR in class 2 than class 1
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 5000,
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+
+  p <- lancelot_parameters(0, region,
+                           rel_susceptibility = c(1, 0.1),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 1),
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
+  y <- helper(p, "ifr_disag")
+  expect_true(sum(y[, 1, 101], na.rm = TRUE) > sum(y[, 2, 101], na.rm = TRUE))
 
 
   ## Vaccine is perfect against death only
-  p <- lancelot_parameters(0, "london",
-                           beta_value = 0,
+  p <- lancelot_parameters(0, region,
                            rel_susceptibility = c(1, 1),
                            rel_p_sympt = c(1, 1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 0),
-                           vaccine_progression_rate = c(0, 5))
-  # TODO: 'm expecting the below
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
   y <- helper(p, "ifr_disag")
-  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) > 0)
+  expect_true(sum(y[, 2, 101], na.rm = TRUE) == 0 &&
+                sum(y[, 1, 101], na.rm = TRUE) > 0)
 
   y <- helper(p, "ihr_disag")
-  expect_false(mean(y[, 2, ], na.rm = TRUE) > 0 &&
+  expect_true(mean(y[, 2, ], na.rm = TRUE) > 0 &&
                  mean(y[, 1, ], na.rm = TRUE) > 0)
 
   y <- helper(p, "hfr_disag")
-  expect_true(mean(y[, 2, ], na.rm = TRUE) == 0 &&
-                mean(y[, 1, ], na.rm = TRUE) > 0)
+  expect_true(sum(y[, 2, 101], na.rm = TRUE) == 0 &&
+                sum(y[, 1, 101], na.rm = TRUE) > 0)
 })
