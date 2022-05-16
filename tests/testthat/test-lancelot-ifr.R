@@ -5,6 +5,7 @@ test_that("Single strain IFR excluding immunity calculated as expected", {
 
     # include a 2nd vaccine class but it should have no impact
     p <- lancelot_parameters(0, "england",
+                             carehome_beds = 0,
                              rel_susceptibility = c(1, 0.5),
                              rel_p_sympt = c(1, 0.5),
                              rel_p_hosp_if_sympt = c(1, 0.5),
@@ -61,9 +62,11 @@ test_that("Multistrain IFR excluding immunity calculated as expected", {
 
     # include a 2nd vaccine class but it should have no impact
     p <- lancelot_parameters(0, "england",
+                             carehome_beds = 0,
                              strain_transmission = c(1, 1),
                              strain_rel_p_sympt = c(1, strain_rel_p_sympt),
-                             strain_rel_p_hosp_if_sympt = c(1, strain_rel_p_hosp_if_sympt),
+                             strain_rel_p_hosp_if_sympt =
+                               c(1, strain_rel_p_hosp_if_sympt),
                              strain_rel_p_G_D = c(1, strain_rel_p_G_D),
                              strain_rel_p_death = c(1, strain_rel_p_death),
                              strain_rel_p_icu = c(1, strain_rel_p_icu),
@@ -112,3 +115,71 @@ test_that("Multistrain IFR excluding immunity calculated as expected", {
   # Check probabilities are capped as expected
   helper(50, 50, 0, 50, 50, 1, 1, 1)
 })
+
+test_that("IFR excluding immunity outputted with correct dimensions", {
+
+  # Dimensions of outputs should be n_steps x n_strains x n_pars
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0)
+  severity <-  lancelot_ifr_excl_immunity(1, list(p))
+  expect_equal(dim(severity$IFR), c(1, 1, 1))
+  expect_equal(dim(severity$IHR), c(1, 1, 1))
+  expect_equal(dim(severity$HFR), c(1, 1, 1))
+  expect_equal(length(severity$step), 1)
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0)
+  severity <-  lancelot_ifr_excl_immunity(1, list(p, p))
+  expect_equal(dim(severity$IFR), c(1, 1, 2))
+  expect_equal(dim(severity$IHR), c(1, 1, 2))
+  expect_equal(dim(severity$HFR), c(1, 1, 2))
+  expect_equal(length(severity$step), 1)
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0)
+  severity <-  lancelot_ifr_excl_immunity(c(1, 3), list(p))
+  expect_equal(dim(severity$IFR), c(2, 1, 1))
+  expect_equal(dim(severity$IHR), c(2, 1, 1))
+  expect_equal(dim(severity$HFR), c(2, 1, 1))
+  expect_equal(length(severity$step), 2)
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0,
+                           strain_transmission = c(1, 1))
+  severity <-  lancelot_ifr_excl_immunity(1, list(p))
+  expect_equal(dim(severity$IFR), c(1, 2, 1))
+  expect_equal(dim(severity$IHR), c(1, 2, 1))
+  expect_equal(dim(severity$HFR), c(1, 2, 1))
+  expect_equal(length(severity$step), 1)
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0,
+                           strain_transmission = c(1, 1))
+  severity <-  lancelot_ifr_excl_immunity(c(1, 3, 5), list(p, p, p, p))
+  expect_equal(dim(severity$IFR), c(3, 2, 4))
+  expect_equal(dim(severity$IHR), c(3, 2, 4))
+  expect_equal(dim(severity$HFR), c(3, 2, 4))
+  expect_equal(length(severity$step), 3)
+
+})
+
+test_that("If infections by age are weighted equally, IFR is a simple mean", {
+
+  # Population even across age groups
+  p <- lancelot_parameters(1, "uk", population = rep(500, 17),
+                           carehome_beds = 0)
+  # All mixing at the same rate
+  p$m[1:17, 1:17] <- 0.1
+  # probability of being symptomatic is the same across groups
+  p$p_C_step[, ] <- p$p_C_step[1, 1]
+
+  severity <- lancelot_ifr_excl_immunity(1, list(p))
+
+  ihr <- p$p_C_step * p$p_H_step * (1 - p$p_G_D_step)
+  hfr <- (1 - p$p_ICU_step) * p$p_H_D_step +
+    p$p_ICU_step * (p$p_ICU_D_step + (1 - p$p_ICU_D_step) * p$p_W_D_step)
+  ifr <- ihr * hfr + p$p_C_step * p$p_H_step * p$p_G_D_step
+
+  expect_equal(severity$IHR[1, 1, 1], mean(ihr[1:17]))
+  expect_equal(severity$IFR[1, 1, 1], mean(ifr[1:17]))
+  # HFR gets weighted by IHR
+  expect_equal(severity$HFR[1, 1, 1], weighted.mean(hfr[1:17], ihr[1:17]))
+
+})
+
