@@ -54,7 +54,7 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
 
   compute_ifr_weighting <- function(p) {
     out <- vapply(seq_len(n_real_strains),
-                  function (i) compute_ifr_weighting_strain(p, i),
+                  function(i) compute_ifr_weighting_strain(p, i),
                   array(0, c(n_age_groups, length(step))))
     out <- aperm(out, c(1, 3, 2))
     out
@@ -65,7 +65,7 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
            array(0, c(n_age_groups, n_real_strains, length(step))))
 
   ifr_unweighted <-
-    lapply(pars, function (p) lancelot_ifr_by_group_strain_vacc_class(step, p))
+    lapply(pars, function(p) lancelot_ifr_by_group_strain_vacc_class(step, p))
 
   weight_ifr <- function(i_strain, i_step, i_pars, type) {
     if (type == "HFR") {
@@ -83,7 +83,7 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
     ## This will output an object of dim: n_steps x n_real_strains x n_pars
     out <-
       vapply(seq_len(n_pars),
-             function (i_pars)
+             function(i_pars)
                vapply(seq_len(n_real_strains),
                       function(i_strain)
                         vnapply(seq_along(step),
