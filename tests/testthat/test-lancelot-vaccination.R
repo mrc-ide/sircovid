@@ -3381,14 +3381,12 @@ test_that("Vaccination has expected behaviour against severity", {
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1))
 
-  # Sanity check - none changed compartment, all severity occurs in class 1
+  # Sanity check 1 - none changed class, all severity in class 1
   y <- helper(p, "ifr_disag")
   expect_true(all(y[, 2, ] == y[, 2, 1], na.rm = TRUE))
   expect_true(mean(y[, 1, ], na.rm = TRUE) > 0 &&
                 mean(y[, 2, ], na.rm = TRUE) == 0)
 
-
-  ## Now for the proper tests
 
   # Vaccine schedule
   region <- "london"
@@ -3398,7 +3396,7 @@ test_that("Vaccination has expected behaviour against severity", {
                                             uptake = 1)
 
 
-  ## Everyone changed vacc_class, all severity in class 2
+  # Sanity check 2 - Everyone changed vacc_class, all severity in class 2
   p <- lancelot_parameters(0, region,
                            rel_susceptibility = c(1, 1),
                            rel_p_sympt = c(1, 1),
@@ -3410,6 +3408,9 @@ test_that("Vaccination has expected behaviour against severity", {
   expect_true(mean(y[, 1, ], na.rm = TRUE) == 0 &&
                 mean(y[, 2, ], na.rm = TRUE) > 0)
 
+
+  ## Now for the proper tests - evaluation is done at the end of the model
+  ## to allow for vaccination to take effect
 
   ## VE 90% vs susceptibility = lower IFR in class 2 than class 1
   vaccine_schedule <- test_vaccine_schedule(daily_doses = 5000,
@@ -3428,7 +3429,7 @@ test_that("Vaccination has expected behaviour against severity", {
   expect_true(sum(y[, 1, 101], na.rm = TRUE) > sum(y[, 2, 101], na.rm = TRUE))
 
 
-  ## Vaccine is perfect against death only
+  ## VE 100% vs death = no IFR/HFR in class 2, but IHR > 0 for both classes
   p <- lancelot_parameters(0, region,
                            rel_susceptibility = c(1, 1),
                            rel_p_sympt = c(1, 1),
@@ -3441,8 +3442,8 @@ test_that("Vaccination has expected behaviour against severity", {
                 sum(y[, 1, 101], na.rm = TRUE) > 0)
 
   y <- helper(p, "ihr_disag")
-  expect_true(mean(y[, 2, ], na.rm = TRUE) > 0 &&
-                 mean(y[, 1, ], na.rm = TRUE) > 0)
+  expect_true(sum(y[, 2, 101], na.rm = TRUE) > 0 &&
+                 sum(y[, 1, 101], na.rm = TRUE) > 0)
 
   y <- helper(p, "hfr_disag")
   expect_true(sum(y[, 2, 101], na.rm = TRUE) == 0 &&
