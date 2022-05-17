@@ -235,4 +235,8 @@ test_that("Validate IFR excluding immunity inputs", {
   expect_error(lancelot_ifr_excl_immunity(1, list(p, p3)),
                "All parameter sets must have the same number of age groups")
 
+  p4 <- p
+  p$ICU_transmission <- 1
+  expect_error(lancelot_ifr_excl_immunity(1, list(p)),
+               "Cannot currently compute IFR if any of 'hosp_transmission'")
 })
