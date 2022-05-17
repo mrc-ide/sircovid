@@ -96,20 +96,20 @@ test_that("Multistrain IFR excluding immunity calculated as expected", {
   helper(0, NULL, NULL, NULL, NULL, 0, 0, NA)
   # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 0
   helper(1, 0, NULL, NULL, NULL, 0, 0, NA)
-  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1 &
-  #     strain_rel_p_G_D = 2 (p_G_D for strain 2 is 1)
+  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1
+  # & strain_rel_p_G_D = 2 (p_G_D for strain 2 is 1)
   helper(1, 1, 2, NULL, NULL, 1, 0, NA)
-  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1 &
-  #     strain_rel_p_G_D = 0 & strain_rel_p_death = 0 & strain_rel_p_icu = 0
+  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1
+  # & strain_rel_p_G_D = 0 & strain_rel_p_death = 0 & strain_rel_p_icu = 0
   helper(1, 1, 0, 0, 0, 0, 1, 0)
-  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1 &
-  #     strain_rel_p_G_D = 0 & strain_rel_p_death = 1 & strain_rel_p_icu = 0
+  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1
+  # & strain_rel_p_G_D = 0 & strain_rel_p_death = 1 & strain_rel_p_icu = 0
   helper(1, 1, 0, 1, 0, 1, 1, 1)
-  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1 &
-  #     strain_rel_p_G_D = 0 & strain_rel_p_death = 0 & strain_rel_p_icu = 1
+  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1
+  # & strain_rel_p_G_D = 0 & strain_rel_p_death = 0 & strain_rel_p_icu = 1
   helper(1, 1, 0, 0, 1, 0, 1, 0)
-  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1 &
-  #     strain_rel_p_G_D = 0 & strain_rel_p_death = 1 & strain_rel_p_icu = 1
+  # Set strain_rel_p_sympt = 1 & strain_rel_p_hosp_if_sympt = 1
+  # & strain_rel_p_G_D = 0 & strain_rel_p_death = 1 & strain_rel_p_icu = 1
   helper(1, 1, 0, 1, 1, 1, 1, 1)
 
   # Check probabilities are capped as expected
