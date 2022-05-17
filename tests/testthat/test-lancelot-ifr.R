@@ -159,6 +159,43 @@ test_that("IFR excluding immunity outputted with correct dimensions", {
 
 })
 
+
+test_that("Can correctly calculate IFR excluding immunity at different steps", {
+
+  p_severity <-
+    lancelot_parameters_severity(0.25,
+                                 p_H =
+                                   list(value = c(0.4, 0.2),
+                                        date = sircovid_date(c("2020-03-01",
+                                                               "2020-04-01"))),
+                                 p_ICU = list(value = 0),
+                                 p_G_D = list(value = 0),
+                                 p_H_D =
+                                   list(value = c(0.5, 0.25),
+                                        date = sircovid_date(c("2020-06-01",
+                                                               "2020-07-01"))))
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0,
+                           severity = p_severity)
+
+  date <- sircovid_date(c("2020-02-01", "2020-05-01", "2020-08-01"))
+  step <- date * 4
+
+  severity <-  lancelot_ifr_excl_immunity(step, list(p))
+
+  # IHR should halve between step[1] & step[2]
+  expect_equal(severity$IHR[1, 1, 1], 2 * severity$IHR[2, 1, 1])
+  expect_equal(severity$IHR[2, 1, 1], severity$IHR[3, 1, 1])
+  # HFR should halve between step[2] & step[3]
+  expect_equal(severity$HFR[1, 1, 1], severity$HFR[2, 1, 1])
+  expect_equal(severity$HFR[2, 1, 1], 2 * severity$HFR[3, 1, 1])
+  # IFR should halve between step[1] & step[2], and between step[2] & step[3]
+  expect_equal(severity$IFR[1, 1, 1], 2 * severity$IFR[2, 1, 1])
+  expect_equal(severity$IFR[2, 1, 1], 2 * severity$IFR[3, 1, 1])
+
+})
+
+
 test_that("If infections by age are weighted equally, IFR is a simple mean", {
 
   # Population even across age groups
@@ -183,3 +220,19 @@ test_that("If infections by age are weighted equally, IFR is a simple mean", {
 
 })
 
+test_that("Validate IFR excluding immunity inputs", {
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0)
+  expect_error(lancelot_ifr_excl_immunity(array(1, c(2, 2)), list(p)),
+               "Expected 'step' to be a vector")
+
+  p2 <- lancelot_parameters(1, "uk", carehome_beds = 0,
+                            strain_transmission = c(1, 1))
+  expect_error(lancelot_ifr_excl_immunity(1, list(p, p2)),
+               "All parameter sets must have the same number of strains")
+
+  p3 <- p
+  p3$n_age_groups <- 5
+  expect_error(lancelot_ifr_excl_immunity(1, list(p, p3)),
+               "All parameter sets must have the same number of age groups")
+
+})
