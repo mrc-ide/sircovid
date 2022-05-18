@@ -9,6 +9,9 @@
 ##' @export
 lancelot_ifr_excl_immunity <- function(step, pars) {
 
+  if (length(dim(step)) > 1) {
+    stop("Expected 'step' to be a vector")
+  }
   if (length(unique(unlist(lapply(pars, function(x) x$n_strains)))) > 1) {
     stop("All parameter sets must have the same number of strains")
   }
