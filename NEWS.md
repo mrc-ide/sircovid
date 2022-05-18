@@ -1,4 +1,4 @@
-# sircovid 0.13.15
+# sircovid 0.13.17
 
 * Add severity outputs by vaccine class and age
 
