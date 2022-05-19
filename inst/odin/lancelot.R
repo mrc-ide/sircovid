@@ -763,7 +763,10 @@ aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
   (if (vacc_skip_from[l] > 0)
     n_I_P_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
-new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
+## NOTE: max() is here for the case where hit rounding error; we
+## should really error if this comes through with a very slight
+## negative.
+new_I_P[, , , ] <- max(as.numeric(0), I_P[i, j, k, l] + aux_I_P[i, j, k, l])
 
 ## Work out the I_C_1->I_C_1 transitions
 aux_I_C_1[, , , ] <- (if (k == 1) n_I_P_progress[i, j, k_P, l] else

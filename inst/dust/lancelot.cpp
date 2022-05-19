@@ -5281,7 +5281,7 @@ public:
       for (int j = 1; j <= shared->dim_new_I_P_2; ++j) {
         for (int k = 1; k <= shared->dim_new_I_P_3; ++k) {
           for (int l = 1; l <= shared->dim_new_I_P_4; ++l) {
-            internal.new_I_P[i - 1 + shared->dim_new_I_P_1 * (j - 1) + shared->dim_new_I_P_12 * (k - 1) + shared->dim_new_I_P_123 * (l - 1)] = I_P[shared->dim_I_P_123 * (l - 1) + shared->dim_I_P_12 * (k - 1) + shared->dim_I_P_1 * (j - 1) + i - 1] + internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1];
+            internal.new_I_P[i - 1 + shared->dim_new_I_P_1 * (j - 1) + shared->dim_new_I_P_12 * (k - 1) + shared->dim_new_I_P_123 * (l - 1)] = std::max(static_cast<real_type>(0), I_P[shared->dim_I_P_123 * (l - 1) + shared->dim_I_P_12 * (k - 1) + shared->dim_I_P_1 * (j - 1) + i - 1] + internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1]);
           }
         }
       }
