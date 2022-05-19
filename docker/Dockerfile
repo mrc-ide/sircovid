@@ -16,7 +16,7 @@ COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 RUN install2.r --error \
         --repos https://cloud.r-project.org \
-        --repos https://vimc.github.io/drat \
+        --repos https://ncov-ic.github.io/drat \
         EpiEstim \
         cpp11 \
         distcrete \
