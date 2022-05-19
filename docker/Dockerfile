@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.1.2
+FROM rocker/r-ver:4.2.0
 
 RUN apt-get update &&  apt-get install -y --no-install-recommends \
         gnupg2 \
@@ -15,12 +15,21 @@ RUN apt-get update &&  apt-get install -y --no-install-recommends \
 COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 RUN install2.r --error \
+        --repos https://cloud.r-project.org \
+        --repos https://vimc.github.io/drat \
         EpiEstim \
         cpp11 \
         distcrete \
+        dust \
+        eigen1 \
+        mcstate \
+        odin \
+        odin.dust \
         remotes \
         socialmixr
 
-RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust", "mrc-ide/mcstate", "mrc-ide/eigen1", "mrc-ide/odin", "mrc-ide/odin.dust"))'
+# If dev versions are needed, adapt one of these:
+# RUN Rscript -e 'remotes::install_github(c("mrc-ide/dust", "mrc-ide/mcstate", "mrc-ide/eigen1", "mrc-ide/odin", "mrc-ide/odin.dust"))'
+
 COPY . /src
 RUN R CMD INSTALL --install-tests /src && rm -rf /src
