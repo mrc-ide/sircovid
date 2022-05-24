@@ -3351,3 +3351,103 @@ test_that("Can create vaccine eligibility vector", {
     vaccine_eligibility(500),
     rep(c(0, 1), c(17, 2)))
 })
+
+
+test_that("Vaccination has expected behaviour against severity", {
+
+  # Helper function that runs model with p parameters and
+  # returns disag severity state i
+  helper <- function(p, i) {
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
+    state <- lancelot_initial(info, 1, p)
+
+    index_i <- array(info$index[[i]], info$dim[[i]])
+
+    mod$update_state(state = state)
+    mod$set_index(info$index[[i]])
+
+    y <- mod$simulate(seq(0, 400, by = 4))
+
+    expect_equal(length(y), prod(info$dim[[i]]) * 101)
+
+    y <- array(y, c(info$dim[[i]], 101))
+  }
+
+  # Initial params - no vaccine = no effect on severity
+  p <- lancelot_parameters(0, "london",
+                           rel_susceptibility = c(1, 1),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 1))
+
+  # Sanity check 1 - none changed class, all severity in class 1
+  y <- helper(p, "ifr_disag")
+  expect_true(all(y[, 2, ] == y[, 2, 1], na.rm = TRUE))
+  expect_true(all(y[, 1, -1] > 0, na.rm = TRUE) &&
+                all(y[, 2, -1] == 0, na.rm = TRUE))
+
+
+  # Vaccine schedule
+  region <- "london"
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf,
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+
+
+  # Sanity check 2 - Everyone changed vacc_class, all severity in class 2
+  p <- lancelot_parameters(0, region,
+                           rel_susceptibility = c(1, 1),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 1),
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
+  y <- helper(p, "ifr_disag")
+  expect_true(all(y[, 1, -1] == 0, na.rm = TRUE) &&
+                all(y[, 2, -1] > 0, na.rm = TRUE))
+
+
+  ## Now for the proper tests - evaluation is done at the end of the model
+  ## to allow for vaccination to take effect
+
+  ## VE 99% vs susceptibility = lower IFR in class 2 than class 1
+  vaccine_schedule <- test_vaccine_schedule(daily_doses = 5000,
+                                            region = region,
+                                            mean_days_between_doses = 1000,
+                                            uptake = 1)
+
+  p <- lancelot_parameters(0, region,
+                           rel_susceptibility = c(1, 0.01),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 1),
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
+  y <- helper(p, "ifr_disag")
+  expect_true(sum(y[, 1, 101], na.rm = TRUE) > sum(y[, 2, 101], na.rm = TRUE))
+  expect_true(all(y[, 1, 101] > 0, na.rm = TRUE))
+  expect_true(all(y[, 2, 101] > 0, na.rm = TRUE))
+
+
+  ## VE 100% vs death = no IFR/HFR in class 2, but IHR > 0 for both classes
+  p <- lancelot_parameters(0, region,
+                           rel_susceptibility = c(1, 1),
+                           rel_p_sympt = c(1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1),
+                           rel_p_death = c(1, 0),
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
+  y <- helper(p, "ifr_disag")
+  expect_true(all(y[, 2, 101] == 0, na.rm = TRUE) &&
+                all(y[, 1, 101] > 0, na.rm = TRUE))
+
+  y <- helper(p, "ihr_disag")
+  expect_true(all(y[, 2, 101] > 0, na.rm = TRUE) &&
+                all(y[, 1, 101] > 0, na.rm = TRUE))
+
+  y <- helper(p, "hfr_disag")
+  expect_true(all(y[, 2, 101] == 0, na.rm = TRUE) &&
+                all(y[, 1, 101] > 0, na.rm = TRUE))
+})

@@ -3519,3 +3519,140 @@ test_that("rotate strain uses correct variables", {
     setdiff(rotate_strain_compartments, names(which(n_strain_dim)))
   expect_length(variables_rotated_but_no_strain, 0)
 })
+
+
+test_that("Multistrain severity has expected behaviour", {
+
+  # Seeding parameters
+  n_seeded_new_strain_inf <- 10
+  start_date <- sircovid_date("2020-01-31")
+  date_seeding <- start_date # seed both strains on same day
+
+  # Helper function that runs model with p parameters
+  helper <- function(p) {
+    np <- 10
+    mod <- lancelot$new(p, 0, np, seed = 1L)
+    info <- mod$info()
+    y0 <- lancelot_initial(info, 1, p)
+    mod$update_state(state = y0)
+    y <- mod$transform_variables(
+      drop(mod$simulate(seq(0, 400, by = 4))))
+
+    y
+  }
+
+  # Initial params - both strains have same severity
+  p <- lancelot_parameters(start_date, "england",
+                           strain_transmission = c(1, 1),
+                           strain_seed_date = date_seeding,
+                           strain_seed_size = n_seeded_new_strain_inf,
+                           strain_seed_pattern = rep(1, 4))
+  dim <- dim(p$rel_p_death)
+
+  ## Severity for both strains is greater than 0
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
+
+
+  # Immunity vs strain 1 infection only
+  p$rel_p_sympt <- array(matrix(c(0, 1, 1, 0),
+                                nrow = dim[1], ncol = dim[2],
+                                byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
+
+
+  # Immunity vs strain 2 infection only
+  p$rel_p_sympt <- array(matrix(c(1, 0, 0, 1),
+                                nrow = dim[1], ncol = dim[2],
+                                byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
+
+
+  # Immunity vs both strains
+  p$rel_p_sympt <- array(0, dim = dim)
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
+
+
+  # Immunity vs strain 1 hospitalisation only
+  p$rel_p_sympt <- array(1, dim = dim)
+  p$rel_p_hosp_if_sympt <- array(matrix(c(0, 1, 1, 0),
+                                        nrow = dim[1], ncol = dim[2],
+                                        byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
+
+
+  # Immunity vs strain 2 hospitalisation only
+  p$rel_p_hosp_if_sympt <- array(matrix(c(1, 0, 0, 1),
+                                        nrow = dim[1], ncol = dim[2],
+                                        byrow = TRUE), dim = dim)
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
+
+
+  # Immunity vs strain 1 death only
+  p_deaths <- c("rel_p_death", "rel_p_G_D", "rel_p_H_D", "rel_p_W_D",
+                "rel_p_ICU_D")
+  p$rel_p_hosp_if_sympt <- array(1, dim = dim)
+  for (i in p_deaths) {
+    p[[i]] <- array(matrix(c(0, 1, 1, 0),
+                           nrow = dim[1], ncol = dim[2],
+                           byrow = TRUE), dim = dim)
+  }
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
+
+
+  # Immunity vs strain 2 death only
+  for (i in p_deaths) {
+    p[[i]] <- array(matrix(c(1, 0, 0, 1),
+                           nrow = dim[1], ncol = dim[2],
+                           byrow = TRUE), dim = dim)
+  }
+  y <- helper(p)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
+
+})
