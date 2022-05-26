@@ -2346,6 +2346,39 @@ update(hfr_strain[]) <- if (n_real_strains == 1)
   (sum(n_I_C_2_to_hosp[, i, ]) + sum(n_I_C_2_to_hosp[, 5 - i, ]))
 dim(hfr_strain) <- n_real_strains
 
+## By age
+dim(ifr_age) <- n_groups
+initial(ifr_age[]) <- 0
+update(ifr_age[]) <- sum(IFR_disag_weighted[i, , ]) /
+  sum(new_inf[i, , ])
+
+dim(ihr_age) <- n_groups
+initial(ihr_age[]) <- 0
+update(ihr_age[]) <- sum(IHR_disag_weighted[i, , ]) /
+  sum(new_inf[i, , ])
+
+dim(hfr_age) <- n_groups
+initial(hfr_age[]) <- 0
+update(hfr_age[]) <- sum(HFR_disag_weighted[i, , ]) /
+  sum(n_I_C_2_to_hosp[i, , ])
+
+## By age and vaccine class
+dim(ifr_disag) <- c(n_groups, n_vacc_classes)
+initial(ifr_disag[, ]) <- 0
+update(ifr_disag[, ]) <- sum(IFR_disag_weighted[i, , j]) /
+  sum(new_inf[i, , j])
+
+dim(ihr_disag) <- c(n_groups, n_vacc_classes)
+initial(ihr_disag[, ]) <- 0
+update(ihr_disag[, ]) <- sum(IHR_disag_weighted[i, , j]) /
+  sum(new_inf[i, , j])
+
+dim(hfr_disag) <- c(n_groups, n_vacc_classes)
+initial(hfr_disag[, ]) <- 0
+update(hfr_disag[, ]) <- sum(HFR_disag_weighted[i, , j]) /
+  sum(n_I_C_2_to_hosp[i, , j])
+
+
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these
 ## do not appear in any odin equation we mark them as "ignore.unused"
