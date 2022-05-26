@@ -3412,15 +3412,15 @@ test_that("Vaccination has expected behaviour against severity", {
   ## Now for the proper tests - evaluation is done at the end of the model
   ## to allow for vaccination to take effect
 
-  ## VE 99% vs susceptibility = lower IFR in class 2 than class 1
+  ## VE 99% vs symptomatic disease = lower IFR in class 2 than class 1
   vaccine_schedule <- test_vaccine_schedule(daily_doses = 5000,
                                             region = region,
                                             mean_days_between_doses = 1000,
                                             uptake = 1)
 
   p <- lancelot_parameters(0, region,
-                           rel_susceptibility = c(1, 0.01),
-                           rel_p_sympt = c(1, 1),
+                           rel_susceptibility = c(1, 1),
+                           rel_p_sympt = c(1, 0.1),
                            rel_p_hosp_if_sympt = c(1, 1),
                            rel_p_death = c(1, 1),
                            vaccine_schedule = vaccine_schedule,
@@ -3429,11 +3429,7 @@ test_that("Vaccination has expected behaviour against severity", {
   # There is severity in both vacc classes
   expect_true(all(y[, 1, 101] > 0, na.rm = TRUE))
   expect_true(all(y[, 2, 101] > 0, na.rm = TRUE))
-
-  # On average this is higher amongst class 1
-  ifr_class_1 <- sum(y[, 1, ], na.rm = TRUE) / 101
-  ifr_class_2 <- sum(y[, 2, ], na.rm = TRUE) / 101
-  expect_true(ifr_class_1 > ifr_class_2)
+  expect_true(all(y[, 1, 101] > y[, 2, 101], na.rm = TRUE))
 
 
   ## VE 100% vs death = no IFR/HFR in class 2, but IHR > 0 for both classes
