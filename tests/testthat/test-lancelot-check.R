@@ -1215,17 +1215,17 @@ test_that("Severity by age is calculated parametrically", {
 
   # There are extremely low discrepancies due to integer precision, in random
   # number generation. We'll round to 15
-  y <- round(helper(p, "ifr_age")[c(1:17), 201], 15)
-  x <- round(ifr[which(!is.na(y))], 15)
-  expect_true(all(y == x))
+  y <- helper(p, "ifr_age")[c(1:17), 201]
+  x <- ifr[which(!is.na(y))]
+  expect_vector_equal(x, y, 15)
 
-  y <- round(helper(p, "ihr_age")[c(1:17), 101], 15)
-  x <- round(ihr[which(!is.na(y))], 15)
-  expect_true(all(y == x))
+  y <- helper(p, "ihr_age")[c(1:17), 101]
+  x <- ihr[which(!is.na(y))]
+  expect_vector_equal(x, y, 15)
 
   # We have some NAs in young age bands in y - we'll ignore
-  y <- round(helper(p, "hfr_age")[c(1:17), 101], 15)
-  x <- round(hfr[which(!is.na(y))], 15)
+  y <- helper(p, "hfr_age")[c(1:17), 101]
+  x <- hfr[which(!is.na(y))]
   y <- y[which(!is.na(y))]
-  expect_true(all(y == x))
+  expect_vector_equal(x, y, 15)
 })

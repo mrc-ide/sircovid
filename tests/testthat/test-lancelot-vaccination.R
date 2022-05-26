@@ -3426,9 +3426,14 @@ test_that("Vaccination has expected behaviour against severity", {
                            vaccine_schedule = vaccine_schedule,
                            vaccine_index_dose2 = 2L)
   y <- helper(p, "ifr_disag")
-  expect_true(sum(y[, 1, 101], na.rm = TRUE) > sum(y[, 2, 101], na.rm = TRUE))
+  # There is severity in both vacc classes
   expect_true(all(y[, 1, 101] > 0, na.rm = TRUE))
   expect_true(all(y[, 2, 101] > 0, na.rm = TRUE))
+
+  # On average this is higher amongst class 1
+  ifr_class_1 <- sum(y[, 1, ], na.rm = TRUE) / 101
+  ifr_class_2 <- sum(y[, 2, ], na.rm = TRUE) / 101
+  expect_true(ifr_class_1 > ifr_class_2)
 
 
   ## VE 100% vs death = no IFR/HFR in class 2, but IHR > 0 for both classes
