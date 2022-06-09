@@ -1976,7 +1976,7 @@ test_that("strain_rel_gamma works as expected in lancelot_parameters", {
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
                                    strain_transmission = c(1, 1),
                                    strain_rel_gamma_A = c(-1, 5)),
-               "must be 1")
+               "non-negative")
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
                                    strain_transmission = c(1, 1),
                                    strain_rel_gamma_A = c(1, -1)),
