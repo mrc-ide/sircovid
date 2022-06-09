@@ -684,7 +684,8 @@ lancelot_parameters <- function(start_date, region,
     if (is.null(rel_gamma)) {
       ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
     } else {
-      rel_gamma <- recycle(rel_gamma, n_real_strains)
+      rel_gamma <- recycle(assert_non_negative(rel_gamma),
+                           n_real_strains)
       if (length(rel_gamma) == 2) {
         ret[[rel_gamma_name]] <- mirror_strain(rel_gamma)
       } else {
