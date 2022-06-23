@@ -615,7 +615,7 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ## In multi-strain model, number of R1 and R2 to S is binomial w.p. waning over
 ##  waning plus prob strain
 ## TODO (RS): waning_rate should eventually be variant varying
-p_RS[, , ] <- if (n_strains == 1 ) 1 else
+p_RS[, , ] <- if (n_strains == 1) 1 else
   (if (waning_rate[i] == 0) 0 else
     if (j == 1 || j == 4)
       (waning_rate[i] /
