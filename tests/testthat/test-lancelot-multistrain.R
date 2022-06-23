@@ -15,18 +15,21 @@ test_that("lancelot_parameters_strain works as expected", {
   expect_equal(
     lancelot_parameters_strain(1, NULL, NULL, NULL, 1),
     list(n_strains = 1,
+         n_strains_R = 1,
          strain_transmission = 1,
          strain_seed_step_start = 0,
          strain_seed_value = 0))
   expect_equal(
     lancelot_parameters_strain(c(1, 1), NULL, NULL, NULL, 1),
     list(n_strains = 4,
+         n_strains_R = 5,
          strain_transmission = c(1, 1, 1, 1),
          strain_seed_step_start = 0,
          strain_seed_value = 0))
   expect_equal(
     lancelot_parameters_strain(c(1, 2), NULL, NULL, NULL, 1),
     list(n_strains = 4,
+         n_strains_R = 5,
          strain_transmission = c(1, 2, 2, 1),
          strain_seed_step_start = 0,
          strain_seed_value = 0))
@@ -669,7 +672,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected prob_strain and R input because")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[-1, 1, ]),
-    "Expected 'R' to have 76 rows")
+    "Expected 'R' to have 95 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, -1]),
     "Expected 'R' to have 123 columns")
@@ -698,7 +701,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected a 3d array of 'R'")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R[-1, , ]),
-    "Expected 'R' to have 76 rows")
+    "Expected 'R' to have 95 rows")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R[, -1, ]),
     "Expected 2nd and 3rd")
