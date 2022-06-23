@@ -2118,7 +2118,15 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
     strain_transmission <- mirror_strain(strain_transmission)
   }
 
-  list(n_strains = length(strain_transmission),
+  n_strains <- length(strain_transmission)
+  if (n_strains == 1) {
+    n_strains_R <- 1
+  } else {
+    n_strains_R <- n_strains + 1
+  }
+
+  list(n_strains = n_strains,
+       n_strains_R = n_strains_R,
        strain_transmission = strain_transmission,
        strain_seed_step_start = strain_seed_step_start,
        strain_seed_value = strain_seed_value)
