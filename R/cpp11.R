@@ -72,6 +72,78 @@ dust_cpu_basic_n_state <- function(ptr) {
   .Call(`_sircovid_dust_cpu_basic_n_state`, ptr)
 }
 
+dust_demo_capabilities <- function() {
+  .Call(`_sircovid_dust_demo_capabilities`)
+}
+
+dust_demo_gpu_info <- function() {
+  .Call(`_sircovid_dust_demo_gpu_info`)
+}
+
+dust_cpu_demo_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_sircovid_dust_cpu_demo_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+}
+
+dust_cpu_demo_run <- function(ptr, step_end) {
+  .Call(`_sircovid_dust_cpu_demo_run`, ptr, step_end)
+}
+
+dust_cpu_demo_simulate <- function(ptr, step_end) {
+  .Call(`_sircovid_dust_cpu_demo_simulate`, ptr, step_end)
+}
+
+dust_cpu_demo_set_index <- function(ptr, r_index) {
+  .Call(`_sircovid_dust_cpu_demo_set_index`, ptr, r_index)
+}
+
+dust_cpu_demo_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
+  .Call(`_sircovid_dust_cpu_demo_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+}
+
+dust_cpu_demo_state <- function(ptr, r_index) {
+  .Call(`_sircovid_dust_cpu_demo_state`, ptr, r_index)
+}
+
+dust_cpu_demo_step <- function(ptr) {
+  .Call(`_sircovid_dust_cpu_demo_step`, ptr)
+}
+
+dust_cpu_demo_reorder <- function(ptr, r_index) {
+  invisible(.Call(`_sircovid_dust_cpu_demo_reorder`, ptr, r_index))
+}
+
+dust_cpu_demo_resample <- function(ptr, r_weights) {
+  .Call(`_sircovid_dust_cpu_demo_resample`, ptr, r_weights)
+}
+
+dust_cpu_demo_rng_state <- function(ptr, first_only, last_only) {
+  .Call(`_sircovid_dust_cpu_demo_rng_state`, ptr, first_only, last_only)
+}
+
+dust_cpu_demo_set_rng_state <- function(ptr, rng_state) {
+  .Call(`_sircovid_dust_cpu_demo_set_rng_state`, ptr, rng_state)
+}
+
+dust_cpu_demo_set_data <- function(ptr, data, shared) {
+  .Call(`_sircovid_dust_cpu_demo_set_data`, ptr, data, shared)
+}
+
+dust_cpu_demo_compare_data <- function(ptr) {
+  .Call(`_sircovid_dust_cpu_demo_compare_data`, ptr)
+}
+
+dust_cpu_demo_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
+  .Call(`_sircovid_dust_cpu_demo_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+}
+
+dust_cpu_demo_set_n_threads <- function(ptr, n_threads) {
+  invisible(.Call(`_sircovid_dust_cpu_demo_set_n_threads`, ptr, n_threads))
+}
+
+dust_cpu_demo_n_state <- function(ptr) {
+  .Call(`_sircovid_dust_cpu_demo_n_state`, ptr)
+}
+
 dust_lancelot_capabilities <- function() {
   .Call(`_sircovid_dust_lancelot_capabilities`)
 }
