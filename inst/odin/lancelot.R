@@ -2159,12 +2159,15 @@ dim(prob_strain) <- n_real_strains
 ## Calculate effective susceptibles to each strain
 ## Weight each person in S/R by their relative susceptibility
 ## Note that for those in R we further account for cross immunity
-## to strains. Those recovered from strain 3 - j will be (partially)
-## susceptible to strain j
+## to strains. Those in R1, R4 and R5 will be (partially)
+## susceptible to strain 2, those in R5 will also be (partially)
+## susceptible to strain 1)
 dim(eff_S) <- c(n_groups, n_real_strains, n_vacc_classes)
 eff_S[, , ] <- if (n_real_strains == 1)
   S[i, k] * rel_susceptibility[i, j, k] else
-    (S[i, k] + (1 - cross_immunity[3 - j]) * R[i, 3 - j, k]) *
+    (S[i, k] + (1 - cross_immunity[3 - j]) *
+       (R[i, 5, k] +
+       if (j == 2) R[i, 1, k] + R[i, 4, k] else 0)) *
   rel_susceptibility[i, j, k]
 
 initial(effective_susceptible[]) <- 0
