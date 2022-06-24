@@ -887,8 +887,10 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   n_strains <- info$dim$prob_strain
   if (n_strains == 2) {
     n_tot_strains <- 4
+    n_strains_R <- 5
   } else {
     n_tot_strains <- 1
+    n_strains_R <- 1
   }
 
   ## age varying only
@@ -913,7 +915,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
 
   ## age x (total) strain x vacc class
   index_R <- calculate_index(index, "R",
-                             list(S = n_tot_strains, V = n_vacc_classes),
+                             list(S = n_strains_R, V = n_vacc_classes),
                              suffix)
 
   index_state <- c(index_core, index_save)
