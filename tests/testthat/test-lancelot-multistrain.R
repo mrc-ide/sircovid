@@ -3580,7 +3580,7 @@ test_that("Can rotate strains with vaccination", {
   expect_true(all(y2$R[, c(2, 3), , ] == 0))
   expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
   expect_equal(y2$R[, 5, , ],
-               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 3, 4), sum))
   expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
   expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
                y1$cum_infections_per_strain[c(1, 4), ] +
@@ -3595,7 +3595,8 @@ test_that("rotate strain uses correct variables", {
 
   check1 <- function(v) {
     any(vlapply(unlist(c(v$dimnames$length, v$dimnames$dim)), function(x)
-      any(c("n_strains", "n_real_strains") %in% ir$equations[[x]]$rhs$value)))
+      any(c("n_strains", "n_real_strains", "n_strains_R") %in%
+            ir$equations[[x]]$rhs$value)))
   }
 
   vars <- ir$data$elements[names(ir$data$variable$contents)]
