@@ -69,4 +69,3 @@ test_that("assert_real", {
   expect_error(assert_real(1 + 1i),
                "must be real")
 })
-
