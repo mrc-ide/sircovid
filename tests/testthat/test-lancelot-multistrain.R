@@ -601,7 +601,7 @@ test_that("Swapping strains gives identical results with different index", {
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
 
-  for (nm in c("prob_strain", "effective_susceptible",
+  for (nm in c("prob_strain",
                "ifr_strain", "ihr_strain", "hfr_strain")) {
     z2[[nm]] <- z2[[nm]][2:1, , drop = FALSE]
   }
@@ -621,6 +621,12 @@ test_that("Swapping strains gives identical results with different index", {
     z1[["sympt_cases_non_variant_inc"]]
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
+
+  ## This one will differ because of the asymmetry of cross immunity
+  ## But at least the number for strain 1 in z1 should match that for
+  ## strain 2 in z2
+  z2$effective_susceptible[1, ] <- z2$effective_susceptible[2, , drop = FALSE]
+  z2$effective_susceptible[2, ] <- z1$effective_susceptible[2, , drop = FALSE]
 
   for (nm in c("T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg",
                "I_weighted")) {
