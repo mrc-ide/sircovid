@@ -146,7 +146,9 @@ test_that("Seeding of second strain generates an epidemic", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
   expect_true(
-    all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
+    sum(y$cum_infections_per_strain[2:3, 101]) > n_seeded_new_strain_inf)
+  expect_true(
+    all(y$cum_infections_per_strain[2:3, 101] > 0))
   ## did we count infections per strain properly?
   expect_equal(sum(y$cum_infections_per_strain[, 101]),
                y$cum_infections[, 101])
@@ -619,10 +621,13 @@ test_that("Swapping strains gives identical results with different index", {
     z1[["sympt_cases_non_variant_inc"]]
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
-  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg",
+
+  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg",
                "I_weighted")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
+  z2[["R"]][, c(1, 2, 3, 4), , , drop = FALSE] <-
+    z2[["R"]][, i, , , drop = FALSE]
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
           "T_sero_pre_1", "T_sero_pre_2", "T_sero_pos_1", "T_sero_pos_2",
           "G_D", "ICU_pre_unconf", "ICU_pre_conf",

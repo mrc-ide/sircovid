@@ -644,10 +644,9 @@ dim(n_R5_to_E3) <- c(n_groups, n_vacc_classes)
 ## E[age i, strain j, vacc class k]
 ## R1 and R4 can go to E3, R5 can go to E3 or E4
 n_RE[, , ] <- if (n_strains == 1 || j < 3) 0 else
-  if (j == 3) n_R5_to_E3[i, k] else
-      (n_R_progress[i, 1, k] - n_RS[i, 1, k] +
-         n_R_progress[i, 2, k] - n_RS[i, 2, k] +
-         n_R_progress[i, 5, k] - n_RS[i, 5, k] - n_R5_to_E3[i, k])
+  if (j == 3) (n_R_progress[i, 1, k] - n_RS[i, 1, k] +
+                 n_R_progress[i, 2, k] - n_RS[i, 2, k] + n_R5_to_E3[i, k]) else
+                   (n_R_progress[i, 5, k] - n_RS[i, 5, k] - n_R5_to_E3[i, k])
 
 ## R -> R vaccine progression
 n_R_tmp[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
