@@ -49,7 +49,7 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
       k <- which(p$N_tot[gen_pop] != 0)
       weighting[k] <- eigen(ngm[k, k])$vectors[, 1]
 
-      weighting
+      as.double(weighting)
     }
 
     vapply(seq_along(step), ifr_weight_step, numeric(n_age_groups))
