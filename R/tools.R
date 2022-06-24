@@ -222,8 +222,8 @@ rotate_strains <- function(state, info, ...) {
   ## infected in the past is moved to now be indexed by strain 1 (no
   ## matter whether they had multiple infections before), and strain 2
   ## will be completely empty.
-  strain_from_idx <- c(2, 3, 4)
-  strain_to_idx <- 1
+  strain_from_idx <- c(2, 3)
+  strain_to_idx <- c(1, 4)
 
   n_particle <- ncol(state)
   for (i in seq_along(rotate_strain_compartments)) {
@@ -232,30 +232,33 @@ rotate_strains <- function(state, info, ...) {
     state_i <- array(state[info$index[[name]], ], c(dim, n_particle))
 
     if (length(dim) == 4) {
-      for (j in strain_from_idx) {
-        tomove <- state_i[, j, , , , drop = FALSE]
-        state_i[, strain_to_idx, , , ] <-
-          state_i[, strain_to_idx, , , , drop = FALSE] + tomove
-        state_i[, j, , , ] <- 0
-      }
+      tomove <- state_i[, strain_from_idx, , , , drop = FALSE]
+      state_i[, strain_to_idx, , , ] <-
+        state_i[, strain_to_idx, , , , drop = FALSE] + tomove
+      state_i[, strain_from_idx, , , ] <- 0
     } else if (length(dim) == 3) {
-      for (j in strain_from_idx) {
-        tomove <- state_i[, j, , , drop = FALSE]
-        state_i[, strain_to_idx, , ] <-
-          state_i[, strain_to_idx, , , drop = FALSE] + tomove
-        state_i[, j, , ] <- 0
+      if (name == "R") {
+        ## Move everyone in 1 or 4 to 5
+        for (j in strain_to_idx) {
+          tomove <- state_i[, j, , , drop = FALSE]
+          state_i[, 5, , ] <-
+            state_i[, 5, , , drop = FALSE] + tomove
+        }
+        state_i[, strain_to_idx, , ] <- 0
       }
+      tomove <- state_i[, strain_from_idx, , , drop = FALSE]
+      state_i[, strain_to_idx, , ] <-
+        state_i[, strain_to_idx, , , drop = FALSE] + tomove
+      state_i[, strain_from_idx, , ] <- 0
     } else if (length(dim) == 1) {
       ## this loop range ensures that the move can still happen when
       ## the object has dimension n_real_strains not n_strains
       ## e.g. for prob_strain
       stopifnot(dim %in% c(2, 4))
-      for (j in strain_from_idx[strain_from_idx <= dim]) {
-        tomove <- state_i[j, , drop = FALSE]
-        state_i[strain_to_idx, ] <-
-          state_i[strain_to_idx, , drop = FALSE] + tomove
-        state_i[j, ] <- 0
-      }
+      tomove <- state_i[strain_from_idx[strain_from_idx <= dim], , drop = FALSE]
+      state_i[strain_to_idx[strain_to_idx <= dim], ] <-
+        state_i[strain_to_idx[strain_to_idx <= dim], , drop = FALSE] + tomove
+      state_i[strain_from_idx[strain_from_idx <= dim], ] <- 0
     } else {
       ## This is unreachable unless the model changes to include
       ## something that has a rank-2 variable that needs transforming.

@@ -2879,7 +2879,7 @@ test_that("Can only move to S from R3 and R4 to S", {
 })
 
 
-test_that("Everyone in R3 and R4 when no waning and transmission high", {
+test_that("Everyone in R2 and R3 when no waning and transmission high", {
   np <- 1L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            initial_seed_size = 30,
@@ -2894,19 +2894,21 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
 
-  initial <- lancelot_initial(mod$info(), np, p)
-  y0 <- initial
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
+  mod$update_state(state = initial, step = 0)
 
-  mod$update_state(state = y0, step = 0)
   end <- sircovid_date("2021-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_true(all(y$R[, 1:2, , 450] == 0))
-  expect_false(all(y$R[, 3:4, , 450] == 0))
+  expect_true(all(y$R[, c(1, 4, 5), , 450] == 0))
+  expect_false(all(y$R[, c(2, 3), , 450] == 0))
 })
 
 
@@ -2959,8 +2961,12 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
                strain_seed_size = 10,
                strain_seed_pattern = rep(1, 4),
                cross_immunity = 0)
-             mod <- lancelot$new(p, 0, np)
-             initial <- lancelot_initial(mod$info(), np, p)
+             mod <- lancelot$new(p, 0, np, seed = 1L)
+             info <- mod$info()
+             initial <- lancelot_initial(info, np, p)
+             ## Add some individuals in R historic variants layer
+             index_R <- array(info$index$R, info$dim$R)
+             initial[index_R[, 5, ]] <- 1e4
              mod$update_state(state = initial)
              end <- sircovid_date("2020-05-01") / p$dt
              steps <- seq(0, end, by = 1 / p$dt)
@@ -2977,8 +2983,12 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
                strain_seed_size = 10,
                strain_seed_pattern = rep(1, 4),
                cross_immunity = 0.5)
-             mod <- lancelot$new(p, 0, np)
-             initial <- lancelot_initial(mod$info(), np, p)
+             mod <- lancelot$new(p, 0, np, seed = 1L)
+             info <- mod$info()
+             initial <- lancelot_initial(info, np, p)
+             ## Add some individuals in R historic variants layer
+             index_R <- array(info$index$R, info$dim$R)
+             initial[index_R[, 5, ]] <- 1e4
              mod$update_state(state = initial)
              set.seed(1)
              y <- mod$transform_variables(
@@ -3005,7 +3015,14 @@ test_that("cross-immunity can be separated by strain", {
                            cross_immunity = c(1, 0)
   )
   mod <- lancelot$new(p, 0, np, seed = seed)
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
+  mod$update_state(state = initial)
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
   mod$update_state(state = initial)
@@ -3024,8 +3041,14 @@ test_that("cross-immunity can be separated by strain", {
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = c(0, 1))
   mod <- lancelot$new(p, 0, np, seed = seed)
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
+
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -3440,11 +3463,18 @@ test_that("Can rotate strains", {
   ## This one is doable analytically :)
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
 
-  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
+  expect_true(all(y2$I_C_1[, c(2, 3), , , ] == 0))
+  expect_equal(y2$I_C_1[, c(1, 4), , , ],
+               y1$I_C_1[, c(1, 4), , , ] + y1$I_C_1[, c(2, 3), , , ])
 
-  expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
+  expect_true(all(y2$T_PCR_neg[, c(2, 3), , ] == 0))
+  expect_equal(y2$T_PCR_neg[, c(1, 4), , ],
+               y1$T_PCR_neg[, c(1, 4), , ] + y1$T_PCR_neg[, c(2, 3), , ])
+
+  expect_true(all(y2$R[, c(2, 3), , ] == 0))
+  expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
+  expect_equal(y2$R[, 5, , ],
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
 
   expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
   expect_equal(y2$cum_infections_per_strain[1, ],
@@ -3493,13 +3523,20 @@ test_that("Can rotate strains with cross-infection", {
   ## Next, check one of each rank of transformed variable to make sure
   ## that all are appropriately transformed; see above.
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
-  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
-  expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
-  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
-  expect_equal(y2$cum_infections_per_strain[1, ],
-               colSums(y1$cum_infections_per_strain))
+  expect_true(all(y2$I_C_1[, c(2, 3), , , ] == 0))
+  expect_equal(y2$I_C_1[, c(1, 4), , , ],
+               y1$I_C_1[, c(1, 4), , , ] + y1$I_C_1[, c(2, 3), , , ])
+  expect_true(all(y2$T_PCR_neg[, c(2, 3), , ] == 0))
+  expect_equal(y2$T_PCR_neg[, c(1, 4), , ],
+               y1$T_PCR_neg[, c(1, 4), , ] + y1$T_PCR_neg[, c(2, 3), , ])
+  expect_true(all(y2$R[, c(2, 3), , ] == 0))
+  expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
+  expect_equal(y2$R[, 5, , ],
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
+  expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
+  expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
+               y1$cum_infections_per_strain[c(1, 4), ] +
+                 y1$cum_infections_per_strain[c(2, 3), ])
 })
 
 
@@ -3534,13 +3571,20 @@ test_that("Can rotate strains with vaccination", {
   ## Next, check one of each rank of transformed variable to make sure
   ## that all are appropriately transformed; see above.
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
-  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 4, 5), sum))
-  expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 3, 4), sum))
-  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
-  expect_equal(y2$cum_infections_per_strain[1, ],
-               colSums(y1$cum_infections_per_strain))
+  expect_true(all(y2$I_C_1[, c(2, 3), , , ] == 0))
+  expect_equal(y2$I_C_1[, c(1, 4), , , ],
+               y1$I_C_1[, c(1, 4), , , ] + y1$I_C_1[, c(2, 3), , , ])
+  expect_true(all(y2$T_PCR_neg[, c(2, 3), , ] == 0))
+  expect_equal(y2$T_PCR_neg[, c(1, 4), , ],
+               y1$T_PCR_neg[, c(1, 4), , ] + y1$T_PCR_neg[, c(2, 3), , ])
+  expect_true(all(y2$R[, c(2, 3), , ] == 0))
+  expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
+  expect_equal(y2$R[, 5, , ],
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
+  expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
+  expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
+               y1$cum_infections_per_strain[c(1, 4), ] +
+                 y1$cum_infections_per_strain[c(2, 3), ])
 })
 
 
