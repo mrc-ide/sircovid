@@ -337,6 +337,61 @@ test_that("N_tot is constant with second strain and waning immunity, while
           })
 
 
+test_that("N_tot is constant with second strain, vaccination and waning
+          immunity, while sero N_tots are non-decreasing - superinfection", {
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+
+            vaccine_schedule <- test_vaccine_schedule(500000, "england")
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              waning_rate = 1 / 20,
+              rel_susceptibility = c(1, 0.5, 0.1),
+              rel_p_sympt = c(1, 1, 1),
+              rel_p_hosp_if_sympt = c(1, 1, 1),
+              rel_p_death = c(1, 1, 1),
+              vaccine_progression_rate = c(0, 0, 0.01),
+              vaccine_schedule = vaccine_schedule,
+              vaccine_index_dose2 = 2L,
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4),
+              cross_immunity = 0)
+
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, np, p)
+
+            ## Move some individuals from S to R historic variants layer
+            index_S <- array(info$index$S, info$dim$S)
+            y0[index_S[, 1]] <- y0[index_S[, 1]] - 1e4
+            index_R <- array(info$index$R, info$dim$R)
+            y0[index_R[, 5, 1]] <- 1e4
+            ## Also move to PCR/sero neg
+            index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
+            y0[index_T_PCR_neg[, 1, 1]] <- 1e4
+            index_T_sero_neg_1 <- array(info$index$T_sero_neg_1,
+                                        info$dim$T_sero_neg_1)
+            y0[index_T_sero_neg_1[, 1, 1]] <- 1e4
+            index_T_sero_neg_2 <- array(info$index$T_sero_neg_2,
+                                        info$dim$T_sero_neg_2)
+            y0[index_T_sero_neg_2[, 1, 1]] <- 1e4
+            mod$update_state(state = y0)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
+
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
+
 test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
   set.seed(2L)
   n_seeded_new_strain_inf <- 100

@@ -593,12 +593,15 @@ n_I_P_vacc_skip[, , , ] <-
 ## Note that (if n_real_strains == 2)
 ## cross_immunity[1] is the cross immunity of strain 1 against strain 2
 ## cross_immunity[2] is the cross immunity of strain 2 against strain 1
+rate_RE_progress[, , ] <- if (n_strains == 1) 0 else
+  lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
+dim(rate_RE_progress) <- c(n_groups, n_real_strains, n_vacc_classes)
+
 rate_R_progress[, , ] <- waning_rate[i] +
   if (n_strains == 1) 0 else
     if (j == 1 || j == 4)
-    lambda_susc[i, 2, k] * (1 - cross_immunity[1]) else
-      if (j == 5) (lambda_susc[i, 2, k] * (1 - cross_immunity[1]) +
-                     lambda_susc[i, 1, k] * (1 - cross_immunity[2])) else 0
+    rate_RE_progress[i, 1, k] else
+      if (j == 5) sum(rate_RE_progress[i, , k]) else 0
 
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
@@ -617,21 +620,13 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ## TODO (RS): waning_rate should eventually be variant varying
 p_RS[, , ] <- if (n_strains == 1) 1 else
   (if (waning_rate[i] == 0) 0 else
-    if (j == 1 || j == 4)
-      (waning_rate[i] /
-         (waning_rate[i] + lambda_susc[i, 2, k] * (1 - cross_immunity[1]))) else
-           if (j == 5)
-             (waning_rate[i] /
-                (waning_rate[i] +
-                   lambda_susc[i, 2, k] * (1 - cross_immunity[1]) +
-                   lambda_susc[i, 1, k] * (1 - cross_immunity[2]))) else 1)
+    waning_rate[i] / rate_R_progress[i, j, k])
 n_RS[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
 
 p_R5_to_E3[, ] <- if (n_strains == 1) 1 else
-  if (lambda_susc[i, 2, j] * (1 - cross_immunity[1]) == 0) 0 else
-    (lambda_susc[i, 2, j] * (1 - cross_immunity[1]) /
-       (lambda_susc[i, 2, j] * (1 - cross_immunity[1]) +
-          lambda_susc[i, 1, j] * (1 - cross_immunity[2])))
+  if (rate_RE_progress[i, 1, j] == 0) 0 else
+    (rate_RE_progress[i, 1, j] /
+       sum(rate_RE_progress[i, , j]))
 
 n_R5_to_E3[, ] <- if (n_strains == 1) 0 else
   rbinom(n_R_progress[i, 5, j] - n_RS[i, 5, j], p_R5_to_E3[i, j])
