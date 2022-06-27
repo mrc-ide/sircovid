@@ -1096,8 +1096,7 @@ new_R[, , ] <- R[i, j, k] -
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
   n_T_PCR_pre_progress[i, j, k, l] +
-  (if (k == 1) n_S_progress[i, j, l] +
-     (if (j > 2) n_RE[i, j - 2, l] else 0) else
+  (if (k == 1) n_S_progress[i, j, l] + n_RE[i, j, l] else
     n_T_PCR_pre_progress[i, j, k - 1, l])
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
