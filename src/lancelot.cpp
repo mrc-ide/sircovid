@@ -4134,6 +4134,15 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_new_T_PCR_pos_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_T_PCR_pos_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
+            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (shared->k_PCR_pre - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] : internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1]));
+          }
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_s_ij_1; ++i) {
       for (int j = 1; j <= shared->dim_s_ij_2; ++j) {
         for (int k = 1; k <= shared->dim_s_ij_3; ++k) {
@@ -4369,9 +4378,26 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_T_PCR_pos_1; ++i) {
+      for (int j = 1; j <= shared->dim_T_PCR_pos_2; ++j) {
+        for (int k = 1; k <= shared->dim_T_PCR_pos_3; ++k) {
+          for (int l = 1; l <= shared->dim_T_PCR_pos_4; ++l) {
+            state_next[shared->offset_variable_T_PCR_pos + i - 1 + shared->dim_T_PCR_pos_1 * (j - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[shared->dim_new_T_PCR_pos_123 * (l - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_effective_susceptible; ++i) {
       state_next[shared->offset_variable_effective_susceptible + i - 1] = odin_sum3<real_type>(internal.eff_S.data(), 0, shared->dim_eff_S_1, i - 1, i, 0, shared->dim_eff_S_3, shared->dim_eff_S_1, shared->dim_eff_S_12);
     }
+    state_next[77] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 0, 1, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 3 / (real_type) 5 + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    state_next[80] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 5, 7, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[81] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 7, 9, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[82] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 9, 11, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[83] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 11, 13, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[79] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 5, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    state_next[84] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 13, 17, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    state_next[78] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     for (int i = 1; i <= shared->dim_vacc_skip_attempted_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vacc_skip_attempted_doses_2; ++j) {
         internal.vacc_skip_attempted_doses[i - 1 + shared->dim_vacc_skip_attempted_doses_1 * (j - 1)] = ((shared->vacc_skip_dose_weight[j - 1] > 0 ? ((shared->vacc_skip_dose[j - 1] > 0 ? internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] : 0)) : 0));
@@ -5294,15 +5320,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pre_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_T_PCR_pre_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_T_PCR_pre_4; ++l) {
-            internal.new_T_PCR_pre[i - 1 + shared->dim_new_T_PCR_pre_1 * (j - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[shared->dim_T_PCR_pre_123 * (l - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_1 * (j - 1) + i - 1] - internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_S_progress[shared->dim_n_S_progress_12 * (l - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] : internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1]));
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_ICU_W_D_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_ICU_W_D_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_ICU_W_D_conf_3; ++k) {
@@ -5424,15 +5441,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_T_PCR_pre_1; ++i) {
-      for (int j = 1; j <= shared->dim_T_PCR_pre_2; ++j) {
-        for (int k = 1; k <= shared->dim_T_PCR_pre_3; ++k) {
-          for (int l = 1; l <= shared->dim_T_PCR_pre_4; ++l) {
-            state_next[shared->offset_variable_T_PCR_pre + i - 1 + shared->dim_T_PCR_pre_1 * (j - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[shared->dim_new_T_PCR_pre_123 * (l - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_cum_n_E_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_cum_n_E_vaccinated_2; ++j) {
         state_next[shared->offset_variable_cum_n_E_vaccinated + i - 1 + shared->dim_cum_n_E_vaccinated_1 * (j - 1)] = cum_n_E_vaccinated[shared->dim_cum_n_E_vaccinated_1 * (j - 1) + i - 1] + internal.n_E_vaccinated[shared->dim_n_E_vaccinated_1 * (j - 1) + i - 1];
@@ -5510,11 +5518,11 @@ public:
         internal.new_S[i - 1 + shared->dim_new_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1] + ((j == 1 ? internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (shared->n_vacc_classes - 1) + i - 1] : internal.n_S_next_vacc_class[shared->dim_n_S_next_vacc_class_1 * (j - 1 - 1) + i - 1])) - ((shared->vacc_skip_to[j - 1] > 0 ? internal.n_S_vacc_skip[shared->dim_n_S_vacc_skip_1 * (j - 1) + i - 1] : 0)) + ((shared->vacc_skip_from[j - 1] > 0 ? internal.n_S_vacc_skip[shared->dim_n_S_vacc_skip_1 * (shared->vacc_skip_from[j - 1] - 1) + i - 1] : 0));
       }
     }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_T_PCR_pos_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
-            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (shared->k_PCR_pre - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] + internal.n_RE[shared->dim_n_RE_12 * (l - 1) + shared->dim_n_RE_1 * (j - 1) + i - 1] : internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1]));
+    for (int i = 1; i <= shared->dim_new_T_PCR_pre_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_T_PCR_pre_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_T_PCR_pre_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_T_PCR_pre_4; ++l) {
+            internal.new_T_PCR_pre[i - 1 + shared->dim_new_T_PCR_pre_1 * (j - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_123 * (l - 1)] = T_PCR_pre[shared->dim_T_PCR_pre_123 * (l - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_1 * (j - 1) + i - 1] - internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_S_progress[shared->dim_n_S_progress_12 * (l - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + ((j > 2 ? internal.n_RE[shared->dim_n_RE_12 * (l - 1) + shared->dim_n_RE_1 * (j - 2 - 1) + i - 1] : 0)) : internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1]));
           }
         }
       }
@@ -5642,11 +5650,11 @@ public:
         state_next[shared->offset_variable_S + i - 1 + shared->dim_S_1 * (j - 1)] = internal.new_S[shared->dim_new_S_1 * (j - 1) + i - 1];
       }
     }
-    for (int i = 1; i <= shared->dim_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_T_PCR_pos_2; ++j) {
-        for (int k = 1; k <= shared->dim_T_PCR_pos_3; ++k) {
-          for (int l = 1; l <= shared->dim_T_PCR_pos_4; ++l) {
-            state_next[shared->offset_variable_T_PCR_pos + i - 1 + shared->dim_T_PCR_pos_1 * (j - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[shared->dim_new_T_PCR_pos_123 * (l - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_1 * (j - 1) + i - 1];
+    for (int i = 1; i <= shared->dim_T_PCR_pre_1; ++i) {
+      for (int j = 1; j <= shared->dim_T_PCR_pre_2; ++j) {
+        for (int k = 1; k <= shared->dim_T_PCR_pre_3; ++k) {
+          for (int l = 1; l <= shared->dim_T_PCR_pre_4; ++l) {
+            state_next[shared->offset_variable_T_PCR_pre + i - 1 + shared->dim_T_PCR_pre_1 * (j - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_123 * (l - 1)] = internal.new_T_PCR_pre[shared->dim_new_T_PCR_pre_123 * (l - 1) + shared->dim_new_T_PCR_pre_12 * (k - 1) + shared->dim_new_T_PCR_pre_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -5669,14 +5677,6 @@ public:
     for (int i = 1; i <= shared->dim_infections_inc_per_strain; ++i) {
       state_next[shared->offset_variable_infections_inc_per_strain + i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_infections_per_strain[i - 1] : infections_inc_per_strain[i - 1] + internal.delta_infections_per_strain[i - 1]);
     }
-    state_next[77] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 0, 1, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 3 / (real_type) 5 + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[80] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 5, 7, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[81] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 7, 9, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[82] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 9, 11, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[83] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 11, 13, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[79] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 5, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[84] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 13, 17, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[78] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     real_type delta_all_admission_0_9_conf = odin_sum2<real_type>(internal.delta_diagnoses_admitted.data(), 0, 2, 0, shared->dim_delta_diagnoses_admitted_2, shared->dim_delta_diagnoses_admitted_1);
     real_type delta_all_admission_10_19_conf = odin_sum2<real_type>(internal.delta_diagnoses_admitted.data(), 2, 4, 0, shared->dim_delta_diagnoses_admitted_2, shared->dim_delta_diagnoses_admitted_1);
     real_type delta_all_admission_20_29_conf = odin_sum2<real_type>(internal.delta_diagnoses_admitted.data(), 4, 6, 0, shared->dim_delta_diagnoses_admitted_2, shared->dim_delta_diagnoses_admitted_1) + odin_sum2<real_type>(internal.delta_diagnoses_admitted.data(), 17, 18, 0, shared->dim_delta_diagnoses_admitted_2, shared->dim_delta_diagnoses_admitted_1) * 1 / (real_type) 8;
