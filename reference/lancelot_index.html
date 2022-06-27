@@ -18,7 +18,7 @@ conforms to the mcstate interface.'><meta property="og:image" content="/logo.png
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -55,18 +55,18 @@ conforms to the mcstate interface.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_index</span><span class="op">(</span>
-  <span class="va">info</span>,
-  rt <span class="op">=</span> <span class="cn">TRUE</span>,
-  cum_admit <span class="op">=</span> <span class="cn">TRUE</span>,
-  diagnoses_admitted <span class="op">=</span> <span class="cn">TRUE</span>,
-  cum_infections_disag <span class="op">=</span> <span class="cn">TRUE</span>,
-  cum_n_vaccinated <span class="op">=</span> <span class="cn">TRUE</span>,
-  D_all <span class="op">=</span> <span class="cn">TRUE</span>,
-  D_hosp <span class="op">=</span> <span class="cn">TRUE</span>,
-  infections_inc_per_strain <span class="op">=</span> <span class="cn">TRUE</span>,
-  severity <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_index</span><span class="op">(</span></span>
+<span>  <span class="va">info</span>,</span>
+<span>  rt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cum_admit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  diagnoses_admitted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cum_infections_disag <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cum_n_vaccinated <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  D_all <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  D_hosp <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  infections_inc_per_strain <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  severity <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -74,39 +74,60 @@ conforms to the mcstate interface.</p>
     <dl><dt>info</dt>
 <dd><p>The result of running the <code>$info()</code> method on an
 initialised <a href="basic.html">basic</a> model</p></dd>
+
+
 <dt>rt</dt>
 <dd><p>Logical, whether to output trajectories required for
 calculating Rt (default = TRUE)</p></dd>
+
+
 <dt>cum_admit</dt>
 <dd><p>Logical, whether to output cumulative
 admissions by age (default = TRUE)</p></dd>
+
+
 <dt>diagnoses_admitted</dt>
 <dd><p>Logical, whether to output
 cumulative combined confirmed admissions and inpatient
 diagnoses by age and vaccine class (default = TRUE)</p></dd>
+
+
 <dt>cum_infections_disag</dt>
 <dd><p>Logical, whether to output
 cumulative infections by age and vaccine class (default = TRUE)</p></dd>
+
+
 <dt>cum_n_vaccinated</dt>
 <dd><p>Logical, whether to output
 cumulative number vaccinated by age and vaccine class
 (default = TRUE)</p></dd>
+
+
 <dt>D_all</dt>
 <dd><p>Logical, whether to output all deaths by age and vaccine class
 (default = TRUE)</p></dd>
+
+
 <dt>D_hosp</dt>
 <dd><p>Logical, whether to output hospital deaths by age
 (default = TRUE)</p></dd>
+
+
 <dt>infections_inc_per_strain</dt>
 <dd><p>Logical, whether to output
 infections incidence per strain (default = TRUE)</p></dd>
+
+
 <dt>severity</dt>
 <dd><p>Logical, whether to output severity calculations
 (default = FALSE)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with element <code>run</code>, indicating the locations of (in
+    
+
+<p>A list with element <code>run</code>, indicating the locations of (in
 order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 in hospital, (5) total deaths, (6) cumulative confirmed
 admissions,(7) cumulative confirmed new admissions, (8)
@@ -119,9 +140,9 @@ carehome workers and carehome residents respectively) and 17
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="lancelot_parameters.html">lancelot_parameters</a></span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-07"</span><span class="op">)</span>, <span class="st">"england"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mod</span> <span class="op">&lt;-</span> <span class="va"><a href="lancelot.html">lancelot</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">p</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">lancelot_index</span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="lancelot_parameters.html">lancelot_parameters</a></span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-07"</span><span class="op">)</span>, <span class="st">"england"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="va"><a href="lancelot.html">lancelot</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">p</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">lancelot_index</span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $run</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               time                                icu </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                  1                                 21 </span>
@@ -408,7 +429,7 @@ carehome workers and carehome residents respectively) and 17
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

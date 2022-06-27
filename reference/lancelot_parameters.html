@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,55 +53,55 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_parameters</span><span class="op">(</span>
-  <span class="va">start_date</span>,
-  <span class="va">region</span>,
-  beta_date <span class="op">=</span> <span class="cn">NULL</span>,
-  beta_value <span class="op">=</span> <span class="cn">NULL</span>,
-  beta_type <span class="op">=</span> <span class="st">"piecewise-linear"</span>,
-  population <span class="op">=</span> <span class="cn">NULL</span>,
-  carehome_beds <span class="op">=</span> <span class="cn">NULL</span>,
-  severity <span class="op">=</span> <span class="cn">NULL</span>,
-  progression <span class="op">=</span> <span class="cn">NULL</span>,
-  observation <span class="op">=</span> <span class="cn">NULL</span>,
-  sens_and_spec <span class="op">=</span> <span class="cn">NULL</span>,
-  initial_seed_size <span class="op">=</span> <span class="fl">30</span>,
-  initial_seed_pattern <span class="op">=</span> <span class="fl">1</span>,
-  eps <span class="op">=</span> <span class="fl">0.1</span>,
-  m_CHW <span class="op">=</span> <span class="fl">4e-06</span>,
-  m_CHR <span class="op">=</span> <span class="fl">5e-05</span>,
-  strain_transmission <span class="op">=</span> <span class="fl">1</span>,
-  strain_seed_date <span class="op">=</span> <span class="cn">NULL</span>,
-  strain_seed_size <span class="op">=</span> <span class="cn">NULL</span>,
-  strain_seed_pattern <span class="op">=</span> <span class="cn">NULL</span>,
-  strain_rel_gamma_E <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_gamma_A <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_gamma_P <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_gamma_C_1 <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_gamma_C_2 <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_p_sympt <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_p_hosp_if_sympt <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_p_icu <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_p_death <span class="op">=</span> <span class="fl">1</span>,
-  strain_rel_p_G_D <span class="op">=</span> <span class="fl">1</span>,
-  rel_susceptibility <span class="op">=</span> <span class="fl">1</span>,
-  rel_p_sympt <span class="op">=</span> <span class="fl">1</span>,
-  rel_p_hosp_if_sympt <span class="op">=</span> <span class="fl">1</span>,
-  rel_p_death <span class="op">=</span> <span class="fl">1</span>,
-  rel_infectivity <span class="op">=</span> <span class="fl">1</span>,
-  vaccine_progression_rate <span class="op">=</span> <span class="cn">NULL</span>,
-  vaccine_schedule <span class="op">=</span> <span class="cn">NULL</span>,
-  vaccine_index_dose2 <span class="op">=</span> <span class="cn">NULL</span>,
-  vaccine_index_booster <span class="op">=</span> <span class="cn">NULL</span>,
-  vaccine_catchup_fraction <span class="op">=</span> <span class="fl">1</span>,
-  n_doses <span class="op">=</span> <span class="fl">2L</span>,
-  vacc_skip_progression_rate <span class="op">=</span> <span class="cn">NULL</span>,
-  vacc_skip_to <span class="op">=</span> <span class="cn">NULL</span>,
-  vacc_skip_weight <span class="op">=</span> <span class="cn">NULL</span>,
-  waning_rate <span class="op">=</span> <span class="fl">0</span>,
-  exp_noise <span class="op">=</span> <span class="fl">1e+06</span>,
-  cross_immunity <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_parameters</span><span class="op">(</span></span>
+<span>  <span class="va">start_date</span>,</span>
+<span>  <span class="va">region</span>,</span>
+<span>  beta_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  beta_value <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  beta_type <span class="op">=</span> <span class="st">"piecewise-linear"</span>,</span>
+<span>  population <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  carehome_beds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  severity <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  progression <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  observation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sens_and_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  initial_seed_size <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  initial_seed_pattern <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  eps <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  m_CHW <span class="op">=</span> <span class="fl">4e-06</span>,</span>
+<span>  m_CHR <span class="op">=</span> <span class="fl">5e-05</span>,</span>
+<span>  strain_transmission <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_seed_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strain_seed_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strain_seed_pattern <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strain_rel_gamma_E <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_gamma_A <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_gamma_P <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_gamma_C_1 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_gamma_C_2 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_p_sympt <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_p_hosp_if_sympt <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_p_icu <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_p_death <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strain_rel_p_G_D <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rel_susceptibility <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rel_p_sympt <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rel_p_hosp_if_sympt <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rel_p_death <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  rel_infectivity <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  vaccine_progression_rate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vaccine_schedule <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vaccine_index_dose2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vaccine_index_booster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vaccine_catchup_fraction <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  n_doses <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  vacc_skip_progression_rate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vacc_skip_to <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vacc_skip_weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  waning_rate <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  exp_noise <span class="op">=</span> <span class="fl">1e+06</span>,</span>
+<span>  cross_immunity <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -109,6 +109,8 @@
     <dl><dt>start_date</dt>
 <dd><p>The start date, as a <code><a href="sircovid_date.html">sircovid_date()</a></code> (i.e.,
 the number of days into 2020)</p></dd>
+
+
 <dt>region</dt>
 <dd><p>The region to run the model for. This will bee used
 to get population data, which is currently fixed within the
@@ -116,6 +118,8 @@ package and is limited to "uk", the four constituent nations
 ("england", "wales", "scotland", "northern_ireland") and the 7
 NHS regions (e.g., "midlands"). These names are case
 insensitive.</p></dd>
+
+
 <dt>beta_date</dt>
 <dd><p>A vector of dates (each as a <code><a href="sircovid_date.html">sircovid_date()</a></code>)
 for changes in beta (the contact rate parameter), or <code>NULL</code> if
@@ -124,6 +128,8 @@ a single value is used for all times (see
 <code><a href="sircovid_parameters_piecewise_constant.html">sircovid_parameters_piecewise_constant()</a></code>, where
 this is passed as <code>date</code>). If <code>beta_type = "piecewise-constant"</code>,
 then the first date must be 0.</p></dd>
+
+
 <dt>beta_value</dt>
 <dd><p>A vector of values for beta (the contact rate
 parameter). If not given, and if <code>beta_date</code> is <code>NULL</code> then a
@@ -133,19 +139,27 @@ otherwise if <code>beta_date</code> is <code>NULL</code> this must be a scalar. 
 the same length (see <code><a href="sircovid_parameters_piecewise_linear.html">sircovid_parameters_piecewise_linear()</a></code> or
 <code><a href="sircovid_parameters_piecewise_constant.html">sircovid_parameters_piecewise_constant()</a></code>, where this is passed
 as <code>value</code>).</p></dd>
+
+
 <dt>beta_type</dt>
 <dd><p>The type of form used for beta (the contact rate
 parameter), which currently can be <code>"piecewise-linear"</code> or
 <code>"piecewise-constant"</code></p></dd>
+
+
 <dt>population</dt>
 <dd><p>Population data. A vector of length 17 for the population
 size for age groups 0-4, 5-9, ..., 75-79, 80+. If <code>NULL</code>, the population
 data will be sourced within the package for the specified <code>region</code> (only
 if available).</p></dd>
+
+
 <dt>carehome_beds</dt>
 <dd><p>The number of care home beds in the region. If <code>NULL</code>,
 this will be sourced within the package for the specified <code>region</code> (only
 if available).</p></dd>
+
+
 <dt>severity</dt>
 <dd><p>Severity data, via Bob Verity's <code>markovid</code>
 package. This needs to be <code>NULL</code> (use the default bundled data
@@ -154,21 +168,31 @@ data) or a list (for data that has already been processed by
 <code>sircovid</code> for use).  New severity data comes from Bob Verity
 via the markovid package, and needs to be carefully calibrated
 with the progression parameters.</p></dd>
+
+
 <dt>progression</dt>
 <dd><p>Progression data</p></dd>
+
+
 <dt>observation</dt>
 <dd><p>Either <code>NULL</code> or a list of observation parameters. If
 <code>NULL</code>, then a list of observation parameters will be generated using
 <code>lancelot_parameters_observation(exp_noise)</code></p></dd>
+
+
 <dt>sens_and_spec</dt>
 <dd><p>Either <code>NULL</code> or a list of diagnostic test sensitivity
 and specificity parameters. If <code>NULL</code>, then a list of sensitivity and
 specificity parameters will be generated using
 <code><a href="lancelot_parameters_sens_and_spec.html">lancelot_parameters_sens_and_spec()</a></code></p></dd>
+
+
 <dt>initial_seed_size</dt>
 <dd><p>Initial size of seeding from the S to E
 compartment; all seeding is in the 15-19 year old group from
 <code>start_date</code> according to <code>initial_seed_pattern</code>. The default is 30.</p></dd>
+
+
 <dt>initial_seed_pattern</dt>
 <dd><p>A vector of seeding weights for the initial
 seeding. The length represents the number of steps to seed over from the
@@ -177,25 +201,39 @@ according to those weights. If <code>start_date</code> is not a multiple of the 
 size (and thus falls between two steps) then we weight over an additional
 step and adjust the weights according to how far the <code>start_date</code> is from
 the previous full step.</p></dd>
+
+
 <dt>eps</dt>
 <dd><p>Change in contact rate for carehome residents</p></dd>
+
+
 <dt>m_CHW</dt>
 <dd><p>Contact rate between carehome workers and either
 residents or workers</p></dd>
+
+
 <dt>m_CHR</dt>
 <dd><p>Contact rate between carehome residents</p></dd>
+
+
 <dt>strain_transmission</dt>
 <dd><p>Vector of length two for relative
 transmissibility of each strain modelled. Length will define the number of
 strains used in the model, either 1 or 2.</p></dd>
+
+
 <dt>strain_seed_date</dt>
 <dd><p>Either <code>NULL</code> (no seeding) or a
 <a href="sircovid_date.html">sircovid_date</a> corresponding to the date the seeding of strain
 2 begins.</p></dd>
+
+
 <dt>strain_seed_size</dt>
 <dd><p>Either <code>NULL</code> (no seeding) or the size of strain 2
 seeding from the S to E compartment; all seeding is in the 15-19 year old
 group from <code>strain_seed_date</code> according to <code>strain_seed_pattern</code>.</p></dd>
+
+
 <dt>strain_seed_pattern</dt>
 <dd><p>Either <code>NULL</code> (no seeding) or a vector of seeding
 weights for the initial seeding. The length represents the number of steps
@@ -204,36 +242,48 @@ over these steps according to those weights. If <code>start_seed_date</code> is 
 multiple of the step size (and thus falls between two steps) then we
 weight over an additional step and adjust the weights according to how far
 the <code>strain_seed_date</code> is from the previous full step.</p></dd>
+
+
 <dt>strain_rel_gamma_E</dt>
 <dd><p>Vector of relative rates of progression out of
 E (gamma_E) for each
 strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
 same length as <code>strain_transmission</code>, with entries that determines the
 relative scaling of the defaults for each strain.</p></dd>
+
+
 <dt>strain_rel_gamma_A</dt>
 <dd><p>Vector of relative rates of progression out of
 I_A (gamma_A) for each
 strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
 same length as <code>strain_transmission</code>, with entries that determines the
 relative scaling of the defaults for each strain.</p></dd>
+
+
 <dt>strain_rel_gamma_P</dt>
 <dd><p>Vector of relative rates of progression out of
 I_P (gamma_P) for each
 strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
 same length as <code>strain_transmission</code>, with entries that determines the
 relative scaling of the defaults for each strain.</p></dd>
+
+
 <dt>strain_rel_gamma_C_1</dt>
 <dd><p>Vector of relative rates of progression out of
 I_C_1 (gamma_C_1) for each
 strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
 same length as <code>strain_transmission</code>, with entries that determines the
 relative scaling of the defaults for each strain.</p></dd>
+
+
 <dt>strain_rel_gamma_C_2</dt>
 <dd><p>Vector of relative rates of progression out of
 I_C_2 (gamma_C_2) for each
 strain modelled. If <code>1</code> all strains have same rates. Otherwise vector of
 same length as <code>strain_transmission</code>, with entries that determines the
 relative scaling of the defaults for each strain.</p></dd>
+
+
 <dt>strain_rel_p_sympt</dt>
 <dd><p>Vector of relative probabilities of
 symptoms for
@@ -248,6 +298,8 @@ with another strain. Alternatively, a vector of twice the length of
 relative probability of symptoms for each pseudostrain
 (with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
 probabilities, p_sympt is upper-truncated at 1 after scaling.</p></dd>
+
+
 <dt>strain_rel_p_hosp_if_sympt</dt>
 <dd><p>Vector of relative probabilities of
 hospitalisation given symptoms for
@@ -262,6 +314,8 @@ with another strain. Alternatively, a vector of twice the length of
 relative probability of hospitalisation for each pseudostrain
 (with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
 probabilities, p_hosp_if_sympt is upper-truncated at 1 after scaling.</p></dd>
+
+
 <dt>strain_rel_p_icu</dt>
 <dd><p>Vector of relative probabilities of
 icu given hospitalised for
@@ -276,6 +330,8 @@ with another strain. Alternatively, a vector of twice the length of
 relative probability of icu admission for each pseudostrain
 (with strain 3 - 1.2 and strain 4 = 2.1). To ensure valid
 probabilities, p_icu is upper-truncated at 1 after scaling.</p></dd>
+
+
 <dt>strain_rel_p_death</dt>
 <dd><p>Vector of relative probabilities of death for
 each strain modelled. If <code>1</code> all strains have same
@@ -289,6 +345,8 @@ another strain. Alternatively, a vector of twice the length of
 relative probability of death for each pseudostrain (with strain 3 - 1.2
 and strain 4 = 2.1). To ensure valid
 probabilities, p_death is upper-truncated at 1 after scaling.</p></dd>
+
+
 <dt>strain_rel_p_G_D</dt>
 <dd><p>Vector of relative probabilities of death in the
 coummunity for each strain modelled. If <code>1</code> all strains have same
@@ -302,6 +360,8 @@ another strain. Alternatively, a vector of twice the length of
 relative probability of death for each pseudostrain (with strain 3 - 1.2
 and strain 4 = 2.1). To ensure valid
 probabilities, p_G_D is upper-truncated at 1 after scaling.</p></dd>
+
+
 <dt>rel_susceptibility</dt>
 <dd><p>A vector or array of values representing the
 relative susceptibility of individuals in different vaccination groups.
@@ -316,6 +376,8 @@ pathogen strain (second dimension) and vaccination group
 rel_susceptibility should be 1 (for the non-vaccinated group)
 for the first column (first infection with first strain) and other
 values between 0 and 1</p></dd>
+
+
 <dt>rel_p_sympt</dt>
 <dd><p>A vector or matrix of values of same dimension as
 rel_susceptibility representing the
@@ -332,6 +394,8 @@ vaccination group (third dimension); in that case,
 the first layer of rel_p_sympt should be 1 (for the non-vaccinated group)
 for the first column (first infection with first strain) and other
 values between 0 and 1</p></dd>
+
+
 <dt>rel_p_hosp_if_sympt</dt>
 <dd><p>A vector or array of values of same dimension as
 rel_susceptibility representing the
@@ -348,6 +412,8 @@ vaccination group (third dimension); in that case,
 the first layer of rel_p_hosp_if_sympt should be 1 (for the
 non-vaccinated group) for the first column
 (first infection with first strain) and other values between 0 and 1</p></dd>
+
+
 <dt>rel_p_death</dt>
 <dd><p>A vector or array of values of same dimension as
 rel_susceptibility representing the relative probability of death for
@@ -364,6 +430,8 @@ vaccination group (third dimension); in that case,
 the first layer of rel_p_death should be 1 (for the non-vaccinated group)
 for the first column (first infection with first strain) and other
 values between 0 and 1</p></dd>
+
+
 <dt>rel_infectivity</dt>
 <dd><p>A vector or array of values representing the
 relative infectivity of individuals in different vaccination groups,
@@ -380,6 +448,8 @@ the first layer of rel_infectivity should be 1 (for the
 non-vaccinated group)
 for the first column (first infection with first strain) and other
 values between 0 and 1</p></dd>
+
+
 <dt>vaccine_progression_rate</dt>
 <dd><p>A vector or matrix of values of same
 dimension as rel_susceptibility representing
@@ -391,13 +461,21 @@ is the rate of returning to the initial
 vacination class); if a matrix, the element on row i and column j is the
 rate of progression from the jth vaccination class to the (j+1)th for age
 group i.</p></dd>
+
+
 <dt>vaccine_schedule</dt>
 <dd><p>A <a href="vaccine_schedule.html">vaccine_schedule</a> object indicating the
 people to be vaccinated by group over time</p></dd>
+
+
 <dt>vaccine_index_dose2</dt>
 <dd><p>The index to use for the second dose</p></dd>
+
+
 <dt>vaccine_index_booster</dt>
 <dd><p>The indices to use for the booster doses</p></dd>
+
+
 <dt>vaccine_catchup_fraction</dt>
 <dd><p>A value between 0 and 1 indicating the
 proportion of doses not distributed according to schedule (e.g. because
@@ -406,15 +484,21 @@ vaccinated at the scheduled time) that we postpone to a later date.
 A value of 0 means we do not catch up at all on any missed doses; a
 value of 1 means we try to catch up for all missed doses. This is set
 to 1 by default</p></dd>
+
+
 <dt>n_doses</dt>
 <dd><p>Number of doses given out, including boosters. Default is
 2.</p></dd>
+
+
 <dt>vacc_skip_progression_rate</dt>
 <dd><p>A vector of length equal to the number of
 vaccine strata. Represents the base progression rate for "vaccine skip
 moves" from each strata. The rate is assumed to be the same across all age
 groups. Must be 0 for all <code>j</code> for which <code>vacc_skip[j] = 0</code>. Default is a
 vector of 0s</p></dd>
+
+
 <dt>vacc_skip_to</dt>
 <dd><p>A vector of integers of length equal to the number of
 vaccine strata. The value of <code>vacc_skip_to[j]</code> represents the vaccine
@@ -429,6 +513,8 @@ skip moves are also not allowed - if a there is a vaccine skip move from
 <code>i &lt; k &lt; j</code>. For example, having vaccine skip moves from 2 to 4 and 3 to 5
 would not be allowed, but moves from 2 to 4 and 4 to 6 would be allowed.
 Default is a vector of 0s</p></dd>
+
+
 <dt>vacc_skip_weight</dt>
 <dd><p>A vector of weights of length equal to the number
 of vaccine strata. If movement into <code>vacc_skip_to[j]</code> from
@@ -437,16 +523,22 @@ is too, and the weight represents how much those in strata <code>j</code> are
 weighted in dose distribution relative to those in <code>vacc_skip_to - 1</code>.
 Must be between 0 and 1. Must be 0 for any <code>j</code> for which
 <code>vacc_skip_to = 0</code>. Default is a vector of 0s</p></dd>
+
+
 <dt>waning_rate</dt>
 <dd><p>A single value or a vector of values representing the
 rates of waning of immunity after infection; if a single value the same
 rate is used for all age groups; if a vector of values if used it should
 have one value per age group.</p></dd>
+
+
 <dt>exp_noise</dt>
 <dd><p>Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
 but non-zero. If set to <code>Inf</code> then there is no noise in the
 observation process (not realistic but useful for testing).</p></dd>
+
+
 <dt>cross_immunity</dt>
 <dd><p>A value or vector of same length as
 <code>strain_transmission</code> that controls the amount of immunity conferred by
@@ -461,10 +553,13 @@ and values of 0 mean no cross-immunity. Modelling
 'superinfections' (being exposed to one strain after
 recovering from another) can be turned off by setting
 <code>cross_immunity = 1</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of inputs to the model, many of which are fixed and
+    
+
+<p>A list of inputs to the model, many of which are fixed and
 represent data. These correspond largely to <code>user()</code> calls
 within the odin code, though some are also used in processing
 just before the model is run.</p>
@@ -472,61 +567,61 @@ just before the model is run.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">region</span> <span class="op">&lt;-</span> <span class="st">"london"</span></span>
-<span class="r-in"><span class="fu">lancelot_parameters</span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="va">region</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># example set up of vaccination parameters independent of age</span></span>
-<span class="r-in"><span class="co"># 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span></span>
-<span class="r-in"><span class="co"># 3) fully vaccinated (but with an imperfect vaccine). People return</span></span>
-<span class="r-in"><span class="co"># to group 1 after a period of time in group 3 to mirror waning immunity</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Assumption: immediately after vaccination susceptibility is reduced by</span></span>
-<span class="r-in"><span class="co"># 20%, and then by 50% when you reach full effect of the vaccination,</span></span>
-<span class="r-in"><span class="co"># then susceptibility returns to 100% upon waning of vaccine=induced</span></span>
-<span class="r-in"><span class="co"># immunity</span></span>
-<span class="r-in"><span class="co"># effect of vaccination similar across all age groups</span></span>
-<span class="r-in"><span class="va">rel_susceptibility</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The vaccine also reduces the risk of symptoms</span></span>
-<span class="r-in"><span class="va">rel_p_sympt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># and the risk of hospitalisation for those with symptoms</span></span>
-<span class="r-in"><span class="va">rel_p_hosp_if_sympt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.95</span>, <span class="fl">0.95</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># and the risk of death for those with severe disease</span></span>
-<span class="r-in"><span class="va">rel_p_death</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The vaccine also reduces infectivity of infected individuals by half</span></span>
-<span class="r-in"><span class="va">rel_infectivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># On average 10000 first doses of vaccine are given every day</span></span>
-<span class="r-in"><span class="co"># Second doses are given on average 12 weeks after the first dose</span></span>
-<span class="r-in"><span class="co"># vaccine-induced immunity wanes after a period which is exponentially</span></span>
-<span class="r-in"><span class="co"># distributed and lasts on average 26 weeks (half a year);</span></span>
-<span class="r-in"><span class="co"># they are similar across all age groups</span></span>
-<span class="r-in"><span class="va">vaccine_progression_rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">/</span><span class="op">(</span><span class="fl">26</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">daily_doses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10000</span>, <span class="fl">365</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mean_days_between_doses</span> <span class="op">&lt;-</span> <span class="fl">12</span> <span class="op">*</span> <span class="fl">7</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="vaccine_priority.html">vaccine_priority_population</a></span><span class="op">(</span><span class="va">region</span>, uptake <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">schedule</span> <span class="op">&lt;-</span> <span class="fu"><a href="vaccine_schedule_future.html">vaccine_schedule_future</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fl">0</span>, <span class="va">daily_doses</span>, <span class="va">mean_days_between_doses</span>, <span class="va">n</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># generate model parameters</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">lancelot_parameters</span><span class="op">(</span></span>
-<span class="r-in">       <span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="va">region</span>,</span>
-<span class="r-in">       rel_susceptibility <span class="op">=</span> <span class="va">rel_susceptibility</span>,</span>
-<span class="r-in">       rel_p_sympt <span class="op">=</span> <span class="va">rel_p_sympt</span>,</span>
-<span class="r-in">       rel_p_hosp_if_sympt <span class="op">=</span> <span class="va">rel_p_hosp_if_sympt</span>,</span>
-<span class="r-in">       rel_p_death <span class="op">=</span> <span class="va">rel_p_death</span>,</span>
-<span class="r-in">       rel_infectivity <span class="op">=</span> <span class="va">rel_infectivity</span>,</span>
-<span class="r-in">       vaccine_progression_rate <span class="op">=</span> <span class="va">vaccine_progression_rate</span>,</span>
-<span class="r-in">       vaccine_schedule <span class="op">=</span> <span class="va">schedule</span>,</span>
-<span class="r-in">       vaccine_index_dose2 <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># vaccination parameters are automatically copied across all age groups#</span></span>
-<span class="r-in"><span class="co"># (and across strains but here we only have 1 strain which is the 2nd</span></span>
-<span class="r-in"><span class="co"># dimension here)</span></span>
-<span class="r-in"><span class="va">p</span><span class="op">$</span><span class="va">rel_susceptibility</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">region</span> <span class="op">&lt;-</span> <span class="st">"london"</span></span></span>
+<span class="r-in"><span><span class="fu">lancelot_parameters</span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="va">region</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># example set up of vaccination parameters independent of age</span></span></span>
+<span class="r-in"><span><span class="co"># 3 groups: 1) unvaccinated, 2) vaccinated with partial immunity</span></span></span>
+<span class="r-in"><span><span class="co"># 3) fully vaccinated (but with an imperfect vaccine). People return</span></span></span>
+<span class="r-in"><span><span class="co"># to group 1 after a period of time in group 3 to mirror waning immunity</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Assumption: immediately after vaccination susceptibility is reduced by</span></span></span>
+<span class="r-in"><span><span class="co"># 20%, and then by 50% when you reach full effect of the vaccination,</span></span></span>
+<span class="r-in"><span><span class="co"># then susceptibility returns to 100% upon waning of vaccine=induced</span></span></span>
+<span class="r-in"><span><span class="co"># immunity</span></span></span>
+<span class="r-in"><span><span class="co"># effect of vaccination similar across all age groups</span></span></span>
+<span class="r-in"><span><span class="va">rel_susceptibility</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The vaccine also reduces the risk of symptoms</span></span></span>
+<span class="r-in"><span><span class="va">rel_p_sympt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># and the risk of hospitalisation for those with symptoms</span></span></span>
+<span class="r-in"><span><span class="va">rel_p_hosp_if_sympt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.95</span>, <span class="fl">0.95</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># and the risk of death for those with severe disease</span></span></span>
+<span class="r-in"><span><span class="va">rel_p_death</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.9</span>, <span class="fl">0.9</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The vaccine also reduces infectivity of infected individuals by half</span></span></span>
+<span class="r-in"><span><span class="va">rel_infectivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># On average 10000 first doses of vaccine are given every day</span></span></span>
+<span class="r-in"><span><span class="co"># Second doses are given on average 12 weeks after the first dose</span></span></span>
+<span class="r-in"><span><span class="co"># vaccine-induced immunity wanes after a period which is exponentially</span></span></span>
+<span class="r-in"><span><span class="co"># distributed and lasts on average 26 weeks (half a year);</span></span></span>
+<span class="r-in"><span><span class="co"># they are similar across all age groups</span></span></span>
+<span class="r-in"><span><span class="va">vaccine_progression_rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">/</span><span class="op">(</span><span class="fl">26</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">daily_doses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10000</span>, <span class="fl">365</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mean_days_between_doses</span> <span class="op">&lt;-</span> <span class="fl">12</span> <span class="op">*</span> <span class="fl">7</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="vaccine_priority.html">vaccine_priority_population</a></span><span class="op">(</span><span class="va">region</span>, uptake <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">schedule</span> <span class="op">&lt;-</span> <span class="fu"><a href="vaccine_schedule_future.html">vaccine_schedule_future</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fl">0</span>, <span class="va">daily_doses</span>, <span class="va">mean_days_between_doses</span>, <span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># generate model parameters</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">lancelot_parameters</span><span class="op">(</span></span></span>
+<span class="r-in"><span>       <span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="va">region</span>,</span></span>
+<span class="r-in"><span>       rel_susceptibility <span class="op">=</span> <span class="va">rel_susceptibility</span>,</span></span>
+<span class="r-in"><span>       rel_p_sympt <span class="op">=</span> <span class="va">rel_p_sympt</span>,</span></span>
+<span class="r-in"><span>       rel_p_hosp_if_sympt <span class="op">=</span> <span class="va">rel_p_hosp_if_sympt</span>,</span></span>
+<span class="r-in"><span>       rel_p_death <span class="op">=</span> <span class="va">rel_p_death</span>,</span></span>
+<span class="r-in"><span>       rel_infectivity <span class="op">=</span> <span class="va">rel_infectivity</span>,</span></span>
+<span class="r-in"><span>       vaccine_progression_rate <span class="op">=</span> <span class="va">vaccine_progression_rate</span>,</span></span>
+<span class="r-in"><span>       vaccine_schedule <span class="op">=</span> <span class="va">schedule</span>,</span></span>
+<span class="r-in"><span>       vaccine_index_dose2 <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># vaccination parameters are automatically copied across all age groups#</span></span></span>
+<span class="r-in"><span><span class="co"># (and across strains but here we only have 1 strain which is the 2nd</span></span></span>
+<span class="r-in"><span><span class="co"># dimension here)</span></span></span>
+<span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">rel_susceptibility</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]</span>
@@ -596,7 +691,7 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,]  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,]  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="va">p</span><span class="op">$</span><span class="va">rel_p_sympt</span></span>
+<span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">rel_p_sympt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]</span>
@@ -666,7 +761,7 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,]  0.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,]  0.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="va">p</span><span class="op">$</span><span class="va">rel_p_hosp_if_sympt</span></span>
+<span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">rel_p_hosp_if_sympt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]</span>
@@ -736,7 +831,7 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,] 0.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,] 0.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="va">p</span><span class="op">$</span><span class="va">rel_p_death</span></span>
+<span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">rel_p_death</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]</span>
@@ -806,7 +901,7 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,]  0.9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,]  0.9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="va">p</span><span class="op">$</span><span class="va">rel_infectivity</span></span>
+<span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">rel_infectivity</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]</span>
@@ -876,9 +971,9 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,]  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,]  0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="co"># Note that this is only the "base" rate as we fill in the first</span></span>
-<span class="r-in"><span class="co"># column dynamically based on vaccine_daily_doses</span></span>
-<span class="r-in"><span class="va">p</span><span class="op">$</span><span class="va">vaccine_progression_rate</span></span>
+<span class="r-in"><span><span class="co"># Note that this is only the "base" rate as we fill in the first</span></span></span>
+<span class="r-in"><span><span class="co"># column dynamically based on vaccine_daily_doses</span></span></span>
+<span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">vaccine_progression_rate</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2]        [,3]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]    0    0 0.005494505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]    0    0 0.005494505</span>
@@ -899,22 +994,22 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17,]    0    0 0.005494505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,]    0    0 0.005494505</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,]    0    0 0.005494505</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### same example as above BUT assume a different effect of vaccine in the</span></span>
-<span class="r-in"><span class="co">### first age group</span></span>
-<span class="r-in"><span class="va">n_groups</span> <span class="op">&lt;-</span> <span class="fl">19</span></span>
-<span class="r-in"><span class="va">n_strains</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Assumption: vaccine is twice more effective at reducing susceptibility</span></span>
-<span class="r-in"><span class="co"># in the first age group</span></span>
-<span class="r-in"><span class="va">rel_susceptibility_agegp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.4</span>, <span class="fl">0.25</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rel_susceptibility_other_agegp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rel_susceptibility</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rel_susceptibility</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">rel_susceptibility_agegp1</span></span>
-<span class="r-in"><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n_groups</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">rel_susceptibility</span><span class="op">[</span><span class="va">i</span>, , <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">rel_susceptibility_other_agegp</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="va">rel_susceptibility</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### same example as above BUT assume a different effect of vaccine in the</span></span></span>
+<span class="r-in"><span><span class="co">### first age group</span></span></span>
+<span class="r-in"><span><span class="va">n_groups</span> <span class="op">&lt;-</span> <span class="fl">19</span></span></span>
+<span class="r-in"><span><span class="va">n_strains</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Assumption: vaccine is twice more effective at reducing susceptibility</span></span></span>
+<span class="r-in"><span><span class="co"># in the first age group</span></span></span>
+<span class="r-in"><span><span class="va">rel_susceptibility_agegp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.4</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rel_susceptibility_other_agegp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rel_susceptibility</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rel_susceptibility</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">rel_susceptibility_agegp1</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n_groups</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">rel_susceptibility</span><span class="op">[</span><span class="va">i</span>, , <span class="op">]</span> <span class="op">&lt;-</span> <span class="va">rel_susceptibility_other_agegp</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">rel_susceptibility</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]</span>
@@ -984,45 +1079,45 @@ just before the model is run.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [18,] 0.50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [19,] 0.50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># But vaccine has the same impact on probability of symptoms and</span></span>
-<span class="r-in"><span class="co"># hospitalisation for the symptomatic across all age groups</span></span>
-<span class="r-in"><span class="va">rel_p_sympt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_p_sympt</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span>
-<span class="r-in">  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rel_p_hosp_if_sympt</span> <span class="op">&lt;-</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_p_hosp_if_sympt</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span>
-<span class="r-in">  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rel_p_death</span> <span class="op">&lt;-</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_p_hosp_if_sympt</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span>
-<span class="r-in">  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># And vaccine has the same impact on onwards infectivity across age groups</span></span>
-<span class="r-in"><span class="va">rel_infectivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_infectivity</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span>
-<span class="r-in">  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># the period of build-up of immunity is the same for all age groups,</span></span>
-<span class="r-in"><span class="co"># lasting on average 2 weeks,</span></span>
-<span class="r-in"><span class="co"># but the first age group loses immunity more quickly</span></span>
-<span class="r-in"><span class="co"># (on average after 3 months) than the other age groups</span></span>
-<span class="r-in"><span class="co"># (on average after 6 months)</span></span>
-<span class="r-in"><span class="va">vaccine_progression_rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>,</span>
-<span class="r-in">                                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">13</span> <span class="op">*</span> <span class="fl">7</span><span class="op">)</span>,</span>
-<span class="r-in">                                  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">26</span> <span class="op">*</span> <span class="fl">7</span><span class="op">)</span>, <span class="va">n_groups</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># generate model parameters</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">lancelot_parameters</span><span class="op">(</span></span>
-<span class="r-in">       <span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="va">region</span>,</span>
-<span class="r-in">       rel_susceptibility <span class="op">=</span> <span class="va">rel_susceptibility</span>,</span>
-<span class="r-in">       rel_p_sympt <span class="op">=</span> <span class="va">rel_p_sympt</span>,</span>
-<span class="r-in">       rel_p_hosp_if_sympt <span class="op">=</span> <span class="va">rel_p_hosp_if_sympt</span>,</span>
-<span class="r-in">       rel_p_death <span class="op">=</span> <span class="va">rel_p_death</span>,</span>
-<span class="r-in">       rel_infectivity <span class="op">=</span> <span class="va">rel_infectivity</span>,</span>
-<span class="r-in">       vaccine_progression_rate <span class="op">=</span> <span class="va">vaccine_progression_rate</span>,</span>
-<span class="r-in">       vaccine_schedule <span class="op">=</span> <span class="va">schedule</span>,</span>
-<span class="r-in">       vaccine_index_dose2 <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># TODO: add an example of manually set up vaccine schedule</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># But vaccine has the same impact on probability of symptoms and</span></span></span>
+<span class="r-in"><span><span class="co"># hospitalisation for the symptomatic across all age groups</span></span></span>
+<span class="r-in"><span><span class="va">rel_p_sympt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_p_sympt</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rel_p_hosp_if_sympt</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_p_hosp_if_sympt</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rel_p_death</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_p_hosp_if_sympt</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># And vaccine has the same impact on onwards infectivity across age groups</span></span></span>
+<span class="r-in"><span><span class="va">rel_infectivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">rel_infectivity</span>, each <span class="op">=</span> <span class="va">n_groups</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_groups</span>, <span class="va">n_strains</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># the period of build-up of immunity is the same for all age groups,</span></span></span>
+<span class="r-in"><span><span class="co"># lasting on average 2 weeks,</span></span></span>
+<span class="r-in"><span><span class="co"># but the first age group loses immunity more quickly</span></span></span>
+<span class="r-in"><span><span class="co"># (on average after 3 months) than the other age groups</span></span></span>
+<span class="r-in"><span><span class="co"># (on average after 6 months)</span></span></span>
+<span class="r-in"><span><span class="va">vaccine_progression_rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">13</span> <span class="op">*</span> <span class="fl">7</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">26</span> <span class="op">*</span> <span class="fl">7</span><span class="op">)</span>, <span class="va">n_groups</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># generate model parameters</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">lancelot_parameters</span><span class="op">(</span></span></span>
+<span class="r-in"><span>       <span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="va">region</span>,</span></span>
+<span class="r-in"><span>       rel_susceptibility <span class="op">=</span> <span class="va">rel_susceptibility</span>,</span></span>
+<span class="r-in"><span>       rel_p_sympt <span class="op">=</span> <span class="va">rel_p_sympt</span>,</span></span>
+<span class="r-in"><span>       rel_p_hosp_if_sympt <span class="op">=</span> <span class="va">rel_p_hosp_if_sympt</span>,</span></span>
+<span class="r-in"><span>       rel_p_death <span class="op">=</span> <span class="va">rel_p_death</span>,</span></span>
+<span class="r-in"><span>       rel_infectivity <span class="op">=</span> <span class="va">rel_infectivity</span>,</span></span>
+<span class="r-in"><span>       vaccine_progression_rate <span class="op">=</span> <span class="va">vaccine_progression_rate</span>,</span></span>
+<span class="r-in"><span>       vaccine_schedule <span class="op">=</span> <span class="va">schedule</span>,</span></span>
+<span class="r-in"><span>       vaccine_index_dose2 <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># TODO: add an example of manually set up vaccine schedule</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -1037,7 +1132,7 @@ just before the model is run.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

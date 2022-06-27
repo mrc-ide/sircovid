@@ -20,7 +20,7 @@ being day 1). We call this integer number a &quot;sircovid date&quot;."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -59,13 +59,13 @@ being day 1). We call this integer number a "sircovid date".</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">sircovid_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span>
-
-<span class="fu">sircovid_date_as_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span>
-
-<span class="fu">as_sircovid_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span>
-
-<span class="fu">as_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sircovid_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">sircovid_date_as_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">as_sircovid_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">as_date</span><span class="op">(</span><span class="va">date</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,10 +73,13 @@ being day 1). We call this integer number a "sircovid date".</p>
     <dl><dt>date</dt>
 <dd><p>A Date object, or something that can be converted to
 one, or a "sircovid date"; see Details</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An integer, being the number of days into 2020</p>
+    
+
+<p>An integer, being the number of days into 2020</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -97,29 +100,29 @@ error)</p></li>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Convert dates into sircovid dates:</span></span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date</span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Convert dates into sircovid dates:</span></span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date</span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-03-01"</span>, <span class="st">"2020-10-01"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-03-01"</span>, <span class="st">"2020-10-01"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  61 275</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Reverse the conversion:</span></span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date_as_date</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Reverse the conversion:</span></span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date_as_date</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2020-01-01"</span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date_as_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">61</span>, <span class="fl">275</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date_as_date</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">61</span>, <span class="fl">275</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2020-03-01" "2020-10-01"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Double conversion not possible with sircovid_date...</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date</span><span class="op">(</span><span class="fl">61</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Double conversion not possible with sircovid_date...</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_date</span><span class="op">(</span><span class="fl">61</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in as_date(date) : Expected ISO dates or R dates - please convert</span>
-<span class="r-in"><span class="co"># ...but allowed with as_sircovid_date</span></span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">as_sircovid_date</span><span class="op">(</span><span class="fl">61</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># ...but allowed with as_sircovid_date</span></span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">as_sircovid_date</span><span class="op">(</span><span class="fl">61</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 61</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Strict date conversion with as_date</span></span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">as_date</span><span class="op">(</span><span class="st">"2020-03-01"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Strict date conversion with as_date</span></span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">as_date</span><span class="op">(</span><span class="st">"2020-03-01"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2020-03-01"</span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">as_date</span><span class="op">(</span><span class="st">"03-01-2020"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">as_date</span><span class="op">(</span><span class="st">"03-01-2020"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in sircovid::as_date("03-01-2020") : </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Expected ISO dates or R dates - please convert</span>
 </code></pre></div>
@@ -136,7 +139,7 @@ error)</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

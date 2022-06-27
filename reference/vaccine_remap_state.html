@@ -20,7 +20,7 @@ for simulations."><meta property="og:image" content="/logo.png"><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -59,7 +59,7 @@ for simulations.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_remap_state</span><span class="op">(</span><span class="va">state_orig</span>, <span class="va">info_orig</span>, <span class="va">info_vacc</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vaccine_remap_state</span><span class="op">(</span><span class="va">state_orig</span>, <span class="va">info_orig</span>, <span class="va">info_vacc</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -68,16 +68,23 @@ for simulations.</p>
 <dd><p>An original state matrix (rows representing
 state, columns representing particles or samples). This must be
 the complete model state.</p></dd>
+
+
 <dt>info_orig</dt>
 <dd><p>The results of <code>info()</code> from the model object
 without vaccination</p></dd>
+
+
 <dt>info_vacc</dt>
 <dd><p>The results of <code>info()</code> from the model object
 with vaccination</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A 3d array with more rows than <code>state</code>.</p>
+    
+
+<p>A 3d array with more rows than <code>state</code>.</p>
     </div>
 
   </div>
@@ -92,7 +99,7 @@ with vaccination</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

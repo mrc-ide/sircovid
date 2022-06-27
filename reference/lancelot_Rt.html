@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,30 +53,36 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_Rt</span><span class="op">(</span>
-  <span class="va">step</span>,
-  <span class="va">S</span>,
-  <span class="va">p</span>,
-  prob_strain <span class="op">=</span> <span class="cn">NULL</span>,
-  type <span class="op">=</span> <span class="cn">NULL</span>,
-  interpolate_every <span class="op">=</span> <span class="cn">NULL</span>,
-  interpolate_critical_dates <span class="op">=</span> <span class="cn">NULL</span>,
-  interpolate_min <span class="op">=</span> <span class="cn">NULL</span>,
-  eigen_method <span class="op">=</span> <span class="st">"power_iteration"</span>,
-  R <span class="op">=</span> <span class="cn">NULL</span>,
-  weight_Rt <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_Rt</span><span class="op">(</span></span>
+<span>  <span class="va">step</span>,</span>
+<span>  <span class="va">S</span>,</span>
+<span>  <span class="va">p</span>,</span>
+<span>  prob_strain <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  interpolate_every <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  interpolate_critical_dates <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  interpolate_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  eigen_method <span class="op">=</span> <span class="st">"power_iteration"</span>,</span>
+<span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weight_Rt <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>step</dt>
 <dd><p>A vector of steps that the model was run over</p></dd>
+
+
 <dt>S</dt>
 <dd><p>A (n groups x n vaccine classes) x steps matrix of "S"
 compartment counts</p></dd>
+
+
 <dt>p</dt>
 <dd><p>A <code><a href="lancelot_parameters.html">lancelot_parameters()</a></code> object</p></dd>
+
+
 <dt>prob_strain</dt>
 <dd><p>A (n groups x n strains) x n steps matrix of
 "prob_strain" outputs from the model. For a 2 strain model for example,
@@ -85,13 +91,19 @@ the j^th time step, the probabilities that new infections
 in group 1 are of strains 1 and 2 respectively.
 The default is <code>NULL</code>, but it must
 be specified if there is more than one strain</p></dd>
+
+
 <dt>type</dt>
 <dd><p>A character vector of possible Rt types to
 compute. Can be any or all of <code>eff_Rt_all</code>, <code>eff_Rt_general</code>,
 <code>Rt_all</code> and <code>Rt_general</code></p></dd>
+
+
 <dt>interpolate_every</dt>
 <dd><p>Spacing (in days) to use between interpolated
 points</p></dd>
+
+
 <dt>interpolate_critical_dates</dt>
 <dd><p>Optional vector of critical sircovid
 dates to use when interpolating. Interpolation will be done in
@@ -99,6 +111,8 @@ blocks between the first time step of these dates, with each block
 starting on the first time step of the date given.
 So if you give a <code>interpolate_critical_dates</code> of <code>c(20, 50)</code> then blocks <em>start</em> on first time step of days 20 and 50,
 i.e.: <code>[1, 20)</code>, <code>[20, 50)</code>, <code>[50, end]</code>.</p></dd>
+
+
 <dt>interpolate_min</dt>
 <dd><p>The minimum number of steps to include
 within a block. If there are fewer points than this then all
@@ -109,20 +123,32 @@ error of small regions. If Rt is small it won't matter that
 much. You do need to specify something though or interpolation
 will not happen, and do not use less than 3 as we use spline
 interpolation and that will not work with fewer than 3 points.</p></dd>
+
+
 <dt>eigen_method</dt>
 <dd><p>The eigenvalue method to use (passed to
 <a href="https://rdrr.io/pkg/eigen1/man/eigen1.html" class="external-link">eigen1::eigen1</a> as <code>method</code>)</p></dd>
+
+
 <dt>R</dt>
 <dd><p>A (n groups x n strains x n vaccine classes) x steps matrix of "R"
 compartment counts, required for multi-strain models.</p></dd>
+
+
 <dt>weight_Rt</dt>
 <dd><p>If <code>TRUE</code> then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with
 an additional dimension to index each strain.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with elements <code>step</code>, <code>beta</code>, and any of the <code>type</code>values specified above.</p>
+    
+
+<p>A list with elements <code>step</code>, <code>beta</code>, and any of the <code>type</code></p>
+
+
+<p>values specified above.</p>
     </div>
 
   </div>
@@ -137,7 +163,7 @@ an additional dimension to index each strain.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

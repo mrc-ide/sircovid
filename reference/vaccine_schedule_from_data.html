@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_schedule_from_data</span><span class="op">(</span><span class="va">data</span>, <span class="va">region</span>, <span class="va">uptake</span>, carehomes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vaccine_schedule_from_data</span><span class="op">(</span><span class="va">data</span>, <span class="va">region</span>, <span class="va">uptake</span>, carehomes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -66,19 +66,28 @@ these should be <code>dose1</code>, <code>dose2</code> and <code>dose3</code>. V
 latter means those doses are not age-specific and will be
 distributed across all ages according to priority after
 all age-specific doses have already been dealt with</p></dd>
+
+
 <dt>region</dt>
 <dd><p>Region to use to get total population numbers</p></dd>
+
+
 <dt>uptake</dt>
 <dd><p>A matrix of 19 rows, and number of columns equal to
 number of doses. The (i,j)th entry gives the fractional uptake
 of dose j for group i. Should be non-increasing across rows</p></dd>
+
+
 <dt>carehomes</dt>
 <dd><p>Logical parameter, whether or not we have carehomes in
 the model. Default is TRUE</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <a href="vaccine_schedule.html">vaccine_schedule</a> object</p>
+    
+
+<p>A <a href="vaccine_schedule.html">vaccine_schedule</a> object</p>
     </div>
 
   </div>
@@ -93,7 +102,7 @@ the model. Default is TRUE</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -20,7 +20,7 @@ parameters.'><meta property="og:image" content="/logo.png"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -59,56 +59,72 @@ parameters.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_Rt_trajectories</span><span class="op">(</span>
-  <span class="va">step</span>,
-  <span class="va">S</span>,
-  <span class="va">pars</span>,
-  prob_strain <span class="op">=</span> <span class="cn">NULL</span>,
-  initial_step_from_parameters <span class="op">=</span> <span class="cn">TRUE</span>,
-  shared_parameters <span class="op">=</span> <span class="cn">NULL</span>,
-  type <span class="op">=</span> <span class="cn">NULL</span>,
-  interpolate_every <span class="op">=</span> <span class="cn">NULL</span>,
-  interpolate_critical_dates <span class="op">=</span> <span class="cn">NULL</span>,
-  interpolate_min <span class="op">=</span> <span class="cn">NULL</span>,
-  eigen_method <span class="op">=</span> <span class="st">"power_iteration"</span>,
-  R <span class="op">=</span> <span class="cn">NULL</span>,
-  weight_Rt <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_Rt_trajectories</span><span class="op">(</span></span>
+<span>  <span class="va">step</span>,</span>
+<span>  <span class="va">S</span>,</span>
+<span>  <span class="va">pars</span>,</span>
+<span>  prob_strain <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  initial_step_from_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  shared_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  interpolate_every <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  interpolate_critical_dates <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  interpolate_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  eigen_method <span class="op">=</span> <span class="st">"power_iteration"</span>,</span>
+<span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weight_Rt <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>step</dt>
 <dd><p>A vector of steps</p></dd>
+
+
 <dt>S</dt>
 <dd><p>A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
 array of "S" compartment counts</p></dd>
+
+
 <dt>pars</dt>
 <dd><p>Either a single <code><a href="lancelot_parameters.html">lancelot_parameters()</a></code> object
 (shared parameters) or an unnamed list of
 <code><a href="lancelot_parameters.html">lancelot_parameters()</a></code> objects, the same length as <code>ncol(S)</code>.</p></dd>
+
+
 <dt>prob_strain</dt>
 <dd><p>A 3d ((n groups x n strains) x n trajectories x n steps)
 array of "prob_strain" model outputs. Default is <code>NULL</code>, but it must be
 specified if there is more than one strain.</p></dd>
+
+
 <dt>initial_step_from_parameters</dt>
 <dd><p>If <code>TRUE</code>, then <code>step[[1]]</code> is
 replaced by the value of <code>initial_step</code> from the parameters.
 This is usually what you want. (From sircovid 0.12.13 this
 parameter means "initial step is zero" and will probably be
 updated in a future version).</p></dd>
+
+
 <dt>shared_parameters</dt>
 <dd><p>Should <code>pars</code> be treated as a single
 shared list? Leave as <code>NULL</code> to detect automatically, set to
 <code>TRUE</code> or <code>FALSE</code> to force it to be interpreted one way or the
 other which may give more easily interpretable error messages.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>A character vector of possible Rt types to
 compute. Can be any or all of <code>eff_Rt_all</code>, <code>eff_Rt_general</code>,
 <code>Rt_all</code> and <code>Rt_general</code></p></dd>
+
+
 <dt>interpolate_every</dt>
 <dd><p>Spacing (in days) to use between interpolated
 points</p></dd>
+
+
 <dt>interpolate_critical_dates</dt>
 <dd><p>Optional vector of critical sircovid
 dates to use when interpolating. Interpolation will be done in
@@ -116,6 +132,8 @@ blocks between the first time step of these dates, with each block
 starting on the first time step of the date given.
 So if you give a <code>interpolate_critical_dates</code> of <code>c(20, 50)</code> then blocks <em>start</em> on first time step of days 20 and 50,
 i.e.: <code>[1, 20)</code>, <code>[20, 50)</code>, <code>[50, end]</code>.</p></dd>
+
+
 <dt>interpolate_min</dt>
 <dd><p>The minimum number of steps to include
 within a block. If there are fewer points than this then all
@@ -126,21 +144,30 @@ error of small regions. If Rt is small it won't matter that
 much. You do need to specify something though or interpolation
 will not happen, and do not use less than 3 as we use spline
 interpolation and that will not work with fewer than 3 points.</p></dd>
+
+
 <dt>eigen_method</dt>
 <dd><p>The eigenvalue method to use (passed to
 <a href="https://rdrr.io/pkg/eigen1/man/eigen1.html" class="external-link">eigen1::eigen1</a> as <code>method</code>)</p></dd>
+
+
 <dt>R</dt>
 <dd><p>A 3d ((n groups x n strains x n vaccine classes) x
 n trajectories x n steps) array of "R" compartment counts, required for
 multi-strain models.</p></dd>
+
+
 <dt>weight_Rt</dt>
 <dd><p>If <code>TRUE</code> then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with
 an additional dimension to index each strain.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>As for <code><a href="lancelot_Rt.html">lancelot_Rt()</a></code>, except that every element is a
+    
+
+<p>As for <code><a href="lancelot_Rt.html">lancelot_Rt()</a></code>, except that every element is a
 matrix, not a vector.</p>
     </div>
 
@@ -156,7 +183,7 @@ matrix, not a vector.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

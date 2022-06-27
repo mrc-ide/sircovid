@@ -23,7 +23,7 @@ cachine will be obvious."><meta property="og:image" content="/logo.png"><!-- mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -65,7 +65,7 @@ cachine will be obvious.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">compile_gpu</span><span class="op">(</span>model <span class="op">=</span> <span class="st">"lancelot"</span>, <span class="va">...</span>, real_type <span class="op">=</span> <span class="st">"float"</span>, gpu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compile_gpu</span><span class="op">(</span>model <span class="op">=</span> <span class="st">"lancelot"</span>, <span class="va">...</span>, real_type <span class="op">=</span> <span class="st">"float"</span>, gpu <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,22 +73,31 @@ cachine will be obvious.</p>
     <dl><dt>model</dt>
 <dd><p>The name of a sircovid model, either <code>lancelot</code> or
 <code>basic</code></p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <a href="https://rdrr.io/pkg/odin.dust/man/odin_dust.html" class="external-link">odin.dust::odin_dust_</a>
 and from there into either odin's options or the gpu options.</p></dd>
+
+
 <dt>real_type</dt>
 <dd><p>The type to use for floating point numbers. The
 default is "float" which differs from the CPU model but is
 typically what you want on the GPU.</p></dd>
+
+
 <dt>gpu</dt>
 <dd><p>The argument passed to <a href="https://rdrr.io/pkg/odin.dust/man/odin_dust.html" class="external-link">odin.dust::odin_dust_</a> as
 <code>gpu</code>. The default here is <code>TRUE</code>, but you may want to pass the
 results of <a href="https://rdrr.io/pkg/dust/man/dust_cuda_options.html" class="external-link">dust::dust_cuda_options</a> in order to control
 compilation.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A model generator, like <a href="lancelot.html">lancelot</a> that can run
+    
+
+<p>A model generator, like <a href="lancelot.html">lancelot</a> that can run
 on the GPU available to this computer.</p>
     </div>
 
@@ -104,7 +113,7 @@ on the GPU available to this computer.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

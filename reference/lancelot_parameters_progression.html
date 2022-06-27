@@ -22,7 +22,7 @@ two."><meta property="og:image" content="/logo.png"><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -63,92 +63,125 @@ two.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_parameters_progression</span><span class="op">(</span>
-  <span class="va">dt</span>,
-  gamma_E <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_A <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_P <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_C_1 <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_C_2 <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_ICU_pre <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_ICU_D <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_ICU_W_D <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_ICU_W_R <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_H_D <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_H_R <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_W_D <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_W_R <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_G_D <span class="op">=</span> <span class="cn">NULL</span>,
-  gamma_U <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_parameters_progression</span><span class="op">(</span></span>
+<span>  <span class="va">dt</span>,</span>
+<span>  gamma_E <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_A <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_P <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_C_1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_C_2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_ICU_pre <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_ICU_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_ICU_W_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_ICU_W_R <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_H_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_H_R <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_W_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_W_R <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_G_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_U <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>dt</dt>
 <dd><p>The step size</p></dd>
+
+
 <dt>gamma_E</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of the
 duration in the E (exposed) compartment. See Details.</p></dd>
+
+
 <dt>gamma_A</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of the
 duration in the I_A (asymptomatic) compartment. See Details.</p></dd>
+
+
 <dt>gamma_P</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of the
 duration in the I_P (presymptomatic) compartment. See Details.</p></dd>
+
+
 <dt>gamma_C_1</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the I_C_1 (first stage symptomatic) compartment. See
 Details.</p></dd>
+
+
 <dt>gamma_C_2</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the I_C_2 (second stage symptomatic) compartment. See
 Details.</p></dd>
+
+
 <dt>gamma_ICU_pre</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter
 of the duration in the ICU_pre (general beds stay before ICU) compartment.
 See Details.</p></dd>
+
+
 <dt>gamma_ICU_D</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the ICU_D (ICU stay for individuals who die in ICU)
 compartment. See Details.</p></dd>
+
+
 <dt>gamma_ICU_W_D</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter
 of the duration in the ICU_W_D (ICU stay for individuals who go on to die
 in stepdown) compartment. See Details.</p></dd>
+
+
 <dt>gamma_ICU_W_R</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter
 of the duration in the ICU_W_R (ICU stay for individuals who go on to
 recover in stepdown) compartment. See Details.</p></dd>
+
+
 <dt>gamma_H_D</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the H_D (general beds stay for individuals who die in
 general beds) compartment. See Details.</p></dd>
+
+
 <dt>gamma_H_R</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the H_R (general beds stay for individuals who recover in
 general beds) compartment. See Details.</p></dd>
+
+
 <dt>gamma_W_D</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the W_D (stepdown for individuals who die in stepdown)
 compartment. See Details.</p></dd>
+
+
 <dt>gamma_W_R</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the W_R (stepdown for individuals who recover in stepdown)
 compartment. See Details.</p></dd>
+
+
 <dt>gamma_G_D</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration in the G_D (delay to death in the community/care homes)
 compartment. See Details.</p></dd>
+
+
 <dt>gamma_U</dt>
 <dd><p>Time-varying parameters for the Erlang rate parameter of
 the duration of the delay from hospital admission to diagnosis for those
 not confirmed on admission. Note this duration is a single-stage Erlang.
 See Details.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of parameter values</p>
+    
+
+<p>A list of parameter values</p>
     </div>
     <div id="time-varying-parameters">
     <h2>Time-varying parameters</h2>
@@ -173,7 +206,7 @@ must be a vector of sircovid dates of the same length as <code>value</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

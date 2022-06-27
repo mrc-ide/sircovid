@@ -18,7 +18,7 @@ daily doses."><meta property="og:image" content="/logo.png"><!-- mathjax --><scr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -55,16 +55,16 @@ daily doses.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_schedule_future</span><span class="op">(</span>
-  <span class="va">start</span>,
-  <span class="va">daily_doses_value</span>,
-  <span class="va">mean_days_between_doses</span>,
-  <span class="va">priority_population</span>,
-  lag_groups <span class="op">=</span> <span class="cn">NULL</span>,
-  lag_days <span class="op">=</span> <span class="cn">NULL</span>,
-  booster_daily_doses_value <span class="op">=</span> <span class="cn">NULL</span>,
-  booster_proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">19</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vaccine_schedule_future</span><span class="op">(</span></span>
+<span>  <span class="va">start</span>,</span>
+<span>  <span class="va">daily_doses_value</span>,</span>
+<span>  <span class="va">mean_days_between_doses</span>,</span>
+<span>  <span class="va">priority_population</span>,</span>
+<span>  lag_groups <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lag_days <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  booster_daily_doses_value <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  booster_proportion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">19</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,30 +73,45 @@ daily doses.</p>
 <dd><p>Either a <a href="sircovid_date.html">sircovid_date</a> object corresponding to the
 first date in daily_doses_value, or a <a href="vaccine_schedule.html">vaccine_schedule</a> object
 corresponding to previously carried out vaccination.</p></dd>
+
+
 <dt>daily_doses_value</dt>
 <dd><p>A vector of doses per day.</p></dd>
+
+
 <dt>mean_days_between_doses</dt>
 <dd><p>Assumed mean days between doses one
 and two</p></dd>
+
+
 <dt>priority_population</dt>
 <dd><p>Output from
 <a href="vaccine_priority.html">vaccine_priority_population</a>, giving the number of people
 to vaccinate in each age (row) and priority group (column)</p></dd>
+
+
 <dt>lag_groups</dt>
 <dd><p>Row indices, corresponding to age
 groups in which a lag should be added to the start time of the dose
 schedule returned by <a href="vaccine_schedule.html">vaccine_schedule</a>, if NULL then no lag is added.
 Ignored if <code>lag_groups</code> is NULL.</p></dd>
+
+
 <dt>lag_days</dt>
 <dd><p>If <code>lag_groups</code> is not NULL then specifies the number of
 days to add the start of the dose schedule for the given groups. Ignored
 if <code>lag_groups</code> is NULL.</p></dd>
+
+
 <dt>booster_daily_doses_value</dt>
 <dd><p>A vector of booster doses per day.</p></dd>
+
+
 <dt>booster_proportion</dt>
 <dd><p>Proportion of the groups in
 <code>priority_population</code> to boost, default is all groups; ignored if
 <code>booster_daily_doses_value</code> is NULL.</p></dd>
+
 </dl></div>
 
   </div>
@@ -111,7 +126,7 @@ if <code>lag_groups</code> is NULL.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

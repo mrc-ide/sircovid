@@ -18,7 +18,7 @@ conforms to the mcstate interface."><meta property="og:image" content="/logo.png
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@ conforms to the mcstate interface.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_compare</span><span class="op">(</span><span class="va">state</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_compare</span><span class="op">(</span><span class="va">state</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -65,17 +65,24 @@ conforms to the mcstate interface.</p>
 assumed to be filtered following <code><a href="lancelot_index.html">lancelot_index()</a></code> so contains
 10 rows corresponding to ICU, general beds, admissions, deaths and
 seroconversion compartments.</p></dd>
+
+
 <dt>observed</dt>
 <dd><p>Observed data. At the moment please see the tests
 for a full list as this changes frequently (and this function
 may be removed in future).</p></dd>
+
+
 <dt>pars</dt>
 <dd><p>A list of parameters, as created by
 <code><a href="lancelot_parameters.html">lancelot_parameters()</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A vector of log likelihoods, the same length as the number
+    
+
+<p>A vector of log likelihoods, the same length as the number
 of particles (the number of columns in the modelled state)</p>
     </div>
 
@@ -91,7 +98,7 @@ of particles (the number of columns in the modelled state)</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

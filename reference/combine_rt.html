@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">combine_rt</span><span class="op">(</span><span class="va">rt</span>, <span class="va">samples</span>, rank <span class="op">=</span> <span class="cn">TRUE</span>, weight <span class="op">=</span> <span class="st">"infections_inc"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">combine_rt</span><span class="op">(</span><span class="va">rt</span>, <span class="va">samples</span>, rank <span class="op">=</span> <span class="cn">TRUE</span>, weight <span class="op">=</span> <span class="st">"infections_inc"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -62,18 +62,27 @@
 <dd><p>A list of Rt calculations from
 <code><a href="lancelot_Rt_trajectories.html">lancelot_Rt_trajectories()</a></code> (though any Rt calculation that
 confirms to this will work)</p></dd>
+
+
 <dt>samples</dt>
 <dd><p>A list of samples from <a href="https://rdrr.io/pkg/mcstate/man/pmcmc.html" class="external-link">mcstate::pmcmc</a></p></dd>
+
+
 <dt>rank</dt>
 <dd><p>A boolean deciding whether to rank trajectories by increasing
 incidence or not before combining Rt estimates</p></dd>
+
+
 <dt>weight</dt>
 <dd><p>A string specifying what trajectory to use for weighting,
 defaults to "infections_inc" (used for Rt calculation)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of Rt output in the same structure as the first
+    
+
+<p>A list of Rt output in the same structure as the first
 element of <code>rt</code>. All Rt estimates will be aggregated across
 regions (or whatever else you are aggregating on) based on the
 parameters in <code>samples</code>.</p>
@@ -91,7 +100,7 @@ parameters in <code>samples</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

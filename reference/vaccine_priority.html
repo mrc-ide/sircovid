@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,21 +53,21 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_priority_proportion</span><span class="op">(</span>
-  <span class="va">uptake</span>,
-  prop_hcw <span class="op">=</span> <span class="cn">NULL</span>,
-  prop_very_vulnerable <span class="op">=</span> <span class="cn">NULL</span>,
-  prop_underlying_condition <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">vaccine_priority_population</span><span class="op">(</span>
-  <span class="va">region</span>,
-  <span class="va">uptake</span>,
-  prop_hcw <span class="op">=</span> <span class="cn">NULL</span>,
-  prop_very_vulnerable <span class="op">=</span> <span class="cn">NULL</span>,
-  prop_underlying_condition <span class="op">=</span> <span class="cn">NULL</span>,
-  carehomes <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vaccine_priority_proportion</span><span class="op">(</span></span>
+<span>  <span class="va">uptake</span>,</span>
+<span>  prop_hcw <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prop_very_vulnerable <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prop_underlying_condition <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">vaccine_priority_population</span><span class="op">(</span></span>
+<span>  <span class="va">region</span>,</span>
+<span>  <span class="va">uptake</span>,</span>
+<span>  prop_hcw <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prop_very_vulnerable <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prop_underlying_condition <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  carehomes <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,27 +76,40 @@
 <dd><p>A vector of length 19 with fractional uptake per
 group. If a single number is given it is shared across all
 groups (note that this includes under-18s)</p></dd>
+
+
 <dt>prop_hcw</dt>
 <dd><p>Assumed fraction of healthcare workers in each
 group (length 19) - if <code>NULL</code> we use a default that is a guess
 with hopefully the right general shape.</p></dd>
+
+
 <dt>prop_very_vulnerable</dt>
 <dd><p>Assumed fraction "very vulnerable" in
 each group (length 19) - if <code>NULL</code> we use a default that is a
 guess with hopefully the right general shape.</p></dd>
+
+
 <dt>prop_underlying_condition</dt>
 <dd><p>Assumed fraction "underlying
 condition" in each group (length 19) - if <code>NULL</code> we use a
 default that is a guess with hopefully the right general shape.</p></dd>
+
+
 <dt>region</dt>
 <dd><p>Region to use to get total population numbers</p></dd>
+
+
 <dt>carehomes</dt>
 <dd><p>Logical parameter, whether or not we have carehomes in
 the model. Default is TRUE</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix with n_groups rows (19) and columns representing
+    
+
+<p>A matrix with n_groups rows (19) and columns representing
 priority groups, and element (i, j) is the proportion in group i
 who should be vaccinated as part of priority group j, accounting
 for uptake so that the sum over the rows corresponds to the
@@ -141,7 +154,7 @@ mortality</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

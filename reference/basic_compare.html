@@ -18,7 +18,7 @@ conforms to the mcstate interface."><meta property="og:image" content="/logo.png
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@ conforms to the mcstate interface.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">basic_compare</span><span class="op">(</span><span class="va">state</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">basic_compare</span><span class="op">(</span><span class="va">state</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -64,28 +64,35 @@ conforms to the mcstate interface.</p>
 <dd><p>State vector for the end of the current day. This is
 assumed to be filtered following <code><a href="basic_index.html">basic_index()</a></code> so contains
 rows corresponding to ICU and deaths.</p></dd>
+
+
 <dt>observed</dt>
 <dd><p>Observed data. This will be a list with elements
 <code>icu</code> (number of ICU beds occupied) and <code>deaths</code> (number of
 deaths over this day).</p></dd>
+
+
 <dt>pars</dt>
 <dd><p>A list of parameters, as created by
 <code><a href="basic_parameters.html">basic_parameters()</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A vector of log likelihoods, the same length as the number
+    
+
+<p>A vector of log likelihoods, the same length as the number
 of particles (the number of columns in the modelled state)</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">state</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span>icu <span class="op">=</span> <span class="fl">10</span><span class="op">:</span><span class="fl">15</span>, deaths_inc <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">observed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>icu <span class="op">=</span> <span class="fl">13</span>, deaths <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pars</span> <span class="op">&lt;-</span> <span class="fu"><a href="basic_parameters.html">basic_parameters</a></span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-07"</span><span class="op">)</span>, <span class="st">"england"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">basic_compare</span><span class="op">(</span><span class="va">state</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -6.196168 -5.427646 -5.250788 -5.253934 -5.330205 -5.440127</span>
-<span class="r-in"><span class="fu">basic_compare</span><span class="op">(</span><span class="va">state</span> <span class="op">*</span> <span class="fl">5</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">state</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span>icu <span class="op">=</span> <span class="fl">10</span><span class="op">:</span><span class="fl">15</span>, deaths_inc <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">observed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>icu <span class="op">=</span> <span class="fl">13</span>, deaths <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pars</span> <span class="op">&lt;-</span> <span class="fu"><a href="basic_parameters.html">basic_parameters</a></span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-07"</span><span class="op">)</span>, <span class="st">"england"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">basic_compare</span><span class="op">(</span><span class="va">state</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -6.196170 -5.427647 -5.250788 -5.253934 -5.330206 -5.440127</span>
+<span class="r-in"><span><span class="fu">basic_compare</span><span class="op">(</span><span class="va">state</span> <span class="op">*</span> <span class="fl">5</span>, <span class="va">observed</span>, <span class="va">pars</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -6.393449 -7.085959 -7.714697 -8.248429 -8.709151 -9.114669</span>
 </code></pre></div>
     </div>
@@ -101,7 +108,7 @@ of particles (the number of columns in the modelled state)</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,17 +53,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">basic_parameters</span><span class="op">(</span>
-  <span class="va">start_date</span>,
-  <span class="va">region</span>,
-  beta_date <span class="op">=</span> <span class="cn">NULL</span>,
-  beta_value <span class="op">=</span> <span class="cn">NULL</span>,
-  beta_type <span class="op">=</span> <span class="st">"piecewise-linear"</span>,
-  severity <span class="op">=</span> <span class="cn">NULL</span>,
-  exp_noise <span class="op">=</span> <span class="fl">1e+06</span>,
-  initial_seed_size <span class="op">=</span> <span class="fl">30</span>,
-  initial_seed_pattern <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">basic_parameters</span><span class="op">(</span></span>
+<span>  <span class="va">start_date</span>,</span>
+<span>  <span class="va">region</span>,</span>
+<span>  beta_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  beta_value <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  beta_type <span class="op">=</span> <span class="st">"piecewise-linear"</span>,</span>
+<span>  severity <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  exp_noise <span class="op">=</span> <span class="fl">1e+06</span>,</span>
+<span>  initial_seed_size <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  initial_seed_pattern <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -71,6 +71,8 @@
     <dl><dt>start_date</dt>
 <dd><p>The start date, as a <code><a href="sircovid_date.html">sircovid_date()</a></code> (i.e.,
 the number of days into 2020)</p></dd>
+
+
 <dt>region</dt>
 <dd><p>The region to run the model for. This will bee used
 to get population data, which is currently fixed within the
@@ -78,6 +80,8 @@ package and is limited to "uk", the four constituent nations
 ("england", "wales", "scotland", "northern_ireland") and the 7
 NHS regions (e.g., "midlands"). These names are case
 insensitive.</p></dd>
+
+
 <dt>beta_date</dt>
 <dd><p>A vector of dates (each as a <code><a href="sircovid_date.html">sircovid_date()</a></code>)
 for changes in beta (the contact rate parameter), or <code>NULL</code> if
@@ -86,6 +90,8 @@ a single value is used for all times (see
 <code><a href="sircovid_parameters_piecewise_constant.html">sircovid_parameters_piecewise_constant()</a></code>, where
 this is passed as <code>date</code>). If <code>beta_type = "piecewise-constant"</code>,
 then the first date must be 0.</p></dd>
+
+
 <dt>beta_value</dt>
 <dd><p>A vector of values for beta (the contact rate
 parameter). If not given, and if <code>beta_date</code> is <code>NULL</code> then a
@@ -95,10 +101,14 @@ otherwise if <code>beta_date</code> is <code>NULL</code> this must be a scalar. 
 the same length (see <code><a href="sircovid_parameters_piecewise_linear.html">sircovid_parameters_piecewise_linear()</a></code> or
 <code><a href="sircovid_parameters_piecewise_constant.html">sircovid_parameters_piecewise_constant()</a></code>, where this is passed
 as <code>value</code>).</p></dd>
+
+
 <dt>beta_type</dt>
 <dd><p>The type of form used for beta (the contact rate
 parameter), which currently can be <code>"piecewise-linear"</code> or
 <code>"piecewise-constant"</code></p></dd>
+
+
 <dt>severity</dt>
 <dd><p>Severity data, via Bob Verity's <code>markovid</code>
 package. This needs to be <code>NULL</code> (use the default bundled data
@@ -107,15 +117,21 @@ data) or a list (for data that has already been processed by
 <code>sircovid</code> for use).  New severity data comes from Bob Verity
 via the markovid package, and needs to be carefully calibrated
 with the progression parameters.</p></dd>
+
+
 <dt>exp_noise</dt>
 <dd><p>Rate of exponential noise used in the compare
 function - typically set to a large value so that noise is small
 but non-zero. If set to <code>Inf</code> then there is no noise in the
 observation process (not realistic but useful for testing).</p></dd>
+
+
 <dt>initial_seed_size</dt>
 <dd><p>Initial size of seeding from the S to E
 compartment; all seeding is in the 15-19 year old group from
 <code>start_date</code> according to <code>initial_seed_pattern</code>. The default is 30.</p></dd>
+
+
 <dt>initial_seed_pattern</dt>
 <dd><p>A vector of seeding weights for the initial
 seeding. The length represents the number of steps to seed over from the
@@ -124,10 +140,13 @@ according to those weights. If <code>start_date</code> is not a multiple of the 
 size (and thus falls between two steps) then we weight over an additional
 step and adjust the weights according to how far the <code>start_date</code> is from
 the previous full step.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of inputs to the model, many of which are fixed and
+    
+
+<p>A list of inputs to the model, many of which are fixed and
 represent data. These correspond largely to <code>user()</code> calls
 within the odin code, though some are also used in processing
 just before the model is run.</p>
@@ -135,7 +154,7 @@ just before the model is run.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">basic_parameters</span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="st">"uk"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">basic_parameters</span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>, <span class="st">"uk"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $hosp_transmission</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -374,7 +393,7 @@ just before the model is run.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

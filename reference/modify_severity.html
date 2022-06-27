@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">modify_severity</span><span class="op">(</span><span class="va">efficacy</span>, <span class="va">efficacy_strain_2</span>, <span class="va">strain_severity_modifier</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">modify_severity</span><span class="op">(</span><span class="va">efficacy</span>, <span class="va">efficacy_strain_2</span>, <span class="va">strain_severity_modifier</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -64,14 +64,19 @@
 with names rel_susceptibility, rel_p_sympt, rel_p_hosp_if_sympt,
 rel_infectivity, rel_p_death. Element columns correspond to vaccine strata
 and rows to age groups.</p></dd>
+
+
 <dt>strain_severity_modifier</dt>
 <dd><p>List of modifiers to be applied to efficacy
 variables; length should correspond to number of strains and each element
 should be a list with same names as <code>efficacy</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns a list with same length and names as <code>efficacy</code> and where
+    
+
+<p>Returns a list with same length and names as <code>efficacy</code> and where
 each element has dimensions n_groups x n_strains x n_vacc_strata</p>
     </div>
 
@@ -87,7 +92,7 @@ each element has dimensions n_groups x n_strains x n_vacc_strata</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

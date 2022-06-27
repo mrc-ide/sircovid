@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,73 +53,100 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_parameters_severity</span><span class="op">(</span>
-  <span class="va">dt</span>,
-  severity <span class="op">=</span> <span class="cn">NULL</span>,
-  p_C <span class="op">=</span> <span class="cn">NULL</span>,
-  p_H <span class="op">=</span> <span class="cn">NULL</span>,
-  p_H_CHR <span class="op">=</span> <span class="cn">NULL</span>,
-  p_ICU <span class="op">=</span> <span class="cn">NULL</span>,
-  p_H_D <span class="op">=</span> <span class="cn">NULL</span>,
-  p_ICU_D <span class="op">=</span> <span class="cn">NULL</span>,
-  p_W_D <span class="op">=</span> <span class="cn">NULL</span>,
-  p_G_D <span class="op">=</span> <span class="cn">NULL</span>,
-  p_G_D_CHR <span class="op">=</span> <span class="cn">NULL</span>,
-  p_R <span class="op">=</span> <span class="cn">NULL</span>,
-  p_star <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_parameters_severity</span><span class="op">(</span></span>
+<span>  <span class="va">dt</span>,</span>
+<span>  severity <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_C <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_H <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_H_CHR <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_ICU <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_H_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_ICU_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_W_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_G_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_G_D_CHR <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_R <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_star <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>dt</dt>
 <dd><p>The step size</p></dd>
+
+
 <dt>severity</dt>
 <dd><p>Severity data, used to determine default severity parameter
 age-scalings and to provide default severity parameter values. Can be
 <code>NULL</code> (use the default bundled data version in the package), or a
 <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> object (for raw severity data).</p></dd>
+
+
 <dt>p_C</dt>
 <dd><p>Time-varying parameters for p_C (the probability of an infected
 individual becoming symptomatic). See Details.</p></dd>
+
+
 <dt>p_H</dt>
 <dd><p>Time-varying parameters for p_H (the probability of a symptomatic
 individual requiring hospitalisation). See Details.</p></dd>
+
+
 <dt>p_H_CHR</dt>
 <dd><p>Time-varying parameters for p_H (the probability of a
 symptomatic individual requiring hospitalisation) for care home residents.
 If <code>NULL</code> then the value for the oldest age group is used. See Details.</p></dd>
+
+
 <dt>p_ICU</dt>
 <dd><p>Time-varying parameters for p_ICU (the probability of a
 hospitalised individual going to ICU). See Details.</p></dd>
+
+
 <dt>p_H_D</dt>
 <dd><p>Time-varying parameters for p_H_D (the probability of death in
 general beds).See Details.</p></dd>
+
+
 <dt>p_ICU_D</dt>
 <dd><p>Time-varying parameters for p_ICU_D (the probability of death
 in ICU). See Details.</p></dd>
+
+
 <dt>p_W_D</dt>
 <dd><p>Time-varying parameters for p_W_D (the probability of death in
 stepdown). See Details.</p></dd>
+
+
 <dt>p_G_D</dt>
 <dd><p>Time-varying parameters for p_G_D (the probability of
 individuals requiring hospitalisation dying in the community or a care
 home). See Details.</p></dd>
+
+
 <dt>p_G_D_CHR</dt>
 <dd><p>Time-varying parameters for p_G_D (the probability of
 individuals requiring hospitalisation dying in a care home) for care home
 residents. If <code>NULL</code> then the value for the oldest age group is used. See
 Details.</p></dd>
+
+
 <dt>p_R</dt>
 <dd><p>Time-varying parameters for p_R (the probability of an non-
 fatally infected individual having immunity post-infection). See Details.</p></dd>
+
+
 <dt>p_star</dt>
 <dd><p>Time-varying parameters for p_star (the probability of
 patients being confirmed as covid on admission to hospital). See Details.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of severity parameters</p>
+    
+
+<p>A list of severity parameters</p>
     </div>
     <div id="time-varying-parameters">
     <h2>Time-varying parameters</h2>
@@ -144,7 +171,7 @@ must be a vector of sircovid dates of the same length as <code>value</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

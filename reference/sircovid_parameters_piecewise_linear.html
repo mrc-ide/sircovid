@@ -18,7 +18,7 @@ sircovid models."><meta property="og:image" content="/logo.png"><!-- mathjax -->
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@ sircovid models.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, <span class="va">dt</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, <span class="va">dt</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -65,19 +65,26 @@ sircovid models.</p>
 all time steps, or a vector of times that will be used as change
 points. Must be provided as a <code><a href="sircovid_date.html">sircovid_date()</a></code>, i.e., days into
 2020. The first date must be 0.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>A vector of values to use for the quantity - either a scalar
 (if <code>date</code> is <code>NULL</code>) or a vector the same length as <code>date</code>.</p></dd>
+
+
 <dt>dt</dt>
 <dd><p>The timestep that will be used in the simulation. This
 must be of the form <code>1 / n</code> where <code>n</code> is an integer representing
 the number of steps per day. Ordinarily this is set by sircovid
 internally to be <code>0.25</code> but this will become tuneable in a
 future version.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns a vector of piecewise linear values, one per timestep,
+    
+
+<p>Returns a vector of piecewise linear values, one per timestep,
 until the values stabilise.  After this point the quantity is assumed to
 be constant.</p>
     </div>
@@ -88,30 +95,30 @@ be constant.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># If "date" is NULL, then the quantity is constant and this function is</span></span>
-<span class="r-in"><span class="co"># trivial:</span></span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="cn">NULL</span>, <span class="fl">0.1</span>, <span class="fl">0.25</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># If "date" is NULL, then the quantity is constant and this function is</span></span></span>
+<span class="r-in"><span><span class="co"># trivial:</span></span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="cn">NULL</span>, <span class="fl">0.1</span>, <span class="fl">0.25</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">date</span> <span class="op">&lt;-</span> <span class="fu">sircovid</span><span class="fu">::</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span></span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-02-01"</span>, <span class="st">"2020-02-14"</span>, <span class="st">"2020-03-15"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The implied time series looks like this:</span></span>
-<span class="r-in"><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">date</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="st">"o"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">date</span> <span class="op">&lt;-</span> <span class="fu">sircovid</span><span class="fu">::</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-02-01"</span>, <span class="st">"2020-02-14"</span>, <span class="st">"2020-03-15"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The implied time series looks like this:</span></span></span>
+<span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">date</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="st">"o"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sircovid_parameters_piecewise_linear-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># After 2020-03-15, the quantity value will be fixed at 2, the value</span></span>
-<span class="r-in"><span class="co"># that it reached at that date.</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># You can see this using sircovid_parameters_expand_step</span></span>
-<span class="r-in"><span class="co"># If a vector of dates is provided then, it's more complex. We'll</span></span>
-<span class="r-in"><span class="co"># use dt of 1 here as it's easier to visualise</span></span>
-<span class="r-in"><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">sircovid</span><span class="fu">::</span><span class="fu"><a href="sircovid_parameters_expand_step.html">sircovid_parameters_expand_step</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># After 2020-03-15, the quantity value will be fixed at 2, the value</span></span></span>
+<span class="r-in"><span><span class="co"># that it reached at that date.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># You can see this using sircovid_parameters_expand_step</span></span></span>
+<span class="r-in"><span><span class="co"># If a vector of dates is provided then, it's more complex. We'll</span></span></span>
+<span class="r-in"><span><span class="co"># use dt of 1 here as it's easier to visualise</span></span></span>
+<span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sircovid</span><span class="fu">::</span><span class="fu"><a href="sircovid_parameters_expand_step.html">sircovid_parameters_expand_step</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [9] 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [17] 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000 3.000000</span>
@@ -125,16 +132,16 @@ be constant.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [81] 2.000000 2.000000 2.000000 2.000000 2.000000 2.000000 2.000000 2.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [89] 2.000000 2.000000 2.000000 2.000000 2.000000 2.000000 2.000000 2.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [97] 2.000000 2.000000 2.000000 2.000000 2.000000</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="fu">sircovid</span><span class="fu">::</span><span class="fu"><a href="sircovid_parameters_expand_step.html">sircovid_parameters_expand_step</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"o"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="fu">sircovid</span><span class="fu">::</span><span class="fu"><a href="sircovid_parameters_expand_step.html">sircovid_parameters_expand_step</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"o"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sircovid_parameters_piecewise_linear-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># If dt is less than 1, this is scaled, but the pattern of</span></span>
-<span class="r-in"><span class="co"># change is the same</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">date</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, by <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="st">"o"</span>, cex <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If dt is less than 1, this is scaled, but the pattern of</span></span></span>
+<span class="r-in"><span><span class="co"># change is the same</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">sircovid</span><span class="fu">::</span><span class="fu">sircovid_parameters_piecewise_linear</span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">date</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, by <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="st">"o"</span>, cex <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">value</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="sircovid_parameters_piecewise_linear-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -150,7 +157,7 @@ be constant.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

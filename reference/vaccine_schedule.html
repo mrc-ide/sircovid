@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vaccine_schedule</span><span class="op">(</span><span class="va">date</span>, <span class="va">doses</span>, n_doses <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vaccine_schedule</span><span class="op">(</span><span class="va">date</span>, <span class="va">doses</span>, n_doses <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -61,6 +61,8 @@
     <dl><dt>date</dt>
 <dd><p>A single date, representing the first day that
 vaccines will be given</p></dd>
+
+
 <dt>doses</dt>
 <dd><p>A 3d array of doses representing (1) the model group
 (19 rows for the lancelot model), (2) the dose (must be length
@@ -68,14 +70,19 @@ vaccines will be given</p></dd>
 represent the number of vaccine doses in that group for that
 dose for that day. So for <code>doses[i, j, k]</code> then it is for the
 ith group, the number of jth doses on day <code>(k - 1) + date</code></p></dd>
+
+
 <dt>n_doses</dt>
 <dd><p>The number of doses in the schedule. Typically (and
 by default) this will be 2, but if using booster doses 3 (and in
 future we may extend further).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>vaccine_schedule</code> object</p>
+    
+
+<p>A <code>vaccine_schedule</code> object</p>
     </div>
 
   </div>
@@ -90,7 +97,7 @@ future we may extend further).</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

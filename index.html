@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -93,22 +93,22 @@
 </h2>
 <p>Install from the ncov drat:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"sircovid"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"sircovid"</span><span class="op">)</span></span></code></pre></div>
 <p>or install directly from GitHub with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mrc-ide/sircovid"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mrc-ide/sircovid"</span>, upgrade <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>You will need the most recent version of <a href="https://mrc-ide.github.io/dust" class="external-link"><code>dust</code></a> and <a href="https://mrc-ide.github.io/mcstate" class="external-link"><code>mcstate</code></a> to use the package. These will be installed automatically if you install <code>sircovid</code> from drat, or manually with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dust"</span>, <span class="st">"mcstate"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dust"</span>, <span class="st">"mcstate"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We use OpenMP for parallelism, and this may not be available on your system. If not then compilation will fail with an error like:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>clang<span class="op">:</span><span class="st"> </span>error<span class="op">:</span><span class="st"> </span>unsupported option <span class="st">'-fopenmp'</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a>make[<span class="dv">1</span>]<span class="op">:</span><span class="st"> </span><span class="er">***</span><span class="st"> </span>[basic.o] Error <span class="dv">1</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a>ERROR<span class="op">:</span><span class="st"> </span>compilation failed <span class="cf">for</span> package ‘sircovid’</span></code></pre></div>
 <p>You can either install OpenMP support, or edit your personal <code>Makevars</code> file to tell R that you do not have it. To do this, you can run</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_makevars</span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_makevars</span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></span></code></pre></div>
 <p>and add the lines</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>SHLIB_OPENMP_CFLAGS=</span>
 <span id="cb6-2"><a href="#cb6-2"></a>SHLIB_OPENMP_CXXFLAGS=</span></code></pre></div>
@@ -119,8 +119,8 @@
 </h2>
 <p>In addition to the above you need to install <a href="https://mrc-ide.github.io/odin" class="external-link"><code>odin</code></a> and <a href="https://mrc-ide.github.io/odin.dust/" class="external-link"><code>odin.dust</code></a></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"odin"</span>, <span class="st">"odin.dust"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"odin"</span>, <span class="st">"odin.dust"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>Make changes to the models in <code>inst/odin</code>
 </li>
@@ -201,7 +201,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

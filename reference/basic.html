@@ -22,7 +22,7 @@ The "basic" sircovid model. This is a dust model.'><meta property="og:image" con
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -64,42 +64,42 @@ The "basic" sircovid model. This is a dust model.</h1>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Set up the basic model for England with default parameters and</span></span>
-<span class="r-in"><span class="co"># an initial seeding of early February:</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="basic_parameters.html">basic_parameters</a></span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-07"</span><span class="op">)</span>, <span class="st">"england"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mod</span> <span class="op">&lt;-</span> <span class="va">basic</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">p</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Set the initial state and index as we would us for a run</span></span>
-<span class="r-in"><span class="co"># (without setting an initial state there is no seeding)</span></span>
-<span class="r-in"><span class="va">initial</span> <span class="op">&lt;-</span> <span class="fu"><a href="basic_initial.html">basic_initial</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span>, <span class="fl">10</span>, <span class="va">p</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">update_state</span><span class="op">(</span>state <span class="op">=</span> <span class="va">initial</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">set_index</span><span class="op">(</span><span class="fu"><a href="basic_index.html">basic_index</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">run</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Run the model up to the end of march</span></span>
-<span class="r-in"><span class="va">step_end</span> <span class="op">&lt;-</span> <span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-03-31"</span><span class="op">)</span> <span class="op">/</span> <span class="va">p</span><span class="op">$</span><span class="va">dt</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The filtered state is returned at the end of the run</span></span>
-<span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="va">step_end</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Set up the basic model for England with default parameters and</span></span></span>
+<span class="r-in"><span><span class="co"># an initial seeding of early February:</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="basic_parameters.html">basic_parameters</a></span><span class="op">(</span><span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-02-07"</span><span class="op">)</span>, <span class="st">"england"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="va">basic</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">p</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Set the initial state and index as we would us for a run</span></span></span>
+<span class="r-in"><span><span class="co"># (without setting an initial state there is no seeding)</span></span></span>
+<span class="r-in"><span><span class="va">initial</span> <span class="op">&lt;-</span> <span class="fu"><a href="basic_initial.html">basic_initial</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span>, <span class="fl">10</span>, <span class="va">p</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mod</span><span class="op">$</span><span class="fu">update_state</span><span class="op">(</span>state <span class="op">=</span> <span class="va">initial</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mod</span><span class="op">$</span><span class="fu">set_index</span><span class="op">(</span><span class="fu"><a href="basic_index.html">basic_index</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">run</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run the model up to the end of march</span></span></span>
+<span class="r-in"><span><span class="va">step_end</span> <span class="op">&lt;-</span> <span class="fu"><a href="sircovid_date.html">sircovid_date</a></span><span class="op">(</span><span class="st">"2020-03-31"</span><span class="op">)</span> <span class="op">/</span> <span class="va">p</span><span class="op">$</span><span class="va">dt</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The filtered state is returned at the end of the run</span></span></span>
+<span class="r-in"><span><span class="va">mod</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="va">step_end</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> icu         194  218  204  191  176  153  171  189  181   261</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deaths      586  679  549  602  558  462  535  455  522   732</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deaths_inc  106  107  104   96   97   74   94   77  103   119</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># More state can be retrieved using the "state" method</span></span>
-<span class="r-in"><span class="va">mod</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> icu         222  106  228  101  182  399  234  302  136   145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deaths      742  335  702  302  481 1071  630  878  395   381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deaths_inc  147   62  120   57   91  177   93  150   66    61</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># More state can be retrieved using the "state" method</span></span></span>
+<span class="r-in"><span><span class="va">mod</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       91.0       91.0       91.0       91.0       91.0       91.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0 56550138.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      194.0      218.0      204.0      191.0      176.0      153.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      586.0      679.0      549.0      602.0      558.0      462.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]      106.0      107.0      104.0       96.0       97.0       74.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      222.0      106.0      228.0      101.0      182.0      399.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      742.0      335.0      702.0      302.0      481.0     1071.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]      147.0       62.0      120.0       57.0       91.0      177.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]        0.1        0.1        0.1        0.1        0.1        0.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,7]       [,8]       [,9]      [,10]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]       91.0       91.0       91.0       91.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 56550138.0 56550138.0 56550138.0 56550138.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      171.0      189.0      181.0      261.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      535.0      455.0      522.0      732.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       94.0       77.0      103.0      119.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]      234.0      302.0      136.0      145.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]      630.0      878.0      395.0      381.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]       93.0      150.0       66.0       61.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]        0.1        0.1        0.1        0.1</span>
 </code></pre></div>
     </div>
@@ -115,7 +115,7 @@ The "basic" sircovid model. This is a dust model.</h1>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

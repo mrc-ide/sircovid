@@ -20,7 +20,7 @@ parameters.'><meta property="og:image" content="/logo.png"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13.18</span>
       </span>
     </div>
 
@@ -59,56 +59,79 @@ parameters.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lancelot_rt_trajectories_epiestim</span><span class="op">(</span>
-  <span class="va">step</span>,
-  <span class="va">incidence</span>,
-  <span class="va">p</span>,
-  gt_distr <span class="op">=</span> <span class="cn">NULL</span>,
-  sliding_window_ndays <span class="op">=</span> <span class="fl">7</span>,
-  mean_prior <span class="op">=</span> <span class="fl">1</span>,
-  sd_prior <span class="op">=</span> <span class="fl">1</span>,
-  n_GT <span class="op">=</span> <span class="fl">10000</span>,
-  n_R <span class="op">=</span> <span class="fl">1000</span>,
-  save_all_Rt_sample <span class="op">=</span> <span class="cn">TRUE</span>,
-  q <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_rt_trajectories_epiestim</span><span class="op">(</span></span>
+<span>  <span class="va">step</span>,</span>
+<span>  <span class="va">incidence</span>,</span>
+<span>  <span class="va">p</span>,</span>
+<span>  gt_distr <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sliding_window_ndays <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  mean_prior <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  sd_prior <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  n_GT <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  n_R <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  save_all_Rt_sample <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  q <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>step</dt>
 <dd><p>A vector of steps</p></dd>
+
+
 <dt>incidence</dt>
 <dd><p>A matrix (n trajectories x n steps) of incidence counts</p></dd>
+
+
 <dt>p</dt>
 <dd><p>A single <code><a href="lancelot_parameters.html">lancelot_parameters()</a></code> object.</p></dd>
+
+
 <dt>gt_distr</dt>
 <dd><p>A vector giving the discrete (daily) distribution of the
 generation time. The first value must be zero. If NULL, the generation time
 distribution will be determined automatically from <code>p</code>.</p></dd>
+
+
 <dt>sliding_window_ndays</dt>
 <dd><p>An integer giving the length of the sliding
 window on which Rt will be estimated</p></dd>
+
+
 <dt>mean_prior</dt>
 <dd><p>The mean prior for Rt</p></dd>
+
+
 <dt>sd_prior</dt>
 <dd><p>The standard deviation of the prior for Rt</p></dd>
+
+
 <dt>n_GT</dt>
 <dd><p>An integer giving the number of generation times to be drawn to
 construct the discrete distribution of the generation time</p></dd>
+
+
 <dt>n_R</dt>
 <dd><p>An integer giving the number of Rt values to sample from for each
 incidence trajectory. These will then be aggregated across all incidence
 trajectories.</p></dd>
+
+
 <dt>save_all_Rt_sample</dt>
 <dd><p>A boolean determining whether to save all samples
 of Rt estimated or only a summary</p></dd>
+
+
 <dt>q</dt>
 <dd><p>A vector of quantiles to return values for</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with elements
+    
+
+<p>A list with elements
 <code>t_start</code> (vector of first days of the sliding windows over which Rt is
 estimated),
 <code>t_end</code> (vector of last days of the sliding windows over which Rt is
@@ -135,7 +158,7 @@ generation time</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
