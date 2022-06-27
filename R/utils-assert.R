@@ -93,3 +93,11 @@ assert_logical <- function(x, name = deparse(substitute(x))) {
 
   invisible(as.integer(x))
 }
+
+assert_real <- function(x, name = deparse(substitute(x))) {
+  if (any(Im(x) != 0)) {
+    stop(sprintf("All '%s' must be real", name), call. = FALSE)
+  }
+
+  invisible(Re(x))
+}

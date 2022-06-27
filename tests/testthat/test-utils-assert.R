@@ -61,3 +61,11 @@ test_that("assert_logical", {
   expect_error(assert_logical("a"),
                "must be logical or in")
 })
+
+test_that("assert_real", {
+  expect_equal(assert_real(1), 1)
+  expect_equal(assert_real(1 + 0i), 1)
+
+  expect_error(assert_real(1 + 1i),
+               "must be real")
+})
