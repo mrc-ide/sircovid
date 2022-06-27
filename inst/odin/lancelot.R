@@ -600,6 +600,16 @@ rate_R_progress[, , ] <- waning_rate[i] +
       if (j == 5) (lambda_susc[i, 2, k] * (1 - cross_immunity[1]) +
                      lambda_susc[i, 1, k] * (1 - cross_immunity[2])) else 0
 
+update(out_n_R_progress[, , ]) <- n_R_progress[i, j, k]
+initial(out_n_R_progress[, , ]) <- 0
+dim(out_n_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
+update(out_n_RS[, , ]) <- n_RS[i, j, k]
+initial(out_n_RS[, , ]) <- 0
+dim(out_n_RS) <- c(n_groups, n_strains_R, n_vacc_classes)
+update(out_n_RE[, , ]) <- n_RE[i, j, k]
+initial(out_n_RE[, , ]) <- 0
+dim(out_n_RE) <- c(n_groups, n_strains, n_vacc_classes)
+
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
 ## n_R_progress is total number who either:
@@ -645,7 +655,7 @@ dim(n_R5_to_E3) <- c(n_groups, n_vacc_classes)
 ## R1 and R4 can go to E3, R5 can go to E3 or E4
 n_RE[, , ] <- if (n_strains == 1 || j < 3) 0 else
   if (j == 3) (n_R_progress[i, 1, k] - n_RS[i, 1, k] +
-                 n_R_progress[i, 2, k] - n_RS[i, 2, k] + n_R5_to_E3[i, k]) else
+                 n_R_progress[i, 4, k] - n_RS[i, 4, k] + n_R5_to_E3[i, k]) else
                    (n_R_progress[i, 5, k] - n_RS[i, 5, k] - n_R5_to_E3[i, k])
 
 ## R -> R vaccine progression

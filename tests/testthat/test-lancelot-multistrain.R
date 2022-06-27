@@ -279,9 +279,20 @@ test_that("N_tot is constant with second strain and waning immunity, while
             info <- mod$info()
             y0 <- lancelot_initial(info, np, p)
 
-            ## Add some individuals in R historic variants layer
+            ## Move some individuals from S to R historic variants layer
+            index_S <- array(info$index$S, info$dim$S)
+            y0[index_S] <- y0[index_S] - 1e4
             index_R <- array(info$index$R, info$dim$R)
             y0[index_R[, 5, ]] <- 1e4
+            ## Also move to PCR/sero neg
+            index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
+            y0[index_T_PCR_neg[, 1, ]] <- 1e4
+            index_T_sero_neg_1 <- array(info$index$T_sero_neg_1,
+                                        info$dim$T_sero_neg_1)
+            y0[index_T_sero_neg_1[, 1, ]] <- 1e4
+            index_T_sero_neg_2 <- array(info$index$T_sero_neg_2,
+                                        info$dim$T_sero_neg_2)
+            y0[index_T_sero_neg_2[, 1, ]] <- 1e4
             mod$update_state(state = y0)
             y <- mod$transform_variables(
               drop(mod$simulate(seq(0, 400, by = 4))))
