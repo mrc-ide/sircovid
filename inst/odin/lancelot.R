@@ -600,16 +600,6 @@ rate_R_progress[, , ] <- waning_rate[i] +
       if (j == 5) (lambda_susc[i, 2, k] * (1 - cross_immunity[1]) +
                      lambda_susc[i, 1, k] * (1 - cross_immunity[2])) else 0
 
-update(out_n_R_progress[, , ]) <- n_R_progress[i, j, k]
-initial(out_n_R_progress[, , ]) <- 0
-dim(out_n_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
-update(out_n_RS[, , ]) <- n_RS[i, j, k]
-initial(out_n_RS[, , ]) <- 0
-dim(out_n_RS) <- c(n_groups, n_strains_R, n_vacc_classes)
-update(out_n_RE[, , ]) <- n_RE[i, j, k]
-initial(out_n_RE[, , ]) <- 0
-dim(out_n_RE) <- c(n_groups, n_strains, n_vacc_classes)
-
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
 ## n_R_progress is total number who either:
