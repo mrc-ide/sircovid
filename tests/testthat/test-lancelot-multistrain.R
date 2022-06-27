@@ -277,7 +277,11 @@ test_that("N_tot is constant with second strain and waning immunity, while
 
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)
+            y0 <- lancelot_initial(info, np, p)
+
+            ## Add some individuals in R historic variants layer
+            index_R <- array(info$index$R, info$dim$R)
+            y0[index_R[, 5, ]] <- 1e4
             mod$update_state(state = y0)
             y <- mod$transform_variables(
               drop(mod$simulate(seq(0, 400, by = 4))))
