@@ -7243,7 +7243,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_p_RS_2 = shared->n_strains_R;
   shared->dim_p_RS_3 = shared->n_vacc_classes;
   shared->dim_p_R_1 = shared->n_groups;
-  shared->dim_p_R_2 = shared->n_strains_R;
+  shared->dim_p_R_2 = shared->n_strains;
   shared->dim_p_R_3 = shared->n_vacc_classes;
   shared->dim_p_R_next_vacc_class_1 = shared->n_groups;
   shared->dim_p_R_next_vacc_class_2 = shared->n_strains_R;
