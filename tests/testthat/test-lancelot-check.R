@@ -1185,3 +1185,47 @@ test_that("Severity outputs are correctly calculated", {
   # Test p_C = 1 & p_H = 1 & p_G_D = 0 & p_ICU = 1 & p_ICU_D = 1
   helper(1, 1, 0, 1, 1, NULL, NULL, 1, 1, 1, 1, 1, 1)
 })
+
+
+test_that("Severity by age is calculated parametrically", {
+
+  helper <- function(p, i) {
+    mod <- lancelot$new(p, 0, 1, seed = 1L)
+    info <- mod$info()
+    state <- lancelot_initial(info, 1, p)
+
+    index_i <- array(info$index[[i]], info$dim[[i]])
+
+    mod$update_state(state = state)
+    mod$set_index(info$index[[i]])
+
+    y <- mod$simulate(seq(0, 800, by = 4))
+
+    expect_equal(length(y), prod(info$dim[[i]]) * 201)
+
+    y <- array(y, c(info$dim[[i]], 201))
+  }
+
+  p <- lancelot_parameters(1, "uk", carehome_beds = 0)
+
+  ihr <- p$p_C_step * p$p_H_step * (1 - p$p_G_D_step)
+  hfr <- (1 - p$p_ICU_step) * p$p_H_D_step +
+    p$p_ICU_step * (p$p_ICU_D_step + (1 - p$p_ICU_D_step) * p$p_W_D_step)
+  ifr <- ihr * hfr + p$p_C_step * p$p_H_step * p$p_G_D_step
+
+  # There are extremely low discrepancies due to integer precision, in random
+  # number generation. We'll round to 15
+  y <- helper(p, "ifr_age")[c(1:17), 201]
+  x <- ifr[which(!is.na(y))]
+  expect_vector_equal(x, y, 15)
+
+  y <- helper(p, "ihr_age")[c(1:17), 101]
+  x <- ihr[which(!is.na(y))]
+  expect_vector_equal(x, y, 15)
+
+  # We have some NAs in young age bands in y - we'll ignore
+  y <- helper(p, "hfr_age")[c(1:17), 101]
+  x <- hfr[which(!is.na(y))]
+  y <- y[which(!is.na(y))]
+  expect_vector_equal(x, y, 15)
+})

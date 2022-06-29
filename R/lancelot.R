@@ -967,7 +967,16 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                      calculate_index(index, "ihr_strain", list(),
                                      seq_len(n_strains), "ihr_strain_"),
                      calculate_index(index, "hfr_strain", list(),
-                                     seq_len(n_strains), "hfr_strain_"))
+                                     seq_len(n_strains), "hfr_strain_"),
+                     calculate_index(index, "ifr_age", list(), suffix),
+                     calculate_index(index, "ihr_age", list(), suffix),
+                     calculate_index(index, "hfr_age", list(), suffix),
+                     calculate_index(index, "ifr_disag",
+                                     list(n_vacc_classes), suffix),
+                     calculate_index(index, "ihr_disag",
+                                     list(n_vacc_classes), suffix),
+                     calculate_index(index, "hfr_disag",
+                                     list(n_vacc_classes), suffix))
   }
 
 

@@ -3011,9 +3011,11 @@ test_that("can inflate the number of strains after running with 1", {
   expect_equal(dim(y2), c(info2$len, 3))
   expect_equal(sum(y2), sum(y1))
 
-  expect_equal(sort(y2[, 1], decreasing = TRUE)[seq_len(info1$len)],
-               sort(y1[, 1], decreasing = TRUE))
-  expect_equal(sort(y2[, 1], decreasing = TRUE)[-seq_len(info1$len)],
+  expect_equal(sort(y2[, 1], decreasing = TRUE,
+                    na.last = FALSE)[seq_len(info1$len)],
+               sort(y1[, 1], decreasing = TRUE, na.last = FALSE))
+  expect_equal(sort(y2[, 1], decreasing = TRUE,
+                    na.last = FALSE)[-seq_len(info1$len)],
                rep(0, info2$len - info1$len))
 
   ## examples of the different types of conversions:
@@ -3525,7 +3527,6 @@ test_that("Multistrain severity has expected behaviour", {
   n_seeded_new_strain_inf <- 10
   start_date <- sircovid_date("2020-01-31")
   date_seeding <- start_date # seed both strains on same day
-  eval_date <- start_date + 34 # check tests 5 weeks into the epidemic
 
   # Helper function that runs model with p parameters
   helper <- function(p) {
@@ -3550,12 +3551,12 @@ test_that("Multistrain severity has expected behaviour", {
 
   ## Severity for both strains is greater than 0
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
-                 mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
 
 
   # Immunity vs strain 1 infection only
@@ -3563,12 +3564,12 @@ test_that("Multistrain severity has expected behaviour", {
                                 nrow = dim[1], ncol = dim[2],
                                 byrow = TRUE), dim = dim)
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
-                 mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) == 0 &&
-                 mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
-                 mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
 
 
   # Immunity vs strain 2 infection only
@@ -3576,24 +3577,23 @@ test_that("Multistrain severity has expected behaviour", {
                                 nrow = dim[1], ncol = dim[2],
                                 byrow = TRUE), dim = dim)
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
-                 mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
-                 mean(y$ihr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
-                 mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
 
 
   # Immunity vs both strains
   p$rel_p_sympt <- array(0, dim = dim)
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
-                # we have small numbers for strain 2, from seeded cases
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$ihr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
 
 
   # Immunity vs strain 1 hospitalisation only
@@ -3602,12 +3602,12 @@ test_that("Multistrain severity has expected behaviour", {
                                         nrow = dim[1], ncol = dim[2],
                                         byrow = TRUE), dim = dim)
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) == 0 &&
-              mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
 
 
   # Immunity vs strain 2 hospitalisation only
@@ -3615,12 +3615,12 @@ test_that("Multistrain severity has expected behaviour", {
                                         nrow = dim[1], ncol = dim[2],
                                         byrow = TRUE), dim = dim)
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ihr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
 
 
   # Immunity vs strain 1 death only
@@ -3633,12 +3633,12 @@ test_that("Multistrain severity has expected behaviour", {
                            byrow = TRUE), dim = dim)
   }
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) == 0 &&
-                mean(y$hfr_strain[2, , ], na.rm = TRUE) > 0)
+  expect_true(all(y$ifr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] == 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] > 0, na.rm = TRUE))
 
 
   # Immunity vs strain 2 death only
@@ -3648,11 +3648,11 @@ test_that("Multistrain severity has expected behaviour", {
                            byrow = TRUE), dim = dim)
   }
   y <- helper(p)
-  expect_true(mean(y$ifr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ifr_strain[2, , ], na.rm = TRUE) == 0)
-  expect_true(mean(y$ihr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$ihr_strain[2, , ], na.rm = TRUE) > 0)
-  expect_true(mean(y$hfr_strain[1, , ], na.rm = TRUE) > 0 &&
-                mean(y$hfr_strain[2, , ], na.rm = TRUE) == 0)
+  expect_true(all(y$ifr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ifr_strain[2, , -1] == 0, na.rm = TRUE))
+  expect_true(all(y$ihr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$ihr_strain[2, , -1] > 0, na.rm = TRUE))
+  expect_true(all(y$hfr_strain[1, , -1] > 0, na.rm = TRUE) &&
+                all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
 
 })

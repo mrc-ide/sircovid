@@ -1066,13 +1066,13 @@ new_R[, , ] <- R[i, j, k] -
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
   n_T_PCR_pre_progress[i, j, k, l] +
-  (if (k == 1) n_S_progress[i, j, l] else
+  (if (k == 1) n_S_progress[i, j, l] +
+     (if (j > 2) n_RE[i, j - 2, l] else 0) else
     n_T_PCR_pre_progress[i, j, k - 1, l])
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
   n_T_PCR_pos_progress[i, j, k, l] +
-  (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] +
-     n_RE[i, j, l] else
+  (if (k == 1) n_T_PCR_pre_progress[i, j, k_PCR_pre, l] else
        n_T_PCR_pos_progress[i, j, k - 1, l])
 
 new_T_PCR_neg[, , ] <- T_PCR_neg[i, j, k] +
@@ -2348,6 +2348,39 @@ update(hfr_strain[]) <- if (n_real_strains == 1)
     (sum(HFR_disag_weighted[, i, ]) + sum(HFR_disag_weighted[, 5 - i, ])) /
   (sum(n_I_C_2_to_hosp[, i, ]) + sum(n_I_C_2_to_hosp[, 5 - i, ]))
 dim(hfr_strain) <- n_real_strains
+
+## By age
+dim(ifr_age) <- n_groups
+initial(ifr_age[]) <- 0
+update(ifr_age[]) <- sum(IFR_disag_weighted[i, , ]) /
+  sum(new_inf[i, , ])
+
+dim(ihr_age) <- n_groups
+initial(ihr_age[]) <- 0
+update(ihr_age[]) <- sum(IHR_disag_weighted[i, , ]) /
+  sum(new_inf[i, , ])
+
+dim(hfr_age) <- n_groups
+initial(hfr_age[]) <- 0
+update(hfr_age[]) <- sum(HFR_disag_weighted[i, , ]) /
+  sum(n_I_C_2_to_hosp[i, , ])
+
+## By age and vaccine class
+dim(ifr_disag) <- c(n_groups, n_vacc_classes)
+initial(ifr_disag[, ]) <- 0
+update(ifr_disag[, ]) <- sum(IFR_disag_weighted[i, , j]) /
+  sum(new_inf[i, , j])
+
+dim(ihr_disag) <- c(n_groups, n_vacc_classes)
+initial(ihr_disag[, ]) <- 0
+update(ihr_disag[, ]) <- sum(IHR_disag_weighted[i, , j]) /
+  sum(new_inf[i, , j])
+
+dim(hfr_disag) <- c(n_groups, n_vacc_classes)
+initial(hfr_disag[, ]) <- 0
+update(hfr_disag[, ]) <- sum(HFR_disag_weighted[i, , j]) /
+  sum(n_I_C_2_to_hosp[i, , j])
+
 
 config(compare) <- "compare_lancelot.cpp"
 ## Parameters and code to support the compare function. Because these

@@ -1,3 +1,11 @@
+# sircovid 0.13.19
+
+* Reinfections move to PCR pre-positive instead of PCR positive
+
+# sircovid 0.13.17
+
+* Add severity outputs by vaccine class and age
+
 # sircovid 0.13.14
 
 * Can now fit to ONS prevalence data
