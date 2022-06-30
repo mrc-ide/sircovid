@@ -5609,7 +5609,7 @@ public:
     for (int i = 1; i <= shared->dim_new_inf_1; ++i) {
       for (int j = 1; j <= shared->dim_new_inf_2; ++j) {
         for (int k = 1; k <= shared->dim_new_inf_3; ++k) {
-          internal.new_inf[i - 1 + shared->dim_new_inf_1 * (j - 1) + shared->dim_new_inf_12 * (k - 1)] = internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + ((j > 2 ? internal.n_RE[shared->dim_n_RE_12 * (k - 1) + shared->dim_n_RE_1 * (j - 2 - 1) + i - 1] : 0));
+          internal.new_inf[i - 1 + shared->dim_new_inf_1 * (j - 1) + shared->dim_new_inf_12 * (k - 1)] = internal.n_S_progress[shared->dim_n_S_progress_12 * (k - 1) + shared->dim_n_S_progress_1 * (j - 1) + i - 1] + ((j > 2 ? internal.n_RE[shared->dim_n_RE_12 * (k - 1) + shared->dim_n_RE_1 * (j - 1) + i - 1] : 0));
         }
       }
     }

@@ -2325,7 +2325,7 @@ dim(IFR_disag) <- c(n_groups, n_strains, n_vacc_classes)
 dim(IFR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
 
 new_inf[, , ] <- n_S_progress[i, j, k] +
-  (if (j > 2) n_RE[i, j - 2, k] else 0)
+  (if (j > 2) n_RE[i, j, k] else 0)
 
 IHR_disag[, , ] <- p_C[i, j, k] * p_H[i, j, k] * (1 - p_G_D[i, j, k])
 IHR_disag_weighted[, , ] <- IHR_disag[i, j, k] * new_inf[i, j, k]
