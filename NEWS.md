@@ -1,3 +1,7 @@
+# sircovid 0.14.0
+
+* New historic variants layer added to R compartment. These individuals can now get reinfected with either strain 1 or strain 2. Those recovered from strain 1 (including from a reinfection) can get reinfected with strain 2, while those recovered from strain 2 are immune to strain 1
+
 # sircovid 0.13.19
 
 * Reinfections move to PCR pre-positive instead of PCR positive
