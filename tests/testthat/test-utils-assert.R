@@ -69,3 +69,12 @@ test_that("assert_real", {
   expect_error(assert_real(1 + 1i),
                "must be real")
 })
+
+test_that("assert_relative", {
+  expect_equal(assert_relatives(c(1, 1)), c(1, 1))
+  expect_equal(assert_relatives(c(1, 0.5)), c(1, 0.5))
+
+  value <- c(0.5, 1)
+  expect_error(assert_relatives(value),
+               "must be 1")
+})
