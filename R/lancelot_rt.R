@@ -276,7 +276,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
         compute_ngm(md, x, p$rel_susceptibility)
       } else {
         N <- n_groups * n_vacc_classes
-        ## in the new model set-up it can only be 4, can make a variable
+        ## in the new model set-up it can only be 5, can make a variable
         ##  if this changes in the future
         RR <- array(R, c(n_groups, p$n_strains_R, n_vacc_classes, ncol(R)))
 
@@ -289,8 +289,9 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
           }
         } else {
           if (effective) {
-            ## get R1 and R5 (as they're susceptible to E2)
+            ## get R1, R4 and R5 (as they're susceptible to E2)
             RR <- matrix(RR[, 1, , ], nrow = n_groups * n_vacc_classes) +
+              matrix(RR[, 4, , ], nrow = n_groups * n_vacc_classes) +
               matrix(RR[, 5, , ], nrow = n_groups * n_vacc_classes)
           } else {
             RR <- 0
