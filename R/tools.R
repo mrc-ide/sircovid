@@ -221,8 +221,8 @@ rotate_strains <- function(state, info, ...) {
   ## Strains are rotated as follows:
   ## 1. Anyone who has recovered from strain 1 (R1/R4) is moved to the historic
   ##    variants layer (R5).
-  ## 2. Anyone who has recovered from strain 2 (R2/R3) is moved to strain 1
-  ##    (R1/R4)
+  ## 2. Anyone who has recovered from strain 2 (R2/R3) is moved to
+  ##    strain 1 (R1/R4)
   ## 3. In all other compartments indexed by strains, those in strain 1 (X1/X4)
   ##    remain where they are, while those in strain 2 (X2/X3) move to strain 1
   ## 4. Strain 2 is then empty
