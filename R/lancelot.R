@@ -2589,6 +2589,12 @@ lancelot_check_data <- function(data) {
     apply(has[nms], 1, any)
   }
 
+  err_hosp <- any(has$hosp & has_any(c("general", "icu")))
+  if (err_hosp) {
+    stop(paste("Cannot fit to all beds occupancy and split general/ICU beds",
+               "occupancy together"))
+  }
+
   deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",
                    "75_79", "80_plus")
   nms_deaths_hosp_ages <- paste0("deaths_hosp_", deaths_ages)
