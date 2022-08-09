@@ -73,7 +73,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
 })
 
 
-test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
+test_that("None hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   ## i.e. if everyone is vaccinated with a vaccine preventing
   ## 100% of hospitalisations
 
@@ -101,7 +101,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in hospital upon reinfection
-  expect_true(all(y$D_hosp[-4, ] == 0))
+  expect_true(all(y$D_hosp[-4, , ] == 0))
   expect_true(all(y$H_R_unconf[-4, , , , ] == 0))
   expect_true(all(y$H_R_conf[-4, , , , ] == 0))
   expect_true(all(y$H_D_unconf[-4, , , , ] == 0))
