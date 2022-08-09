@@ -951,8 +951,9 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   }
 
   if (D_hosp) {
-    index_state <- c(index_state, calculate_index(index, "D_hosp", list(),
-                                                  suffix, "D_hosp"))
+    index_state <- c(index_state,
+                     calculate_index(index, "D_hosp", list(n_vacc_classes),
+                                     suffix, "D_hosp"))
   }
 
   if (infections_inc_per_strain) {

@@ -149,7 +149,7 @@ update(T_sero_pre_2[, , , ]) <- new_T_sero_pre_2[i, j, k, l]
 update(T_sero_pos_2[, , , ]) <- new_T_sero_pos_2[i, j, k, l]
 update(T_sero_neg_2[, , ]) <- new_T_sero_neg_2[i, j, k]
 update(R[, , ]) <- new_R[i, j, k]
-update(D_hosp[]) <- D_hosp[i] + delta_D_hosp[i]
+update(D_hosp[, ]) <- D_hosp[i, j] + delta_D_hosp_disag[i, j]
 update(D_non_hosp[]) <- D_non_hosp[i] + delta_D_non_hosp[i]
 update(T_PCR_pre[, , , ]) <- new_T_PCR_pre[i, j, k, l]
 update(T_PCR_pos[, , , ]) <- new_T_PCR_pos[i, j, k, l]
@@ -1159,7 +1159,7 @@ initial(T_sero_pre_2[, , , ]) <- 0
 initial(T_sero_pos_2[, , , ]) <- 0
 initial(T_sero_neg_2[, , ]) <- 0
 initial(R[, , ]) <- 0
-initial(D_hosp[]) <- 0
+initial(D_hosp[, ]) <- 0
 initial(D_non_hosp[]) <- 0
 initial(T_PCR_pre[, , , ]) <- 0
 initial(T_PCR_pos[, , , ]) <- 0
@@ -1630,7 +1630,7 @@ dim(T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
 dim(new_T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the D_hosp class
-dim(D_hosp) <- n_groups
+dim(D_hosp) <- c(n_groups, n_vacc_classes)
 dim(delta_D_hosp) <- n_groups
 
 ## Vectors handling the D_non_hosp class
@@ -1749,8 +1749,8 @@ cross_immunity[] <- user()
 
 ## Total population
 initial(N_tot[]) <- 0
-update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + D_hosp[i] + sum(E[i, , , ]) +
-  sum(I_A[i, , , ]) + sum(I_P[i, , , ]) +
+update(N_tot[]) <- sum(S[i, ]) + sum(R[i, , ]) + sum(D_hosp[i, ]) +
+  sum(E[i, , , ]) + sum(I_A[i, , , ]) + sum(I_P[i, , , ]) +
   sum(I_C_1[i, , , ]) + sum(I_C_2[i, , , ]) +
   sum(ICU_pre_conf[i, , , ]) + sum(ICU_pre_unconf[i, , , ])  +
   sum(H_R_conf[i, , , ]) + sum(H_R_unconf[i, , , ]) +
