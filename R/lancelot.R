@@ -684,7 +684,7 @@ lancelot_parameters <- function(start_date, region,
     if (is.null(rel_gamma)) {
       ret[[rel_gamma_name]] <- rep(1, strain$n_strains)
     } else {
-      rel_gamma <- recycle(assert_relatives(rel_gamma),
+      rel_gamma <- recycle(assert_non_negative(rel_gamma),
                            n_real_strains)
       if (length(rel_gamma) == 2) {
         ret[[rel_gamma_name]] <- mirror_strain(rel_gamma)
@@ -887,8 +887,10 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   n_strains <- info$dim$prob_strain
   if (n_strains == 2) {
     n_tot_strains <- 4
+    n_strains_R <- 5
   } else {
     n_tot_strains <- 1
+    n_strains_R <- 1
   }
 
   ## age varying only
@@ -913,7 +915,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
 
   ## age x (total) strain x vacc class
   index_R <- calculate_index(index, "R",
-                             list(S = n_tot_strains, V = n_vacc_classes),
+                             list(S = n_strains_R, V = n_vacc_classes),
                              suffix)
 
   index_state <- c(index_core, index_save)
@@ -2118,7 +2120,15 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
     strain_transmission <- mirror_strain(strain_transmission)
   }
 
-  list(n_strains = length(strain_transmission),
+  n_strains <- length(strain_transmission)
+  if (n_strains == 1) {
+    n_strains_R <- 1
+  } else {
+    n_strains_R <- n_strains + 1
+  }
+
+  list(n_strains = n_strains,
+       n_strains_R = n_strains_R,
        strain_transmission = strain_transmission,
        strain_seed_step_start = strain_seed_step_start,
        strain_seed_value = strain_seed_value)
@@ -2577,6 +2587,12 @@ lancelot_check_data <- function(data) {
   has <- as.data.frame(!is.na(data[required]))
   has_any <- function(nms) {
     apply(has[nms], 1, any)
+  }
+
+  err_hosp <- any(has$hosp & has_any(c("general", "icu")))
+  if (err_hosp) {
+    stop(paste("Cannot fit to all beds occupancy and split general/ICU beds",
+               "occupancy together"))
   }
 
   deaths_ages <- c("0_49", "50_54", "55_59", "60_64", "65_69", "70_74",

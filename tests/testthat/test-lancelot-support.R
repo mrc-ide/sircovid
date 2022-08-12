@@ -1080,6 +1080,41 @@ test_that("lancelot_check_data requires consistent deaths", {
 })
 
 
+test_that("lancelot_check_data disallows double fitting to beds occupancy", {
+  data <- lancelot_simple_data(read_csv(sircovid_file("extdata/example.csv")))
+
+  data$hosp <- NA
+  data$icu <- 10
+  data$general <- 20
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Allow all beds occupancy and split icu/general beds occupancy on different
+  ## days
+  data$hosp[11:20] <- 30
+  data$icu[11:20] <- NA
+  data$general[11:20] <- NA
+
+  expect_silent(lancelot_check_data(data))
+
+  ## Throw error
+  data$hosp <- 30
+  expect_error(
+    lancelot_check_data(data),
+    paste0("Cannot fit to all beds occupancy and split general/ICU beds ",
+           "occupancy together"))
+
+  ## Add populations and throw regional error
+  data2 <- cbind(
+    rbind(data, data),
+    region = factor(rep(c("london", "south_east"), each = nrow(data))))
+
+  expect_error(
+    lancelot_check_data(data2),
+    "london: Cannot fit to all beds occupancy and split general/ICU beds")
+})
+
+
 test_that("lancelot_check_data disallows double fitting to hospital deaths", {
   ## Specifically, disallow double fitting to aggregated and
   ## disaggregated hospital deaths

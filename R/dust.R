@@ -376,6 +376,7 @@ lancelot <- R6::R6Class(
      n_p_W_D_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      n_p_star_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      n_strains = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_strains_R = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      n_vacc_classes = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      ons_sensitivity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      ons_specificity = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),

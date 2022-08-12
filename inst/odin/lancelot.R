@@ -593,9 +593,15 @@ n_I_P_vacc_skip[, , , ] <-
 ## Note that (if n_real_strains == 2)
 ## cross_immunity[1] is the cross immunity of strain 1 against strain 2
 ## cross_immunity[2] is the cross immunity of strain 2 against strain 1
+rate_RE_progress[, , ] <- if (n_strains == 1) 0 else
+  lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
+dim(rate_RE_progress) <- c(n_groups, n_real_strains, n_vacc_classes)
+
 rate_R_progress[, , ] <- waning_rate[i] +
-  if (n_strains == 1 || j > 2) 0 else
-    lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j])
+  if (n_strains == 1) 0 else
+    if (j == 1 || j == 4)
+    rate_RE_progress[i, 1, k] else
+      if (j == 5) sum(rate_RE_progress[i, , k]) else 0
 
 p_R_progress[, , ] <- 1 - exp(-rate_R_progress[i, j, k] * dt)
 
@@ -612,18 +618,30 @@ n_R_progress[, , ] <- rbinom(R[i, j, k], p_R_progress[i, j, k])
 ## In multi-strain model, number of R1 and R2 to S is binomial w.p. waning over
 ##  waning plus prob strain
 ## TODO (RS): waning_rate should eventually be variant varying
-p_RS[, , ] <- if (n_strains == 1 || j > 2) 1 else
+p_RS[, , ] <- if (n_strains == 1) 1 else
   (if (waning_rate[i] == 0) 0 else
-    (waning_rate[i] /
-       (waning_rate[i] + lambda_susc[i, 3 - j, k] * (1 - cross_immunity[j]))))
+    waning_rate[i] / rate_R_progress[i, j, k])
 n_RS[, , ] <- rbinom(n_R_progress[i, j, k], p_RS[i, j, k])
 
+p_R5_to_E3[, ] <- if (n_strains == 1) 1 else
+  if (rate_RE_progress[i, 1, j] == 0) 0 else
+    (rate_RE_progress[i, 1, j] /
+       sum(rate_RE_progress[i, , j]))
+
+n_R5_to_E3[, ] <- if (n_strains == 1) 0 else
+  rbinom(n_R_progress[i, 5, j] - n_RS[i, 5, j], p_R5_to_E3[i, j])
+
+dim(p_R5_to_E3) <- c(n_groups, n_vacc_classes)
+dim(n_R5_to_E3) <- c(n_groups, n_vacc_classes)
 
 ## n_RE[i, j, k] is the number going from
-## R[age i, strain j, vacc class k] to
-## E[age i, strain j + 2, vacc class k]
-## Movement possible to E3 and E4 are from R1 and R2 respectively
-n_RE[, , ] <- n_R_progress[i, j, k] - n_RS[i, j, k]
+## R[age i, , vacc class k] to
+## E[age i, strain j, vacc class k]
+## R1 and R4 can go to E3, R5 can go to E3 or E4
+n_RE[, , ] <- if (n_strains == 1 || j < 3) 0 else
+  if (j == 3) (n_R_progress[i, 1, k] - n_RS[i, 1, k] +
+                 n_R_progress[i, 4, k] - n_RS[i, 4, k] + n_R5_to_E3[i, k]) else
+                   (n_R_progress[i, 5, k] - n_RS[i, 5, k] - n_R5_to_E3[i, k])
 
 ## R -> R vaccine progression
 n_R_tmp[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
@@ -694,7 +712,7 @@ initial(cum_infections_per_strain[]) <- 0
 delta_infections_per_strain[] <-
   sum(n_S_progress[, i, ]) +
   (if (i > 2)
-    (sum(n_RE[, i - 2, ]))
+    (sum(n_RE[, i, ]))
    else
      0)
 update(cum_infections_per_strain[]) <-
@@ -726,7 +744,7 @@ n_EI_P[, , ] <- n_E_progress[i, j, k_E, k] - n_EI_A[i, j, k]
 
 ## Work out the S->E and E->E transitions
 aux_E[, , , ] <- (if (k == 1) n_S_progress[i, j, l] +
-                    (if (j > 2) n_RE[i, j - 2, l] else 0)
+                    (if (j > 2) n_RE[i, j, l] else 0)
                   else n_E_progress[i, j, k - 1, l]) -
   n_E_progress[i, j, k, l] -
   n_E_next_vacc_class[i, j, k, l] +
@@ -1057,7 +1075,7 @@ n_infected_to_S[, , ] <- n_infection_end[i, j, k] - n_infected_to_R[i, j, k]
 new_R[, , ] <- R[i, j, k] -
   n_R_progress[i, j, k] -
   n_R_next_vacc_class[i, j, k] +
-  n_infected_to_R[i, j, k] +
+  (if (n_strains == 1 || j < 5) n_infected_to_R[i, j, k] else 0) +
   (if (k == 1) n_R_next_vacc_class[i, j, n_vacc_classes] else
     n_R_next_vacc_class[i, j, k - 1])  -
   (if (vacc_skip_to[k] > 0) n_R_vacc_skip[i, j, k] else 0) +
@@ -1066,8 +1084,7 @@ new_R[, , ] <- R[i, j, k] -
 ## Work out the PCR positivity
 new_T_PCR_pre[, , , ] <- T_PCR_pre[i, j, k, l] -
   n_T_PCR_pre_progress[i, j, k, l] +
-  (if (k == 1) n_S_progress[i, j, l] +
-     (if (j > 2) n_RE[i, j - 2, l] else 0) else
+  (if (k == 1) n_S_progress[i, j, l] + n_RE[i, j, l] else
     n_T_PCR_pre_progress[i, j, k - 1, l])
 
 new_T_PCR_pos[, , , ] <- T_PCR_pos[i, j, k, l] -
@@ -1419,6 +1436,7 @@ G_D_transmission <- user()
 strain_transmission[] <- user()
 dim(strain_transmission) <- n_strains
 n_strains <- user()
+n_strains_R <- user()
 n_real_strains <- if (n_strains == 4) 2 else 1
 
 ## Dimensions of the different "vectors" here vectors stand for
@@ -1575,8 +1593,8 @@ dim(n_W_D_unconf_to_conf) <-
   c(n_groups, n_strains, k_W_D, n_vacc_classes)
 
 ## Vectors handling the R class
-dim(R) <- c(n_groups, n_strains, n_vacc_classes)
-dim(new_R) <- c(n_groups, n_strains, n_vacc_classes)
+dim(R) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(new_R) <- c(n_groups, n_strains_R, n_vacc_classes)
 
 ## Vectors handling the T_sero_pre_1 class and seroconversion
 dim(T_sero_pre_1) <- c(n_groups, n_strains, k_sero_pre_1, n_vacc_classes)
@@ -1716,18 +1734,18 @@ dim(m) <- c(n_groups, n_groups)
 dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling progress from R
-dim(p_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_next_vacc_class) <- c(n_groups, n_strains, n_vacc_classes)
-dim(p_R_vacc_skip) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_vacc_skip) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_R_next_vacc_class) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(n_R_next_vacc_class) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(p_R_vacc_skip) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(n_R_vacc_skip) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(n_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
 
-dim(n_R_tmp) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_RS) <- c(n_groups, n_strains, n_vacc_classes)
-dim(p_RS) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_R_tmp) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(n_RS) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(p_RS) <- c(n_groups, n_strains_R, n_vacc_classes)
 dim(n_RE) <- c(n_groups, n_strains, n_vacc_classes)
-dim(p_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
-dim(rate_R_progress) <- c(n_groups, n_strains, n_vacc_classes)
+dim(p_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(rate_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
 
 dim(cross_immunity) <- n_real_strains
 cross_immunity[] <- user()
@@ -2138,12 +2156,15 @@ dim(prob_strain) <- n_real_strains
 ## Calculate effective susceptibles to each strain
 ## Weight each person in S/R by their relative susceptibility
 ## Note that for those in R we further account for cross immunity
-## to strains. Those recovered from strain 3 - j will be (partially)
-## susceptible to strain j
+## to strains. Those in R1, R4 and R5 will be (partially)
+## susceptible to strain 2, those in R5 will also be (partially)
+## susceptible to strain 1)
 dim(eff_S) <- c(n_groups, n_real_strains, n_vacc_classes)
 eff_S[, , ] <- if (n_real_strains == 1)
   S[i, k] * rel_susceptibility[i, j, k] else
-    (S[i, k] + (1 - cross_immunity[3 - j]) * R[i, 3 - j, k]) *
+    (S[i, k] + (1 - cross_immunity[3 - j]) *
+       (R[i, 5, k] +
+       if (j == 2) R[i, 1, k] + R[i, 4, k] else 0)) *
   rel_susceptibility[i, j, k]
 
 initial(effective_susceptible[]) <- 0
@@ -2307,7 +2328,7 @@ dim(IFR_disag) <- c(n_groups, n_strains, n_vacc_classes)
 dim(IFR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
 
 new_inf[, , ] <- n_S_progress[i, j, k] +
-  (if (j > 2) n_RE[i, j - 2, k] else 0)
+  (if (j > 2) n_RE[i, j, k] else 0)
 
 IHR_disag[, , ] <- p_C[i, j, k] * p_H[i, j, k] * (1 - p_G_D[i, j, k])
 IHR_disag_weighted[, , ] <- IHR_disag[i, j, k] * new_inf[i, j, k]

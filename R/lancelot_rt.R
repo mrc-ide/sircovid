@@ -167,12 +167,12 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
                  length(step)))
   }
   if (!is.null(R)) {
-    if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * n_strains) {
+    if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * p$n_strains_R) {
       stop(sprintf(
-        "Expected 'R' to have %d rows = %d groups x %d strains x %d vaccine
+        "Expected 'R' to have %d rows = %d groups x %d strains_R x %d vaccine
           classes",
-        p$n_groups * nlayer(p$rel_susceptibility) * n_strains,
-        p$n_groups, n_strains, nlayer(p$rel_susceptibility)))
+        p$n_groups * nlayer(p$rel_susceptibility) * p$n_strains_R,
+        p$n_groups, p$n_strains_R, nlayer(p$rel_susceptibility)))
     }
     if (ncol(R) != length(step)) {
       stop(sprintf("Expected 'R' to have %d columns, following 'step'",
@@ -276,22 +276,23 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
         compute_ngm(md, x, p$rel_susceptibility)
       } else {
         N <- n_groups * n_vacc_classes
-        ## in the new model set-up it can only be 4, can make a variable
+        ## in the new model set-up it can only be 5, can make a variable
         ##  if this changes in the future
-        n_total_strains <- 4
-        RR <- array(R, c(n_groups, n_total_strains, n_vacc_classes, ncol(R)))
+        RR <- array(R, c(n_groups, p$n_strains_R, n_vacc_classes, ncol(R)))
 
         if (i == 1) {
           if (effective) {
-            ## get R2 (as they're susceptible to E1)
-            RR <- matrix(RR[, 2, , ], nrow = n_groups * n_vacc_classes)
+            ## get R5 (as they're susceptible to E1)
+            RR <- matrix(RR[, 5, , ], nrow = n_groups * n_vacc_classes)
           } else {
             RR <- 0
           }
         } else {
           if (effective) {
-            ## get R1 (as they're susceptible to E2)
-            RR <- matrix(RR[, 1, , ], nrow = n_groups * n_vacc_classes)
+            ## get R1, R4 and R5 (as they're susceptible to E2)
+            RR <- matrix(RR[, 1, , ], nrow = n_groups * n_vacc_classes) +
+              matrix(RR[, 4, , ], nrow = n_groups * n_vacc_classes) +
+              matrix(RR[, 5, , ], nrow = n_groups * n_vacc_classes)
           } else {
             RR <- 0
           }

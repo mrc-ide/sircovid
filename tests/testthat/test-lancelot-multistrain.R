@@ -15,18 +15,21 @@ test_that("lancelot_parameters_strain works as expected", {
   expect_equal(
     lancelot_parameters_strain(1, NULL, NULL, NULL, 1),
     list(n_strains = 1,
+         n_strains_R = 1,
          strain_transmission = 1,
          strain_seed_step_start = 0,
          strain_seed_value = 0))
   expect_equal(
     lancelot_parameters_strain(c(1, 1), NULL, NULL, NULL, 1),
     list(n_strains = 4,
+         n_strains_R = 5,
          strain_transmission = c(1, 1, 1, 1),
          strain_seed_step_start = 0,
          strain_seed_value = 0))
   expect_equal(
     lancelot_parameters_strain(c(1, 2), NULL, NULL, NULL, 1),
     list(n_strains = 4,
+         n_strains_R = 5,
          strain_transmission = c(1, 2, 2, 1),
          strain_seed_step_start = 0,
          strain_seed_value = 0))
@@ -143,7 +146,9 @@ test_that("Seeding of second strain generates an epidemic", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
   expect_true(
-    all(y$cum_infections_per_strain[, 101] > n_seeded_new_strain_inf))
+    sum(y$cum_infections_per_strain[2:3, 101]) > n_seeded_new_strain_inf)
+  expect_true(
+    all(y$cum_infections_per_strain[2:3, 101] > 0))
   ## did we count infections per strain properly?
   expect_equal(sum(y$cum_infections_per_strain[, 101]),
                y$cum_infections[, 101])
@@ -272,7 +277,22 @@ test_that("N_tot is constant with second strain and waning immunity, while
 
             mod <- lancelot$new(p, 0, 1)
             info <- mod$info()
-            y0 <- lancelot_initial(info, 1, p)
+            y0 <- lancelot_initial(info, np, p)
+
+            ## Move some individuals from S to R historic variants layer
+            index_S <- array(info$index$S, info$dim$S)
+            y0[index_S] <- y0[index_S] - 1e4
+            index_R <- array(info$index$R, info$dim$R)
+            y0[index_R[, 5, ]] <- 1e4
+            ## Also move to PCR/sero neg
+            index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
+            y0[index_T_PCR_neg[, 1, ]] <- 1e4
+            index_T_sero_neg_1 <- array(info$index$T_sero_neg_1,
+                                        info$dim$T_sero_neg_1)
+            y0[index_T_sero_neg_1[, 1, ]] <- 1e4
+            index_T_sero_neg_2 <- array(info$index$T_sero_neg_2,
+                                        info$dim$T_sero_neg_2)
+            y0[index_T_sero_neg_2[, 1, ]] <- 1e4
             mod$update_state(state = y0)
             y <- mod$transform_variables(
               drop(mod$simulate(seq(0, 400, by = 4))))
@@ -316,6 +336,61 @@ test_that("N_tot is constant with second strain and waning immunity, while
             expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
           })
 
+
+test_that("N_tot is constant with second strain, vaccination and waning
+          immunity, while sero N_tots are non-decreasing - superinfection", {
+            ## Default for waning_rate is 0
+            set.seed(1)
+            n_seeded_new_strain_inf <- 100
+            date_seeding <- "2020-03-07"
+
+            vaccine_schedule <- test_vaccine_schedule(500000, "england")
+            p <- lancelot_parameters(
+              sircovid_date("2020-02-07"), "england",
+              waning_rate = 1 / 20,
+              rel_susceptibility = c(1, 0.5, 0.1),
+              rel_p_sympt = c(1, 1, 1),
+              rel_p_hosp_if_sympt = c(1, 1, 1),
+              rel_p_death = c(1, 1, 1),
+              vaccine_progression_rate = c(0, 0, 0.01),
+              vaccine_schedule = vaccine_schedule,
+              vaccine_index_dose2 = 2L,
+              strain_transmission = c(1, 1),
+              strain_seed_date = sircovid_date(date_seeding),
+              strain_seed_size = n_seeded_new_strain_inf,
+              strain_seed_pattern = rep(1, 4),
+              cross_immunity = 0)
+
+            mod <- lancelot$new(p, 0, 1)
+            info <- mod$info()
+            y0 <- lancelot_initial(info, np, p)
+
+            ## Move some individuals from S to R historic variants layer
+            index_S <- array(info$index$S, info$dim$S)
+            y0[index_S[, 1]] <- y0[index_S[, 1]] - 1e4
+            index_R <- array(info$index$R, info$dim$R)
+            y0[index_R[, 5, 1]] <- 1e4
+            ## Also move to PCR/sero neg
+            index_T_PCR_neg <- array(info$index$T_PCR_neg, info$dim$T_PCR_neg)
+            y0[index_T_PCR_neg[, 1, 1]] <- 1e4
+            index_T_sero_neg_1 <- array(info$index$T_sero_neg_1,
+                                        info$dim$T_sero_neg_1)
+            y0[index_T_sero_neg_1[, 1, 1]] <- 1e4
+            index_T_sero_neg_2 <- array(info$index$T_sero_neg_2,
+                                        info$dim$T_sero_neg_2)
+            y0[index_T_sero_neg_2[, 1, 1]] <- 1e4
+            mod$update_state(state = y0)
+            y <- mod$transform_variables(
+              drop(mod$simulate(seq(0, 400, by = 4))))
+
+            expect_true(all(y$N_tot - mod$transform_variables(y0)$N_tot == 0))
+            expect_true(all(diff(y$N_tot_sero_1) >= 0))
+            expect_true(all(diff(y$N_tot_sero_2) >= 0))
+            expect_true(all(diff(y$N_tot_PCR) >= 0))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_1))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_sero_2))
+            expect_true(all(colSums(y$N_tot) <= y$N_tot_PCR))
+          })
 
 test_that("No-one in strains 3 or 4 if waning_rate is 1e6", {
   set.seed(2L)
@@ -596,7 +671,7 @@ test_that("Swapping strains gives identical results with different index", {
   z1 <- mod$transform_variables(res1)
   z2 <- mod2$transform_variables(res2)
 
-  for (nm in c("prob_strain", "effective_susceptible",
+  for (nm in c("prob_strain",
                "ifr_strain", "ihr_strain", "hfr_strain")) {
     z2[[nm]] <- z2[[nm]][2:1, , drop = FALSE]
   }
@@ -616,10 +691,18 @@ test_that("Swapping strains gives identical results with different index", {
     z1[["sympt_cases_non_variant_inc"]]
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
-  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg",
+
+  ## This one will differ because of the asymmetry of cross immunity
+  ## But at least the number for strain 1 in z1 should match that for
+  ## strain 2 in z2
+  z2$effective_susceptible[1, ] <- z2$effective_susceptible[2, , drop = FALSE]
+  z2$effective_susceptible[2, ] <- z1$effective_susceptible[2, , drop = FALSE]
+
+  for (nm in c("T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg",
                "I_weighted")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
+  z2$R <- z2$R[, c(i, 5), , , drop = FALSE]
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
           "T_sero_pre_1", "T_sero_pre_2", "T_sero_pos_1", "T_sero_pos_2",
           "G_D", "ICU_pre_unconf", "ICU_pre_conf",
@@ -669,7 +752,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected prob_strain and R input because")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[-1, 1, ]),
-    "Expected 'R' to have 76 rows")
+    "Expected 'R' to have 95 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, ], R = R[, 1, -1]),
     "Expected 'R' to have 123 columns")
@@ -698,7 +781,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected a 3d array of 'R'")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R[-1, , ]),
-    "Expected 'R' to have 76 rows")
+    "Expected 'R' to have 95 rows")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R[, -1, ]),
     "Expected 2nd and 3rd")
@@ -1975,8 +2058,8 @@ test_that("strain_rel_gamma works as expected in lancelot_parameters", {
                "1 or 2")
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
                                    strain_transmission = c(1, 1),
-                                   strain_rel_gamma_A = c(2, 5)),
-               "must be 1")
+                                   strain_rel_gamma_A = c(-1, 5)),
+               "non-negative")
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
                                    strain_transmission = c(1, 1),
                                    strain_rel_gamma_A = c(1, -1)),
@@ -2390,7 +2473,12 @@ test_that("G_D strain 2 empty when rel_p_G_D = c(1, 0)", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2399,10 +2487,10 @@ test_that("G_D strain 2 empty when rel_p_G_D = c(1, 0)", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$G_D[, 1, , , , ] == 0))
   expect_false(all(y$G_D[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$G_D[, 2, , , , ] == 0))
   expect_true(all(y$G_D[, 3, , , , ] == 0))
 })
@@ -2425,7 +2513,12 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2436,34 +2529,34 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   ## Some deaths in ICU for strains 1, 4 but not strains 2, 3
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_D_conf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_D_unconf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_D_unconf[, 3, , , , ] == 0))
 
   ## But people outside ICU can still die for all strains
   ## testing just one example here: death in stepdown care after ICU
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_W_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_W_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_W_D_conf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_W_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_W_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_W_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_W_D_unconf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_W_D_unconf[, 3, , , , ] == 0))
 
@@ -2474,7 +2567,12 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2485,34 +2583,34 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   ## Some deaths in stepdown after ICU for strains 1, 4 but not strains 2, 3
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_W_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_W_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_W_D_conf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_W_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_W_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_W_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_W_D_unconf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_W_D_unconf[, 3, , , , ] == 0))
 
   ## But people outside stepdown after ICU can still die for all strains
   ## testing just one example here: death in ICU
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
 
@@ -2523,7 +2621,12 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2534,27 +2637,27 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   ## Some deaths in community for strains 1, 4 but not strains 2, 3
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$G_D[, 1, , , , ] == 0))
   expect_false(all(y$G_D[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$G_D[, 2, , , , ] == 0))
   expect_true(all(y$G_D[, 3, , , , ] == 0))
 
   ## But people outside community can still die for all strains
   ## testing just one example here: death in ICU
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
 
@@ -2565,7 +2668,12 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2576,34 +2684,34 @@ test_that("can alter p_death (strain 2) in different pathways independently", {
 
   ## Some deaths in hospital wards for strains 1, 4 but not strains 2, 3
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$H_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$H_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$H_D_conf[, 2, , , , ] == 0))
   expect_true(all(y$H_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$H_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$H_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$H_D_unconf[, 2, , , , ] == 0))
   expect_true(all(y$H_D_unconf[, 3, , , , ] == 0))
 
   ## But people outside hospital wards can still die for all strains
   ## testing just one example here: death in ICU
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_D_conf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_false(all(y$ICU_D_unconf[, 2, , , , ] == 0))
   expect_false(all(y$ICU_D_unconf[, 3, , , , ] == 0))
 })
@@ -2621,7 +2729,12 @@ test_that("ICU strain 2 empty when p_icu = c(1, 0)", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2630,17 +2743,17 @@ test_that("ICU strain 2 empty when p_icu = c(1, 0)", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_pre_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_pre_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_pre_conf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_pre_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_pre_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_pre_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_pre_unconf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_pre_unconf[, 3, , , , ] == 0))
 
@@ -2659,7 +2772,12 @@ test_that("H strain 2 empty when p_hosp = c(1, 0)", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2668,45 +2786,45 @@ test_that("H strain 2 empty when p_hosp = c(1, 0)", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$H_D_conf[, 1, , , , ] == 0))
   expect_false(all(y$H_D_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$H_D_conf[, 2, , , , ] == 0))
   expect_true(all(y$H_D_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$H_D_unconf[, 1, , , , ] == 0))
   expect_false(all(y$H_D_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$H_D_unconf[, 2, , , , ] == 0))
   expect_true(all(y$H_D_unconf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$H_R_conf[, 1, , , , ] == 0))
   expect_false(all(y$H_R_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$H_R_conf[, 2, , , , ] == 0))
   expect_true(all(y$H_R_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$H_R_unconf[, 1, , , , ] == 0))
   expect_false(all(y$H_R_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$H_R_unconf[, 2, , , , ] == 0))
   expect_true(all(y$H_R_unconf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_pre_conf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_pre_conf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_pre_conf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_pre_conf[, 3, , , , ] == 0))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$ICU_pre_unconf[, 1, , , , ] == 0))
   expect_false(all(y$ICU_pre_unconf[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$ICU_pre_unconf[, 2, , , , ] == 0))
   expect_true(all(y$ICU_pre_unconf[, 3, , , , ] == 0))
 })
@@ -2723,7 +2841,12 @@ test_that("I_P strain 2 empty when p_sympt = c(1, 0)", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
 
   end <- sircovid_date("2020-05-01") / p$dt
@@ -2732,10 +2855,10 @@ test_that("I_P strain 2 empty when p_sympt = c(1, 0)", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  # Strain 1 and 4 (2 -> 1)
+  # Strain 1 and 4 (1 reinfection)
   expect_false(all(y$I_P[, 1, , , , ] == 0))
   expect_false(all(y$I_P[, 4, , , , ] == 0))
-  # Strain 2 and 3 (1 -> 2)
+  # Strain 2 and 3 (2 reinfection)
   expect_true(all(y$I_P[, 2, , , , ] == 0))
   expect_true(all(y$I_P[, 3, , , , ] == 0))
 })
@@ -2832,7 +2955,7 @@ test_that("Can only move to S from R3 and R4 to S", {
 })
 
 
-test_that("Everyone in R3 and R4 when no waning and transmission high", {
+test_that("Everyone in R2 and R3 when no waning and transmission high", {
   np <- 1L
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            initial_seed_size = 30,
@@ -2847,19 +2970,21 @@ test_that("Everyone in R3 and R4 when no waning and transmission high", {
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
 
-  initial <- lancelot_initial(mod$info(), np, p)
-  y0 <- initial
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
+  mod$update_state(state = initial, step = 0)
 
-  mod$update_state(state = y0, step = 0)
   end <- sircovid_date("2021-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_true(all(y$R[, 1:2, , 450] == 0))
-  expect_false(all(y$R[, 3:4, , 450] == 0))
+  expect_true(all(y$R[, c(1, 4, 5), , 450] == 0))
+  expect_false(all(y$R[, c(2, 3), , 450] == 0))
 })
 
 
@@ -2912,8 +3037,12 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
                strain_seed_size = 10,
                strain_seed_pattern = rep(1, 4),
                cross_immunity = 0)
-             mod <- lancelot$new(p, 0, np)
-             initial <- lancelot_initial(mod$info(), np, p)
+             mod <- lancelot$new(p, 0, np, seed = 1L)
+             info <- mod$info()
+             initial <- lancelot_initial(info, np, p)
+             ## Add some individuals in R historic variants layer
+             index_R <- array(info$index$R, info$dim$R)
+             initial[index_R[, 5, ]] <- 1e4
              mod$update_state(state = initial)
              end <- sircovid_date("2020-05-01") / p$dt
              steps <- seq(0, end, by = 1 / p$dt)
@@ -2930,8 +3059,12 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
                strain_seed_size = 10,
                strain_seed_pattern = rep(1, 4),
                cross_immunity = 0.5)
-             mod <- lancelot$new(p, 0, np)
-             initial <- lancelot_initial(mod$info(), np, p)
+             mod <- lancelot$new(p, 0, np, seed = 1L)
+             info <- mod$info()
+             initial <- lancelot_initial(info, np, p)
+             ## Add some individuals in R historic variants layer
+             index_R <- array(info$index$R, info$dim$R)
+             initial[index_R[, 5, ]] <- 1e4
              mod$update_state(state = initial)
              set.seed(1)
              y <- mod$transform_variables(
@@ -2949,7 +3082,7 @@ test_that("cross-immunity can be separated by strain", {
   np <- 1L
   set.seed(seed)
 
-  ## complete immunity from Strain 1 means Strain 3 empty (1 -> 2)
+  ## complete immunity from Strain 1 means Strain 3 empty (2 reinfection)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
@@ -2958,7 +3091,14 @@ test_that("cross-immunity can be separated by strain", {
                            cross_immunity = c(1, 0)
   )
   mod <- lancelot$new(p, 0, np, seed = seed)
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
+  mod$update_state(state = initial)
+
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
   mod$update_state(state = initial)
@@ -2969,7 +3109,7 @@ test_that("cross-immunity can be separated by strain", {
   expect_equal(y$cum_infections_per_strain[3, 123], 0)
   expect_gt(y$cum_infections_per_strain[4, 123], 0)
 
-  ## complete immunity from Strain 2 means Strain 4 empty (2 -> 1)
+  ## complete immunity from Strain 2 means Strain 4 empty (1 reinfection)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
                            strain_transmission = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
@@ -2977,8 +3117,14 @@ test_that("cross-immunity can be separated by strain", {
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = c(0, 1))
   mod <- lancelot$new(p, 0, np, seed = seed)
-  initial <- lancelot_initial(mod$info(), np, p)
+  info <- mod$info()
+  initial <- lancelot_initial(info, np, p)
+
+  ## Add some individuals in R historic variants layer
+  index_R <- array(info$index$R, info$dim$R)
+  initial[index_R[, 5, ]] <- 1e4
   mod$update_state(state = initial)
+
   set.seed(1)
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
@@ -3393,11 +3539,18 @@ test_that("Can rotate strains", {
   ## This one is doable analytically :)
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
 
-  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
+  expect_true(all(y2$I_C_1[, c(2, 3), , , ] == 0))
+  expect_equal(y2$I_C_1[, c(1, 4), , , ],
+               y1$I_C_1[, c(1, 4), , , ] + y1$I_C_1[, c(2, 3), , , ])
 
-  expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
+  expect_true(all(y2$T_PCR_neg[, c(2, 3), , ] == 0))
+  expect_equal(y2$T_PCR_neg[, c(1, 4), , ],
+               y1$T_PCR_neg[, c(1, 4), , ] + y1$T_PCR_neg[, c(2, 3), , ])
+
+  expect_true(all(y2$R[, c(2, 3), , ] == 0))
+  expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
+  expect_equal(y2$R[, 5, , ],
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
 
   expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
   expect_equal(y2$cum_infections_per_strain[1, ],
@@ -3446,13 +3599,20 @@ test_that("Can rotate strains with cross-infection", {
   ## Next, check one of each rank of transformed variable to make sure
   ## that all are appropriately transformed; see above.
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
-  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 5), sum))
-  expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 4), sum))
-  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
-  expect_equal(y2$cum_infections_per_strain[1, ],
-               colSums(y1$cum_infections_per_strain))
+  expect_true(all(y2$I_C_1[, c(2, 3), , , ] == 0))
+  expect_equal(y2$I_C_1[, c(1, 4), , , ],
+               y1$I_C_1[, c(1, 4), , , ] + y1$I_C_1[, c(2, 3), , , ])
+  expect_true(all(y2$T_PCR_neg[, c(2, 3), , ] == 0))
+  expect_equal(y2$T_PCR_neg[, c(1, 4), , ],
+               y1$T_PCR_neg[, c(1, 4), , ] + y1$T_PCR_neg[, c(2, 3), , ])
+  expect_true(all(y2$R[, c(2, 3), , ] == 0))
+  expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
+  expect_equal(y2$R[, 5, , ],
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
+  expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
+  expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
+               y1$cum_infections_per_strain[c(1, 4), ] +
+                 y1$cum_infections_per_strain[c(2, 3), ])
 })
 
 
@@ -3487,13 +3647,20 @@ test_that("Can rotate strains with vaccination", {
   ## Next, check one of each rank of transformed variable to make sure
   ## that all are appropriately transformed; see above.
   expect_equal(y2$prob_strain, matrix(1:0, 2, np))
-  expect_true(all(y2$I_C_1[, 2:4, , , ] == 0))
-  expect_equal(y2$I_C_1[, 1, , , ], apply(y1$I_C_1, c(1, 4, 5), sum))
-  expect_true(all(y2$R[, 2:4, , ] == 0))
-  expect_equal(y2$R[, 1, , ], apply(y1$R, c(1, 3, 4), sum))
-  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
-  expect_equal(y2$cum_infections_per_strain[1, ],
-               colSums(y1$cum_infections_per_strain))
+  expect_true(all(y2$I_C_1[, c(2, 3), , , ] == 0))
+  expect_equal(y2$I_C_1[, c(1, 4), , , ],
+               y1$I_C_1[, c(1, 4), , , ] + y1$I_C_1[, c(2, 3), , , ])
+  expect_true(all(y2$T_PCR_neg[, c(2, 3), , ] == 0))
+  expect_equal(y2$T_PCR_neg[, c(1, 4), , ],
+               y1$T_PCR_neg[, c(1, 4), , ] + y1$T_PCR_neg[, c(2, 3), , ])
+  expect_true(all(y2$R[, c(2, 3), , ] == 0))
+  expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
+  expect_equal(y2$R[, 5, , ],
+               apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 3, 4), sum))
+  expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
+  expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
+               y1$cum_infections_per_strain[c(1, 4), ] +
+                 y1$cum_infections_per_strain[c(2, 3), ])
 })
 
 
@@ -3504,7 +3671,8 @@ test_that("rotate strain uses correct variables", {
 
   check1 <- function(v) {
     any(vlapply(unlist(c(v$dimnames$length, v$dimnames$dim)), function(x)
-      any(c("n_strains", "n_real_strains") %in% ir$equations[[x]]$rhs$value)))
+      any(c("n_strains", "n_real_strains", "n_strains_R") %in%
+            ir$equations[[x]]$rhs$value)))
   }
 
   vars <- ir$data$elements[names(ir$data$variable$contents)]
