@@ -683,6 +683,8 @@ test_that("Swapping strains gives identical results with different index", {
     z2$cum_infections_per_strain[i, , drop = FALSE]
   z2$infections_inc_per_strain <-
     z2$infections_inc_per_strain[i, , drop = FALSE]
+  z2$hospitalisations_inc_by_strain <-
+    z2$hospitalisations_inc_by_strain[i, , drop = FALSE]
   ## This one can't easily be computed as it's not quite running
   ## incidence but over a sawtooth; the calculation relative to
   ## cum_infections_per_strain is confirmed elsewhere so here just
