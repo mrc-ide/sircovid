@@ -868,12 +868,16 @@ test_that("lancelot_index switches work as expected", {
       info$index$ifr,
       info$index$ihr,
       info$index$hfr,
+      info$index$hospitalisations_inc,
       info$index$ifr_strain,
       info$index$ihr_strain,
       info$index$hfr_strain,
+      info$index$hospitalisations_inc_by_strain,
       info$index$ifr_age,
       info$index$ihr_age,
-      info$index$hfr_age))
+      info$index$hfr_age,
+      info$index$infections_inc_by_age,
+      info$index$hospitalisations_inc_by_age))
 
   index_severity_disag <- lancelot_index(info, severity_disag = TRUE)
   expect_equal(

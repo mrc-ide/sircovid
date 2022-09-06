@@ -230,10 +230,17 @@ delta_diagnoses_admitted[, ] <-
   sum(n_W_D_unconf_to_conf[i, , , j])
 dim(delta_diagnoses_admitted) <- c(n_groups, n_vacc_classes)
 
+delta_infections[, , ] <-
+  n_S_progress[i, j, k] +
+  (if (j > 2)
+    n_RE[i, j, k]
+   else
+     0)
+dim(delta_infections) <- c(n_groups, n_strains, n_vacc_classes)
+
 initial(cum_infections_disag[, ]) <- 0
 update(cum_infections_disag[, ]) <- cum_infections_disag[i, j] +
-  sum(n_S_progress[i, , j]) +
-  sum(n_RE[i, , j])
+  sum(delta_infections[i, , j])
 dim(cum_infections_disag) <- c(n_groups, n_vacc_classes)
 
 initial(admit_conf_inc) <- 0
@@ -701,20 +708,15 @@ n_T_PCR_pos_progress[, , , ] <-
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
-delta_infections <- sum(n_S_progress) + sum(n_RE)
-update(cum_infections) <- cum_infections + delta_infections
+delta_infections_total <- sum(delta_infections)
+update(cum_infections) <- cum_infections + delta_infections_total
 
 initial(infections_inc) <- 0
 update(infections_inc) <- if (step %% steps_per_day == 0)
-  delta_infections else infections_inc + delta_infections
+  delta_infections_total else infections_inc + delta_infections_total
 
 initial(cum_infections_per_strain[]) <- 0
-delta_infections_per_strain[] <-
-  sum(n_S_progress[, i, ]) +
-  (if (i > 2)
-    (sum(n_RE[, i, ]))
-   else
-     0)
+delta_infections_per_strain[] <- sum(delta_infections[, i, ])
 update(cum_infections_per_strain[]) <-
   cum_infections_per_strain[i] + delta_infections_per_strain[i]
 dim(delta_infections_per_strain) <- n_strains
@@ -726,6 +728,40 @@ update(infections_inc_per_strain[]) <-
     delta_infections_per_strain[i] else
       infections_inc_per_strain[i] + delta_infections_per_strain[i]
 dim(infections_inc_per_strain) <- n_strains
+
+initial(infections_inc_by_age[]) <- 0
+delta_infections_by_age[] <- sum(delta_infections[i, , ])
+update(infections_inc_by_age[]) <-
+  if (step %% steps_per_day == 0)
+    delta_infections_by_age[i] else
+      infections_inc_by_age[i] + delta_infections_by_age[i]
+dim(delta_infections_by_age) <- n_groups
+dim(infections_inc_by_age) <- n_groups
+
+## Hospitalisations
+initial(hospitalisations_inc) <- 0
+delta_hospitalisations_total <- sum(n_I_C_2_to_hosp)
+update(hospitalisations_inc) <- if (step %% steps_per_day == 0)
+  delta_hospitalisations_total else
+    hospitalisations_inc + delta_hospitalisations_total
+
+initial(hospitalisations_inc_by_strain[]) <- 0
+delta_hospitalisations_by_strain[] <- sum(n_I_C_2_to_hosp[, i, ])
+update(hospitalisations_inc_by_strain[]) <-
+  if (step %% steps_per_day == 0)
+    delta_infections_per_strain[i] else
+      hospitalisations_inc_by_strain[i] + delta_infections_per_strain[i]
+dim(delta_hospitalisations_by_strain) <- n_strains
+dim(hospitalisations_inc_by_strain) <- n_strains
+
+initial(hospitalisations_inc_by_age[]) <- 0
+delta_hospitalisations_by_age[] <- sum(n_I_C_2_to_hosp[i, , ])
+update(hospitalisations_inc_by_age[]) <-
+  if (step %% steps_per_day == 0)
+    delta_hospitalisations_by_age[i] else
+      hospitalisations_inc_by_age[i] + delta_hospitalisations_by_age[i]
+dim(delta_hospitalisations_by_age) <- n_groups
+dim(hospitalisations_inc_by_age) <- n_groups
 
 ## Work out the new S (i for age, j for vaccination status)
 new_S[, ] <- S[i, j] + sum(n_RS[i, , j]) + sum(n_infected_to_S[i, , j]) -
