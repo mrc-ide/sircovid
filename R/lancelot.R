@@ -746,9 +746,6 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' @param severity Logical, whether to output severity calculations
 ##'   (default = FALSE)
 ##'
-##' @param severity_disag Logical, whether to output disaggregated severity
-##'   calculations (default = FALSE)
-##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
@@ -770,7 +767,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                            cum_infections_disag = TRUE,
                            cum_n_vaccinated = TRUE, D_all = TRUE,
                            D_hosp = TRUE, infections_inc_per_strain = TRUE,
-                           severity = FALSE, severity_disag = FALSE) {
+                           severity = FALSE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -989,17 +986,6 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
     index_state <- c(index_state, index_severity, index_severity_strain,
                      index_severity_age)
   }
-
-  if (severity_disag) {
-    index_state <- c(index_state,
-      calculate_index(index, "ifr_disag",
-                      list(n_vacc_classes), suffix),
-      calculate_index(index, "ihr_disag",
-                      list(n_vacc_classes), suffix),
-      calculate_index(index, "hfr_disag",
-                      list(n_vacc_classes), suffix))
-  }
-
 
   list(run = index_run, state = index_state)
 }

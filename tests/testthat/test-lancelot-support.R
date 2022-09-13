@@ -879,32 +879,6 @@ test_that("lancelot_index switches work as expected", {
       info$index$infections_inc_by_age,
       info$index$hospitalisations_inc_by_age))
 
-  index_severity_disag <- lancelot_index(info, severity_disag = TRUE)
-  expect_equal(
-    unname(index_severity_disag$state[
-      !names(index_severity_disag$state) %in% names(index_severity_disag$run)]),
-    c(info$index$hosp_tot,
-      info$index$cum_admit_conf,
-      info$index$cum_new_conf,
-      info$index$D_tot,
-      info$index$D_inc,
-      info$index$cum_infections,
-      info$index$infections_inc,
-      info$index$effective_susceptible,
-      info$index$S,
-      info$index$R,
-      info$index$prob_strain,
-      info$index$cum_admit_by_age,
-      info$index$diagnoses_admitted,
-      info$index$cum_infections_disag,
-      info$index$cum_n_vaccinated,
-      info$index$D,
-      info$index$D_hosp,
-      info$index$infections_inc_per_strain,
-      info$index$ifr_disag,
-      info$index$ihr_disag,
-      info$index$hfr_disag))
-
   index_rt <- lancelot_index(info, rt = FALSE)
   expect_equal(
     unname(index_rt$state[!names(index_rt$state) %in% names(index_rt$run)]),
