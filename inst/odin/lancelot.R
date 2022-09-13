@@ -2376,21 +2376,36 @@ new_inf[, , ] <- n_S_progress[i, j, k] +
 
 IHR_disag[, , ] <- p_C[i, j, k] * p_H[i, j, k] * (1 - p_G_D[i, j, k])
 IHR_disag_weighted[, , ] <- IHR_disag[i, j, k] * new_inf[i, j, k]
-initial(ihr) <- 0
-update(ihr) <- sum(IHR_disag_weighted) / sum(new_inf)
+new_IH_expected_inc <-
+  if (step %% steps_per_day == 0)
+    sum(IHR_disag_weighted) else IH_expected_inc + sum(IHR_disag_weighted)
+initial(IH_expected_inc) <- 0
+update(IH_expected_inc) <- new_IH_expected_inc
+initial(ihr) <- NA
+update(ihr) <- new_IH_expected_inc / new_infections_inc
 
 HFR_disag[, , ] <- (1 - p_ICU[i, j, k]) * p_H_D[i, j, k] +
   p_ICU[i, j, k] * p_ICU_D[i, j, k] +
   p_ICU[i, j, k] * (1 - p_ICU_D[i, j, k]) * p_W_D[i, j, k]
 HFR_disag_weighted[, , ] <- HFR_disag[i, j, k] * n_I_C_2_to_hosp[i, j, k]
-initial(hfr) <- 0
-update(hfr) <- sum(HFR_disag_weighted) / sum(n_I_C_2_to_hosp)
+new_HF_expected_inc <-
+  if (step %% steps_per_day == 0)
+    sum(HFR_disag_weighted) else HF_expected_inc + sum(HFR_disag_weighted)
+initial(HF_expected_inc) <- 0
+update(HF_expected_inc) <- new_HF_expected_inc
+initial(hfr) <- NA
+update(hfr) <- new_HF_expected_inc / new_hospitalisations_inc
 
 IFR_disag[, , ] <- IHR_disag[i, j, k] * HFR_disag[i, j, k] +
   p_C[i, j, k] * p_H[i, j, k] * p_G_D[i, j, k]
 IFR_disag_weighted[, , ] <- IFR_disag[i, j, k] * new_inf[i, j, k]
-initial(ifr) <- 0
-update(ifr) <- sum(IFR_disag_weighted) / sum(new_inf)
+new_IF_expected_inc <-
+  if (step %% steps_per_day == 0)
+    sum(IFR_disag_weighted) else IF_expected_inc + sum(IFR_disag_weighted)
+initial(IF_expected_inc) <- 0
+update(IF_expected_inc) <- new_IF_expected_inc
+initial(ifr) <- NA
+update(ifr) <- new_IF_expected_inc / new_infections_inc
 
 ## By strain
 initial(ifr_strain[]) <- 0
