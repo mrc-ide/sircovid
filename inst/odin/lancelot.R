@@ -712,8 +712,9 @@ delta_infections_total <- sum(delta_infections)
 update(cum_infections) <- cum_infections + delta_infections_total
 
 initial(infections_inc) <- 0
-update(infections_inc) <- if (step %% steps_per_day == 0)
+new_infections_inc <- if (step %% steps_per_day == 0)
   delta_infections_total else infections_inc + delta_infections_total
+update(infections_inc) <- new_infections_inc
 
 initial(cum_infections_per_strain[]) <- 0
 delta_infections_per_strain[] <- sum(delta_infections[, i, ])
@@ -723,44 +724,54 @@ dim(delta_infections_per_strain) <- n_strains
 dim(cum_infections_per_strain) <- n_strains
 
 initial(infections_inc_per_strain[]) <- 0
-update(infections_inc_per_strain[]) <-
+new_infections_inc_per_strain[] <-
   if (step %% steps_per_day == 0)
     delta_infections_per_strain[i] else
       infections_inc_per_strain[i] + delta_infections_per_strain[i]
+update(infections_inc_per_strain[]) <- new_infections_inc_per_strain[i]
+dim(new_infections_inc_per_strain) <- n_strains
 dim(infections_inc_per_strain) <- n_strains
 
 initial(infections_inc_by_age[]) <- 0
 delta_infections_by_age[] <- sum(delta_infections[i, , ])
-update(infections_inc_by_age[]) <-
+new_infections_inc_by_age[] <-
   if (step %% steps_per_day == 0)
     delta_infections_by_age[i] else
       infections_inc_by_age[i] + delta_infections_by_age[i]
+update(infections_inc_by_age[]) <- new_infections_inc_by_age[i]
 dim(delta_infections_by_age) <- n_groups
+dim(new_infections_inc_by_age) <- n_groups
 dim(infections_inc_by_age) <- n_groups
 
 ## Hospitalisations
 initial(hospitalisations_inc) <- 0
 delta_hospitalisations_total <- sum(n_I_C_2_to_hosp)
-update(hospitalisations_inc) <- if (step %% steps_per_day == 0)
+new_hospitalisations_inc <- if (step %% steps_per_day == 0)
   delta_hospitalisations_total else
     hospitalisations_inc + delta_hospitalisations_total
+update(hospitalisations_inc) <- new_hospitalisations_inc
 
 initial(hospitalisations_inc_by_strain[]) <- 0
 delta_hospitalisations_by_strain[] <- sum(n_I_C_2_to_hosp[, i, ])
-update(hospitalisations_inc_by_strain[]) <-
+new_hospitalisations_inc_by_strain[] <-
   if (step %% steps_per_day == 0)
-    delta_infections_per_strain[i] else
-      hospitalisations_inc_by_strain[i] + delta_infections_per_strain[i]
+    delta_hospitalisations_by_strain[i] else
+      hospitalisations_inc_by_strain[i] + delta_hospitalisations_by_strain[i]
+update(hospitalisations_inc_by_strain[]) <-
+  new_hospitalisations_inc_by_strain[i]
 dim(delta_hospitalisations_by_strain) <- n_strains
+dim(new_hospitalisations_inc_by_strain) <- n_strains
 dim(hospitalisations_inc_by_strain) <- n_strains
 
 initial(hospitalisations_inc_by_age[]) <- 0
 delta_hospitalisations_by_age[] <- sum(n_I_C_2_to_hosp[i, , ])
-update(hospitalisations_inc_by_age[]) <-
+new_hospitalisations_inc_by_age[] <-
   if (step %% steps_per_day == 0)
     delta_hospitalisations_by_age[i] else
       hospitalisations_inc_by_age[i] + delta_hospitalisations_by_age[i]
+update(hospitalisations_inc_by_age[]) <- new_hospitalisations_inc_by_age[i]
 dim(delta_hospitalisations_by_age) <- n_groups
+dim(new_hospitalisations_inc_by_age) <- n_groups
 dim(hospitalisations_inc_by_age) <- n_groups
 
 ## Work out the new S (i for age, j for vaccination status)

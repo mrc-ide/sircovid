@@ -2443,11 +2443,15 @@ public:
     int dim_new_W_R_unconf_2;
     int dim_new_W_R_unconf_3;
     int dim_new_W_R_unconf_4;
+    int dim_new_hospitalisations_inc_by_age;
+    int dim_new_hospitalisations_inc_by_strain;
     int dim_new_inf;
     int dim_new_inf_1;
     int dim_new_inf_12;
     int dim_new_inf_2;
     int dim_new_inf_3;
+    int dim_new_infections_inc_by_age;
+    int dim_new_infections_inc_per_strain;
     int dim_p_C;
     int dim_p_C_1;
     int dim_p_C_12;
@@ -3360,7 +3364,11 @@ public:
     std::vector<real_type> new_W_D_unconf;
     std::vector<real_type> new_W_R_conf;
     std::vector<real_type> new_W_R_unconf;
+    std::vector<real_type> new_hospitalisations_inc_by_age;
+    std::vector<real_type> new_hospitalisations_inc_by_strain;
     std::vector<real_type> new_inf;
+    std::vector<real_type> new_infections_inc_by_age;
+    std::vector<real_type> new_infections_inc_per_strain;
     std::vector<real_type> p_C;
     std::vector<real_type> p_E_next_vacc_class;
     std::vector<real_type> p_E_progress;
@@ -4956,6 +4964,9 @@ public:
     for (int i = 1; i <= shared->dim_delta_hospitalisations_by_age; ++i) {
       internal.delta_hospitalisations_by_age[i - 1] = odin_sum3<real_type>(internal.n_I_C_2_to_hosp.data(), i - 1, i, 0, shared->dim_n_I_C_2_to_hosp_2, 0, shared->dim_n_I_C_2_to_hosp_3, shared->dim_n_I_C_2_to_hosp_1, shared->dim_n_I_C_2_to_hosp_12);
     }
+    for (int i = 1; i <= shared->dim_delta_hospitalisations_by_strain; ++i) {
+      internal.delta_hospitalisations_by_strain[i - 1] = odin_sum3<real_type>(internal.n_I_C_2_to_hosp.data(), 0, shared->dim_n_I_C_2_to_hosp_1, i - 1, i, 0, shared->dim_n_I_C_2_to_hosp_3, shared->dim_n_I_C_2_to_hosp_1, shared->dim_n_I_C_2_to_hosp_12);
+    }
     real_type delta_hospitalisations_total = odin_sum1<real_type>(internal.n_I_C_2_to_hosp.data(), 0, shared->dim_n_I_C_2_to_hosp);
     for (int i = 1; i <= shared->dim_n_E_next_vacc_class_1; ++i) {
       for (int j = 1; j <= shared->dim_n_E_next_vacc_class_2; ++j) {
@@ -5228,6 +5239,13 @@ public:
         }
       }
     }
+    real_type new_hospitalisations_inc = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? delta_hospitalisations_total : hospitalisations_inc + delta_hospitalisations_total);
+    for (int i = 1; i <= shared->dim_new_hospitalisations_inc_by_age; ++i) {
+      internal.new_hospitalisations_inc_by_age[i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_hospitalisations_by_age[i - 1] : hospitalisations_inc_by_age[i - 1] + internal.delta_hospitalisations_by_age[i - 1]);
+    }
+    for (int i = 1; i <= shared->dim_new_hospitalisations_inc_by_strain; ++i) {
+      internal.new_hospitalisations_inc_by_strain[i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_hospitalisations_by_strain[i - 1] : hospitalisations_inc_by_strain[i - 1] + internal.delta_hospitalisations_by_strain[i - 1]);
+    }
     for (int i = 1; i <= shared->dim_p_RS_1; ++i) {
       for (int j = 1; j <= shared->dim_p_RS_2; ++j) {
         for (int k = 1; k <= shared->dim_p_RS_3; ++k) {
@@ -5282,10 +5300,6 @@ public:
     }
     for (int i = 1; i <= shared->dim_hfr_strain; ++i) {
       state_next[shared->offset_variable_hfr_strain + i - 1] = (shared->n_real_strains == 1 ? odin_sum3<real_type>(internal.HFR_disag_weighted.data(), 0, shared->dim_HFR_disag_weighted_1, 0, 1, 0, shared->dim_HFR_disag_weighted_3, shared->dim_HFR_disag_weighted_1, shared->dim_HFR_disag_weighted_12) / (real_type) odin_sum3<real_type>(internal.n_I_C_2_to_hosp.data(), 0, shared->dim_n_I_C_2_to_hosp_1, 0, 1, 0, shared->dim_n_I_C_2_to_hosp_3, shared->dim_n_I_C_2_to_hosp_1, shared->dim_n_I_C_2_to_hosp_12) : (odin_sum3<real_type>(internal.HFR_disag_weighted.data(), 0, shared->dim_HFR_disag_weighted_1, i - 1, i, 0, shared->dim_HFR_disag_weighted_3, shared->dim_HFR_disag_weighted_1, shared->dim_HFR_disag_weighted_12) + odin_sum3<real_type>(internal.HFR_disag_weighted.data(), 0, shared->dim_HFR_disag_weighted_1, 5 - i - 1, 5 - i, 0, shared->dim_HFR_disag_weighted_3, shared->dim_HFR_disag_weighted_1, shared->dim_HFR_disag_weighted_12)) / (real_type) (odin_sum3<real_type>(internal.n_I_C_2_to_hosp.data(), 0, shared->dim_n_I_C_2_to_hosp_1, i - 1, i, 0, shared->dim_n_I_C_2_to_hosp_3, shared->dim_n_I_C_2_to_hosp_1, shared->dim_n_I_C_2_to_hosp_12) + odin_sum3<real_type>(internal.n_I_C_2_to_hosp.data(), 0, shared->dim_n_I_C_2_to_hosp_1, 5 - i - 1, 5 - i, 0, shared->dim_n_I_C_2_to_hosp_3, shared->dim_n_I_C_2_to_hosp_1, shared->dim_n_I_C_2_to_hosp_12)));
-    }
-    state_next[14] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? delta_hospitalisations_total : hospitalisations_inc + delta_hospitalisations_total);
-    for (int i = 1; i <= shared->dim_hospitalisations_inc_by_age; ++i) {
-      state_next[shared->offset_variable_hospitalisations_inc_by_age + i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_hospitalisations_by_age[i - 1] : hospitalisations_inc_by_age[i - 1] + internal.delta_hospitalisations_by_age[i - 1]);
     }
     for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
       for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
@@ -5408,6 +5422,13 @@ public:
       for (int j = 1; j <= shared->dim_cum_n_I_P_vacc_skip_2; ++j) {
         state_next[shared->offset_variable_cum_n_I_P_vacc_skip + i - 1 + shared->dim_cum_n_I_P_vacc_skip_1 * (j - 1)] = cum_n_I_P_vacc_skip[shared->dim_cum_n_I_P_vacc_skip_1 * (j - 1) + i - 1] + odin_sum4<real_type>(internal.n_I_P_vacc_skip.data(), i - 1, i, 0, shared->dim_n_I_P_vacc_skip_2, 0, shared->dim_n_I_P_vacc_skip_3, j - 1, j, shared->dim_n_I_P_vacc_skip_1, shared->dim_n_I_P_vacc_skip_12, shared->dim_n_I_P_vacc_skip_123);
       }
+    }
+    state_next[14] = new_hospitalisations_inc;
+    for (int i = 1; i <= shared->dim_hospitalisations_inc_by_age; ++i) {
+      state_next[shared->offset_variable_hospitalisations_inc_by_age + i - 1] = internal.new_hospitalisations_inc_by_age[i - 1];
+    }
+    for (int i = 1; i <= shared->dim_hospitalisations_inc_by_strain; ++i) {
+      state_next[shared->offset_variable_hospitalisations_inc_by_strain + i - 1] = internal.new_hospitalisations_inc_by_strain[i - 1];
     }
     for (int i = 1; i <= shared->dim_n_I_C_2_to_H_D_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_n_I_C_2_to_H_D_conf_2; ++j) {
@@ -5830,6 +5851,13 @@ public:
     }
     state_next[22] = new_general_tot;
     state_next[23] = new_ICU_tot + new_general_tot;
+    real_type new_infections_inc = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? delta_infections_total : infections_inc + delta_infections_total);
+    for (int i = 1; i <= shared->dim_new_infections_inc_by_age; ++i) {
+      internal.new_infections_inc_by_age[i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_infections_by_age[i - 1] : infections_inc_by_age[i - 1] + internal.delta_infections_by_age[i - 1]);
+    }
+    for (int i = 1; i <= shared->dim_new_infections_inc_per_strain; ++i) {
+      internal.new_infections_inc_per_strain[i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_infections_per_strain[i - 1] : infections_inc_per_strain[i - 1] + internal.delta_infections_per_strain[i - 1]);
+    }
     real_type prob_strain_1 = (shared->n_real_strains == 1 || sum_new_I_weighted == 0 ? 1 : (odin_sum3<real_type>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted_1, 0, 1, 0, shared->dim_new_I_weighted_3, shared->dim_new_I_weighted_1, shared->dim_new_I_weighted_12) + odin_sum3<real_type>(internal.new_I_weighted.data(), 0, shared->dim_new_I_weighted_1, 3, 4, 0, shared->dim_new_I_weighted_3, shared->dim_new_I_weighted_1, shared->dim_new_I_weighted_12)) / (real_type) sum_new_I_weighted);
     for (int i = 1; i <= shared->dim_E_1; ++i) {
       for (int j = 1; j <= shared->dim_E_2; ++j) {
@@ -5856,9 +5884,6 @@ public:
         state_next[shared->offset_variable_cum_n_vaccinated + i - 1 + shared->dim_cum_n_vaccinated_1 * (j - 1)] = cum_n_vaccinated[shared->dim_cum_n_vaccinated_1 * (j - 1) + i - 1] + internal.n_vaccinated[shared->dim_n_vaccinated_1 * (j - 1) + i - 1];
       }
     }
-    for (int i = 1; i <= shared->dim_hospitalisations_inc_by_strain; ++i) {
-      state_next[shared->offset_variable_hospitalisations_inc_by_strain + i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_infections_per_strain[i - 1] : hospitalisations_inc_by_strain[i - 1] + internal.delta_infections_per_strain[i - 1]);
-    }
     state_next[88] = odin_sum1<real_type>(internal.IFR_disag_weighted.data(), 0, shared->dim_IFR_disag_weighted) / (real_type) odin_sum1<real_type>(internal.new_inf.data(), 0, shared->dim_new_inf);
     for (int i = 1; i <= shared->dim_ifr_age; ++i) {
       state_next[shared->offset_variable_ifr_age + i - 1] = odin_sum3<real_type>(internal.IFR_disag_weighted.data(), i - 1, i, 0, shared->dim_IFR_disag_weighted_2, 0, shared->dim_IFR_disag_weighted_3, shared->dim_IFR_disag_weighted_1, shared->dim_IFR_disag_weighted_12) / (real_type) odin_sum3<real_type>(internal.new_inf.data(), i - 1, i, 0, shared->dim_new_inf_2, 0, shared->dim_new_inf_3, shared->dim_new_inf_1, shared->dim_new_inf_12);
@@ -5883,17 +5908,17 @@ public:
     for (int i = 1; i <= shared->dim_ihr_strain; ++i) {
       state_next[shared->offset_variable_ihr_strain + i - 1] = (shared->n_real_strains == 1 ? odin_sum3<real_type>(internal.IHR_disag_weighted.data(), 0, shared->dim_IHR_disag_weighted_1, 0, 1, 0, shared->dim_IHR_disag_weighted_3, shared->dim_IHR_disag_weighted_1, shared->dim_IHR_disag_weighted_12) / (real_type) odin_sum3<real_type>(internal.new_inf.data(), 0, shared->dim_new_inf_1, 0, 1, 0, shared->dim_new_inf_3, shared->dim_new_inf_1, shared->dim_new_inf_12) : (odin_sum3<real_type>(internal.IHR_disag_weighted.data(), 0, shared->dim_IHR_disag_weighted_1, i - 1, i, 0, shared->dim_IHR_disag_weighted_3, shared->dim_IHR_disag_weighted_1, shared->dim_IHR_disag_weighted_12) + odin_sum3<real_type>(internal.IHR_disag_weighted.data(), 0, shared->dim_IHR_disag_weighted_1, 5 - i - 1, 5 - i, 0, shared->dim_IHR_disag_weighted_3, shared->dim_IHR_disag_weighted_1, shared->dim_IHR_disag_weighted_12)) / (real_type) (odin_sum3<real_type>(internal.new_inf.data(), 0, shared->dim_new_inf_1, i - 1, i, 0, shared->dim_new_inf_3, shared->dim_new_inf_1, shared->dim_new_inf_12) + odin_sum3<real_type>(internal.new_inf.data(), 0, shared->dim_new_inf_1, 5 - i - 1, 5 - i, 0, shared->dim_new_inf_3, shared->dim_new_inf_1, shared->dim_new_inf_12)));
     }
-    state_next[13] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? delta_infections_total : infections_inc + delta_infections_total);
-    for (int i = 1; i <= shared->dim_infections_inc_by_age; ++i) {
-      state_next[shared->offset_variable_infections_inc_by_age + i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_infections_by_age[i - 1] : infections_inc_by_age[i - 1] + internal.delta_infections_by_age[i - 1]);
-    }
-    for (int i = 1; i <= shared->dim_infections_inc_per_strain; ++i) {
-      state_next[shared->offset_variable_infections_inc_per_strain + i - 1] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? internal.delta_infections_per_strain[i - 1] : infections_inc_per_strain[i - 1] + internal.delta_infections_per_strain[i - 1]);
-    }
     for (int i = 1; i <= shared->dim_vaccine_missed_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vaccine_missed_doses_2; ++j) {
         state_next[shared->offset_variable_vaccine_missed_doses + i - 1 + shared->dim_vaccine_missed_doses_1 * (j - 1)] = shared->vaccine_catchup_fraction * std::max(internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.n_vaccinated[shared->dim_n_vaccinated_1 * (shared->index_dose[j - 1] - 1) + i - 1], static_cast<real_type>(0));
       }
+    }
+    state_next[13] = new_infections_inc;
+    for (int i = 1; i <= shared->dim_infections_inc_by_age; ++i) {
+      state_next[shared->offset_variable_infections_inc_by_age + i - 1] = internal.new_infections_inc_by_age[i - 1];
+    }
+    for (int i = 1; i <= shared->dim_infections_inc_per_strain; ++i) {
+      state_next[shared->offset_variable_infections_inc_per_strain + i - 1] = internal.new_infections_inc_per_strain[i - 1];
     }
     for (int i = 1; i <= shared->dim_prob_strain; ++i) {
       state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
@@ -7301,9 +7326,13 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_new_W_R_unconf_2 = shared->n_strains;
   shared->dim_new_W_R_unconf_3 = shared->k_W_R;
   shared->dim_new_W_R_unconf_4 = shared->n_vacc_classes;
+  shared->dim_new_hospitalisations_inc_by_age = shared->n_groups;
+  shared->dim_new_hospitalisations_inc_by_strain = shared->n_strains;
   shared->dim_new_inf_1 = shared->n_groups;
   shared->dim_new_inf_2 = shared->n_strains;
   shared->dim_new_inf_3 = shared->n_vacc_classes;
+  shared->dim_new_infections_inc_by_age = shared->n_groups;
+  shared->dim_new_infections_inc_per_strain = shared->n_strains;
   shared->dim_p_C_1 = shared->n_groups;
   shared->dim_p_C_2 = shared->n_strains;
   shared->dim_p_C_3 = shared->n_vacc_classes;
@@ -7531,6 +7560,10 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->initial_ihr_age = std::vector<real_type>(shared->dim_ihr_age);
   shared->initial_infections_inc_by_age = std::vector<real_type>(shared->dim_infections_inc_by_age);
   shared->initial_infections_inc_per_strain = std::vector<real_type>(shared->dim_infections_inc_per_strain);
+  internal.new_hospitalisations_inc_by_age = std::vector<real_type>(shared->dim_new_hospitalisations_inc_by_age);
+  internal.new_hospitalisations_inc_by_strain = std::vector<real_type>(shared->dim_new_hospitalisations_inc_by_strain);
+  internal.new_infections_inc_by_age = std::vector<real_type>(shared->dim_new_infections_inc_by_age);
+  internal.new_infections_inc_per_strain = std::vector<real_type>(shared->dim_new_infections_inc_per_strain);
   internal.p_E_progress = std::vector<real_type>(shared->dim_p_E_progress);
   internal.p_G_D_progress = std::vector<real_type>(shared->dim_p_G_D_progress);
   internal.p_H_D_progress = std::vector<real_type>(shared->dim_p_H_D_progress);
