@@ -3351,5 +3351,3 @@ test_that("Can create vaccine eligibility vector", {
     vaccine_eligibility(500),
     rep(c(0, 1), c(17, 2)))
 })
-
-
