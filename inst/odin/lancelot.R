@@ -2365,101 +2365,95 @@ dim(vacc_skipped) <- n_vacc_classes
 ## Severity outputs by age - vacc class - infection class
 dim(new_inf) <- c(n_groups, n_strains, n_vacc_classes)
 dim(IHR_disag) <- c(n_groups, n_strains, n_vacc_classes)
-dim(IHR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+dim(IHR_disag_weighted_inc) <- c(n_groups, n_strains, n_vacc_classes)
+dim(new_IHR_disag_weighted_inc) <- c(n_groups, n_strains, n_vacc_classes)
 dim(HFR_disag) <- c(n_groups, n_strains, n_vacc_classes)
-dim(HFR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+dim(HFR_disag_weighted_inc) <- c(n_groups, n_strains, n_vacc_classes)
+dim(new_HFR_disag_weighted_inc) <- c(n_groups, n_strains, n_vacc_classes)
 dim(IFR_disag) <- c(n_groups, n_strains, n_vacc_classes)
-dim(IFR_disag_weighted) <- c(n_groups, n_strains, n_vacc_classes)
+dim(IFR_disag_weighted_inc) <- c(n_groups, n_strains, n_vacc_classes)
+dim(new_IFR_disag_weighted_inc) <- c(n_groups, n_strains, n_vacc_classes)
 
 new_inf[, , ] <- n_S_progress[i, j, k] +
   (if (j > 2) n_RE[i, j, k] else 0)
 
 IHR_disag[, , ] <- p_C[i, j, k] * p_H[i, j, k] * (1 - p_G_D[i, j, k])
-IHR_disag_weighted[, , ] <- IHR_disag[i, j, k] * new_inf[i, j, k]
-new_IH_expected_inc <-
+new_IHR_disag_weighted_inc[, , ] <-
   if (step %% steps_per_day == 0)
-    sum(IHR_disag_weighted) else IH_expected_inc + sum(IHR_disag_weighted)
-initial(IH_expected_inc) <- 0
-update(IH_expected_inc) <- new_IH_expected_inc
+    IHR_disag[i, j, k] * new_inf[i, j, k] else
+      IHR_disag_weighted_inc[i, j, k] + IHR_disag[i, j, k] * new_inf[i, j, k]
+initial(IHR_disag_weighted_inc[, , ]) <- NA
+update(IHR_disag_weighted_inc[, , ]) <- new_IHR_disag_weighted_inc[i, j, k]
 initial(ihr) <- NA
-update(ihr) <- new_IH_expected_inc / new_infections_inc
+update(ihr) <- sum(new_IHR_disag_weighted_inc) / new_infections_inc
 
 HFR_disag[, , ] <- (1 - p_ICU[i, j, k]) * p_H_D[i, j, k] +
   p_ICU[i, j, k] * p_ICU_D[i, j, k] +
   p_ICU[i, j, k] * (1 - p_ICU_D[i, j, k]) * p_W_D[i, j, k]
-HFR_disag_weighted[, , ] <- HFR_disag[i, j, k] * n_I_C_2_to_hosp[i, j, k]
-new_HF_expected_inc <-
+new_HFR_disag_weighted_inc[, , ] <-
   if (step %% steps_per_day == 0)
-    sum(HFR_disag_weighted) else HF_expected_inc + sum(HFR_disag_weighted)
-initial(HF_expected_inc) <- 0
-update(HF_expected_inc) <- new_HF_expected_inc
+    HFR_disag[i, j, k] * new_inf[i, j, k] else
+      HFR_disag_weighted_inc[i, j, k] +
+  HFR_disag[i, j, k] * n_I_C_2_to_hosp[i, j, k]
+initial(HFR_disag_weighted_inc[, , ]) <- NA
+update(HFR_disag_weighted_inc[, , ]) <- new_HFR_disag_weighted_inc[i, j, k]
 initial(hfr) <- NA
-update(hfr) <- new_HF_expected_inc / new_hospitalisations_inc
+update(hfr) <- sum(new_HFR_disag_weighted_inc) / new_hospitalisations_inc
+
 
 IFR_disag[, , ] <- IHR_disag[i, j, k] * HFR_disag[i, j, k] +
   p_C[i, j, k] * p_H[i, j, k] * p_G_D[i, j, k]
-IFR_disag_weighted[, , ] <- IFR_disag[i, j, k] * new_inf[i, j, k]
-new_IF_expected_inc <-
+new_IFR_disag_weighted_inc[, , ] <-
   if (step %% steps_per_day == 0)
-    sum(IFR_disag_weighted) else IF_expected_inc + sum(IFR_disag_weighted)
-initial(IF_expected_inc) <- 0
-update(IF_expected_inc) <- new_IF_expected_inc
+    IFR_disag[i, j, k] * new_inf[i, j, k] else
+      IFR_disag_weighted_inc[i, j, k] + IFR_disag[i, j, k] * new_inf[i, j, k]
+initial(IFR_disag_weighted_inc[, , ]) <- NA
+update(IFR_disag_weighted_inc[, , ]) <- new_IFR_disag_weighted_inc[i, j, k]
 initial(ifr) <- NA
-update(ifr) <- new_IF_expected_inc / new_infections_inc
+update(ifr) <- sum(new_IFR_disag_weighted_inc) / new_infections_inc
 
 ## By strain
-initial(ifr_strain[]) <- 0
+initial(ifr_strain[]) <- NA
 update(ifr_strain[]) <- if (n_real_strains == 1)
-  sum(IFR_disag_weighted[, 1, ]) / sum(new_inf[, 1, ]) else
-    (sum(IFR_disag_weighted[, i, ]) + sum(IFR_disag_weighted[, 5 - i, ])) /
-  (sum(new_inf[, i, ]) + sum(new_inf[, 5 - i, ]))
+  sum(new_IFR_disag_weighted_inc[, 1, ]) / new_infections_inc_per_strain[1] else
+    (sum(new_IFR_disag_weighted_inc[, i, ]) +
+       sum(new_IFR_disag_weighted_inc[, 5 - i, ])) /
+  (new_infections_inc_per_strain[i] + new_infections_inc_per_strain[5 - i])
 dim(ifr_strain) <- n_real_strains
 
-initial(ihr_strain[]) <- 0
+initial(ihr_strain[]) <- NA
 update(ihr_strain[]) <- if (n_real_strains == 1)
-  sum(IHR_disag_weighted[, 1, ]) / sum(new_inf[, 1, ]) else
-    (sum(IHR_disag_weighted[, i, ]) + sum(IHR_disag_weighted[, 5 - i, ])) /
-  (sum(new_inf[, i, ]) + sum(new_inf[, 5 - i, ]))
+  sum(new_IHR_disag_weighted_inc[, 1, ]) / new_infections_inc_per_strain[1] else
+    (sum(new_IHR_disag_weighted_inc[, i, ]) +
+       sum(new_IHR_disag_weighted_inc[, 5 - i, ])) /
+  (new_infections_inc_per_strain[i] + new_infections_inc_per_strain[5 - i])
 dim(ihr_strain) <- n_real_strains
 
-initial(hfr_strain[]) <- 0
+initial(hfr_strain[]) <- NA
 update(hfr_strain[]) <- if (n_real_strains == 1)
-  sum(HFR_disag_weighted[, 1, ]) / sum(n_I_C_2_to_hosp[, 1, ]) else
-    (sum(HFR_disag_weighted[, i, ]) + sum(HFR_disag_weighted[, 5 - i, ])) /
-  (sum(n_I_C_2_to_hosp[, i, ]) + sum(n_I_C_2_to_hosp[, 5 - i, ]))
+  sum(new_HFR_disag_weighted_inc[, 1, ]) /
+  new_hospitalisations_inc_by_strain[1] else
+    (sum(new_HFR_disag_weighted_inc[, i, ]) +
+       sum(new_HFR_disag_weighted_inc[, 5 - i, ])) /
+  (new_hospitalisations_inc_by_strain[i] +
+     new_hospitalisations_inc_by_strain[5 - i])
 dim(hfr_strain) <- n_real_strains
 
 ## By age
 dim(ifr_age) <- n_groups
-initial(ifr_age[]) <- 0
-update(ifr_age[]) <- sum(IFR_disag_weighted[i, , ]) /
-  sum(new_inf[i, , ])
+initial(ifr_age[]) <- NA
+update(ifr_age[]) <- sum(new_IFR_disag_weighted_inc[i, , ]) /
+  new_infections_inc_by_age[i]
 
 dim(ihr_age) <- n_groups
-initial(ihr_age[]) <- 0
-update(ihr_age[]) <- sum(IHR_disag_weighted[i, , ]) /
-  sum(new_inf[i, , ])
+initial(ihr_age[]) <- NA
+update(ihr_age[]) <- sum(new_IHR_disag_weighted_inc[i, , ]) /
+  new_infections_inc_by_age[i]
 
 dim(hfr_age) <- n_groups
-initial(hfr_age[]) <- 0
-update(hfr_age[]) <- sum(HFR_disag_weighted[i, , ]) /
-  sum(n_I_C_2_to_hosp[i, , ])
-
-## By age and vaccine class
-dim(ifr_disag) <- c(n_groups, n_vacc_classes)
-initial(ifr_disag[, ]) <- 0
-update(ifr_disag[, ]) <- sum(IFR_disag_weighted[i, , j]) /
-  sum(new_inf[i, , j])
-
-dim(ihr_disag) <- c(n_groups, n_vacc_classes)
-initial(ihr_disag[, ]) <- 0
-update(ihr_disag[, ]) <- sum(IHR_disag_weighted[i, , j]) /
-  sum(new_inf[i, , j])
-
-dim(hfr_disag) <- c(n_groups, n_vacc_classes)
-initial(hfr_disag[, ]) <- 0
-update(hfr_disag[, ]) <- sum(HFR_disag_weighted[i, , j]) /
-  sum(n_I_C_2_to_hosp[i, , j])
+initial(hfr_age[]) <- NA
+update(hfr_age[]) <- sum(new_HFR_disag_weighted_inc[i, , ]) /
+  new_hospitalisations_inc_by_age[i]
 
 
 config(compare) <- "compare_lancelot.cpp"
