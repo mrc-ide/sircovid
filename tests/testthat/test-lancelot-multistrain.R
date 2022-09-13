@@ -701,7 +701,8 @@ test_that("Swapping strains gives identical results with different index", {
   z2$effective_susceptible[2, ] <- z1$effective_susceptible[2, , drop = FALSE]
 
   for (nm in c("T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg",
-               "I_weighted")) {
+               "I_weighted", "IFR_disag_weighted_inc", "IHR_disag_weighted_inc",
+               "HFR_disag_weighted_inc")) {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   z2$R <- z2$R[, c(i, 5), , , drop = FALSE]

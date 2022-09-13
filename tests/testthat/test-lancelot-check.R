@@ -1214,18 +1214,18 @@ test_that("Severity by age is calculated parametrically", {
   ifr <- ihr * hfr + p$p_C_step * p$p_H_step * p$p_G_D_step
 
   # There are extremely low discrepancies due to integer precision, in random
-  # number generation. We'll round to 15
+  # number generation. We'll round to 10 digits
   y <- helper(p, "ifr_age")[c(1:17), 201]
   x <- ifr[which(!is.na(y))]
-  expect_vector_equal(x, y, 15)
+  expect_vector_equal(x, y, 10)
 
   y <- helper(p, "ihr_age")[c(1:17), 101]
   x <- ihr[which(!is.na(y))]
-  expect_vector_equal(x, y, 15)
+  expect_vector_equal(x, y, 10)
 
   # We have some NAs in young age bands in y - we'll ignore
   y <- helper(p, "hfr_age")[c(1:17), 101]
   x <- hfr[which(!is.na(y))]
   y <- y[which(!is.na(y))]
-  expect_vector_equal(x, y, 15)
+  expect_vector_equal(x, y, 10)
 })
