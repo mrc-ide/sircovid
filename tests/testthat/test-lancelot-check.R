@@ -904,6 +904,24 @@ test_that("Symptomatic cases by age add up correctly", {
 })
 
 
+test_that("Infections and hospitlisations incidence by age add up correctly", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$infections_inc == colSums(y$infections_inc_age)))
+
+  expect_true(all(y$hospitalisations_inc ==
+                    colSums(y$hospitalisations_inc_age)))
+})
+
+
 test_that("Disaggregated and aggregated data streams add up correctly", {
   p <- lancelot_parameters(0, "england")
   mod <- lancelot$new(p, 0, 1)

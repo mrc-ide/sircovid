@@ -954,7 +954,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   if (infections_inc_per_strain || severity) {
     ## strain only
     index_infections_inc_per_strain <-
-      calculate_index(index, "infections_inc_per_strain", list(),
+      calculate_index(index, "infections_inc_strain", list(),
                       seq_len(n_tot_strains), "infections_inc_strain_")
 
     index_state <- c(index_state, index_infections_inc_per_strain)
@@ -973,15 +973,15 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                         seq_len(n_strains), "ihr_strain_"),
         calculate_index(index, "hfr_strain", list(),
                         seq_len(n_strains), "hfr_strain_"),
-        calculate_index(index, "hospitalisations_inc_by_strain", list(),
-                        seq_len(n_tot_strains)))
+        calculate_index(index, "hospitalisations_inc_strain", list(),
+                        seq_len(n_tot_strains), "hospitalisations_inc_strain_"))
 
     index_severity_age <-
       c(calculate_index(index, "ifr_age", list(), suffix),
         calculate_index(index, "ihr_age", list(), suffix),
         calculate_index(index, "hfr_age", list(), suffix),
-        calculate_index(index, "infections_inc_by_age", list(), suffix),
-        calculate_index(index, "hospitalisations_inc_by_age", list(), suffix))
+        calculate_index(index, "infections_inc_age", list(), suffix),
+        calculate_index(index, "hospitalisations_inc_age", list(), suffix))
 
     index_state <- c(index_state, index_severity, index_severity_strain,
                      index_severity_age)

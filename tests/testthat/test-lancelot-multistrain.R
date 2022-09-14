@@ -146,11 +146,11 @@ test_that("Seeding of second strain generates an epidemic", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Did the seeded cases go on to infect other people?
   expect_true(
-    sum(y$cum_infections_per_strain[2:3, 101]) > n_seeded_new_strain_inf)
+    sum(y$cum_infections_strain[2:3, 101]) > n_seeded_new_strain_inf)
   expect_true(
-    all(y$cum_infections_per_strain[2:3, 101] > 0))
+    all(y$cum_infections_strain[2:3, 101] > 0))
   ## did we count infections per strain properly?
-  expect_equal(sum(y$cum_infections_per_strain[, 101]),
+  expect_equal(sum(y$cum_infections_strain[, 101]),
                y$cum_infections[, 101])
 
   ## Check the epidemic of the second strain starts when we expect
@@ -197,8 +197,8 @@ test_that("Second more virulent strain takes over", {
 
   ## cumulative infections with 2nd strain larger than with 1st strain
   ## (average over 10 runs)
-  expect_true(mean(y$cum_infections_per_strain[c(1, 3), , 101]) <
-                mean(y$cum_infections_per_strain[c(2, 4), , 101]))
+  expect_true(mean(y$cum_infections_strain[c(1, 3), , 101]) <
+                mean(y$cum_infections_strain[c(2, 4), , 101]))
 })
 
 
@@ -221,8 +221,8 @@ test_that("Second less virulent strain does not take over", {
     drop(mod$simulate(seq(0, 400, by = 4))))
   ## Cumulative infections with 2nd strain smaller than with 1st strain
   ## (average over 10 runs)
-  expect_true(mean(y$cum_infections_per_strain[c(1, 3), , 101]) >
-                mean(y$cum_infections_per_strain[c(2, 4), , 101]))
+  expect_true(mean(y$cum_infections_strain[c(1, 3), , 101]) >
+                mean(y$cum_infections_strain[c(2, 4), , 101]))
 
 })
 
@@ -508,10 +508,10 @@ test_that("No infection after seeding of second strain with 0 transmission", {
   pois_range <- rpois(1000, n_seeded_new_strain_inf)
 
   ## Expect the seeded cases did not infect any other people
-  expect_true(y$cum_infections_per_strain[2, 101] <= max(pois_range))
-  expect_true(y$cum_infections_per_strain[2, 101] >= min(pois_range))
-  expect_true(y$cum_infections_per_strain[4, 101] <= max(pois_range))
-  expect_true(y$cum_infections_per_strain[4, 101] >= 0)
+  expect_true(y$cum_infections_strain[2, 101] <= max(pois_range))
+  expect_true(y$cum_infections_strain[2, 101] >= min(pois_range))
+  expect_true(y$cum_infections_strain[4, 101] <= max(pois_range))
+  expect_true(y$cum_infections_strain[4, 101] >= 0)
 })
 
 
@@ -582,7 +582,7 @@ test_that("No infection with either strain with perfect vaccine", {
   expect_true(all(y$S[, 2, ] == y$S[, 2, 1]))
 
   ## Noone gets infected with either strain
-  expect_true(all(y$cum_infections_per_strain == 0))
+  expect_true(all(y$cum_infections_strain == 0))
   expect_true(all(y$cum_infections == 0))
 })
 
@@ -679,15 +679,15 @@ test_that("Swapping strains gives identical results with different index", {
     z2[["cum_sympt_cases"]] - z2[["cum_sympt_cases_non_variant"]]
   z2[["cum_sympt_cases_non_variant_over25"]] <-
     z2[["cum_sympt_cases_over25"]] - z2[["cum_sympt_cases_non_variant_over25"]]
-  z2$cum_infections_per_strain <-
-    z2$cum_infections_per_strain[i, , drop = FALSE]
-  z2$infections_inc_per_strain <-
-    z2$infections_inc_per_strain[i, , drop = FALSE]
-  z2$hospitalisations_inc_by_strain <-
-    z2$hospitalisations_inc_by_strain[i, , drop = FALSE]
+  z2$cum_infections_strain <-
+    z2$cum_infections_strain[i, , drop = FALSE]
+  z2$infections_inc_strain <-
+    z2$infections_inc_strain[i, , drop = FALSE]
+  z2$hospitalisations_inc_strain <-
+    z2$hospitalisations_inc_strain[i, , drop = FALSE]
   ## This one can't easily be computed as it's not quite running
   ## incidence but over a sawtooth; the calculation relative to
-  ## cum_infections_per_strain is confirmed elsewhere so here just
+  ## cum_infections_strain is confirmed elsewhere so here just
   ## move it out the way:
   z2[["sympt_cases_non_variant_inc"]] <-
     z1[["sympt_cases_non_variant_inc"]]
@@ -3024,7 +3024,7 @@ test_that("complete cross_immunity means no Strain 3/4 infections", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_true(all(y$cum_infections_per_strain[3:4, ] == 0))
+  expect_true(all(y$cum_infections_strain[3:4, ] == 0))
 })
 
 test_that("some cross-immunity means less Strain 3 or 4 infections than none
@@ -3052,7 +3052,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
              set.seed(1)
              y <- mod$transform_variables(
                drop(mod$simulate(steps)))
-             infect_no_cross <- y$cum_infections_per_strain[3:4, 123]
+             infect_no_cross <- y$cum_infections_strain[3:4, 123]
 
              ## some cross-immunity
              p <- lancelot_parameters(
@@ -3072,7 +3072,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
              set.seed(1)
              y <- mod$transform_variables(
                drop(mod$simulate(steps)))
-             infect_some_cross <- y$cum_infections_per_strain[3:4, 123]
+             infect_some_cross <- y$cum_infections_strain[3:4, 123]
 
              expect_vector_lte(infect_some_cross, infect_no_cross)
              expect_true(all(infect_some_cross > 0))
@@ -3109,8 +3109,8 @@ test_that("cross-immunity can be separated by strain", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_equal(y$cum_infections_per_strain[3, 123], 0)
-  expect_gt(y$cum_infections_per_strain[4, 123], 0)
+  expect_equal(y$cum_infections_strain[3, 123], 0)
+  expect_gt(y$cum_infections_strain[4, 123], 0)
 
   ## complete immunity from Strain 2 means Strain 4 empty (1 reinfection)
   p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
@@ -3132,8 +3132,8 @@ test_that("cross-immunity can be separated by strain", {
   y <- mod$transform_variables(
     drop(mod$simulate(steps)))
 
-  expect_equal(y$cum_infections_per_strain[4, 123], 0)
-  expect_gt(y$cum_infections_per_strain[3, 123], 0)
+  expect_equal(y$cum_infections_strain[4, 123], 0)
+  expect_gt(y$cum_infections_strain[3, 123], 0)
 })
 
 
@@ -3172,8 +3172,8 @@ test_that("can inflate the number of strains after running with 1", {
   z1 <- mod1$transform_variables(y1)
   z2 <- mod2$transform_variables(y2)
   expect_equal(z2$prob_strain, matrix(c(1, 0), 2, 3))
-  expect_equal(z2$cum_infections_per_strain,
-               rbind(z1$cum_infections_per_strain, 0, 0, 0))
+  expect_equal(z2$cum_infections_strain,
+               rbind(z1$cum_infections_strain, 0, 0, 0))
   expect_equal(z2$T_PCR_pos[, 1, , , , drop = FALSE], z1$T_PCR_pos)
   expect_equal(z2$T_PCR_pos[, 2:4, , , , drop = FALSE],
                array(0, c(19, 3, 2, 1, 3)))
@@ -3555,9 +3555,9 @@ test_that("Can rotate strains", {
   expect_equal(y2$R[, 5, , ],
                apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
 
-  expect_true(all(y2$cum_infections_per_strain[2:4, ] == 0))
-  expect_equal(y2$cum_infections_per_strain[1, ],
-               colSums(y1$cum_infections_per_strain))
+  expect_true(all(y2$cum_infections_strain[2:4, ] == 0))
+  expect_equal(y2$cum_infections_strain[1, ],
+               colSums(y1$cum_infections_strain))
 
   expect_error(rotate_strains(state1[, 1], mod$info()),
                "Expected a matrix or array for 'state'")
@@ -3612,10 +3612,10 @@ test_that("Can rotate strains with cross-infection", {
   expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
   expect_equal(y2$R[, 5, , ],
                apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 4), sum))
-  expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
-  expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
-               y1$cum_infections_per_strain[c(1, 4), ] +
-                 y1$cum_infections_per_strain[c(2, 3), ])
+  expect_true(all(y2$cum_infections_strain[c(2, 3), ] == 0))
+  expect_equal(y2$cum_infections_strain[c(1, 4), ],
+               y1$cum_infections_strain[c(1, 4), ] +
+                 y1$cum_infections_strain[c(2, 3), ])
 })
 
 
@@ -3660,10 +3660,10 @@ test_that("Can rotate strains with vaccination", {
   expect_equal(y2$R[, c(1, 4), , ], y1$R[, c(2, 3), , ])
   expect_equal(y2$R[, 5, , ],
                apply(y1$R[, c(1, 4, 5), , , drop = FALSE], c(1, 3, 4), sum))
-  expect_true(all(y2$cum_infections_per_strain[c(2, 3), ] == 0))
-  expect_equal(y2$cum_infections_per_strain[c(1, 4), ],
-               y1$cum_infections_per_strain[c(1, 4), ] +
-                 y1$cum_infections_per_strain[c(2, 3), ])
+  expect_true(all(y2$cum_infections_strain[c(2, 3), ] == 0))
+  expect_equal(y2$cum_infections_strain[c(1, 4), ],
+               y1$cum_infections_strain[c(1, 4), ] +
+                 y1$cum_infections_strain[c(2, 3), ])
 })
 
 
