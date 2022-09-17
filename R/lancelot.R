@@ -908,11 +908,6 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                     seq_len(n_strains), "effective_susceptible_")
   index_save <- c(index_save, index_effective_susceptible)
 
-  ## strain only
-  index_infections_inc_per_strain <-
-    calculate_index(index, "infections_inc_per_strain", list(),
-                    seq_len(n_tot_strains), "infections_inc_strain_")
-
   ## age x (total) strain x vacc class
   index_R <- calculate_index(index, "R",
                              list(S = n_strains_R, V = n_vacc_classes),
@@ -956,32 +951,41 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                                      suffix, "D_hosp"))
   }
 
-  if (infections_inc_per_strain) {
+  if (infections_inc_per_strain || severity) {
+    ## strain only
+    index_infections_inc_per_strain <-
+      calculate_index(index, "infections_inc_strain", list(),
+                      seq_len(n_tot_strains), "infections_inc_strain_")
+
     index_state <- c(index_state, index_infections_inc_per_strain)
   }
 
   if (severity) {
-    index_severity <- c(ifr = index[["ifr"]], ihr = index[["ihr"]],
-                        hfr = index[["hfr"]])
+    index_severity <- c(ifr = index[["ifr"]],
+                        ihr = index[["ihr"]],
+                        hfr = index[["hfr"]],
+                        hospitalisations_inc = index[["hospitalisations_inc"]])
 
-    index_state <- c(index_state, index_severity,
-                     calculate_index(index, "ifr_strain", list(),
-                                     seq_len(n_strains), "ifr_strain_"),
-                     calculate_index(index, "ihr_strain", list(),
-                                     seq_len(n_strains), "ihr_strain_"),
-                     calculate_index(index, "hfr_strain", list(),
-                                     seq_len(n_strains), "hfr_strain_"),
-                     calculate_index(index, "ifr_age", list(), suffix),
-                     calculate_index(index, "ihr_age", list(), suffix),
-                     calculate_index(index, "hfr_age", list(), suffix),
-                     calculate_index(index, "ifr_disag",
-                                     list(n_vacc_classes), suffix),
-                     calculate_index(index, "ihr_disag",
-                                     list(n_vacc_classes), suffix),
-                     calculate_index(index, "hfr_disag",
-                                     list(n_vacc_classes), suffix))
+    index_severity_strain <-
+      c(calculate_index(index, "ifr_strain", list(),
+                        seq_len(n_strains), "ifr_strain_"),
+        calculate_index(index, "ihr_strain", list(),
+                        seq_len(n_strains), "ihr_strain_"),
+        calculate_index(index, "hfr_strain", list(),
+                        seq_len(n_strains), "hfr_strain_"),
+        calculate_index(index, "hospitalisations_inc_strain", list(),
+                        seq_len(n_tot_strains), "hospitalisations_inc_strain_"))
+
+    index_severity_age <-
+      c(calculate_index(index, "ifr_age", list(), suffix),
+        calculate_index(index, "ihr_age", list(), suffix),
+        calculate_index(index, "hfr_age", list(), suffix),
+        calculate_index(index, "infections_inc_age", list(), suffix),
+        calculate_index(index, "hospitalisations_inc_age", list(), suffix))
+
+    index_state <- c(index_state, index_severity, index_severity_strain,
+                     index_severity_age)
   }
-
 
   list(run = index_run, state = index_state)
 }

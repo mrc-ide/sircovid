@@ -1,3 +1,7 @@
+# sircovid 0.14.3
+
+* Severity now calculated based on daily incidence instead of step incidence
+
 # sircovid 0.14.2
 
 * D_hosp is now disaggregated by age and vaccine class
