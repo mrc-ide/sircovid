@@ -997,7 +997,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                         seq_len(n_strains), "protected_R_unvaccinated_"),
         calculate_index(index, "protected_R_vaccinated", list(),
                         seq_len(n_strains), "protected_R_vaccinated_"))
-    index_save <- c(index_save, index_protected)
+    index_state <- c(index_state, index_protected)
   }
 
   list(run = index_run, state = index_state)
