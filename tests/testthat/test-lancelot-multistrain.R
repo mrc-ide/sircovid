@@ -694,11 +694,15 @@ test_that("Swapping strains gives identical results with different index", {
   z2[["sympt_cases_non_variant_over25_inc"]] <-
     z1[["sympt_cases_non_variant_over25_inc"]]
 
-  ## This one will differ because of the asymmetry of cross immunity
+  ## These will differ because of the asymmetry of cross immunity
   ## But at least the number for strain 1 in z1 should match that for
   ## strain 2 in z2
   z2$effective_susceptible[1, ] <- z2$effective_susceptible[2, , drop = FALSE]
   z2$effective_susceptible[2, ] <- z1$effective_susceptible[2, , drop = FALSE]
+  z2$protected_R_unvaccinated[1, ] <-
+    z2$protected_R_unvaccinated[2, , drop = FALSE]
+  z2$protected_R_unvaccinated[2, ] <-
+    z1$protected_R_unvaccinated[2, , drop = FALSE]
 
   for (nm in c("T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg",
                "I_weighted", "IFR_disag_weighted_inc", "IHR_disag_weighted_inc",
