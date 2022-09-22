@@ -3827,3 +3827,36 @@ test_that("Multistrain severity has expected behaviour", {
                 all(y$hfr_strain[2, , -1] == 0, na.rm = TRUE))
 
 })
+
+
+test_that("Effective susceptible and protected calculation work as expected for
+          multistrain", {
+
+  set.seed(1)
+  n_seeded_new_strain_inf <- 100
+  date_seeding <- "2020-03-07"
+  p <- lancelot_parameters(
+    sircovid_date("2020-02-07"), "england",
+    strain_transmission = c(1, 1),
+    cross_immunity = c(0.5, 0.9),
+    strain_seed_date = sircovid_date(date_seeding),
+    strain_seed_size = n_seeded_new_strain_inf,
+    strain_seed_pattern = rep(1, 4))
+
+  mod <- lancelot$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = y0)
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(apply(y$S, 3, sum) + apply(y$R, 4, sum) ==
+                    y$effective_susceptible[1, ] +
+                    y$protected_R_unvaccinated[1, ]))
+  expect_true(all(apply(y$S, 3, sum) + apply(y$R, 4, sum) ==
+                    y$effective_susceptible[2, ] +
+                    y$protected_R_unvaccinated[2, ]))
+  ## No-one should be vaccinated
+  expect_true(all(y$protected_S_vaccinated == 0))
+  expect_true(all(y$protected_R_vaccinated == 0))
+})

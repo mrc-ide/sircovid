@@ -3351,3 +3351,29 @@ test_that("Can create vaccine eligibility vector", {
     vaccine_eligibility(500),
     rep(c(0, 1), c(17, 2)))
 })
+
+test_that("Effective susceptible and protected calculation work as expected with
+          vaccination", {
+  set.seed(1)
+  vaccine_schedule <- test_vaccine_schedule(500000, "london")
+  p <- lancelot_parameters(0, "london",
+                           rel_susceptibility = c(1, 0.5, 0.1),
+                           rel_p_sympt = c(1, 1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1, 1),
+                           rel_p_death = c(1, 1, 1),
+                           vaccine_progression_rate = c(0, 0, 0.01),
+                           vaccine_schedule = vaccine_schedule,
+                           vaccine_index_dose2 = 2L)
+
+  mod <- lancelot$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = y0)
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(apply(y$S, 3, sum) ==
+                    y$effective_susceptible + y$protected_S_vaccinated))
+  ## All individuals in R should be fully protected
+  expect_true(all(apply(y$R, 4, sum) ==
+                    y$protected_R_unvaccinated + y$protected_R_vaccinated))
+})
