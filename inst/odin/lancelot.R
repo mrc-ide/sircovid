@@ -2205,9 +2205,9 @@ dim(prob_strain) <- n_real_strains
 ## susceptible to strain 1)
 dim(eff_sus_S) <- c(n_groups, n_real_strains, n_vacc_classes)
 dim(eff_sus_R) <- c(n_groups, n_real_strains, n_vacc_classes)
-eff_sus_S[i, j, k] <- S[i, k] * rel_susceptibility[i, j, k]
-eff_sus_R[i, j, k] <- if (n_real_strains == 1) 0 else
-  (R[i, 5, k] + if (j == 2) R[i, 1, k] + R[i, 4, k] else 0) *
+eff_sus_S[, , ] <- new_S[i, k] * rel_susceptibility[i, j, k]
+eff_sus_R[, , ] <- if (n_real_strains == 1) 0 else
+  (new_R[i, 5, k] + if (j == 2) new_R[i, 1, k] + new_R[i, 4, k] else 0) *
   (1 - cross_immunity[3 - j]) * rel_susceptibility[i, j, k]
 
 initial(effective_susceptible[]) <- 0
@@ -2220,9 +2220,9 @@ dim(effective_susceptible) <- n_real_strains
 initial(protected_S_vaccinated[]) <- 0
 initial(protected_R_unvaccinated[]) <- 0
 initial(protected_R_vaccinated[]) <- 0
-update(protected_S_vaccinated[]) <- sum(S) - sum(eff_sus_S[, i, ])
-update(protected_R_unvaccinated[]) <- sum(R[, , 1]) - sum(eff_sus_R[, i, 1])
-update(protected_R_vaccinated[]) <- sum(R) - sum(R[, , 1]) -
+update(protected_S_vaccinated[]) <- sum(new_S) - sum(eff_sus_S[, i, ])
+update(protected_R_unvaccinated[]) <- sum(new_R[, , 1]) - sum(eff_sus_R[, i, 1])
+update(protected_R_vaccinated[]) <- sum(new_R) - sum(new_R[, , 1]) -
   (sum(eff_sus_R[, i, ]) - sum(eff_sus_R[, i, 1]))
 dim(protected_S_vaccinated) <- n_real_strains
 dim(protected_R_unvaccinated) <- n_real_strains
