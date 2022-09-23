@@ -14,7 +14,8 @@ lancelot_index(
   D_all = TRUE,
   D_hosp = TRUE,
   infections_inc_per_strain = TRUE,
-  severity = FALSE
+  severity = FALSE,
+  protected = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ infections incidence per strain (default = TRUE)}
 
 \item{severity}{Logical, whether to output severity calculations
 (default = FALSE)}
+
+\item{protected}{Logical, whether to output protected levels}
 }
 \value{
 A list with element \code{run}, indicating the locations of (in

@@ -746,6 +746,8 @@ process_strain_rel_p <- function(p, n_strains, n_real_strains) {
 ##' @param severity Logical, whether to output severity calculations
 ##'   (default = FALSE)
 ##'
+##' @param protected Logical, whether to output protected levels
+##'
 ##' @return A list with element `run`, indicating the locations of (in
 ##'   order) (1) ICU, (2) general, (3) deaths in community, (4) deaths
 ##'   in hospital, (5) total deaths, (6) cumulative confirmed
@@ -767,7 +769,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                            cum_infections_disag = TRUE,
                            cum_n_vaccinated = TRUE, D_all = TRUE,
                            D_hosp = TRUE, infections_inc_per_strain = TRUE,
-                           severity = FALSE) {
+                           severity = FALSE, protected = FALSE) {
   index <- info$index
 
   ## Variables required for the particle filter to run:
@@ -985,6 +987,17 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
 
     index_state <- c(index_state, index_severity, index_severity_strain,
                      index_severity_age)
+  }
+
+  if (protected) {
+    index_protected <-
+      c(calculate_index(index, "protected_S_vaccinated", list(),
+                        seq_len(n_strains), "protected_S_vaccinated_"),
+        calculate_index(index, "protected_R_unvaccinated", list(),
+                        seq_len(n_strains), "protected_R_unvaccinated_"),
+        calculate_index(index, "protected_R_vaccinated", list(),
+                        seq_len(n_strains), "protected_R_vaccinated_"))
+    index_state <- c(index_state, index_protected)
   }
 
   list(run = index_run, state = index_state)
@@ -1874,6 +1887,8 @@ lancelot_initial <- function(info, n_particles, pars) {
 
   index_prob_strain <- index[["prob_strain"]]
 
+  index_effective_susceptible <- index[["effective_susceptible"]]
+
   seed_age_band <- 4L
   index_I_weighted <- index[["I_weighted"]][[1L]] + seed_age_band - 1L
 
@@ -1887,6 +1902,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   state[index_N_tot_PCR] <- sum(pars$N_tot)
   state[index_prob_strain] <- c(1L, numeric(length(index_prob_strain) - 1L))
   state[index_I_weighted] <- 1
+  state[index_effective_susceptible] <- sum(initial_S)
 
   state
 }

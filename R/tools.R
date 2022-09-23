@@ -295,4 +295,5 @@ rotate_strain_compartments <- c(
   "hospitalisations_inc_strain",
   ## those with dimension n_real_strains:
   "prob_strain", "effective_susceptible", "ifr_strain", "ihr_strain",
-  "hfr_strain")
+  "hfr_strain", "protected_S_vaccinated", "protected_R_unvaccinated",
+  "protected_R_vaccinated")

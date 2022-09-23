@@ -2203,17 +2203,30 @@ dim(prob_strain) <- n_real_strains
 ## to strains. Those in R1, R4 and R5 will be (partially)
 ## susceptible to strain 2, those in R5 will also be (partially)
 ## susceptible to strain 1)
-dim(eff_S) <- c(n_groups, n_real_strains, n_vacc_classes)
-eff_S[, , ] <- if (n_real_strains == 1)
-  S[i, k] * rel_susceptibility[i, j, k] else
-    (S[i, k] + (1 - cross_immunity[3 - j]) *
-       (R[i, 5, k] +
-       if (j == 2) R[i, 1, k] + R[i, 4, k] else 0)) *
-  rel_susceptibility[i, j, k]
+dim(eff_sus_S) <- c(n_groups, n_real_strains, n_vacc_classes)
+dim(eff_sus_R) <- c(n_groups, n_real_strains, n_vacc_classes)
+eff_sus_S[, , ] <- new_S[i, k] * rel_susceptibility[i, j, k]
+eff_sus_R[, , ] <- if (n_real_strains == 1) 0 else
+  (new_R[i, 5, k] + if (j == 2) new_R[i, 1, k] + new_R[i, 4, k] else 0) *
+  (1 - cross_immunity[3 - j]) * rel_susceptibility[i, j, k]
 
 initial(effective_susceptible[]) <- 0
-update(effective_susceptible[]) <- sum(eff_S[, i, ])
+update(effective_susceptible[]) <- sum(eff_sus_S[, i, ]) + sum(eff_sus_R[, i, ])
 dim(effective_susceptible) <- n_real_strains
+
+
+## Calculate the (weighted) number of individuals protected against infection
+## to each strain in S and R
+initial(protected_S_vaccinated[]) <- 0
+initial(protected_R_unvaccinated[]) <- 0
+initial(protected_R_vaccinated[]) <- 0
+update(protected_S_vaccinated[]) <- sum(new_S) - sum(eff_sus_S[, i, ])
+update(protected_R_unvaccinated[]) <- sum(new_R[, , 1]) - sum(eff_sus_R[, i, 1])
+update(protected_R_vaccinated[]) <- sum(new_R) - sum(new_R[, , 1]) -
+  (sum(eff_sus_R[, i, ]) - sum(eff_sus_R[, i, 1]))
+dim(protected_S_vaccinated) <- n_real_strains
+dim(protected_R_unvaccinated) <- n_real_strains
+dim(protected_R_vaccinated) <- n_real_strains
 
 ## Vaccination engine
 n_doses <- user()

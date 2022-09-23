@@ -511,7 +511,7 @@ test_that("Can compute initial conditions", {
   ## * 38 (S + N_tot)
   ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial != 0), 43)
+  expect_equal(sum(initial != 0), 44)
 })
 
 
@@ -539,7 +539,7 @@ test_that("Can control the seeding", {
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial != 0), 43)
+  expect_equal(sum(initial != 0), 44)
 })
 
 ## TODO: Ed - you had said that you had ideas for some more systematic
@@ -878,6 +878,32 @@ test_that("lancelot_index switches work as expected", {
       info$index$hfr_age,
       info$index$infections_inc_age,
       info$index$hospitalisations_inc_age))
+
+  index_protected <- lancelot_index(info, protected = TRUE)
+  expect_equal(
+    unname(index_protected$state[
+      !names(index_protected$state) %in% names(index_protected$run)]),
+    c(info$index$hosp_tot,
+      info$index$cum_admit_conf,
+      info$index$cum_new_conf,
+      info$index$D_tot,
+      info$index$D_inc,
+      info$index$cum_infections,
+      info$index$infections_inc,
+      info$index$effective_susceptible,
+      info$index$S,
+      info$index$R,
+      info$index$prob_strain,
+      info$index$cum_admit_by_age,
+      info$index$diagnoses_admitted,
+      info$index$cum_infections_disag,
+      info$index$cum_n_vaccinated,
+      info$index$D,
+      info$index$D_hosp,
+      info$index$infections_inc_strain,
+      info$index$protected_S_vaccinated,
+      info$index$protected_R_unvaccinated,
+      info$index$protected_R_vaccinated))
 
   index_rt <- lancelot_index(info, rt = FALSE)
   expect_equal(

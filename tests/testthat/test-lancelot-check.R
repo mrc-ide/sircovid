@@ -1247,3 +1247,23 @@ test_that("Severity by age is calculated parametrically", {
   y <- y[which(!is.na(y))]
   expect_vector_equal(x, y, 10)
 })
+
+
+test_that("Effective susceptible and protected calculation work as expected", {
+  p <- lancelot_parameters(0, "uk")
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  ## With single strain and no vaccination, effective_susceptible should just
+  ## equal the total susceptible
+  expect_true(all(apply(y$S, 3, sum) == y$effective_susceptible))
+  ## All individuals in R should be fully protected
+  expect_true(all(apply(y$R, 4, sum) == y$protected_R_unvaccinated))
+  ## No-one should be vaccinated
+  expect_true(all(y$protected_S_vaccinated == 0))
+  expect_true(all(y$protected_R_vaccinated == 0))
+})
