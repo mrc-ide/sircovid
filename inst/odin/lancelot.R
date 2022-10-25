@@ -815,7 +815,7 @@ aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else
   (if (vacc_skip_from[l] > 0)
     n_I_A_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
-new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
+new_I_A[, , , ] <- max(as.numeric(0), I_A[i, j, k, l] + aux_I_A[i, j, k, l])
 
 ## Work out the I_P->I_P transitions
 aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
