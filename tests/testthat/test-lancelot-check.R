@@ -868,7 +868,7 @@ test_that("tots all summed correctly ", {
                     apply(y$ICU_W_D_conf, 5, sum) +
                     apply(y$ICU_D_conf, 5, sum)))
   expect_true(all(y$hosp_tot == y$ICU_tot + y$general_tot))
-  expect_true(all(y$D_hosp_tot == apply(y$D_hosp, 2, sum)))
+  expect_true(all(y$D_hosp_tot == apply(y$D_hosp, c(2, 3), sum)))
   expect_true(all(y$D_comm_tot == apply(y$D_non_hosp[1:18, ], 2, sum)))
   expect_true(all(y$D_lancelot_tot == y$D_non_hosp[19, ]))
   expect_true(all(y$D_tot == y$D_hosp_tot + y$D_lancelot_tot + y$D_comm_tot))
@@ -901,6 +901,24 @@ test_that("Symptomatic cases by age add up correctly", {
   expect_true(all(y$sympt_cases_over25_inc ==
                     y$sympt_cases_25_49_inc + y$sympt_cases_50_64_inc +
                     y$sympt_cases_65_79_inc + y$sympt_cases_80_plus_inc))
+})
+
+
+test_that("Infections and hospitlisations incidence by age add up correctly", {
+  ## waning_rate default is 0, setting to a non-zero value so that this test
+  ## passes with waning immunity
+  p <- lancelot_parameters(0, "england", waning_rate = 1 / 20)
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  expect_true(all(y$infections_inc == colSums(y$infections_inc_age)))
+
+  expect_true(all(y$hospitalisations_inc ==
+                    colSums(y$hospitalisations_inc_age)))
 })
 
 
@@ -1214,18 +1232,38 @@ test_that("Severity by age is calculated parametrically", {
   ifr <- ihr * hfr + p$p_C_step * p$p_H_step * p$p_G_D_step
 
   # There are extremely low discrepancies due to integer precision, in random
-  # number generation. We'll round to 15
+  # number generation. We'll round to 10 digits
   y <- helper(p, "ifr_age")[c(1:17), 201]
   x <- ifr[which(!is.na(y))]
-  expect_vector_equal(x, y, 15)
+  expect_vector_equal(x, y, 10)
 
   y <- helper(p, "ihr_age")[c(1:17), 101]
   x <- ihr[which(!is.na(y))]
-  expect_vector_equal(x, y, 15)
+  expect_vector_equal(x, y, 10)
 
   # We have some NAs in young age bands in y - we'll ignore
   y <- helper(p, "hfr_age")[c(1:17), 101]
   x <- hfr[which(!is.na(y))]
   y <- y[which(!is.na(y))]
-  expect_vector_equal(x, y, 15)
+  expect_vector_equal(x, y, 10)
+})
+
+
+test_that("Effective susceptible and protected calculation work as expected", {
+  p <- lancelot_parameters(0, "uk")
+  mod <- lancelot$new(p, 0, 1)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = lancelot_initial(info, 1, p))
+  y <- mod$transform_variables(
+    drop(mod$simulate(seq(0, 400, by = 4))))
+
+  ## With single strain and no vaccination, effective_susceptible should just
+  ## equal the total susceptible
+  expect_true(all(apply(y$S, 3, sum) == y$effective_susceptible))
+  ## All individuals in R should be fully protected
+  expect_true(all(apply(y$R, 4, sum) == y$protected_R_unvaccinated))
+  ## No-one should be vaccinated
+  expect_true(all(y$protected_S_vaccinated == 0))
+  expect_true(all(y$protected_R_vaccinated == 0))
 })

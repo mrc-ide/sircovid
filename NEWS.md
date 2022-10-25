@@ -1,3 +1,11 @@
+# sircovid 0.14.3
+
+* Severity now calculated based on daily incidence instead of step incidence
+
+# sircovid 0.14.2
+
+* D_hosp is now disaggregated by age and vaccine class
+
 # sircovid 0.14.0
 
 * New historic variants layer added to R compartment. These individuals can now get reinfected with either strain 1 or strain 2. Those recovered from strain 1 (including from a reinfection) can get reinfected with strain 2, while those recovered from strain 2 are immune to strain 1

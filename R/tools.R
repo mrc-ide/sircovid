@@ -289,8 +289,11 @@ rotate_strain_compartments <- c(
   "T_PCR_pre", "T_PCR_pos",
   ## those with dimension c(n_groups, n_strains, n_vacc_classes):
   "R", "T_sero_neg_1", "T_sero_neg_2", "T_PCR_neg", "I_weighted",
+  "IFR_disag_weighted_inc", "IHR_disag_weighted_inc", "HFR_disag_weighted_inc",
   ## those with dimension n_strains:
-  "cum_infections_per_strain", "infections_inc_per_strain",
+  "cum_infections_strain", "infections_inc_strain",
+  "hospitalisations_inc_strain",
   ## those with dimension n_real_strains:
   "prob_strain", "effective_susceptible", "ifr_strain", "ihr_strain",
-  "hfr_strain")
+  "hfr_strain", "protected_S_vaccinated", "protected_R_unvaccinated",
+  "protected_R_vaccinated")

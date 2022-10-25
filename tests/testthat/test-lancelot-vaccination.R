@@ -73,7 +73,7 @@ test_that("No symptomatic infections with perfect vaccine wrt rel_p_sympt", {
 })
 
 
-test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
+test_that("None hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   ## i.e. if everyone is vaccinated with a vaccine preventing
   ## 100% of hospitalisations
 
@@ -101,7 +101,7 @@ test_that("Noone hospitalised with perfect vaccine wrt rel_p_hosp_if_sympt", {
   ## other than in the 4th age group where some infections are seeded
   ## in the unvaccinated group and because of waning immunity they may
   ## eventually end up in hospital upon reinfection
-  expect_true(all(y$D_hosp[-4, ] == 0))
+  expect_true(all(y$D_hosp[-4, , ] == 0))
   expect_true(all(y$H_R_unconf[-4, , , , ] == 0))
   expect_true(all(y$H_R_conf[-4, , , , ] == 0))
   expect_true(all(y$H_D_unconf[-4, , , , ] == 0))
@@ -3352,103 +3352,28 @@ test_that("Can create vaccine eligibility vector", {
     rep(c(0, 1), c(17, 2)))
 })
 
-
-test_that("Vaccination has expected behaviour against severity", {
-
-  # Helper function that runs model with p parameters and
-  # returns disag severity state i
-  helper <- function(p, i) {
-    mod <- lancelot$new(p, 0, 1, seed = 1L)
-    info <- mod$info()
-    state <- lancelot_initial(info, 1, p)
-
-    index_i <- array(info$index[[i]], info$dim[[i]])
-
-    mod$update_state(state = state)
-    mod$set_index(info$index[[i]])
-
-    y <- mod$simulate(seq(0, 400, by = 4))
-
-    expect_equal(length(y), prod(info$dim[[i]]) * 101)
-
-    y <- array(y, c(info$dim[[i]], 101))
-  }
-
-  # Initial params - no vaccine = no effect on severity
+test_that("Effective susceptible and protected calculation work as expected with
+          vaccination", {
+  set.seed(1)
+  vaccine_schedule <- test_vaccine_schedule(500000, "london")
   p <- lancelot_parameters(0, "london",
-                           rel_susceptibility = c(1, 1),
-                           rel_p_sympt = c(1, 1),
-                           rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 1))
-
-  # Sanity check 1 - none changed class, all severity in class 1
-  y <- helper(p, "ifr_disag")
-  expect_true(all(y[, 2, ] == y[, 2, 1], na.rm = TRUE))
-  expect_true(all(y[, 1, -1] > 0, na.rm = TRUE) &&
-                all(y[, 2, -1] == 0, na.rm = TRUE))
-
-
-  # Vaccine schedule
-  region <- "london"
-  vaccine_schedule <- test_vaccine_schedule(daily_doses = Inf,
-                                            region = region,
-                                            mean_days_between_doses = 1000,
-                                            uptake = 1)
-
-
-  # Sanity check 2 - Everyone changed vacc_class, all severity in class 2
-  p <- lancelot_parameters(0, region,
-                           rel_susceptibility = c(1, 1),
-                           rel_p_sympt = c(1, 1),
-                           rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 1),
+                           rel_susceptibility = c(1, 0.5, 0.1),
+                           rel_p_sympt = c(1, 1, 1),
+                           rel_p_hosp_if_sympt = c(1, 1, 1),
+                           rel_p_death = c(1, 1, 1),
+                           vaccine_progression_rate = c(0, 0, 0.01),
                            vaccine_schedule = vaccine_schedule,
                            vaccine_index_dose2 = 2L)
-  y <- helper(p, "ifr_disag")
-  expect_true(all(y[, 1, -1] == 0, na.rm = TRUE) &&
-                all(y[, 2, -1] > 0, na.rm = TRUE))
 
+  mod <- lancelot$new(p, 0, 1, seed = 1L)
+  info <- mod$info()
+  y0 <- lancelot_initial(info, 1, p)
+  mod$update_state(state = y0)
+  y <- mod$transform_variables(drop(mod$simulate(seq(0, 400, by = 4))))
 
-  ## Now for the proper tests - evaluation is done at the end of the model
-  ## to allow for vaccination to take effect
-
-  ## VE 99% vs symptomatic disease = lower IFR in class 2 than class 1
-  vaccine_schedule <- test_vaccine_schedule(daily_doses = 5000,
-                                            region = region,
-                                            mean_days_between_doses = 1000,
-                                            uptake = 1)
-
-  p <- lancelot_parameters(0, region,
-                           rel_susceptibility = c(1, 1),
-                           rel_p_sympt = c(1, 0.1),
-                           rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 1),
-                           vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
-  y <- helper(p, "ifr_disag")
-  # There is severity in both vacc classes
-  expect_true(all(y[, 1, 101] > 0, na.rm = TRUE))
-  expect_true(all(y[, 2, 101] > 0, na.rm = TRUE))
-  expect_true(all(y[, 1, 101] > y[, 2, 101], na.rm = TRUE))
-
-
-  ## VE 100% vs death = no IFR/HFR in class 2, but IHR > 0 for both classes
-  p <- lancelot_parameters(0, region,
-                           rel_susceptibility = c(1, 1),
-                           rel_p_sympt = c(1, 1),
-                           rel_p_hosp_if_sympt = c(1, 1),
-                           rel_p_death = c(1, 0),
-                           vaccine_schedule = vaccine_schedule,
-                           vaccine_index_dose2 = 2L)
-  y <- helper(p, "ifr_disag")
-  expect_true(all(y[, 2, 101] == 0, na.rm = TRUE) &&
-                all(y[, 1, 101] > 0, na.rm = TRUE))
-
-  y <- helper(p, "ihr_disag")
-  expect_true(all(y[, 2, 101] > 0, na.rm = TRUE) &&
-                all(y[, 1, 101] > 0, na.rm = TRUE))
-
-  y <- helper(p, "hfr_disag")
-  expect_true(all(y[, 2, 101] == 0, na.rm = TRUE) &&
-                all(y[, 1, 101] > 0, na.rm = TRUE))
+  expect_true(all(apply(y$S, 3, sum) ==
+                    y$effective_susceptible + y$protected_S_vaccinated))
+  ## All individuals in R should be fully protected
+  expect_true(all(apply(y$R, 4, sum) ==
+                    y$protected_R_unvaccinated + y$protected_R_vaccinated))
 })
