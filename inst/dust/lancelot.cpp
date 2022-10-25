@@ -1484,13 +1484,6 @@ public:
     int dim_aux_ICU_pre_unconf_2;
     int dim_aux_ICU_pre_unconf_3;
     int dim_aux_ICU_pre_unconf_4;
-    int dim_aux_I_A;
-    int dim_aux_I_A_1;
-    int dim_aux_I_A_12;
-    int dim_aux_I_A_123;
-    int dim_aux_I_A_2;
-    int dim_aux_I_A_3;
-    int dim_aux_I_A_4;
     int dim_aux_I_C_1;
     int dim_aux_I_C_1_1;
     int dim_aux_I_C_1_12;
@@ -1505,13 +1498,6 @@ public:
     int dim_aux_I_C_2_2;
     int dim_aux_I_C_2_3;
     int dim_aux_I_C_2_4;
-    int dim_aux_I_P;
-    int dim_aux_I_P_1;
-    int dim_aux_I_P_12;
-    int dim_aux_I_P_123;
-    int dim_aux_I_P_2;
-    int dim_aux_I_P_3;
-    int dim_aux_I_P_4;
     int dim_aux_W_D_conf;
     int dim_aux_W_D_conf_1;
     int dim_aux_W_D_conf_12;
@@ -3159,10 +3145,8 @@ public:
     std::vector<real_type> aux_ICU_W_R_unconf;
     std::vector<real_type> aux_ICU_pre_conf;
     std::vector<real_type> aux_ICU_pre_unconf;
-    std::vector<real_type> aux_I_A;
     std::vector<real_type> aux_I_C_1;
     std::vector<real_type> aux_I_C_2;
-    std::vector<real_type> aux_I_P;
     std::vector<real_type> aux_W_D_conf;
     std::vector<real_type> aux_W_D_unconf;
     std::vector<real_type> aux_W_R_conf;
@@ -5243,24 +5227,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_aux_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_A_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_I_A_3; ++k) {
-          for (int l = 1; l <= shared->dim_aux_I_A_4; ++l) {
-            internal.aux_I_A[i - 1 + shared->dim_aux_I_A_1 * (j - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_123 * (l - 1)] = ((k == 1 ? internal.n_EI_A[shared->dim_n_EI_A_12 * (l - 1) + shared->dim_n_EI_A_1 * (j - 1) + i - 1] : internal.n_I_A_progress[shared->dim_n_I_A_progress_123 * (l - 1) + shared->dim_n_I_A_progress_12 * (k - 1 - 1) + shared->dim_n_I_A_progress_1 * (j - 1) + i - 1])) - internal.n_I_A_progress[shared->dim_n_I_A_progress_123 * (l - 1) + shared->dim_n_I_A_progress_12 * (k - 1) + shared->dim_n_I_A_progress_1 * (j - 1) + i - 1] - internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1])) - ((shared->vacc_skip_to[l - 1] > 0 ? internal.n_I_A_vacc_skip[shared->dim_n_I_A_vacc_skip_123 * (l - 1) + shared->dim_n_I_A_vacc_skip_12 * (k - 1) + shared->dim_n_I_A_vacc_skip_1 * (j - 1) + i - 1] : 0)) + ((shared->vacc_skip_from[l - 1] > 0 ? internal.n_I_A_vacc_skip[shared->dim_n_I_A_vacc_skip_123 * (shared->vacc_skip_from[l - 1] - 1) + shared->dim_n_I_A_vacc_skip_12 * (k - 1) + shared->dim_n_I_A_vacc_skip_1 * (j - 1) + i - 1] : 0));
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_aux_I_P_2; ++j) {
-        for (int k = 1; k <= shared->dim_aux_I_P_3; ++k) {
-          for (int l = 1; l <= shared->dim_aux_I_P_4; ++l) {
-            internal.aux_I_P[i - 1 + shared->dim_aux_I_P_1 * (j - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_123 * (l - 1)] = ((k == 1 ? internal.n_EI_P[shared->dim_n_EI_P_12 * (l - 1) + shared->dim_n_EI_P_1 * (j - 1) + i - 1] : internal.n_I_P_progress[shared->dim_n_I_P_progress_123 * (l - 1) + shared->dim_n_I_P_progress_12 * (k - 1 - 1) + shared->dim_n_I_P_progress_1 * (j - 1) + i - 1])) - internal.n_I_P_progress[shared->dim_n_I_P_progress_123 * (l - 1) + shared->dim_n_I_P_progress_12 * (k - 1) + shared->dim_n_I_P_progress_1 * (j - 1) + i - 1] - internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1])) - ((shared->vacc_skip_to[l - 1] > 0 ? internal.n_I_P_vacc_skip[shared->dim_n_I_P_vacc_skip_123 * (l - 1) + shared->dim_n_I_P_vacc_skip_12 * (k - 1) + shared->dim_n_I_P_vacc_skip_1 * (j - 1) + i - 1] : 0)) + ((shared->vacc_skip_from[l - 1] > 0 ? internal.n_I_P_vacc_skip[shared->dim_n_I_P_vacc_skip_123 * (shared->vacc_skip_from[l - 1] - 1) + shared->dim_n_I_P_vacc_skip_12 * (k - 1) + shared->dim_n_I_P_vacc_skip_1 * (j - 1) + i - 1] : 0));
-          }
-        }
-      }
-    }
     real_type delta_new_conf = odin_sum1<real_type>(internal.n_H_D_unconf_to_conf.data(), 0, shared->dim_n_H_D_unconf_to_conf) + odin_sum1<real_type>(internal.n_H_R_unconf_to_conf.data(), 0, shared->dim_n_H_R_unconf_to_conf) + odin_sum1<real_type>(internal.n_ICU_pre_unconf_to_conf.data(), 0, shared->dim_n_ICU_pre_unconf_to_conf) + odin_sum1<real_type>(internal.n_ICU_D_unconf_to_conf.data(), 0, shared->dim_n_ICU_D_unconf_to_conf) + odin_sum1<real_type>(internal.n_ICU_W_R_unconf_to_conf.data(), 0, shared->dim_n_ICU_W_R_unconf_to_conf) + odin_sum1<real_type>(internal.n_ICU_W_D_unconf_to_conf.data(), 0, shared->dim_n_ICU_W_D_unconf_to_conf) + odin_sum1<real_type>(internal.n_W_R_unconf_to_conf.data(), 0, shared->dim_n_W_R_unconf_to_conf) + odin_sum1<real_type>(internal.n_W_D_unconf_to_conf.data(), 0, shared->dim_n_W_D_unconf_to_conf);
     for (int i = 1; i <= shared->dim_n_E_vaccinated_1; ++i) {
       for (int j = 1; j <= shared->dim_n_E_vaccinated_2; ++j) {
@@ -5328,6 +5294,24 @@ public:
         for (int k = 1; k <= shared->dim_new_ICU_pre_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_new_ICU_pre_unconf_4; ++l) {
             internal.new_ICU_pre_unconf[i - 1 + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_123 * (l - 1)] = internal.aux_ICU_pre_unconf[shared->dim_aux_ICU_pre_unconf_123 * (l - 1) + shared->dim_aux_ICU_pre_unconf_12 * (k - 1) + shared->dim_aux_ICU_pre_unconf_1 * (j - 1) + i - 1] - internal.n_ICU_pre_unconf_to_conf[shared->dim_n_ICU_pre_unconf_to_conf_123 * (l - 1) + shared->dim_n_ICU_pre_unconf_to_conf_12 * (k - 1) + shared->dim_n_ICU_pre_unconf_to_conf_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_I_C_2_to_ICU_pre[shared->dim_n_I_C_2_to_ICU_pre_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_1 * (j - 1) + i - 1] - internal.n_I_C_2_to_ICU_pre_conf[shared->dim_n_I_C_2_to_ICU_pre_conf_12 * (l - 1) + shared->dim_n_I_C_2_to_ICU_pre_conf_1 * (j - 1) + i - 1] : 0));
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_new_I_A_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_I_A_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_I_A_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_I_A_4; ++l) {
+            internal.new_I_A[i - 1 + shared->dim_new_I_A_1 * (j - 1) + shared->dim_new_I_A_12 * (k - 1) + shared->dim_new_I_A_123 * (l - 1)] = I_A[shared->dim_I_A_123 * (l - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_EI_A[shared->dim_n_EI_A_12 * (l - 1) + shared->dim_n_EI_A_1 * (j - 1) + i - 1] : internal.n_I_A_progress[shared->dim_n_I_A_progress_123 * (l - 1) + shared->dim_n_I_A_progress_12 * (k - 1 - 1) + shared->dim_n_I_A_progress_1 * (j - 1) + i - 1])) - internal.n_I_A_progress[shared->dim_n_I_A_progress_123 * (l - 1) + shared->dim_n_I_A_progress_12 * (k - 1) + shared->dim_n_I_A_progress_1 * (j - 1) + i - 1] - internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_I_A_next_vacc_class[shared->dim_n_I_A_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_A_next_vacc_class_12 * (k - 1) + shared->dim_n_I_A_next_vacc_class_1 * (j - 1) + i - 1])) - ((shared->vacc_skip_to[l - 1] > 0 ? internal.n_I_A_vacc_skip[shared->dim_n_I_A_vacc_skip_123 * (l - 1) + shared->dim_n_I_A_vacc_skip_12 * (k - 1) + shared->dim_n_I_A_vacc_skip_1 * (j - 1) + i - 1] : 0)) + ((shared->vacc_skip_from[l - 1] > 0 ? internal.n_I_A_vacc_skip[shared->dim_n_I_A_vacc_skip_123 * (shared->vacc_skip_from[l - 1] - 1) + shared->dim_n_I_A_vacc_skip_12 * (k - 1) + shared->dim_n_I_A_vacc_skip_1 * (j - 1) + i - 1] : 0));
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_new_I_P_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_I_P_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_I_P_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_I_P_4; ++l) {
+            internal.new_I_P[i - 1 + shared->dim_new_I_P_1 * (j - 1) + shared->dim_new_I_P_12 * (k - 1) + shared->dim_new_I_P_123 * (l - 1)] = I_P[shared->dim_I_P_123 * (l - 1) + shared->dim_I_P_12 * (k - 1) + shared->dim_I_P_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_EI_P[shared->dim_n_EI_P_12 * (l - 1) + shared->dim_n_EI_P_1 * (j - 1) + i - 1] : internal.n_I_P_progress[shared->dim_n_I_P_progress_123 * (l - 1) + shared->dim_n_I_P_progress_12 * (k - 1 - 1) + shared->dim_n_I_P_progress_1 * (j - 1) + i - 1])) - internal.n_I_P_progress[shared->dim_n_I_P_progress_123 * (l - 1) + shared->dim_n_I_P_progress_12 * (k - 1) + shared->dim_n_I_P_progress_1 * (j - 1) + i - 1] - internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1] + ((l == 1 ? internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (shared->n_vacc_classes - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1] : internal.n_I_P_next_vacc_class[shared->dim_n_I_P_next_vacc_class_123 * (l - 1 - 1) + shared->dim_n_I_P_next_vacc_class_12 * (k - 1) + shared->dim_n_I_P_next_vacc_class_1 * (j - 1) + i - 1])) - ((shared->vacc_skip_to[l - 1] > 0 ? internal.n_I_P_vacc_skip[shared->dim_n_I_P_vacc_skip_123 * (l - 1) + shared->dim_n_I_P_vacc_skip_12 * (k - 1) + shared->dim_n_I_P_vacc_skip_1 * (j - 1) + i - 1] : 0)) + ((shared->vacc_skip_from[l - 1] > 0 ? internal.n_I_P_vacc_skip[shared->dim_n_I_P_vacc_skip_123 * (shared->vacc_skip_from[l - 1] - 1) + shared->dim_n_I_P_vacc_skip_12 * (k - 1) + shared->dim_n_I_P_vacc_skip_1 * (j - 1) + i - 1] : 0));
           }
         }
       }
@@ -5413,24 +5397,6 @@ public:
       }
     }
     real_type new_ICU_tot = odin_sum1<real_type>(internal.new_ICU_W_R_conf.data(), 0, shared->dim_new_ICU_W_R_conf) + odin_sum1<real_type>(internal.new_ICU_W_D_conf.data(), 0, shared->dim_new_ICU_W_D_conf) + odin_sum1<real_type>(internal.new_ICU_D_conf.data(), 0, shared->dim_new_ICU_D_conf);
-    for (int i = 1; i <= shared->dim_new_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_I_A_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_I_A_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_I_A_4; ++l) {
-            internal.new_I_A[i - 1 + shared->dim_new_I_A_1 * (j - 1) + shared->dim_new_I_A_12 * (k - 1) + shared->dim_new_I_A_123 * (l - 1)] = std::max(static_cast<real_type>(0), I_A[shared->dim_I_A_123 * (l - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_1 * (j - 1) + i - 1] + internal.aux_I_A[shared->dim_aux_I_A_123 * (l - 1) + shared->dim_aux_I_A_12 * (k - 1) + shared->dim_aux_I_A_1 * (j - 1) + i - 1]);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_I_P_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_I_P_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_I_P_4; ++l) {
-            internal.new_I_P[i - 1 + shared->dim_new_I_P_1 * (j - 1) + shared->dim_new_I_P_12 * (k - 1) + shared->dim_new_I_P_123 * (l - 1)] = std::max(static_cast<real_type>(0), I_P[shared->dim_I_P_123 * (l - 1) + shared->dim_I_P_12 * (k - 1) + shared->dim_I_P_1 * (j - 1) + i - 1] + internal.aux_I_P[shared->dim_aux_I_P_123 * (l - 1) + shared->dim_aux_I_P_12 * (k - 1) + shared->dim_aux_I_P_1 * (j - 1) + i - 1]);
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_ICU_W_R_conf_1; ++i) {
       for (int j = 1; j <= shared->dim_ICU_W_R_conf_2; ++j) {
         for (int k = 1; k <= shared->dim_ICU_W_R_conf_3; ++k) {
@@ -5463,6 +5429,24 @@ public:
         for (int k = 1; k <= shared->dim_ICU_pre_unconf_3; ++k) {
           for (int l = 1; l <= shared->dim_ICU_pre_unconf_4; ++l) {
             state_next[shared->offset_variable_ICU_pre_unconf + i - 1 + shared->dim_ICU_pre_unconf_1 * (j - 1) + shared->dim_ICU_pre_unconf_12 * (k - 1) + shared->dim_ICU_pre_unconf_123 * (l - 1)] = internal.new_ICU_pre_unconf[shared->dim_new_ICU_pre_unconf_123 * (l - 1) + shared->dim_new_ICU_pre_unconf_12 * (k - 1) + shared->dim_new_ICU_pre_unconf_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_I_A_1; ++i) {
+      for (int j = 1; j <= shared->dim_I_A_2; ++j) {
+        for (int k = 1; k <= shared->dim_I_A_3; ++k) {
+          for (int l = 1; l <= shared->dim_I_A_4; ++l) {
+            state_next[shared->offset_variable_I_A + i - 1 + shared->dim_I_A_1 * (j - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_123 * (l - 1)] = internal.new_I_A[shared->dim_new_I_A_123 * (l - 1) + shared->dim_new_I_A_12 * (k - 1) + shared->dim_new_I_A_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_I_P_1; ++i) {
+      for (int j = 1; j <= shared->dim_I_P_2; ++j) {
+        for (int k = 1; k <= shared->dim_I_P_3; ++k) {
+          for (int l = 1; l <= shared->dim_I_P_4; ++l) {
+            state_next[shared->offset_variable_I_P + i - 1 + shared->dim_I_P_1 * (j - 1) + shared->dim_I_P_12 * (k - 1) + shared->dim_I_P_123 * (l - 1)] = internal.new_I_P[shared->dim_new_I_P_123 * (l - 1) + shared->dim_new_I_P_12 * (k - 1) + shared->dim_new_I_P_1 * (j - 1) + i - 1];
           }
         }
       }
@@ -5537,24 +5521,6 @@ public:
       }
     }
     state_next[21] = new_ICU_tot;
-    for (int i = 1; i <= shared->dim_I_A_1; ++i) {
-      for (int j = 1; j <= shared->dim_I_A_2; ++j) {
-        for (int k = 1; k <= shared->dim_I_A_3; ++k) {
-          for (int l = 1; l <= shared->dim_I_A_4; ++l) {
-            state_next[shared->offset_variable_I_A + i - 1 + shared->dim_I_A_1 * (j - 1) + shared->dim_I_A_12 * (k - 1) + shared->dim_I_A_123 * (l - 1)] = internal.new_I_A[shared->dim_new_I_A_123 * (l - 1) + shared->dim_new_I_A_12 * (k - 1) + shared->dim_new_I_A_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_I_P_1; ++i) {
-      for (int j = 1; j <= shared->dim_I_P_2; ++j) {
-        for (int k = 1; k <= shared->dim_I_P_3; ++k) {
-          for (int l = 1; l <= shared->dim_I_P_4; ++l) {
-            state_next[shared->offset_variable_I_P + i - 1 + shared->dim_I_P_1 * (j - 1) + shared->dim_I_P_12 * (k - 1) + shared->dim_I_P_123 * (l - 1)] = internal.new_I_P[shared->dim_new_I_P_123 * (l - 1) + shared->dim_new_I_P_12 * (k - 1) + shared->dim_new_I_P_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
     for (int i = 1; i <= shared->dim_cum_n_S_vacc_skip_1; ++i) {
       for (int j = 1; j <= shared->dim_cum_n_S_vacc_skip_2; ++j) {
         state_next[shared->offset_variable_cum_n_S_vacc_skip + i - 1 + shared->dim_cum_n_S_vacc_skip_1 * (j - 1)] = cum_n_S_vacc_skip[shared->dim_cum_n_S_vacc_skip_1 * (j - 1) + i - 1] + internal.n_S_vacc_skip[shared->dim_n_S_vacc_skip_1 * (j - 1) + i - 1];
@@ -6760,10 +6726,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_aux_ICU_pre_unconf_2 = shared->n_strains;
   shared->dim_aux_ICU_pre_unconf_3 = shared->k_ICU_pre;
   shared->dim_aux_ICU_pre_unconf_4 = shared->n_vacc_classes;
-  shared->dim_aux_I_A_1 = shared->n_groups;
-  shared->dim_aux_I_A_2 = shared->n_strains;
-  shared->dim_aux_I_A_3 = shared->k_A;
-  shared->dim_aux_I_A_4 = shared->n_vacc_classes;
   shared->dim_aux_I_C_1_1 = shared->n_groups;
   shared->dim_aux_I_C_1_2 = shared->n_strains;
   shared->dim_aux_I_C_1_3 = shared->k_C_1;
@@ -6772,10 +6734,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_aux_I_C_2_2 = shared->n_strains;
   shared->dim_aux_I_C_2_3 = shared->k_C_2;
   shared->dim_aux_I_C_2_4 = shared->n_vacc_classes;
-  shared->dim_aux_I_P_1 = shared->n_groups;
-  shared->dim_aux_I_P_2 = shared->n_strains;
-  shared->dim_aux_I_P_3 = shared->k_P;
-  shared->dim_aux_I_P_4 = shared->n_vacc_classes;
   shared->dim_aux_W_D_conf_1 = shared->n_groups;
   shared->dim_aux_W_D_conf_2 = shared->n_strains;
   shared->dim_aux_W_D_conf_3 = shared->k_W_D;
@@ -7701,18 +7659,12 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_aux_ICU_pre_unconf = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2 * shared->dim_aux_ICU_pre_unconf_3 * shared->dim_aux_ICU_pre_unconf_4;
   shared->dim_aux_ICU_pre_unconf_12 = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2;
   shared->dim_aux_ICU_pre_unconf_123 = shared->dim_aux_ICU_pre_unconf_1 * shared->dim_aux_ICU_pre_unconf_2 * shared->dim_aux_ICU_pre_unconf_3;
-  shared->dim_aux_I_A = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2 * shared->dim_aux_I_A_3 * shared->dim_aux_I_A_4;
-  shared->dim_aux_I_A_12 = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2;
-  shared->dim_aux_I_A_123 = shared->dim_aux_I_A_1 * shared->dim_aux_I_A_2 * shared->dim_aux_I_A_3;
   shared->dim_aux_I_C_1 = shared->dim_aux_I_C_1_1 * shared->dim_aux_I_C_1_2 * shared->dim_aux_I_C_1_3 * shared->dim_aux_I_C_1_4;
   shared->dim_aux_I_C_1_12 = shared->dim_aux_I_C_1_1 * shared->dim_aux_I_C_1_2;
   shared->dim_aux_I_C_1_123 = shared->dim_aux_I_C_1_1 * shared->dim_aux_I_C_1_2 * shared->dim_aux_I_C_1_3;
   shared->dim_aux_I_C_2 = shared->dim_aux_I_C_2_1 * shared->dim_aux_I_C_2_2 * shared->dim_aux_I_C_2_3 * shared->dim_aux_I_C_2_4;
   shared->dim_aux_I_C_2_12 = shared->dim_aux_I_C_2_1 * shared->dim_aux_I_C_2_2;
   shared->dim_aux_I_C_2_123 = shared->dim_aux_I_C_2_1 * shared->dim_aux_I_C_2_2 * shared->dim_aux_I_C_2_3;
-  shared->dim_aux_I_P = shared->dim_aux_I_P_1 * shared->dim_aux_I_P_2 * shared->dim_aux_I_P_3 * shared->dim_aux_I_P_4;
-  shared->dim_aux_I_P_12 = shared->dim_aux_I_P_1 * shared->dim_aux_I_P_2;
-  shared->dim_aux_I_P_123 = shared->dim_aux_I_P_1 * shared->dim_aux_I_P_2 * shared->dim_aux_I_P_3;
   shared->dim_aux_W_D_conf = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2 * shared->dim_aux_W_D_conf_3 * shared->dim_aux_W_D_conf_4;
   shared->dim_aux_W_D_conf_12 = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2;
   shared->dim_aux_W_D_conf_123 = shared->dim_aux_W_D_conf_1 * shared->dim_aux_W_D_conf_2 * shared->dim_aux_W_D_conf_3;
@@ -8279,10 +8231,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   internal.aux_ICU_W_R_unconf = std::vector<real_type>(shared->dim_aux_ICU_W_R_unconf);
   internal.aux_ICU_pre_conf = std::vector<real_type>(shared->dim_aux_ICU_pre_conf);
   internal.aux_ICU_pre_unconf = std::vector<real_type>(shared->dim_aux_ICU_pre_unconf);
-  internal.aux_I_A = std::vector<real_type>(shared->dim_aux_I_A);
   internal.aux_I_C_1 = std::vector<real_type>(shared->dim_aux_I_C_1);
   internal.aux_I_C_2 = std::vector<real_type>(shared->dim_aux_I_C_2);
-  internal.aux_I_P = std::vector<real_type>(shared->dim_aux_I_P);
   internal.aux_W_D_conf = std::vector<real_type>(shared->dim_aux_W_D_conf);
   internal.aux_W_D_unconf = std::vector<real_type>(shared->dim_aux_W_D_unconf);
   internal.aux_W_R_conf = std::vector<real_type>(shared->dim_aux_W_R_conf);

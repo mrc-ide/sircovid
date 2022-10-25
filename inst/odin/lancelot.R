@@ -805,21 +805,21 @@ aux_E[, , , ] <- (if (k == 1) n_S_progress[i, j, l] +
 new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
 
 ## Work out the I_A->I_A transitions
-aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else
-  n_I_A_progress[i, j, k - 1, l]) -
-  n_I_A_progress[i, j, k, l] -
-  n_I_A_next_vacc_class[i, j, k, l] +
+new_I_A[, , , ] <- I_A[i, j, k, l] +
+  (if (k == 1) n_EI_A[i, j, l] else
+    n_I_A_progress[i, j, k - 1, l]) -
+    n_I_A_progress[i, j, k, l] -
+    n_I_A_next_vacc_class[i, j, k, l] +
   (if (l == 1) n_I_A_next_vacc_class[i, j, k, n_vacc_classes] else
     n_I_A_next_vacc_class[i, j, k, l - 1]) -
   (if (vacc_skip_to[l] > 0) n_I_A_vacc_skip[i, j, k, l] else 0) +
   (if (vacc_skip_from[l] > 0)
     n_I_A_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
-new_I_A[, , , ] <- max(as.numeric(0), I_A[i, j, k, l] + aux_I_A[i, j, k, l])
-
 ## Work out the I_P->I_P transitions
-aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
-  n_I_P_progress[i, j, k - 1, l]) -
+new_I_P[, , , ] <- I_P[i, j, k, l] +
+  (if (k == 1) n_EI_P[i, j, l] else
+    n_I_P_progress[i, j, k - 1, l]) -
   n_I_P_progress[i, j, k, l] -
   n_I_P_next_vacc_class[i, j, k, l] +
   (if (l == 1) n_I_P_next_vacc_class[i, j, k, n_vacc_classes] else
@@ -827,11 +827,6 @@ aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
   (if (vacc_skip_to[l] > 0) n_I_P_vacc_skip[i, j, k, l] else 0) +
   (if (vacc_skip_from[l] > 0)
     n_I_P_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
-
-## NOTE: max() is here for the case where hit rounding error; we
-## should really error if this comes through with a very slight
-## negative.
-new_I_P[, , , ] <- max(as.numeric(0), I_P[i, j, k, l] + aux_I_P[i, j, k, l])
 
 ## Work out the I_C_1->I_C_1 transitions
 aux_I_C_1[, , , ] <- (if (k == 1) n_I_P_progress[i, j, k_P, l] else
@@ -1500,12 +1495,10 @@ dim(new_E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 
 ## Vectors handling the I_A class
 dim(I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(aux_I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 dim(new_I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 
 ## Vectors handling the I_P class
 dim(I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(aux_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(new_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 
 ## Vectors handling the I_C_2 class
