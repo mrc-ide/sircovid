@@ -18,7 +18,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r@main
 
-      - uses: r-lib/actions/setup-pandoc@master
+      - uses: r-lib/actions/setup-pandoc@main
 
       - name: Query dependencies
         run: |
