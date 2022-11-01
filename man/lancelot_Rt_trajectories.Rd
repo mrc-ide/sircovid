@@ -17,7 +17,8 @@ lancelot_Rt_trajectories(
   interpolate_min = NULL,
   eigen_method = "power_iteration",
   R = NULL,
-  weight_Rt = FALSE
+  weight_Rt = FALSE,
+  keep_strains_Rt = FALSE
 )
 }
 \arguments{
@@ -79,6 +80,12 @@ multi-strain models.}
 \item{weight_Rt}{If \code{TRUE} then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with
 an additional dimension to index each strain.}
+
+\item{keep_strains_Rt}{Additional argument for when \code{weight_Rt} is \code{TRUE}
+(has no impact otherwise). If \code{TRUE}, then the Rt for each strain is
+returned along with the weighted average, otherwise just the weighted
+average is returned. When \code{TRUE}, the dimension indexing these lists
+strains first, and then the weighted average.}
 }
 \value{
 As for \code{\link[=lancelot_Rt]{lancelot_Rt()}}, except that every element is a
