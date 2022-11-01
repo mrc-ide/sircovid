@@ -790,9 +790,10 @@ n_EI_A[, , ] <- rbinom(n_E_progress[i, j, k_E, k], 1 - p_C[i, j, k])
 n_EI_P[, , ] <- n_E_progress[i, j, k_E, k] - n_EI_A[i, j, k]
 
 ## Work out the S->E and E->E transitions
-aux_E[, , , ] <- (if (k == 1) n_S_progress[i, j, l] +
-                    (if (j > 2) n_RE[i, j, l] else 0)
-                  else n_E_progress[i, j, k - 1, l]) -
+new_E[, , , ] <- E[i, j, k, l] +
+  (if (k == 1) n_S_progress[i, j, l] +
+     (if (j > 2) n_RE[i, j, l] else 0)
+   else n_E_progress[i, j, k - 1, l]) -
   n_E_progress[i, j, k, l] -
   n_E_next_vacc_class[i, j, k, l] +
   (if (l == 1)
@@ -802,24 +803,22 @@ aux_E[, , , ] <- (if (k == 1) n_S_progress[i, j, l] +
   (if (vacc_skip_to[l] > 0) n_E_vacc_skip[i, j, k, l] else 0) +
   (if (vacc_skip_from[l] > 0) n_E_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
-new_E[, , , ] <- E[i, j, k, l] + aux_E[i, j, k, l]
-
 ## Work out the I_A->I_A transitions
-aux_I_A[, , , ] <- (if (k == 1) n_EI_A[i, j, l] else
-  n_I_A_progress[i, j, k - 1, l]) -
-  n_I_A_progress[i, j, k, l] -
-  n_I_A_next_vacc_class[i, j, k, l] +
+new_I_A[, , , ] <- I_A[i, j, k, l] +
+  (if (k == 1) n_EI_A[i, j, l] else
+    n_I_A_progress[i, j, k - 1, l]) -
+    n_I_A_progress[i, j, k, l] -
+    n_I_A_next_vacc_class[i, j, k, l] +
   (if (l == 1) n_I_A_next_vacc_class[i, j, k, n_vacc_classes] else
     n_I_A_next_vacc_class[i, j, k, l - 1]) -
   (if (vacc_skip_to[l] > 0) n_I_A_vacc_skip[i, j, k, l] else 0) +
   (if (vacc_skip_from[l] > 0)
     n_I_A_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
-new_I_A[, , , ] <- I_A[i, j, k, l] + aux_I_A[i, j, k, l]
-
 ## Work out the I_P->I_P transitions
-aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
-  n_I_P_progress[i, j, k - 1, l]) -
+new_I_P[, , , ] <- I_P[i, j, k, l] +
+  (if (k == 1) n_EI_P[i, j, l] else
+    n_I_P_progress[i, j, k - 1, l]) -
   n_I_P_progress[i, j, k, l] -
   n_I_P_next_vacc_class[i, j, k, l] +
   (if (l == 1) n_I_P_next_vacc_class[i, j, k, n_vacc_classes] else
@@ -828,19 +827,15 @@ aux_I_P[, , , ] <- (if (k == 1) n_EI_P[i, j, l] else
   (if (vacc_skip_from[l] > 0)
     n_I_P_vacc_skip[i, j, k, vacc_skip_from[l]] else 0)
 
-new_I_P[, , , ] <- I_P[i, j, k, l] + aux_I_P[i, j, k, l]
-
 ## Work out the I_C_1->I_C_1 transitions
-aux_I_C_1[, , , ] <- (if (k == 1) n_I_P_progress[i, j, k_P, l] else
-  n_I_C_1_progress[i, j, k - 1, l]) - n_I_C_1_progress[i, j, k, l]
-
-new_I_C_1[, , , ] <- I_C_1[i, j, k, l] + aux_I_C_1[i, j, k, l]
+new_I_C_1[, , , ] <- I_C_1[i, j, k, l] +
+  (if (k == 1) n_I_P_progress[i, j, k_P, l] else
+    n_I_C_1_progress[i, j, k - 1, l]) - n_I_C_1_progress[i, j, k, l]
 
 ## Work out the I_C_2->I_C_2 transitions
-aux_I_C_2[, , , ] <- (if (k == 1) n_I_C_1_progress[i, j, k_C_1, l] else
-  n_I_C_2_progress[i, j, k - 1, l]) - n_I_C_2_progress[i, j, k, l]
-
-new_I_C_2[, , , ] <- I_C_2[i, j, k, l] + aux_I_C_2[i, j, k, l]
+new_I_C_2[, , , ] <- I_C_2[i, j, k, l] +
+  (if (k == 1) n_I_C_1_progress[i, j, k_C_1, l] else
+    n_I_C_2_progress[i, j, k - 1, l]) - n_I_C_2_progress[i, j, k, l]
 
 ## Work out the flow from I_C_2 -> R, G_D, hosp
 n_I_C_2_to_RS[, , ] <-
@@ -852,10 +847,9 @@ n_I_C_2_to_hosp[, , ] <- n_I_C_2_progress[i, j, k_C_2, k] -
   n_I_C_2_to_RS[i, j, k] - n_I_C_2_to_G_D[i, j, k]
 
 ## Work out the G_D -> G_D transitions
-aux_G_D[, , , ] <- (if (k == 1) n_I_C_2_to_G_D[i, j, l] else
-  n_G_D_progress[i, j, k - 1, l]) - n_G_D_progress[i, j, k, l]
-
-new_G_D[, , , ] <- G_D[i, j, k, l] + aux_G_D[i, j, k, l]
+new_G_D[, , , ] <- G_D[i, j, k, l] +
+  (if (k == 1) n_I_C_2_to_G_D[i, j, l] else
+    n_G_D_progress[i, j, k - 1, l]) - n_G_D_progress[i, j, k, l]
 
 ## Work out the split in hospitals between H_D, H_R and ICU_pre
 n_I_C_2_to_ICU_pre[, , ] <- rbinom(n_I_C_2_to_hosp[i, j, k], p_ICU[i, j, k])
@@ -1492,35 +1486,29 @@ dim(new_S) <- c(n_groups, n_vacc_classes)
 
 ## Vectors handling the E class
 dim(E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
-dim(aux_E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 dim(new_E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 
 ## Vectors handling the I_A class
 dim(I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(aux_I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 dim(new_I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 
 ## Vectors handling the I_P class
 dim(I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(aux_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 dim(new_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 
 ## Vectors handling the I_C_2 class
 dim(I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-dim(aux_I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
 dim(new_I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
 dim(n_I_C_1_progress) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
 
 ## Vectors handling the I_C_2 class
 dim(I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
-dim(aux_I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
 dim(new_I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
 dim(n_I_C_2_progress) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
 
 
 ## Vectors handling the G_D class
 dim(G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
-dim(aux_G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 dim(new_G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 dim(n_G_D_progress) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
 
