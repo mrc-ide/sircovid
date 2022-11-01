@@ -855,8 +855,8 @@ test_that("wtmean_Rt works as expected", {
 
   nms <- names(rt)
 
-  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
-  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ], FALSE)
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain, FALSE)
 
   ## here the 1st strain has weight 1 all along
   ## (except step 1 --> to investigate)
@@ -888,7 +888,7 @@ test_that("wtmean_Rt works as expected", {
 
   expect_error(wtmean_Rt(1L), "must inherit")
   expect_error(wtmean_Rt(structure(list(Rt_all = matrix(1)), class = "Rt"),
-                         prob_strain),
+                         prob_strain, FALSE),
                "Expect elements of Rt to have dimensions")
 
   ## check single particle case
@@ -3469,8 +3469,8 @@ test_that("wtmean_Rt works as expected with interpolation", {
 
   nms <- names(rt)
 
-  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
-  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ], FALSE)
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain, FALSE)
 
   ## here the 1st strain has weight 1 all along
   ## (except step 1 --> to investigate)

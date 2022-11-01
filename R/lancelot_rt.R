@@ -106,8 +106,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
           prob_strain[, which_nna, drop = FALSE], type, interpolate_every,
           interpolate_critical_dates, interpolate_min,
           eigen_method, R[, which_nna, drop = FALSE], weight_Rt,
-          keep_strains_Rt,
-        )
+          keep_strains_Rt)
       } else {
         ret <- vector("list", 3 + length(type))
         names(ret) <- c("step", "date", "beta", type)
