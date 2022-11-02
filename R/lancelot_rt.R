@@ -620,8 +620,10 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
     class(ret) <- c("single_strain", "Rt_trajectories", "Rt")
-  } else {
+  } else if (dim(ret[[length(ret)]])[2] < 3) {
     class(ret) <- c("multi_strain", "Rt_trajectories", "Rt")
+  } else {
+    class(ret) <- c("multi_strain_weighted", "Rt_trajectories", "Rt")
   }
 
   ret
