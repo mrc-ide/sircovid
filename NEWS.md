@@ -1,3 +1,7 @@
+# sircovid 0.14.5
+
+* Added keep_strains_Rt option to Rt calculation, allowing return of both the strain-specific Rts and the weighted Rt together
+
 # sircovid 0.14.3
 
 * Severity now calculated based on daily incidence instead of step incidence

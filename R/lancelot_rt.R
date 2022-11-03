@@ -52,6 +52,12 @@
 ##'  of the Rt for all strains, otherwise all calculations are returned with
 ##'  an additional dimension to index each strain.
 ##'
+##' @param keep_strains_Rt Additional argument for when `weight_Rt` is `TRUE`
+##'  (has no impact otherwise). If `TRUE`, then the Rt for each strain is
+##'  returned along with the weighted average, otherwise just the weighted
+##'  average is returned. When `TRUE`, the dimension indexing these lists
+##'  strains first, and then the weighted average.
+##'
 ##' @return A list with elements `step`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
@@ -61,7 +67,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
                         interpolate_critical_dates = NULL,
                         interpolate_min = NULL,
                         eigen_method = "power_iteration", R = NULL,
-                        weight_Rt = FALSE) {
+                        weight_Rt = FALSE, keep_strains_Rt = FALSE) {
 
   if (sum(p$hosp_transmission, p$ICU_transmission, p$G_D_transmission) > 0) {
     stop("Cannot currently compute Rt if any of 'hosp_transmission',
@@ -99,8 +105,8 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
           step[which_nna], S[, which_nna, drop = FALSE], p,
           prob_strain[, which_nna, drop = FALSE], type, interpolate_every,
           interpolate_critical_dates, interpolate_min,
-          eigen_method, R[, which_nna, drop = FALSE], weight_Rt
-        )
+          eigen_method, R[, which_nna, drop = FALSE], weight_Rt,
+          keep_strains_Rt)
       } else {
         ret <- vector("list", 3 + length(type))
         names(ret) <- c("step", "date", "beta", type)
@@ -143,7 +149,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
     ret <- lancelot_Rt(step[step_index], S[, step_index, drop = FALSE], p,
                        prob_strain[, step_index, drop = FALSE], type,
                        R = R[, step_index, drop = FALSE],
-                       weight_Rt = weight_Rt)
+                       weight_Rt = weight_Rt, keep_strains_Rt = keep_strains_Rt)
     if (!is.null(interpolate_every)) {
       ret[type] <- lapply(ret[type], interpolate_grid_expand_y,
                           step_index_split)
@@ -363,9 +369,14 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
     class(ret) <- c("single_strain", class(ret))
   } else {
     if (weight_Rt) {
-      ## treat multi strain as single once weighted
-      ret <- wtmean_Rt(ret, prob_strain)
-      class(ret) <- c("single_strain", class(ret))
+      ret <- wtmean_Rt(ret, prob_strain, keep_strains_Rt)
+      if (keep_strains_Rt) {
+        class(ret) <- c("multi_strain_weighted", class(ret))
+      } else {
+        ## treat multi strain as single once weighted
+        class(ret) <- c("single_strain", class(ret))
+      }
+
     } else {
       class(ret) <- c("multi_strain", class(ret))
     }
@@ -431,7 +442,8 @@ lancelot_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                      interpolate_critical_dates = NULL,
                                      interpolate_min = NULL,
                                      eigen_method = "power_iteration",
-                                     R = NULL, weight_Rt = FALSE) {
+                                     R = NULL, weight_Rt = FALSE,
+                                     keep_strains_Rt = FALSE) {
   calculate_Rt_trajectories(
     calculate_Rt = lancelot_Rt, step = step,
     S = S, pars = pars,
@@ -444,7 +456,8 @@ lancelot_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
     interpolate_min = interpolate_min,
     eigen_method = eigen_method,
     R = R,
-    weight_Rt = weight_Rt)
+    weight_Rt = weight_Rt,
+    keep_strains_Rt = keep_strains_Rt)
 }
 
 
@@ -607,15 +620,17 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     ret[intersect(all_types, names(ret))] <-
       lapply(ret[intersect(all_types, names(ret))], drop)
     class(ret) <- c("single_strain", "Rt_trajectories", "Rt")
-  } else {
+  } else if (dim(ret[[length(ret)]])[2] < 3) {
     class(ret) <- c("multi_strain", "Rt_trajectories", "Rt")
+  } else {
+    class(ret) <- c("multi_strain_weighted", "Rt_trajectories", "Rt")
   }
 
   ret
 }
 
 
-wtmean_Rt <- function(rt, prob_strain) {
+wtmean_Rt <- function(rt, prob_strain, keep_strains_Rt) {
   if (!inherits(rt, "Rt")) {
     stop("'rt' must inherit from class 'Rt")
   }
@@ -646,6 +661,9 @@ wtmean_Rt <- function(rt, prob_strain) {
     x <- r * reshape_prob_strain
     x[reshape_prob_strain == 0] <- 0
     res <- apply(x, seq_len(n_dim)[-strain_dim], sum)
+    if (keep_strains_Rt) {
+      res <- cbind(r, res)
+    }
     res
   }
 

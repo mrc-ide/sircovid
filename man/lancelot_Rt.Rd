@@ -15,7 +15,8 @@ lancelot_Rt(
   interpolate_min = NULL,
   eigen_method = "power_iteration",
   R = NULL,
-  weight_Rt = FALSE
+  weight_Rt = FALSE,
+  keep_strains_Rt = FALSE
 )
 }
 \arguments{
@@ -67,6 +68,12 @@ compartment counts, required for multi-strain models.}
 \item{weight_Rt}{If \code{TRUE} then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with
 an additional dimension to index each strain.}
+
+\item{keep_strains_Rt}{Additional argument for when \code{weight_Rt} is \code{TRUE}
+(has no impact otherwise). If \code{TRUE}, then the Rt for each strain is
+returned along with the weighted average, otherwise just the weighted
+average is returned. When \code{TRUE}, the dimension indexing these lists
+strains first, and then the weighted average.}
 }
 \value{
 A list with elements \code{step}, \code{beta}, and any of the \code{type}

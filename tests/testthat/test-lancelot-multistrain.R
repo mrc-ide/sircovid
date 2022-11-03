@@ -853,10 +853,17 @@ test_that("wtmean_Rt works as expected", {
   expect_equal(class(rt_traj_strain_weighted),
                c("single_strain", "Rt_trajectories", "Rt"))
 
+  rt_traj_weighted_keep_strains <-
+    lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                             weight_Rt = TRUE, keep_strains_Rt = TRUE)
+  expect_equal(dim(rt_traj_weighted_keep_strains$eff_Rt_all), c(123, 3, 3))
+  expect_equal(class(rt_traj_weighted_keep_strains),
+               c("multi_strain_weighted", "Rt_trajectories", "Rt"))
+
   nms <- names(rt)
 
-  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
-  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ], FALSE)
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain, FALSE)
 
   ## here the 1st strain has weight 1 all along
   ## (except step 1 --> to investigate)
@@ -888,8 +895,27 @@ test_that("wtmean_Rt works as expected", {
 
   expect_error(wtmean_Rt(1L), "must inherit")
   expect_error(wtmean_Rt(structure(list(Rt_all = matrix(1)), class = "Rt"),
-                         prob_strain),
+                         prob_strain, FALSE),
                "Expect elements of Rt to have dimensions")
+
+  ## first two layers in strain dimension in keep_strains version should be same
+  ## as non-weighted, third the same as weighted
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_general[, 1:2, ],
+               rt_traj$eff_Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_all[, 1:2, ],
+               rt_traj$eff_Rt_all)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_general[, 1:2, ],
+               rt_traj$Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_all[, 1:2, ],
+               rt_traj$Rt_all)
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_general[, 3, ],
+               rt_traj_strain_weighted$eff_Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_all[, 3, ],
+               rt_traj_strain_weighted$eff_Rt_all)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_general[, 3, ],
+               rt_traj_strain_weighted$Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_all[, 3, ],
+               rt_traj_strain_weighted$Rt_all)
 
   ## check single particle case
   S <- mcstate::array_flatten(S, 2:3)[, 1, drop = FALSE]
@@ -897,11 +923,13 @@ test_that("wtmean_Rt works as expected", {
   prob_strain <- mcstate::array_flatten(prob_strain, 2:3)[, 1, drop = FALSE]
   rt_weight_F <- lancelot_Rt(1, S, p, prob_strain, R = R, weight_Rt = FALSE)
   rt_weight_T <- lancelot_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
-  expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
+  expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all,
+               tolerance = 1e-5)
   expect_equal(rt_weight_F$eff_Rt_general[[1]],
-               rt_weight_T$eff_Rt_general)
-  expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
-  expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
+               rt_weight_T$eff_Rt_general, tolerance = 1e-5)
+  expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all, tolerance = 1e-5)
+  expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general,
+               tolerance = 1e-5)
 })
 
 
@@ -3467,10 +3495,19 @@ test_that("wtmean_Rt works as expected with interpolation", {
   expect_equal(class(rt_traj_strain_weighted),
                c("single_strain", "Rt_trajectories", "Rt"))
 
+  rt_traj_weighted_keep_strains <-
+    lancelot_Rt_trajectories(steps, S, p, prob_strain, R = R,
+                             weight_Rt = TRUE, keep_strains_Rt = TRUE,
+                             interpolate_every = interpolate_every,
+                             interpolate_min = interpolate_min)
+  expect_equal(dim(rt_traj_weighted_keep_strains$eff_Rt_all), c(123, 3, 3))
+  expect_equal(class(rt_traj_weighted_keep_strains),
+               c("multi_strain_weighted", "Rt_trajectories", "Rt"))
+
   nms <- names(rt)
 
-  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ])
-  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain)
+  avg_rt <- wtmean_Rt(rt, prob_strain[, 1, ], FALSE)
+  avg_rt_traj <- wtmean_Rt(rt_traj, prob_strain, FALSE)
 
   ## here the 1st strain has weight 1 all along
   ## (except step 1 --> to investigate)
@@ -3500,17 +3537,38 @@ test_that("wtmean_Rt works as expected with interpolation", {
   expect_equal(names(avg_rt), nms)
   expect_equal(names(avg_rt_traj), nms)
 
+  ## first two layers in strain dimension in keep_strains version should be same
+  ## as non-weighted, third the same as weighted
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_general[, 1:2, ],
+               rt_traj$eff_Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_all[, 1:2, ],
+               rt_traj$eff_Rt_all)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_general[, 1:2, ],
+               rt_traj$Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_all[, 1:2, ],
+               rt_traj$Rt_all)
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_general[, 3, ],
+               rt_traj_strain_weighted$eff_Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$eff_Rt_all[, 3, ],
+               rt_traj_strain_weighted$eff_Rt_all)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_general[, 3, ],
+               rt_traj_strain_weighted$Rt_general)
+  expect_equal(rt_traj_weighted_keep_strains$Rt_all[, 3, ],
+               rt_traj_strain_weighted$Rt_all)
+
   ## check single particle case
   S <- mcstate::array_flatten(S, 2:3)[, 1, drop = FALSE]
   R <- mcstate::array_flatten(R, 2:3)[, 1, drop = FALSE]
   prob_strain <- mcstate::array_flatten(prob_strain, 2:3)[, 1, drop = FALSE]
   rt_weight_F <- lancelot_Rt(1, S, p, prob_strain, R = R, weight_Rt = FALSE)
   rt_weight_T <- lancelot_Rt(1, S, p, prob_strain, R = R, weight_Rt = TRUE)
-  expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all)
+  expect_equal(rt_weight_F$eff_Rt_all[[1]], rt_weight_T$eff_Rt_all,
+               tolerance = 1e-5)
   expect_equal(rt_weight_F$eff_Rt_general[[1]],
-               rt_weight_T$eff_Rt_general)
-  expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all)
-  expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general)
+               rt_weight_T$eff_Rt_general, tolerance = 1e-5)
+  expect_equal(rt_weight_F$Rt_all[[1]], rt_weight_T$Rt_all, tolerance = 1e-5)
+  expect_equal(rt_weight_F$Rt_general[[1]], rt_weight_T$Rt_general,
+               tolerance = 1e-5)
 })
 
 
