@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.5</span>
       </span>
     </div>
 
@@ -80,6 +80,7 @@
 <div class="page-header"><h1 id="sircovid-">sircovid <img src="reference/figures/logo.png" align="right" height="138.5"><a class="anchor" aria-label="anchor" href="#sircovid-"></a>
 </h1></div>
 <!-- badges: start -->
+
 <p><code>sircovid</code> implements a series of mechanistic models to help modelling the transmission of the SARS-Cov-2 virus using stochastic compartmental models. <code>sircovid</code> also provides some tools to perfom Bayesian evidence synthesis from several surveillance data streams through the estimation of transmission parameters.</p>
 <p><img src="reference/figures/sircovid_diagram.png" align="center" style="border: none; float: center;" width="800px"></p>
 <div class="section level2">
@@ -103,15 +104,15 @@
 <code class="sourceCode R"><span><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"ncov-ic"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dust"</span>, <span class="st">"mcstate"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We use OpenMP for parallelism, and this may not be available on your system. If not then compilation will fail with an error like:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>clang<span class="op">:</span><span class="st"> </span>error<span class="op">:</span><span class="st"> </span>unsupported option <span class="st">'-fopenmp'</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a>make[<span class="dv">1</span>]<span class="op">:</span><span class="st"> </span><span class="er">***</span><span class="st"> </span>[basic.o] Error <span class="dv">1</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>ERROR<span class="op">:</span><span class="st"> </span>compilation failed <span class="cf">for</span> package ‘sircovid’</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>clang<span class="sc">:</span> error<span class="sc">:</span> unsupported option <span class="st">'-fopenmp'</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>make[<span class="dv">1</span>]<span class="sc">:</span> <span class="er">***</span> [basic.o] Error <span class="dv">1</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ERROR<span class="sc">:</span> compilation failed <span class="cf">for</span> package ‘sircovid’</span></code></pre></div>
 <p>You can either install OpenMP support, or edit your personal <code>Makevars</code> file to tell R that you do not have it. To do this, you can run</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_makevars</span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></span></code></pre></div>
 <p>and add the lines</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>SHLIB_OPENMP_CFLAGS=</span>
-<span id="cb6-2"><a href="#cb6-2"></a>SHLIB_OPENMP_CXXFLAGS=</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>SHLIB_OPENMP_CFLAGS<span class="ot">=</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SHLIB_OPENMP_CXXFLAGS<span class="ot">=</span></span></code></pre></div>
 <p>after which compilation will succeed, but the model will only run on one core.</p>
 </div>
 <div class="section level2">

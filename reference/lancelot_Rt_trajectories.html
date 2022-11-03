@@ -20,7 +20,7 @@ parameters.'><meta property="og:image" content="/logo.png"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.5</span>
       </span>
     </div>
 
@@ -72,7 +72,8 @@ parameters.</p>
 <span>  interpolate_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  eigen_method <span class="op">=</span> <span class="st">"power_iteration"</span>,</span>
 <span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  weight_Rt <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  weight_Rt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  keep_strains_Rt <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -161,6 +162,14 @@ multi-strain models.</p></dd>
 <dd><p>If <code>TRUE</code> then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with
 an additional dimension to index each strain.</p></dd>
+
+
+<dt>keep_strains_Rt</dt>
+<dd><p>Additional argument for when <code>weight_Rt</code> is <code>TRUE</code>
+(has no impact otherwise). If <code>TRUE</code>, then the Rt for each strain is
+returned along with the weighted average, otherwise just the weighted
+average is returned. When <code>TRUE</code>, the dimension indexing these lists
+strains first, and then the weighted average.</p></dd>
 
 </dl></div>
     <div id="value">
