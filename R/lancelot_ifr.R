@@ -2,7 +2,7 @@
 ##'
 ##' @title Compute "IFR" excluding immunity
 ##'
-##' @param step A vector of steps to calculate IFR at
+##' @param step A vector of time steps to calculate IFR at
 ##'
 ##' @param pars An unnamed list of [lancelot_parameters()] objects
 ##'

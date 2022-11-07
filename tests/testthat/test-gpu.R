@@ -85,11 +85,11 @@ test_that("Can run the gpu compare on the cpu", {
   mod_cpu$update_state(state = initial)
   mod_gpu$update_state(state = initial)
 
-  mod_cpu$set_data(dust::dust_data(data, "step_end"))
-  mod_gpu$set_data(dust::dust_data(data, "step_end"))
+  mod_cpu$set_data(dust::dust_data(data, "time_end"))
+  mod_gpu$set_data(dust::dust_data(data, "time_end"))
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
-  y_cpu <- mod_cpu$run(data$step_end[[i]])
-  y_gpu <- mod_gpu$run(data$step_end[[i]])
+  y_cpu <- mod_cpu$run(data$time_end[[i]])
+  y_gpu <- mod_gpu$run(data$time_end[[i]])
   expect_equal(mod_cpu$compare_data(), mod_gpu$compare_data())
 })

@@ -1,7 +1,8 @@
-##' @name basic
-##' @title The basic sircovid model
-##'
 ##' The "basic" sircovid model. This is a dust model.
+##'
+##' @name basic
+##'
+##' @title The basic sircovid model
 ##' @export basic
 ##' @examples
 ##' # Set up the basic model for England with default parameters and

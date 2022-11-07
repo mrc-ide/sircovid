@@ -7,7 +7,7 @@
 lancelot_ifr_excl_immunity(step, pars)
 }
 \arguments{
-\item{step}{A vector of steps to calculate IFR at}
+\item{step}{A vector of time steps to calculate IFR at}
 
 \item{pars}{An unnamed list of \code{\link[=lancelot_parameters]{lancelot_parameters()}} objects}
 }

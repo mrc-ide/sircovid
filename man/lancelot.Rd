@@ -2,11 +2,7 @@
 % Please edit documentation in R/lancelot.R
 \name{lancelot}
 \alias{lancelot}
-\title{The lancelot sircovid model
-
-Our "current" sircovid model. This is a dust model.}
+\title{The lancelot sircovid model}
 \description{
-The lancelot sircovid model
-
-Our "current" sircovid model. This is a dust model.
+##' Our "current" sircovid model. This is a dust model.
 }
