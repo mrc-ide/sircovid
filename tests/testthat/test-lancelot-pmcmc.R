@@ -46,7 +46,7 @@ test_that("can compute incidence for a single variable", {
 test_that("Can combine trajectories of equal size - rank = FALSE", {
   dat <- reference_data_lancelot_trajectories()
   res <- combine_trajectories(list(dat, dat), rank = FALSE)
-  expect_equal(res$step, dat$trajectories$step)
+  expect_equal(res$time, dat$trajectories$time)
   expect_equal(res$rate, dat$trajectories$rate)
   expect_equal(res$predicted, dat$trajectories$predicted)
   expect_equal(res$date, dat$trajectories$date)
@@ -57,7 +57,7 @@ test_that("Can combine trajectories of equal size - rank = FALSE", {
 test_that("Can combine trajectories of equal size", {
   dat <- reference_data_lancelot_trajectories()
   res <- combine_trajectories(list(dat, dat))
-  expect_equal(res$step, dat$trajectories$step)
+  expect_equal(res$time, dat$trajectories$time)
   expect_equal(res$rate, dat$trajectories$rate)
   expect_equal(res$predicted, dat$trajectories$predicted)
   expect_equal(res$date, dat$trajectories$date)
@@ -107,12 +107,12 @@ test_that("can combine rt calculations over trajectories", {
     dat$predict$transform(dat$pars[i, ]))
   rt <- lancelot_Rt_trajectories(
     dat$trajectories$time, S, pars,
-    initial_step_from_parameters = TRUE,
+    initial_time_from_parameters = TRUE,
     shared_parameters = FALSE)
 
   res <- combine_rt(list(rt, rt), list(dat, dat))
   cmp <- rt
-  for (i in setdiff(names(cmp), c("step", "date"))) {
+  for (i in setdiff(names(cmp), c("time", "date"))) {
     cmp[[i]][1, ] <- NA
   }
   ## This should pass for everything, but the effective Rt
@@ -133,12 +133,12 @@ test_that("when combining rt calculations the output has the expected order", {
     dat$predict$transform(dat$pars[i, ]))
   rt <- lancelot_Rt_trajectories(
     dat$trajectories$time, S, pars,
-    initial_step_from_parameters = TRUE,
+    initial_time_from_parameters = TRUE,
     shared_parameters = FALSE)
 
   res <- combine_rt(list(rt, rt), list(dat, dat))
   cmp <- rt
-  for (i in setdiff(names(cmp), c("step", "date"))) {
+  for (i in setdiff(names(cmp), c("time", "date"))) {
     cmp[[i]][1, ] <- NA
   }
 
@@ -160,12 +160,12 @@ test_that("can combine rt calculations over trajectories without reordering", {
     dat$predict$transform(dat$pars[i, ]))
   rt <- lancelot_Rt_trajectories(
     dat$trajectories$time, S, pars,
-    initial_step_from_parameters = TRUE,
+    initial_time_from_parameters = TRUE,
     shared_parameters = FALSE)
 
   res <- combine_rt(list(rt, rt), list(dat, dat), rank = FALSE)
   cmp <- rt
-  for (i in setdiff(names(cmp), c("step", "date"))) {
+  for (i in setdiff(names(cmp), c("time", "date"))) {
     cmp[[i]][1, ] <- NA
   }
 
@@ -381,7 +381,7 @@ test_that("reorder_rt_ifr rejects invalid inputs", {
     dat$predict$transform(dat$pars[i, ]))
   rt <- lancelot_Rt_trajectories(
     dat$trajectories$time, S, pars,
-    initial_step_from_parameters = TRUE,
+    initial_time_from_parameters = TRUE,
     shared_parameters = FALSE)
 
   expect_error(reorder_rt_ifr(rt$beta, 1:10),
@@ -404,7 +404,7 @@ test_that("reorder_rt_ifr returns expected output", {
     dat$predict$transform(dat$pars[i, ]))
   rt <- lancelot_Rt_trajectories(
     dat$trajectories$time, S, pars,
-    initial_step_from_parameters = TRUE,
+    initial_time_from_parameters = TRUE,
     shared_parameters = FALSE)
 
   ## maintaining the initial order returns the same as input

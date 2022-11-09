@@ -777,7 +777,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 'prob_strain' to have 2 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
-    "Expected 'prob_strain' to have 123 columns, following 'step'")
+    "Expected 'prob_strain' to have 123 columns, following 'time'")
 
   ## Check lancelot_Rt_trajectories R
   expect_error(
@@ -808,7 +808,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 2nd dim of 'prob_strain' to have length 3, following 'pars'")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain[, , -1], R = R),
-    "Expected 3rd dim of 'prob_strain' to have length 123, following 'step'")
+    "Expected 3rd dim of 'prob_strain' to have length 123, following 'time'")
 })
 
 
