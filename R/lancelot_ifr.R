@@ -2,15 +2,15 @@
 ##'
 ##' @title Compute "IFR" excluding immunity
 ##'
-##' @param step A vector of time steps to calculate IFR at
+##' @param time A vector of time steps to calculate IFR at
 ##'
 ##' @param pars An unnamed list of [lancelot_parameters()] objects
 ##'
 ##' @export
-lancelot_ifr_excl_immunity <- function(step, pars) {
+lancelot_ifr_excl_immunity <- function(time, pars) {
 
-  if (length(dim(step)) > 1) {
-    stop("Expected 'step' to be a vector")
+  if (length(dim(time)) > 1) {
+    stop("Expected 'time' to be a vector")
   }
   if (length(unique(unlist(lapply(pars, function(x) x$n_strains)))) > 1) {
     stop("All parameter sets must have the same number of strains")
@@ -36,9 +36,9 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
     }
 
     mean_duration <-
-      lancelot_Rt_mean_duration_weighted_by_infectivity(step, p)
+      lancelot_Rt_mean_duration_weighted_by_infectivity(time, p)
 
-    ifr_weight_step <- function(t) {
+    ifr_weight_time <- function(t) {
       ## We want unvaccinated only so set 1 in 3rd dimension
       ngm <- p$m[gen_pop, gen_pop] *
         tcrossprod(mean_duration[gen_pop, i_strain, 1, t], p$N_tot[gen_pop])
@@ -52,51 +52,51 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
       assert_real(weighting)
     }
 
-    vapply(seq_along(step), ifr_weight_step, numeric(n_age_groups))
+    vapply(seq_along(time), ifr_weight_time, numeric(n_age_groups))
   }
 
   compute_ifr_weighting <- function(p) {
     out <- vapply(seq_len(n_real_strains),
                   function(i) compute_ifr_weighting_strain(p, i),
-                  array(0, c(n_age_groups, length(step))))
+                  array(0, c(n_age_groups, length(time))))
     out <- aperm(out, c(1, 3, 2))
     out
   }
 
   ifr_weighting <-
     vapply(pars, compute_ifr_weighting,
-           array(0, c(n_age_groups, n_real_strains, length(step))))
+           array(0, c(n_age_groups, n_real_strains, length(time))))
 
   ifr_unweighted <-
-    lapply(pars, function(p) lancelot_ifr_by_group_strain_vacc_class(step, p))
+    lapply(pars, function(p) lancelot_ifr_by_group_strain_vacc_class(time, p))
 
-  weight_ifr <- function(i_strain, i_step, i_pars, type) {
+  weight_ifr <- function(i_strain, i_time, i_pars, type) {
     if (type == "HFR") {
       ## for HFR, need to weight further by IHR
-      w <- ifr_weighting[, i_strain, i_step, i_pars] *
-        ifr_unweighted[[i_pars]]$IHR[gen_pop, i_strain, 1, i_step]
+      w <- ifr_weighting[, i_strain, i_time, i_pars] *
+        ifr_unweighted[[i_pars]]$IHR[gen_pop, i_strain, 1, i_time]
     } else {
-      w <- ifr_weighting[, i_strain, i_step, i_pars]
+      w <- ifr_weighting[, i_strain, i_time, i_pars]
     }
     weighted.mean(
-      ifr_unweighted[[i_pars]][[type]][gen_pop, i_strain, 1, i_step], w)
+      ifr_unweighted[[i_pars]][[type]][gen_pop, i_strain, 1, i_time], w)
   }
 
   calc_type <- function(type) {
-    ## This will output an object of dim: n_steps x n_real_strains x n_pars
+    ## This will output an object of dim: n_time_steps x n_real_strains x n_pars
     out <-
       vapply(seq_len(n_pars),
              function(i_pars)
                vapply(seq_len(n_real_strains),
                       function(i_strain)
-                        vnapply(seq_along(step),
-                                function(i_step)
-                                  weight_ifr(i_strain, i_step, i_pars, type)),
-                    numeric(length(step))),
-            array(0, c(length(step), n_real_strains)))
+                        vnapply(seq_along(time),
+                                function(i_time)
+                                  weight_ifr(i_strain, i_time, i_pars, type)),
+                    numeric(length(time))),
+            array(0, c(length(time), n_real_strains)))
 
-    if (sum(c(length(step), n_real_strains, n_pars) == 1) >= 2) {
-      out <- array(out, c(length(step), n_real_strains, n_pars))
+    if (sum(c(length(time), n_real_strains, n_pars) == 1) >= 2) {
+      out <- array(out, c(length(time), n_real_strains, n_pars))
     }
     out
 
@@ -105,17 +105,17 @@ lancelot_ifr_excl_immunity <- function(step, pars) {
   ret <- list(IFR = calc_type("IFR"),
               IHR = calc_type("IHR"),
               HFR = calc_type("HFR"),
-              step = step)
+              time = time)
 
   ret
 }
 
-lancelot_ifr_by_group_strain_vacc_class <- function(step, pars) {
+lancelot_ifr_by_group_strain_vacc_class <- function(time, pars) {
 
   probs <- compute_pathway_probabilities(
-    step = step,
+    time = time,
     pars = pars,
-    n_time_steps = length(sircovid_parameters_expand_step(step,
+    n_time_steps = length(sircovid_parameters_expand_step(time,
                                                           pars$p_H_step)),
     n_strains = length(pars$strain_transmission),
     n_vacc_classes = nlayer(pars$rel_susceptibility))
@@ -146,38 +146,38 @@ lancelot_ifr_by_group_strain_vacc_class <- function(step, pars) {
 }
 
 
-compute_pathway_probabilities <- function(step, pars, n_time_steps, n_strains,
+compute_pathway_probabilities <- function(time, pars, n_time_steps, n_strains,
                                           n_vacc_classes) {
 
   i <- seq_len(n_strains)
 
   out <- list()
   out$p_C <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_C_step, pars$rel_p_sympt[, i, , drop = FALSE],
     pars$strain_rel_p_sympt)
   out$p_H <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_H_step, pars$rel_p_hosp_if_sympt[, i, , drop = FALSE],
     pars$strain_rel_p_hosp_if_sympt)
   out$p_ICU <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_ICU_step, pars$rel_p_ICU[, i, , drop = FALSE],
     pars$strain_rel_p_icu)
   out$p_ICU_D <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_ICU_D_step, pars$rel_p_ICU_D[, i, , drop = FALSE],
     pars$strain_rel_p_ICU_D)
   out$p_H_D <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_H_D_step, pars$rel_p_H_D[, i, , drop = FALSE],
     pars$strain_rel_p_H_D)
   out$p_W_D <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_W_D_step, pars$rel_p_W_D[, i, , drop = FALSE],
     pars$strain_rel_p_W_D)
   out$p_G_D <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
+    time, pars$n_groups, n_time_steps, n_strains, n_vacc_classes,
     pars$p_G_D_step, pars$rel_p_G_D[, i, , drop = FALSE],
     pars$strain_rel_p_G_D)
 

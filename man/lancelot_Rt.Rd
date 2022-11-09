@@ -5,7 +5,7 @@
 \title{Compute "Rt"}
 \usage{
 lancelot_Rt(
-  step,
+  time,
   S,
   p,
   prob_strain = NULL,
@@ -20,14 +20,14 @@ lancelot_Rt(
 )
 }
 \arguments{
-\item{step}{A vector of steps that the model was run over}
+\item{time}{A vector of time steps that the model was run over}
 
 \item{S}{A (n groups x n vaccine classes) x steps matrix of "S"
 compartment counts}
 
 \item{p}{A \code{\link[=lancelot_parameters]{lancelot_parameters()}} object}
 
-\item{prob_strain}{A (n groups x n strains) x n steps matrix of
+\item{prob_strain}{A (n groups x n strains) x n time steps matrix of
 "prob_strain" outputs from the model. For a 2 strain model for example,
 \code{prob_strain[1, j]} and \code{prob_strain[n_groups + 1, j]} should give, for
 the j^th time step, the probabilities that new infections
@@ -62,8 +62,8 @@ interpolation and that will not work with fewer than 3 points.}
 \item{eigen_method}{The eigenvalue method to use (passed to
 \link[eigen1:eigen1]{eigen1::eigen1} as \code{method})}
 
-\item{R}{A (n groups x n strains x n vaccine classes) x steps matrix of "R"
-compartment counts, required for multi-strain models.}
+\item{R}{A (n groups x n strains x n vaccine classes) x time steps matrix of
+"R" compartment counts, required for multi-strain models.}
 
 \item{weight_Rt}{If \code{TRUE} then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with
@@ -76,7 +76,7 @@ average is returned. When \code{TRUE}, the dimension indexing these lists
 strains first, and then the weighted average.}
 }
 \value{
-A list with elements \code{step}, \code{beta}, and any of the \code{type}
+A list with elements \code{time}, \code{beta}, and any of the \code{type}
 values specified above.
 }
 \description{

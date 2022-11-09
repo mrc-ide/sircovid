@@ -2,14 +2,14 @@
 ##'
 ##' @title Compute "Rt"
 ##'
-##' @param step A vector of steps that the model was run over
+##' @param time A vector of time steps that the model was run over
 ##'
 ##' @param S A (n groups x n vaccine classes) x steps matrix of "S"
 ##'   compartment counts
 ##'
 ##' @param p A [lancelot_parameters()] object
 ##'
-##' @param prob_strain A (n groups x n strains) x n steps matrix of
+##' @param prob_strain A (n groups x n strains) x n time steps matrix of
 ##'   "prob_strain" outputs from the model. For a 2 strain model for example,
 ##'   `prob_strain[1, j]` and `prob_strain[n_groups + 1, j]` should give, for
 ##'   the j^th time step, the probabilities that new infections
@@ -45,8 +45,8 @@
 ##' @param eigen_method The eigenvalue method to use (passed to
 ##'   [eigen1::eigen1] as `method`)
 ##'
-##' @param R A (n groups x n strains x n vaccine classes) x steps matrix of "R"
-##'   compartment counts, required for multi-strain models.
+##' @param R A (n groups x n strains x n vaccine classes) x time steps matrix of
+##'   "R" compartment counts, required for multi-strain models.
 ##'
 ##' @param weight_Rt If `TRUE` then computes the weighted average
 ##'  of the Rt for all strains, otherwise all calculations are returned with
@@ -58,11 +58,11 @@
 ##'  average is returned. When `TRUE`, the dimension indexing these lists
 ##'  strains first, and then the weighted average.
 ##'
-##' @return A list with elements `step`, `beta`, and any of the `type`
+##' @return A list with elements `time`, `beta`, and any of the `type`
 ##'   values specified above.
 ##'
 ##' @export
-lancelot_Rt <- function(step, S, p, prob_strain = NULL,
+lancelot_Rt <- function(time, S, p, prob_strain = NULL,
                         type = NULL, interpolate_every = NULL,
                         interpolate_critical_dates = NULL,
                         interpolate_min = NULL,
@@ -102,24 +102,24 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
       ## calculate Rt by first ignoring NA
       if (any(which_nna)) {
         ret <- lancelot_Rt(
-          step[which_nna], S[, which_nna, drop = FALSE], p,
+          time[which_nna], S[, which_nna, drop = FALSE], p,
           prob_strain[, which_nna, drop = FALSE], type, interpolate_every,
           interpolate_critical_dates, interpolate_min,
           eigen_method, R[, which_nna, drop = FALSE], weight_Rt,
           keep_strains_Rt)
       } else {
         ret <- vector("list", 3 + length(type))
-        names(ret) <- c("step", "date", "beta", type)
+        names(ret) <- c("time", "date", "beta", type)
       }
 
-      ## replace reduced step,date,beta with full values (no NA here)
-      ret$step <- step
-      ret$date <- step * p$dt
-      ret$beta <- beta <- sircovid_parameters_expand_step(step, p$beta_step)
+      ## replace reduced time,date,beta with full values (no NA here)
+      ret$time <- time
+      ret$date <- time * p$dt
+      ret$beta <- beta <- sircovid_parameters_expand_step(time, p$beta_step)
 
       ## restore full length Rt with NAs when prob_strain is NA
       for (i in grep("Rt_", names(ret))) {
-        base <- rep(NA, length(step))
+        base <- rep(NA, length(time))
         base[which_nna] <- ret[[i]]
         ret[[i]] <- base
       }
@@ -127,13 +127,13 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
       return(ret)
     }
   } else {
-    prob_strain <- array(1, length(step))
+    prob_strain <- array(1, length(time))
     R <- NULL
   }
 
   if (!is.null(interpolate_every)) {
     interpolate_critical_index <- match(interpolate_critical_dates / p$dt,
-                                        step)
+                                        time)
     # remove NA values and ensure vector order is decreasing
     interpolate_critical_index <-
       interpolate_critical_index[!is.na(interpolate_critical_index)]
@@ -141,23 +141,23 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
       interpolate_critical_index[order(interpolate_critical_index,
                                        decreasing = FALSE)]
 
-    step_index_split <- interpolate_grid_critical_x(seq_along(step),
+    time_index_split <- interpolate_grid_critical_x(seq_along(time),
                                                     interpolate_every,
                                                     interpolate_critical_index,
                                                     interpolate_min)
-    step_index <- unlist(step_index_split)
-    ret <- lancelot_Rt(step[step_index], S[, step_index, drop = FALSE], p,
-                       prob_strain[, step_index, drop = FALSE], type,
-                       R = R[, step_index, drop = FALSE],
+    time_index <- unlist(time_index_split)
+    ret <- lancelot_Rt(time[time_index], S[, time_index, drop = FALSE], p,
+                       prob_strain[, time_index, drop = FALSE], type,
+                       R = R[, time_index, drop = FALSE],
                        weight_Rt = weight_Rt, keep_strains_Rt = keep_strains_Rt)
     if (!is.null(interpolate_every)) {
       ret[type] <- lapply(ret[type], interpolate_grid_expand_y,
-                          step_index_split)
+                          time_index_split)
     }
     ## Also need to update these
-    ret$step <- step
-    ret$date <- step * p$dt
-    ret$beta <- sircovid_parameters_expand_step(step, p$beta_step)
+    ret$time <- time
+    ret$date <- time * p$dt
+    ret$beta <- sircovid_parameters_expand_step(time, p$beta_step)
     return(ret)
   }
 
@@ -168,9 +168,9 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
       p$n_groups,
       nlayer(p$rel_susceptibility)))
   }
-  if (ncol(S) != length(step)) {
-    stop(sprintf("Expected 'S' to have %d columns, following 'step'",
-                 length(step)))
+  if (ncol(S) != length(time)) {
+    stop(sprintf("Expected 'S' to have %d columns, following 'time'",
+                 length(time)))
   }
   if (!is.null(R)) {
     if (nrow(R) != nlayer(p$rel_susceptibility) * nrow(p$m) * p$n_strains_R) {
@@ -180,9 +180,9 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
         p$n_groups * nlayer(p$rel_susceptibility) * p$n_strains_R,
         p$n_groups, p$n_strains_R, nlayer(p$rel_susceptibility)))
     }
-    if (ncol(R) != length(step)) {
-      stop(sprintf("Expected 'R' to have %d columns, following 'step'",
-                   length(step)))
+    if (ncol(R) != length(time)) {
+      stop(sprintf("Expected 'R' to have %d columns, following 'time'",
+                   length(time)))
     }
   }
 
@@ -195,8 +195,8 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 
     if (!is.matrix(prob_strain)) {
       stop(sprintf(
-        "Expected a %d strains x %d step matrix for 'prob_strain'",
-        n_real_strains, length(step)))
+        "Expected a %d strains x %d time steps matrix for 'prob_strain'",
+        n_real_strains, length(time)))
     }
 
     if (nrow(prob_strain) != n_real_strains) {
@@ -204,10 +204,10 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
         "Expected 'prob_strain' to have %d rows, following number of strains",
         n_real_strains))
     }
-    if (ncol(prob_strain) != length(step)) {
+    if (ncol(prob_strain) != length(time)) {
       stop(sprintf(
-        "Expected 'prob_strain' to have %d columns, following 'step'",
-        length(step)))
+        "Expected 'prob_strain' to have %d columns, following 'time'",
+        length(time)))
     }
   }
 
@@ -215,7 +215,7 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 
   ### here mean_duration accounts for relative infectivity of
   ### different infection / vaccination stages
-  beta <- sircovid_parameters_expand_step(step, p$beta_step)
+  beta <- sircovid_parameters_expand_step(time, p$beta_step)
 
   ages <- seq_len(p$n_age_groups)
   ch <- seq(p$n_age_groups + 1L, p$n_groups)
@@ -245,10 +245,10 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
   mt <- m %o% beta
   mt[ch, ch, ] <- m[ch, ch]
 
-  n_time <- length(step)
+  n_time <- length(time)
 
   mean_duration <-
-    lancelot_Rt_mean_duration_weighted_by_infectivity(step, p)
+    lancelot_Rt_mean_duration_weighted_by_infectivity(time, p)
 
   compute_ngm <- function(x, S, rel_sus, R = 0, rel_sus_strain = 1) {
     n_groups <- p$n_groups
@@ -267,8 +267,8 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
                    method = eigen_method)
   }
 
-  ret <- list(step = step,
-              date = step * p$dt,
+  ret <- list(time = time,
+              date = time * p$dt,
               beta = beta)
 
   n_groups <- nrow(p$m)
@@ -388,10 +388,10 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 
 ## Here we expect 'S' in order:
 ##
-##   state x sample x step
+##   state x sample x time
 ##
 ## We expect 'pars' to be a list along sample (or a shared parameter set)
-## We expect 'step' to be a vector along step
+## We expect 'time' to be a vector along time
 
 ##' Compute "Rt" for a set of simulated trajectories (e.g., the result
 ##' of the `$iterate()` method of [lancelot], [mcstate::pmcmc()] or
@@ -400,23 +400,23 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 ##'
 ##' @title Compute Rt for a set of trajectories
 ##'
-##' @param step A vector of steps
+##' @param time A vector of time steps
 ##'
-##' @param S A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
-##'   array of "S" compartment counts
+##' @param S A 3d ((n groups x n vaccine classes) x n trajectories x n time
+##'   steps) array of "S" compartment counts
 ##'
 ##' @param pars Either a single [lancelot_parameters()] object
 ##'   (shared parameters) or an unnamed list of
 ##'   [lancelot_parameters()] objects, the same length as `ncol(S)`.
 ##'
-##' @param prob_strain A 3d ((n groups x n strains) x n trajectories x n steps)
-##'   array of "prob_strain" model outputs. Default is `NULL`, but it must be
-##'   specified if there is more than one strain.
+##' @param prob_strain A 3d ((n groups x n strains) x n trajectories x n time
+##'   steps) array of "prob_strain" model outputs. Default is `NULL`, but it
+##'   must be specified if there is more than one strain.
 ##'
-##' @param initial_step_from_parameters If `TRUE`, then `step[[1]]` is
-##'   replaced by the value of `initial_step` from the parameters.
+##' @param initial_time_from_parameters If `TRUE`, then `time[[1]]` is
+##'   replaced by the value of `initial_time` from the parameters.
 ##'   This is usually what you want. (From sircovid 0.12.13 this
-##'   parameter means "initial step is zero" and will probably be
+##'   parameter means "initial time is zero" and will probably be
 ##'   updated in a future version).
 ##'
 ##' @param shared_parameters Should `pars` be treated as a single
@@ -425,8 +425,8 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 ##'   other which may give more easily interpretable error messages.
 ##'
 ##' @param R A 3d ((n groups x n strains x n vaccine classes) x
-##'   n trajectories x n steps) array of "R" compartment counts, required for
-##'   multi-strain models.
+##'   n trajectories x n time steps) array of "R" compartment counts, required
+##'   for multi-strain models.
 ##'
 ##' @inheritParams lancelot_Rt
 ##'
@@ -434,8 +434,8 @@ lancelot_Rt <- function(step, S, p, prob_strain = NULL,
 ##'   matrix, not a vector.
 ##'
 ##' @export
-lancelot_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
-                                     initial_step_from_parameters = TRUE,
+lancelot_Rt_trajectories <- function(time, S, pars, prob_strain = NULL,
+                                     initial_time_from_parameters = TRUE,
                                      shared_parameters = NULL,
                                      type = NULL,
                                      interpolate_every = NULL,
@@ -445,10 +445,10 @@ lancelot_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
                                      R = NULL, weight_Rt = FALSE,
                                      keep_strains_Rt = FALSE) {
   calculate_Rt_trajectories(
-    calculate_Rt = lancelot_Rt, step = step,
+    calculate_Rt = lancelot_Rt, time = time,
     S = S, pars = pars,
     prob_strain = prob_strain,
-    initial_step_from_parameters = initial_step_from_parameters,
+    initial_time_from_parameters = initial_time_from_parameters,
     shared_parameters = shared_parameters,
     type = type,
     interpolate_every = interpolate_every,
@@ -461,14 +461,14 @@ lancelot_Rt_trajectories <- function(step, S, pars, prob_strain = NULL,
 }
 
 
-lancelot_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
+lancelot_Rt_mean_duration_weighted_by_infectivity <- function(time, pars) {
 
   dt <- pars$dt
   n_time_steps <-
-    length(sircovid_parameters_expand_step(step, pars$p_H_step))
+    length(sircovid_parameters_expand_step(time, pars$p_H_step))
 
   p_C <- combine_steps_groups(
-    step, pars$n_groups, n_time_steps,
+    time, pars$n_groups, n_time_steps,
     n_strains = length(pars$strain_transmission),
     n_vacc_classes = pars$n_vacc_classes, p_step = pars$p_C_step,
     rel_p = pars$rel_p_sympt,
@@ -483,7 +483,7 @@ lancelot_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
   ## a discretised Erlang(k, gamma) is k / (1 - exp(dt * gamma))
   calculate_mean <- function(transmission, prob, name) {
     gamma_step <-
-      sircovid_parameters_expand_step(step,
+      sircovid_parameters_expand_step(time,
                                       pars[[paste0("gamma_", name, "_step")]])
     rel_gamma <- pars[[paste0("rel_gamma_", name)]]
     k <- pars[[paste0("k_", name)]]
@@ -522,8 +522,8 @@ lancelot_Rt_mean_duration_weighted_by_infectivity <- function(step, pars) {
 ## it out here; when we implement this for the basic model this will
 ## remain unchanged.  However, I am leaving it in this
 ## lancelot-specific file until we do add a new model or port it.
-calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
-                                      initial_step_from_parameters,
+calculate_Rt_trajectories <- function(calculate_Rt, time, S, pars, prob_strain,
+                                      initial_time_from_parameters,
                                       shared_parameters, type, R = NULL, ...) {
   if (length(dim(S)) != 3) {
     stop("Expected a 3d array of 'S'")
@@ -550,10 +550,10 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
     }
   }
 
-  if (dim(S)[[3]] != length(step)) {
+  if (dim(S)[[3]] != length(time)) {
     stop(sprintf(
-      "Expected 3rd dimension of 'S' to have length %d, following 'step'",
-      length(step)))
+      "Expected 3rd dimension of 'S' to have length %d, following 'time'",
+      length(time)))
   }
 
   if (!is.null(R) && any(dim(R)[2:3] != dim(S)[2:3])) {
@@ -571,28 +571,28 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
         "Expected 2nd dim of 'prob_strain' to have length %d, following 'pars'",
         length(pars)))
     }
-    if (dim(prob_strain)[[3]] != length(step)) {
+    if (dim(prob_strain)[[3]] != length(time)) {
       stop(sprintf(
-        "Expected 3rd dim of 'prob_strain' to have length %d, following 'step'",
-        length(step)))
+        "Expected 3rd dim of 'prob_strain' to have length %d, following 'time'",
+        length(time)))
     }
   }
 
   calculate_rt_one_trajectory <- function(i) {
-    if (initial_step_from_parameters) {
+    if (initial_time_from_parameters) {
       ## TODO: Ed (or someone else) this has been probably not ideal
       ## since we moved to seeding as this is *always* zero now!
       ## Similar problem in the ifr calculation.
       ##
       ## The current formulation will be backward compatible and leave
       ## tests passing until we fix this properly.
-      step[[1L]] <- pars[[i]]$initial_step %||% 0
+      time[[1L]] <- pars[[i]]$initial_time %||% 0
     }
     if (is.null(prob_strain)) {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], type = type,
+      rt_1 <- calculate_Rt(time, S[, i, ], pars[[i]], type = type,
                            R = R[, i, ], ...)
     } else {
-      rt_1 <- calculate_Rt(step, S[, i, ], pars[[i]], prob_strain[, i, ],
+      rt_1 <- calculate_Rt(time, S[, i, ], pars[[i]], prob_strain[, i, ],
                            type = type, R = R[, i, ], ...)
     }
     rt_1
@@ -603,11 +603,11 @@ calculate_Rt_trajectories <- function(calculate_Rt, step, S, pars, prob_strain,
   ## These are stored in a list-of-lists and we convert to a
   ## list-of-matrices here
   collect <- function(nm) {
-    if (nm %in% c("step", "date", "beta")) {
-      matrix(unlist(lapply(res, "[[", nm)), length(step), length(res))
+    if (nm %in% c("time", "date", "beta")) {
+      matrix(unlist(lapply(res, "[[", nm)), length(time), length(res))
     } else {
       array(unlist(lapply(res, "[[", nm)),
-            c(length(step), ncol(res[[1]][[nm]]), length(res)))
+            c(length(time), ncol(res[[1]][[nm]]), length(res)))
     }
   }
   nms <- names(res[[1]])
@@ -638,7 +638,7 @@ wtmean_Rt <- function(rt, prob_strain, keep_strains_Rt) {
   rt_mean <- rt
 
   what <- names(rt)
-  what <- what[!(what %in% c("step", "date", "beta"))]
+  what <- what[!(what %in% c("time", "date", "beta"))]
 
   get_mean_rt <- function(r, prob_strain) {
     n_dim <- length(dim(prob_strain))
@@ -653,7 +653,7 @@ wtmean_Rt <- function(rt, prob_strain, keep_strains_Rt) {
     if (length(dim(r)) != length(dim(reshape_prob_strain)) ||
         !all(dim(r) == dim(reshape_prob_strain))) {
       stop(sprintf(
-        "Expect elements of Rt to have dimensions: %d steps x %d strains x
+        "Expect elements of Rt to have dimensions: %d time steps x %d strains x
         %d particles", nrow(reshape_prob_strain), ncol(reshape_prob_strain),
         nlayer(reshape_prob_strain)))
     }

@@ -11,15 +11,15 @@ reference_data_lancelot_rt <- function() {
     index <- mod$info()$index$S
 
     end <- sircovid_date("2020-05-01") / p$dt
-    steps <- seq(0, end, by = 1 / p$dt)
+    time <- seq(0, end, by = 1 / p$dt)
 
     set.seed(1)
     mod$set_index(index)
-    y <- mod$simulate(steps)
-    rt_1 <- lancelot_Rt(steps, y[, 1, ], p)
-    rt_all <- lancelot_Rt_trajectories(steps, y, p)
+    y <- mod$simulate(time)
+    rt_1 <- lancelot_Rt(time, y[, 1, ], p)
+    rt_all <- lancelot_Rt_trajectories(time, y, p)
 
-    list(inputs = list(steps = steps, y = y, p = p),
+    list(inputs = list(time = time, y = y, p = p),
          outputs = list(rt_1 = rt_1, rt_all = rt_all))
   })
 }
@@ -30,5 +30,5 @@ calculate_lancelot_rt_simple <- function(dat) {
     dat$predict$transform(dat$pars[i, ]))
   i <- grep("S_", rownames(dat$trajectories$state))
   S <- dat$trajectories$state[i, , ]
-  lancelot_Rt_trajectories(dat$trajectories$step, S, p)
+  lancelot_Rt_trajectories(dat$trajectories$time, S, p)
 }

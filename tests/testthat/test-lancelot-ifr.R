@@ -118,28 +118,28 @@ test_that("Multistrain IFR excluding immunity calculated as expected", {
 
 test_that("IFR excluding immunity outputted with correct dimensions", {
 
-  # Dimensions of outputs should be n_steps x n_strains x n_pars
+  # Dimensions of outputs should be n_time_steps x n_strains x n_pars
 
   p <- lancelot_parameters(1, "uk", carehome_beds = 0)
   severity <-  lancelot_ifr_excl_immunity(1, list(p))
   expect_equal(dim(severity$IFR), c(1, 1, 1))
   expect_equal(dim(severity$IHR), c(1, 1, 1))
   expect_equal(dim(severity$HFR), c(1, 1, 1))
-  expect_equal(length(severity$step), 1)
+  expect_equal(length(severity$time), 1)
 
   p <- lancelot_parameters(1, "uk", carehome_beds = 0)
   severity <-  lancelot_ifr_excl_immunity(1, list(p, p))
   expect_equal(dim(severity$IFR), c(1, 1, 2))
   expect_equal(dim(severity$IHR), c(1, 1, 2))
   expect_equal(dim(severity$HFR), c(1, 1, 2))
-  expect_equal(length(severity$step), 1)
+  expect_equal(length(severity$time), 1)
 
   p <- lancelot_parameters(1, "uk", carehome_beds = 0)
   severity <-  lancelot_ifr_excl_immunity(c(1, 3), list(p))
   expect_equal(dim(severity$IFR), c(2, 1, 1))
   expect_equal(dim(severity$IHR), c(2, 1, 1))
   expect_equal(dim(severity$HFR), c(2, 1, 1))
-  expect_equal(length(severity$step), 2)
+  expect_equal(length(severity$time), 2)
 
   p <- lancelot_parameters(1, "uk", carehome_beds = 0,
                            strain_transmission = c(1, 1))
@@ -147,7 +147,7 @@ test_that("IFR excluding immunity outputted with correct dimensions", {
   expect_equal(dim(severity$IFR), c(1, 2, 1))
   expect_equal(dim(severity$IHR), c(1, 2, 1))
   expect_equal(dim(severity$HFR), c(1, 2, 1))
-  expect_equal(length(severity$step), 1)
+  expect_equal(length(severity$time), 1)
 
   p <- lancelot_parameters(1, "uk", carehome_beds = 0,
                            strain_transmission = c(1, 1))
@@ -155,12 +155,13 @@ test_that("IFR excluding immunity outputted with correct dimensions", {
   expect_equal(dim(severity$IFR), c(3, 2, 4))
   expect_equal(dim(severity$IHR), c(3, 2, 4))
   expect_equal(dim(severity$HFR), c(3, 2, 4))
-  expect_equal(length(severity$step), 3)
+  expect_equal(length(severity$time), 3)
 
 })
 
 
-test_that("Can correctly calculate IFR excluding immunity at different steps", {
+test_that("Can correctly calculate IFR excluding immunity at different time
+          steps", {
 
   p_severity <-
     lancelot_parameters_severity(0.25,
@@ -179,17 +180,17 @@ test_that("Can correctly calculate IFR excluding immunity at different steps", {
                            severity = p_severity)
 
   date <- sircovid_date(c("2020-02-01", "2020-05-01", "2020-08-01"))
-  step <- date * 4
+  time <- date * 4
 
-  severity <-  lancelot_ifr_excl_immunity(step, list(p))
+  severity <-  lancelot_ifr_excl_immunity(time, list(p))
 
-  # IHR should halve between step[1] & step[2]
+  # IHR should halve between time[1] & time[2]
   expect_equal(severity$IHR[1, 1, 1], 2 * severity$IHR[2, 1, 1])
   expect_equal(severity$IHR[2, 1, 1], severity$IHR[3, 1, 1])
-  # HFR should halve between step[2] & step[3]
+  # HFR should halve between time[2] & time[3]
   expect_equal(severity$HFR[1, 1, 1], severity$HFR[2, 1, 1])
   expect_equal(severity$HFR[2, 1, 1], 2 * severity$HFR[3, 1, 1])
-  # IFR should halve between step[1] & step[2], and between step[2] & step[3]
+  # IFR should halve between time[1] & time[2], and between time[2] & time[3]
   expect_equal(severity$IFR[1, 1, 1], 2 * severity$IFR[2, 1, 1])
   expect_equal(severity$IFR[2, 1, 1], 2 * severity$IFR[3, 1, 1])
 
@@ -223,7 +224,7 @@ test_that("If infections by age are weighted equally, IFR is a simple mean", {
 test_that("Validate IFR excluding immunity inputs", {
   p <- lancelot_parameters(1, "uk", carehome_beds = 0)
   expect_error(lancelot_ifr_excl_immunity(array(1, c(2, 2)), list(p)),
-               "Expected 'step' to be a vector")
+               "Expected 'time' to be a vector")
 
   p2 <- lancelot_parameters(1, "uk", carehome_beds = 0,
                             strain_transmission = c(1, 1))
