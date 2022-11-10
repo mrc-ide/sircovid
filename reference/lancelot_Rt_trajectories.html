@@ -20,7 +20,7 @@ parameters.'><meta property="og:image" content="/logo.png"><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.7</span>
       </span>
     </div>
 
@@ -60,11 +60,11 @@ parameters.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_Rt_trajectories</span><span class="op">(</span></span>
-<span>  <span class="va">step</span>,</span>
+<span>  <span class="va">time</span>,</span>
 <span>  <span class="va">S</span>,</span>
 <span>  <span class="va">pars</span>,</span>
 <span>  prob_strain <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  initial_step_from_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  initial_time_from_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  shared_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  interpolate_every <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -79,13 +79,13 @@ parameters.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>step</dt>
-<dd><p>A vector of steps</p></dd>
+    <dl><dt>time</dt>
+<dd><p>A vector of time steps</p></dd>
 
 
 <dt>S</dt>
-<dd><p>A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
-array of "S" compartment counts</p></dd>
+<dd><p>A 3d ((n groups x n vaccine classes) x n trajectories x n time
+steps) array of "S" compartment counts</p></dd>
 
 
 <dt>pars</dt>
@@ -95,16 +95,16 @@ array of "S" compartment counts</p></dd>
 
 
 <dt>prob_strain</dt>
-<dd><p>A 3d ((n groups x n strains) x n trajectories x n steps)
-array of "prob_strain" model outputs. Default is <code>NULL</code>, but it must be
-specified if there is more than one strain.</p></dd>
+<dd><p>A 3d ((n groups x n strains) x n trajectories x n time
+steps) array of "prob_strain" model outputs. Default is <code>NULL</code>, but it
+must be specified if there is more than one strain.</p></dd>
 
 
-<dt>initial_step_from_parameters</dt>
-<dd><p>If <code>TRUE</code>, then <code>step[[1]]</code> is
-replaced by the value of <code>initial_step</code> from the parameters.
+<dt>initial_time_from_parameters</dt>
+<dd><p>If <code>TRUE</code>, then <code>time[[1]]</code> is
+replaced by the value of <code>initial_time</code> from the parameters.
 This is usually what you want. (From sircovid 0.12.13 this
-parameter means "initial step is zero" and will probably be
+parameter means "initial time is zero" and will probably be
 updated in a future version).</p></dd>
 
 
@@ -154,8 +154,8 @@ interpolation and that will not work with fewer than 3 points.</p></dd>
 
 <dt>R</dt>
 <dd><p>A 3d ((n groups x n strains x n vaccine classes) x
-n trajectories x n steps) array of "R" compartment counts, required for
-multi-strain models.</p></dd>
+n trajectories x n time steps) array of "R" compartment counts, required
+for multi-strain models.</p></dd>
 
 
 <dt>weight_Rt</dt>

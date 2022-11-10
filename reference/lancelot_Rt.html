@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.7</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lancelot_Rt</span><span class="op">(</span></span>
-<span>  <span class="va">step</span>,</span>
+<span>  <span class="va">time</span>,</span>
 <span>  <span class="va">S</span>,</span>
 <span>  <span class="va">p</span>,</span>
 <span>  prob_strain <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -71,8 +71,8 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>step</dt>
-<dd><p>A vector of steps that the model was run over</p></dd>
+    <dl><dt>time</dt>
+<dd><p>A vector of time steps that the model was run over</p></dd>
 
 
 <dt>S</dt>
@@ -85,7 +85,7 @@ compartment counts</p></dd>
 
 
 <dt>prob_strain</dt>
-<dd><p>A (n groups x n strains) x n steps matrix of
+<dd><p>A (n groups x n strains) x n time steps matrix of
 "prob_strain" outputs from the model. For a 2 strain model for example,
 <code>prob_strain[1, j]</code> and <code>prob_strain[n_groups + 1, j]</code> should give, for
 the j^th time step, the probabilities that new infections
@@ -132,8 +132,8 @@ interpolation and that will not work with fewer than 3 points.</p></dd>
 
 
 <dt>R</dt>
-<dd><p>A (n groups x n strains x n vaccine classes) x steps matrix of "R"
-compartment counts, required for multi-strain models.</p></dd>
+<dd><p>A (n groups x n strains x n vaccine classes) x time steps matrix of
+"R" compartment counts, required for multi-strain models.</p></dd>
 
 
 <dt>weight_Rt</dt>
@@ -154,7 +154,7 @@ strains first, and then the weighted average.</p></dd>
     <h2>Value</h2>
     
 
-<p>A list with elements <code>step</code>, <code>beta</code>, and any of the <code>type</code></p>
+<p>A list with elements <code>time</code>, <code>beta</code>, and any of the <code>type</code></p>
 
 
 <p>values specified above.</p>
