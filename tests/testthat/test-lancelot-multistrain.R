@@ -656,7 +656,7 @@ test_that("Swapping strains gives identical results with different index", {
   y$prob_strain <- y$prob_strain[c(2, 1)]
 
   initial2_state <- unlist(y)
-  mod$update_state(state = initial_state, step = 0)
+  mod$update_state(state = initial_state, time = 0)
   index <- mod$info()$index
 
   steps <- seq(0, end, by = 1)
@@ -665,7 +665,7 @@ test_that("Swapping strains gives identical results with different index", {
 
   mod2 <- lancelot$new(p, 0, np, seed = 1L)
 
-  mod2$update_state(state = initial2_state, step = 0)
+  mod2$update_state(state = initial2_state, time = 0)
   res2 <- drop(mod2$simulate(steps))
 
   z1 <- mod$transform_variables(res1)
@@ -777,7 +777,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 'prob_strain' to have 2 rows")
   expect_error(
     lancelot_Rt(steps, S[, 1, ], p, prob_strain[, 1, -1], R = R[, 1, ]),
-    "Expected 'prob_strain' to have 123 columns, following 'step'")
+    "Expected 'prob_strain' to have 123 columns, following 'time'")
 
   ## Check lancelot_Rt_trajectories R
   expect_error(
@@ -808,7 +808,7 @@ test_that("Cannot calculate Rt for multistrain without correct inputs", {
     "Expected 2nd dim of 'prob_strain' to have length 3, following 'pars'")
   expect_error(
     lancelot_Rt_trajectories(steps, S, p, prob_strain[, , -1], R = R),
-    "Expected 3rd dim of 'prob_strain' to have length 123, following 'step'")
+    "Expected 3rd dim of 'prob_strain' to have length 123, following 'time'")
 })
 
 
@@ -3010,7 +3010,7 @@ test_that("Everyone in R2 and R3 when no waning and transmission high", {
   ## Add some individuals in R historic variants layer
   index_R <- array(info$index$R, info$dim$R)
   initial[index_R[, 5, ]] <- 1e4
-  mod$update_state(state = initial, step = 0)
+  mod$update_state(state = initial, time = 0)
 
   end <- sircovid_date("2021-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)

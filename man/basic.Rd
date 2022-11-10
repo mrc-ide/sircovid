@@ -2,12 +2,8 @@
 % Please edit documentation in R/basic.R
 \name{basic}
 \alias{basic}
-\title{The basic sircovid model
-
-The "basic" sircovid model. This is a dust model.}
+\title{The basic sircovid model}
 \description{
-The basic sircovid model
-
 The "basic" sircovid model. This is a dust model.
 }
 \examples{

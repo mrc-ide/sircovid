@@ -262,10 +262,10 @@ test_that("compiled compare function is correct", {
   mod$update_state(state = initial)
   mod$set_index(lancelot_index(mod$info())$run)
 
-  mod$set_data(dust::dust_data(data, "step_end"))
+  mod$set_data(dust::dust_data(data, "time_end"))
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
-  y <- mod$run(data$step_end[[i]])
+  y <- mod$run(data$time_end[[i]])
   expect_equal(mod$compare_data(),
                lancelot_compare(y, data[i, ], pars))
 })
@@ -286,12 +286,12 @@ test_that("Test compiled lancelot components", {
   mod$set_index(lancelot_index(mod$info())$run)
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
-  step <- data$step_end[[i]]
-  y <- mod$run(step)
+  time <- data$time_end[[i]]
+  y <- mod$run(time)
 
   ## quickly bodge together some data:
   d <- data[i, ]
-  d[setdiff(names(d), "step_end")] <- NA_real_
+  d[setdiff(names(d), "time_end")] <- NA_real_
   update_data <- function(values) {
     d[names(values)] <- values
     d
@@ -363,7 +363,7 @@ test_that("Test compiled lancelot components", {
 
   for (p in partial) {
     d_test <- update_data(p)
-    mod$set_data(dust::dust_data(d_test, "step_end"))
+    mod$set_data(dust::dust_data(d_test, "time_end"))
     expect_equal(mod$compare_data(),
                  unname(lancelot_compare(y, d_test, pars)))
   }

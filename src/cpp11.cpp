@@ -20,24 +20,24 @@ extern "C" SEXP _sircovid_dust_basic_gpu_info() {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
-extern "C" SEXP _sircovid_dust_cpu_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
+SEXP dust_cpu_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
+extern "C" SEXP _sircovid_dust_cpu_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
+    return cpp11::as_sexp(dust_cpu_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_run(SEXP ptr, size_t step_end);
-extern "C" SEXP _sircovid_dust_cpu_basic_run(SEXP ptr, SEXP step_end) {
+SEXP dust_cpu_basic_run(SEXP ptr, size_t time_end);
+extern "C" SEXP _sircovid_dust_cpu_basic_run(SEXP ptr, SEXP time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(step_end)));
+    return cpp11::as_sexp(dust_cpu_basic_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_simulate(SEXP ptr, cpp11::sexp step_end);
-extern "C" SEXP _sircovid_dust_cpu_basic_simulate(SEXP ptr, SEXP step_end) {
+SEXP dust_cpu_basic_simulate(SEXP ptr, cpp11::sexp time_end);
+extern "C" SEXP _sircovid_dust_cpu_basic_simulate(SEXP ptr, SEXP time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_simulate(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(step_end)));
+    return cpp11::as_sexp(dust_cpu_basic_simulate(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(time_end)));
   END_CPP11
 }
 // basic.cpp
@@ -48,10 +48,10 @@ extern "C" SEXP _sircovid_dust_cpu_basic_set_index(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_step, SEXP r_set_initial_state);
-extern "C" SEXP _sircovid_dust_cpu_basic_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_step, SEXP r_set_initial_state) {
+SEXP dust_cpu_basic_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_time, SEXP r_set_initial_state);
+extern "C" SEXP _sircovid_dust_cpu_basic_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_time, SEXP r_set_initial_state) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_update_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_pars), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_state), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_step), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_set_initial_state)));
+    return cpp11::as_sexp(dust_cpu_basic_update_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_pars), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_state), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_time), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_set_initial_state)));
   END_CPP11
 }
 // basic.cpp
@@ -62,10 +62,10 @@ extern "C" SEXP _sircovid_dust_cpu_basic_state(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // basic.cpp
-size_t dust_cpu_basic_step(SEXP ptr);
-extern "C" SEXP _sircovid_dust_cpu_basic_step(SEXP ptr) {
+size_t dust_cpu_basic_time(SEXP ptr);
+extern "C" SEXP _sircovid_dust_cpu_basic_time(SEXP ptr) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_step(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+    return cpp11::as_sexp(dust_cpu_basic_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // basic.cpp
@@ -112,10 +112,10 @@ extern "C" SEXP _sircovid_dust_cpu_basic_compare_data(SEXP ptr) {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_filter(SEXP ptr, SEXP step_end, bool save_trajectories, cpp11::sexp step_snapshot, cpp11::sexp min_log_likelihood);
-extern "C" SEXP _sircovid_dust_cpu_basic_filter(SEXP ptr, SEXP step_end, SEXP save_trajectories, SEXP step_snapshot, SEXP min_log_likelihood) {
+SEXP dust_cpu_basic_filter(SEXP ptr, SEXP time_end, bool save_trajectories, cpp11::sexp time_snapshot, cpp11::sexp min_log_likelihood);
+extern "C" SEXP _sircovid_dust_cpu_basic_filter(SEXP ptr, SEXP time_end, SEXP save_trajectories, SEXP time_snapshot, SEXP min_log_likelihood) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(step_end), cpp11::as_cpp<cpp11::decay_t<bool>>(save_trajectories), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(step_snapshot), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(min_log_likelihood)));
+    return cpp11::as_sexp(dust_cpu_basic_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(time_end), cpp11::as_cpp<cpp11::decay_t<bool>>(save_trajectories), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(time_snapshot), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(min_log_likelihood)));
   END_CPP11
 }
 // basic.cpp
@@ -148,24 +148,24 @@ extern "C" SEXP _sircovid_dust_lancelot_gpu_info() {
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_alloc(cpp11::list r_pars, bool pars_multi, size_t step, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP r_pars, SEXP pars_multi, SEXP step, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
+SEXP dust_cpu_lancelot_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(step), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
+    return cpp11::as_sexp(dust_cpu_lancelot_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_run(SEXP ptr, size_t step_end);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_run(SEXP ptr, SEXP step_end) {
+SEXP dust_cpu_lancelot_run(SEXP ptr, size_t time_end);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_run(SEXP ptr, SEXP time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(step_end)));
+    return cpp11::as_sexp(dust_cpu_lancelot_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_simulate(SEXP ptr, cpp11::sexp step_end);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_simulate(SEXP ptr, SEXP step_end) {
+SEXP dust_cpu_lancelot_simulate(SEXP ptr, cpp11::sexp time_end);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_simulate(SEXP ptr, SEXP time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_simulate(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(step_end)));
+    return cpp11::as_sexp(dust_cpu_lancelot_simulate(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(time_end)));
   END_CPP11
 }
 // lancelot.cpp
@@ -176,10 +176,10 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_set_index(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_step, SEXP r_set_initial_state);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_step, SEXP r_set_initial_state) {
+SEXP dust_cpu_lancelot_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_time, SEXP r_set_initial_state);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_update_state(SEXP ptr, SEXP r_pars, SEXP r_state, SEXP r_time, SEXP r_set_initial_state) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_update_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_pars), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_state), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_step), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_set_initial_state)));
+    return cpp11::as_sexp(dust_cpu_lancelot_update_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_pars), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_state), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_time), cpp11::as_cpp<cpp11::decay_t<SEXP>>(r_set_initial_state)));
   END_CPP11
 }
 // lancelot.cpp
@@ -190,10 +190,10 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_state(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // lancelot.cpp
-size_t dust_cpu_lancelot_step(SEXP ptr);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_step(SEXP ptr) {
+size_t dust_cpu_lancelot_time(SEXP ptr);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_time(SEXP ptr) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_step(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+    return cpp11::as_sexp(dust_cpu_lancelot_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // lancelot.cpp
@@ -240,10 +240,10 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_compare_data(SEXP ptr) {
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_filter(SEXP ptr, SEXP step_end, bool save_trajectories, cpp11::sexp step_snapshot, cpp11::sexp min_log_likelihood);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_filter(SEXP ptr, SEXP step_end, SEXP save_trajectories, SEXP step_snapshot, SEXP min_log_likelihood) {
+SEXP dust_cpu_lancelot_filter(SEXP ptr, SEXP time_end, bool save_trajectories, cpp11::sexp time_snapshot, cpp11::sexp min_log_likelihood);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_filter(SEXP ptr, SEXP time_end, SEXP save_trajectories, SEXP time_snapshot, SEXP min_log_likelihood) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(step_end), cpp11::as_cpp<cpp11::decay_t<bool>>(save_trajectories), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(step_snapshot), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(min_log_likelihood)));
+    return cpp11::as_sexp(dust_cpu_lancelot_filter(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(time_end), cpp11::as_cpp<cpp11::decay_t<bool>>(save_trajectories), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(time_snapshot), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(min_log_likelihood)));
   END_CPP11
 }
 // lancelot.cpp
@@ -280,7 +280,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_basic_set_rng_state",    (DL_FUNC) &_sircovid_dust_cpu_basic_set_rng_state,    2},
     {"_sircovid_dust_cpu_basic_simulate",         (DL_FUNC) &_sircovid_dust_cpu_basic_simulate,         2},
     {"_sircovid_dust_cpu_basic_state",            (DL_FUNC) &_sircovid_dust_cpu_basic_state,            2},
-    {"_sircovid_dust_cpu_basic_step",             (DL_FUNC) &_sircovid_dust_cpu_basic_step,             1},
+    {"_sircovid_dust_cpu_basic_time",             (DL_FUNC) &_sircovid_dust_cpu_basic_time,             1},
     {"_sircovid_dust_cpu_basic_update_state",     (DL_FUNC) &_sircovid_dust_cpu_basic_update_state,     5},
     {"_sircovid_dust_cpu_lancelot_alloc",         (DL_FUNC) &_sircovid_dust_cpu_lancelot_alloc,         8},
     {"_sircovid_dust_cpu_lancelot_compare_data",  (DL_FUNC) &_sircovid_dust_cpu_lancelot_compare_data,  1},
@@ -296,7 +296,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_lancelot_set_rng_state", (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_rng_state, 2},
     {"_sircovid_dust_cpu_lancelot_simulate",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_simulate,      2},
     {"_sircovid_dust_cpu_lancelot_state",         (DL_FUNC) &_sircovid_dust_cpu_lancelot_state,         2},
-    {"_sircovid_dust_cpu_lancelot_step",          (DL_FUNC) &_sircovid_dust_cpu_lancelot_step,          1},
+    {"_sircovid_dust_cpu_lancelot_time",          (DL_FUNC) &_sircovid_dust_cpu_lancelot_time,          1},
     {"_sircovid_dust_cpu_lancelot_update_state",  (DL_FUNC) &_sircovid_dust_cpu_lancelot_update_state,  5},
     {"_sircovid_dust_lancelot_capabilities",      (DL_FUNC) &_sircovid_dust_lancelot_capabilities,      0},
     {"_sircovid_dust_lancelot_gpu_info",          (DL_FUNC) &_sircovid_dust_lancelot_gpu_info,          0},

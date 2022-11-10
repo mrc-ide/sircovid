@@ -450,7 +450,7 @@ reorder_rt_ifr <- function(x, rank) {
   if (!(inherits(x, "Rt_trajectories") || inherits(x, "IFR_t_trajectories"))) {
     stop("'x' should be an 'Rt_trajectories' or 'IFR_t_trajectories' object")
   }
-  what <- setdiff(names(x), c("step", "date"))
+  what <- setdiff(names(x), c("time", "date"))
   if (ncol(x[[what[[1]]]]) != length(rank)) {
     stop(paste("Unexpected length for 'rank':", length(rank),
                "; should have length", ncol(x[[what[[1]]]])))
@@ -487,7 +487,7 @@ reorder_rt_ifr <- function(x, rank) {
 combine_rt <- function(rt, samples, rank = TRUE, weight = "infections_inc") {
   ## Ensure all trajectories are the same length
   ret <- rt[[1L]]
-  what <- setdiff(names(ret), c("date", "step"))
+  what <- setdiff(names(ret), c("date", "time"))
   ret[what] <- lapply(what, combine_rt1, rt, samples, rank, weight)
   ret
 }

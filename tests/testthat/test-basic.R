@@ -133,10 +133,10 @@ test_that("compiled compare function is correct", {
   mod$update_state(state = initial)
   mod$set_index(basic_index(mod$info())$run)
 
-  mod$set_data(dust::dust_data(data, "step_end"))
+  mod$set_data(dust::dust_data(data, "time_end"))
 
   i <- which(!is.na(data$icu) & !is.na(data$deaths))[[10]]
-  y <- mod$run(data$step_end[[i]])
+  y <- mod$run(data$time_end[[i]])
   expect_equal(mod$compare_data(),
                basic_compare(y, data[i, ], pars))
 })

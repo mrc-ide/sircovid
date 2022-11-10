@@ -67,11 +67,11 @@ reference_data_lancelot_trajectories <- function() {
     dat <- reference_data_lancelot_mcmc()
     incidence <- "deaths"
     ret <- mcstate::pmcmc_thin(dat)
-    steps_predict <- seq(ret$predict$step, length.out = 11,
+    times_predict <- seq(ret$predict$time, length.out = 11,
                          by = ret$predict$rate)
     ret$trajectories <- mcstate::pmcmc_predict(
-      ret, steps_predict, prepend_trajectories = TRUE)
-    ret$trajectories$date <- ret$trajectories$step / ret$trajectories$rate
+      ret, times_predict, prepend_trajectories = TRUE)
+    ret$trajectories$date <- ret$trajectories$time / ret$trajectories$rate
     ret$trajectories <- add_trajectory_incidence(ret$trajectories, "deaths")
     ret
   })

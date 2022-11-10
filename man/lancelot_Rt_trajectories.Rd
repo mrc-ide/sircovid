@@ -5,11 +5,11 @@
 \title{Compute Rt for a set of trajectories}
 \usage{
 lancelot_Rt_trajectories(
-  step,
+  time,
   S,
   pars,
   prob_strain = NULL,
-  initial_step_from_parameters = TRUE,
+  initial_time_from_parameters = TRUE,
   shared_parameters = NULL,
   type = NULL,
   interpolate_every = NULL,
@@ -22,23 +22,23 @@ lancelot_Rt_trajectories(
 )
 }
 \arguments{
-\item{step}{A vector of steps}
+\item{time}{A vector of time steps}
 
-\item{S}{A 3d ((n groups x n vaccine classes) x n trajectories x n steps)
-array of "S" compartment counts}
+\item{S}{A 3d ((n groups x n vaccine classes) x n trajectories x n time
+steps) array of "S" compartment counts}
 
 \item{pars}{Either a single \code{\link[=lancelot_parameters]{lancelot_parameters()}} object
 (shared parameters) or an unnamed list of
 \code{\link[=lancelot_parameters]{lancelot_parameters()}} objects, the same length as \code{ncol(S)}.}
 
-\item{prob_strain}{A 3d ((n groups x n strains) x n trajectories x n steps)
-array of "prob_strain" model outputs. Default is \code{NULL}, but it must be
-specified if there is more than one strain.}
+\item{prob_strain}{A 3d ((n groups x n strains) x n trajectories x n time
+steps) array of "prob_strain" model outputs. Default is \code{NULL}, but it
+must be specified if there is more than one strain.}
 
-\item{initial_step_from_parameters}{If \code{TRUE}, then \code{step[[1]]} is
-replaced by the value of \code{initial_step} from the parameters.
+\item{initial_time_from_parameters}{If \code{TRUE}, then \code{time[[1]]} is
+replaced by the value of \code{initial_time} from the parameters.
 This is usually what you want. (From sircovid 0.12.13 this
-parameter means "initial step is zero" and will probably be
+parameter means "initial time is zero" and will probably be
 updated in a future version).}
 
 \item{shared_parameters}{Should \code{pars} be treated as a single
@@ -74,8 +74,8 @@ interpolation and that will not work with fewer than 3 points.}
 \link[eigen1:eigen1]{eigen1::eigen1} as \code{method})}
 
 \item{R}{A 3d ((n groups x n strains x n vaccine classes) x
-n trajectories x n steps) array of "R" compartment counts, required for
-multi-strain models.}
+n trajectories x n time steps) array of "R" compartment counts, required
+for multi-strain models.}
 
 \item{weight_Rt}{If \code{TRUE} then computes the weighted average
 of the Rt for all strains, otherwise all calculations are returned with

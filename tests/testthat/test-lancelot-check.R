@@ -701,7 +701,7 @@ test_that("No one is unconfirmed, if p_star = 1", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p), step = 0)
+  mod$update_state(state = lancelot_initial(info, 1, p), time = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(all(y$H_R_unconf == 0))
@@ -742,7 +742,7 @@ test_that("No one is confirmed, if p_star = 0 and gamma_U = 0", {
 
   mod <- lancelot$new(p, 0, 1)
   info <- mod$info()
-  mod$update_state(state = lancelot_initial(info, 1, p), step = 0)
+  mod$update_state(state = lancelot_initial(info, 1, p), time = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
 
   expect_true(any(y$H_R_unconf > 0))
@@ -792,7 +792,7 @@ test_that("Instant confirmation if p_star = 0 and gamma_U = Inf", {
   y0[info$index$ICU_W_D_unconf[1:19]] <- 50
   y0[info$index$ICU_D_unconf[1:19]] <- 50
 
-  mod$update_state(state = y0, step = 0)
+  mod$update_state(state = y0, time = 0)
   y <- mod$transform_variables(drop(mod$simulate(0:400)))
   n <- length(y$time)
 

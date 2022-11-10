@@ -1,8 +1,6 @@
+##' ##' Our "current" sircovid model. This is a dust model.
 ##' @name lancelot
 ##' @title The lancelot sircovid model
-##'
-##' Our "current" sircovid model. This is a dust model.
-##'
 ##' @export lancelot
 NULL
 
