@@ -896,7 +896,7 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
   ## Save total number of susceptible and recovered by strain
   index_susceptible_recovered <-
     c(susceptible = index[["susceptible"]],
-      calculate_index(index, "recovered", list(n_strains_R)))
+      calculate_index(index, "recovered", list(), seq_len(n_strains_R)))
   index_save <- c(index_save, index_susceptible_recovered)
 
   ## age varying only
