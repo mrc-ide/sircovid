@@ -73,7 +73,7 @@ Suggests:
     odin (>= 1.1.16),
     odin.dust (>= 0.2.26),
     testthat
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
