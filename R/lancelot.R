@@ -1883,7 +1883,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   state <- numeric(info$len)
 
   index_S <- index[["S"]]
-  index_susceptible <- index["susceptible"]
+  index_susceptible <- index[["susceptible"]]
   index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
   index_N_tot <- index[["N_tot"]]
   index_N_tot_sero_1 <- index[["N_tot_sero_1"]][[1L]]
