@@ -710,6 +710,7 @@ test_that("Swapping strains gives identical results with different index", {
     z2[[nm]] <- z2[[nm]][, i, , , drop = FALSE]
   }
   z2$R <- z2$R[, c(i, 5), , , drop = FALSE]
+  z2$recovered <- z2$recovered[c(i, 5), , drop = FALSE]
   v5 <- c("E", "I_A", "I_P", "I_C_1", "I_C_2", "T_PCR_pre", "T_PCR_pos",
           "T_sero_pre_1", "T_sero_pre_2", "T_sero_pos_1", "T_sero_pos_2",
           "G_D", "ICU_pre_unconf", "ICU_pre_conf",
