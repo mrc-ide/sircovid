@@ -511,7 +511,7 @@ test_that("Can compute initial conditions", {
   ## * 38 (S + N_tot)
   ## * 1 (react_pos)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial != 0), 44)
+  expect_equal(sum(initial != 0), 45)
 })
 
 
@@ -539,7 +539,7 @@ test_that("Can control the seeding", {
   ## * 38 (S + N_tot)
   ## * 1 (prob_strain)
   ## * 3 (N_tot_sero_1 + N_tot_sero_2 + N_tot_PCR)
-  expect_equal(sum(initial != 0), 44)
+  expect_equal(sum(initial != 0), 45)
 })
 
 ## TODO: Ed - you had said that you had ideas for some more systematic
@@ -831,6 +831,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -854,6 +856,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -890,6 +894,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -915,6 +921,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$cum_admit_by_age,
       info$index$diagnoses_admitted,
@@ -936,6 +944,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -959,6 +969,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -983,6 +995,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -1006,6 +1020,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -1030,6 +1046,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -1053,6 +1071,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,
@@ -1076,6 +1096,8 @@ test_that("lancelot_index switches work as expected", {
       info$index$D_inc,
       info$index$cum_infections,
       info$index$infections_inc,
+      info$index$susceptible,
+      info$index$recovered,
       info$index$effective_susceptible,
       info$index$S,
       info$index$R,

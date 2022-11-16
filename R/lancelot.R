@@ -893,6 +893,12 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
     n_strains_R <- 1
   }
 
+  ## Save total number of susceptible and recovered by strain
+  index_susceptible_recovered <-
+    c(susceptible = index[["susceptible"]],
+      calculate_index(index, "recovered", list(), seq_len(n_strains_R)))
+  index_save <- c(index_save, index_susceptible_recovered)
+
   ## age varying only
   index_cum_admit <- calculate_index(index, "cum_admit_by_age",
                                      list(), suffix, "cum_admit")
@@ -1877,6 +1883,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   state <- numeric(info$len)
 
   index_S <- index[["S"]]
+  index_susceptible <- index[["susceptible"]]
   index_S_no_vacc <- index_S[seq_len(length(pars$N_tot))]
   index_N_tot <- index[["N_tot"]]
   index_N_tot_sero_1 <- index[["N_tot_sero_1"]][[1L]]
@@ -1894,6 +1901,7 @@ lancelot_initial <- function(info, n_particles, pars) {
   initial_S <- pars$N_tot
 
   state[index_S_no_vacc] <- initial_S
+  state[index_susceptible] <- sum(pars$N_tot)
   state[index_N_tot] <- pars$N_tot
   state[index_N_tot_sero_1] <- sum(pars$N_tot)
   state[index_N_tot_sero_2] <- sum(pars$N_tot)

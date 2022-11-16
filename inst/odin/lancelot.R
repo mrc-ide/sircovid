@@ -2202,6 +2202,13 @@ initial(effective_susceptible[]) <- 0
 update(effective_susceptible[]) <- sum(eff_sus_S[, i, ]) + sum(eff_sus_R[, i, ])
 dim(effective_susceptible) <- n_real_strains
 
+## Calculate the total number of susceptibles, and recovered by strain
+initial(susceptible) <- 0
+update(susceptible) <- sum(new_S)
+initial(recovered[]) <- 0
+update(recovered[]) <- sum(new_R[, i, ])
+dim(recovered) <- n_strains_R
+
 
 ## Calculate the (weighted) number of individuals protected against infection
 ## to each strain in S and R
