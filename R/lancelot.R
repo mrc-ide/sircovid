@@ -2246,6 +2246,9 @@ lancelot_parameters_waning <- function(waning_rate) {
 ##'   not confirmed on admission. Note this duration is a single-stage Erlang.
 ##'   See Details.
 ##'
+##' @param gamma_PCR_pos Time-varying parameters for the Erlang rate parameter
+##'   of the duration of PCR positivity. See Details.
+##'
 ##' @return A list of parameter values
 ##'
 ##' @export
