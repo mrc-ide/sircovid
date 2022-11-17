@@ -20,7 +20,8 @@ lancelot_parameters_progression(
   gamma_W_D = NULL,
   gamma_W_R = NULL,
   gamma_G_D = NULL,
-  gamma_U = NULL
+  gamma_U = NULL,
+  gamma_PCR_pos = NULL
 )
 }
 \arguments{

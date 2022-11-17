@@ -2264,7 +2264,8 @@ lancelot_parameters_progression <- function(dt,
                                             gamma_W_D = NULL,
                                             gamma_W_R = NULL,
                                             gamma_G_D = NULL,
-                                            gamma_U = NULL) {
+                                            gamma_U = NULL,
+                                            gamma_PCR_pos = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
   ## distribution, while the gamma parameters are the rate
@@ -2327,7 +2328,8 @@ lancelot_parameters_progression <- function(dt,
                               W_D = gamma_W_D,
                               W_R = gamma_W_R,
                               G_D = gamma_G_D,
-                              U = gamma_U)
+                              U = gamma_U,
+                              PCR_pos = gamma_PCR_pos)
 
   get_gamma_step <- function(x, name) {
 
