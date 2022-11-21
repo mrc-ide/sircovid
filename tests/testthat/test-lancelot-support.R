@@ -12,12 +12,13 @@ test_that("lancelot progression parameters", {
       "gamma_H_R_step", "gamma_ICU_D_step", "gamma_ICU_W_R_step",
       "gamma_ICU_W_D_step", "gamma_ICU_pre_step", "gamma_W_D_step",
       "gamma_W_R_step", "gamma_sero_pos_1", "gamma_sero_pos_2",
-      "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U_step", "gamma_PCR_pos",
-      "gamma_PCR_pre", "n_gamma_E_steps", "n_gamma_A_steps", "n_gamma_P_steps",
-      "n_gamma_C_1_steps", "n_gamma_C_2_steps", "n_gamma_H_D_steps",
-      "n_gamma_H_R_steps", "n_gamma_ICU_D_steps", "n_gamma_ICU_W_R_steps",
-      "n_gamma_ICU_W_D_steps", "n_gamma_ICU_pre_steps", "n_gamma_W_D_steps",
-      "n_gamma_W_R_steps", "n_gamma_G_D_steps", "n_gamma_U_steps"))
+      "gamma_sero_pre_1", "gamma_sero_pre_2", "gamma_U_step",
+      "gamma_PCR_pos_step", "gamma_PCR_pre", "n_gamma_E_steps",
+      "n_gamma_A_steps", "n_gamma_P_steps", "n_gamma_C_1_steps",
+      "n_gamma_C_2_steps", "n_gamma_H_D_steps", "n_gamma_H_R_steps",
+      "n_gamma_ICU_D_steps", "n_gamma_ICU_W_R_steps", "n_gamma_ICU_W_D_steps",
+      "n_gamma_ICU_pre_steps", "n_gamma_W_D_steps", "n_gamma_W_R_steps",
+      "n_gamma_G_D_steps", "n_gamma_U_steps", "n_gamma_PCR_pos_steps"))
 
   ## TODO: Lilith; you had said that there were some constraints
   ## evident in the fractional representation of these values - can
@@ -212,7 +213,7 @@ test_that("lancelot_parameters returns a list of parameters", {
       "rel_p_R", "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
       "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
       "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
-      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
+      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D", "rel_gamma_PCR_pos",
       "strain_rel_p_ICU_D", "strain_rel_p_H_D",
       "strain_rel_p_W_D", "strain_rel_p_G_D",
       "strain_rel_p_icu",
