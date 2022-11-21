@@ -24,8 +24,8 @@ dust_cpu_basic_set_index <- function(ptr, r_index) {
   .Call(`_sircovid_dust_cpu_basic_set_index`, ptr, r_index)
 }
 
-dust_cpu_basic_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
-  .Call(`_sircovid_dust_cpu_basic_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
+dust_cpu_basic_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state, index, reset_step_size) {
+  .Call(`_sircovid_dust_cpu_basic_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state, index, reset_step_size)
 }
 
 dust_cpu_basic_state <- function(ptr, r_index) {
@@ -96,8 +96,8 @@ dust_cpu_lancelot_set_index <- function(ptr, r_index) {
   .Call(`_sircovid_dust_cpu_lancelot_set_index`, ptr, r_index)
 }
 
-dust_cpu_lancelot_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
-  .Call(`_sircovid_dust_cpu_lancelot_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
+dust_cpu_lancelot_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state, index, reset_step_size) {
+  .Call(`_sircovid_dust_cpu_lancelot_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state, index, reset_step_size)
 }
 
 dust_cpu_lancelot_state <- function(ptr, r_index) {
