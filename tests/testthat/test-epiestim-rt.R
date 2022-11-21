@@ -83,13 +83,13 @@ test_that("Can calculate EpiEstim Rt (II)", {
   #### Check a few values
   expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 2.7,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.2,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.7,
                tolerance = .1)
   expect_equal(
     rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
     tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.7,
     tolerance = .1)
 })
 
@@ -182,13 +182,13 @@ test_that("Can calculate EpiEstim Rt with predefined GT (II)", {
   #### Check a few values
   expect_equal(rt_EpiEstim$Rt_summary[["mean_R", first_non_NA_idx]], 2.7,
                tolerance = .1)
-  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 1.2,
+  expect_equal(rt_EpiEstim$Rt_summary[["2.5%", first_non_NA_idx]], 0.7,
                tolerance = .1)
   expect_equal(
     rt_EpiEstim$Rt_summary[["mean_R", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
     tolerance = .1)
   expect_equal(
-    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.4,
+    rt_EpiEstim$Rt_summary[["97.5%", ncol(rt_EpiEstim$Rt_summary)]], 0.7,
     tolerance = .1)
 })
 
