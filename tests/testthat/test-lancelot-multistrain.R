@@ -647,7 +647,7 @@ test_that("Swapping strains gives identical results with different index", {
   initial <- lancelot_initial(mod$info(), 1, p)
   y <- mod$transform_variables(initial)
   ## force some seeding
-  y$I_A[4, 1, 1, 1] <- 10
+  y$I_A[4, 1, 1, 1] <- 50
   initial_state <- unlist(y)
 
   i <- c(2, 1, 4, 3)
