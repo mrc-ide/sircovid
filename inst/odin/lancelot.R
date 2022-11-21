@@ -336,7 +336,7 @@ p_T_sero_pos_1_progress <- 1 - exp(-gamma_sero_pos_1 * dt)
 p_T_sero_pre_2_progress <- 1 - exp(-gamma_sero_pre_2 * dt)
 p_T_sero_pos_2_progress <- 1 - exp(-gamma_sero_pos_2 * dt)
 p_test <- 1 - exp(-gamma_U * dt)
-p_T_PCR_pre_progress <- 1 - exp(-gamma_PCR_pre * dt)
+p_T_PCR_pre_progress[] <- 1 - exp(-gamma_PCR_pre[i] * dt)
 p_T_PCR_pos_progress[] <- 1 - exp(-gamma_PCR_pos[i] * dt)
 
 dim(p_E_progress) <- n_strains
@@ -353,6 +353,7 @@ dim(p_ICU_W_D_progress) <- n_strains
 dim(p_ICU_D_progress) <- n_strains
 dim(p_W_R_progress) <- n_strains
 dim(p_W_D_progress) <- n_strains
+dim(p_T_PCR_pre_progress) <- n_strains
 dim(p_T_PCR_pos_progress) <- n_strains
 
 
@@ -430,10 +431,6 @@ gamma_C_2[] <- if (as.integer(step) >= n_gamma_C_2_steps)
   gamma_C_2_step[n_gamma_C_2_steps] * rel_gamma_C_2[i] else
     gamma_C_2_step[step + 1] * rel_gamma_C_2[i]
 
-gamma_PCR_pos[] <- if (as.integer(step) >= n_gamma_PCR_pos_steps)
-  gamma_PCR_pos_step[n_gamma_PCR_pos_steps] * rel_gamma_PCR_pos[i] else
-    gamma_PCR_pos_step[step + 1] * rel_gamma_PCR_pos[i]
-
 gamma_G_D[] <- if (as.integer(step) >= n_gamma_G_D_steps)
   gamma_G_D_step[n_gamma_G_D_steps] * rel_gamma_G_D[i] else
     gamma_G_D_step[step + 1] * rel_gamma_G_D[i]
@@ -469,6 +466,14 @@ gamma_W_R[] <- if (as.integer(step) >= n_gamma_W_R_steps)
 gamma_W_D[] <- if (as.integer(step) >= n_gamma_W_D_steps)
   gamma_W_D_step[n_gamma_W_D_steps] * rel_gamma_W_D[i] else
     gamma_W_D_step[step + 1] * rel_gamma_W_D[i]
+
+gamma_PCR_pre[] <- if (as.integer(step) >= n_gamma_PCR_pre_steps)
+  gamma_PCR_pre_step[n_gamma_PCR_pre_steps] * rel_gamma_PCR_pre[i] else
+    gamma_PCR_pre_step[step + 1] * rel_gamma_PCR_pre[i]
+
+gamma_PCR_pos[] <- if (as.integer(step) >= n_gamma_PCR_pos_steps)
+  gamma_PCR_pos_step[n_gamma_PCR_pos_steps] * rel_gamma_PCR_pos[i] else
+    gamma_PCR_pos_step[step + 1] * rel_gamma_PCR_pos[i]
 
 gamma_U <- if (as.integer(step) >= n_gamma_U_steps)
   gamma_U_step[n_gamma_U_steps] else
@@ -707,7 +712,7 @@ n_T_sero_pre_2_progress[, , , ] <-
 n_T_sero_pos_2_progress[, , , ] <-
   rbinom(T_sero_pos_2[i, j, k, l], p_T_sero_pos_2_progress)
 n_T_PCR_pre_progress[, , , ] <-
-  rbinom(T_PCR_pre[i, j, k, l], p_T_PCR_pre_progress)
+  rbinom(T_PCR_pre[i, j, k, l], p_T_PCR_pre_progress[j])
 n_T_PCR_pos_progress[, , , ] <-
   rbinom(T_PCR_pos[i, j, k, l], p_T_PCR_pos_progress[j])
 
@@ -1448,7 +1453,12 @@ dim(p_star_step) <- c(n_p_star_steps, n_groups)
 
 ## Parameters relating to PCR positivity
 k_PCR_pre <- user()
-gamma_PCR_pre <- user(0.1)
+dim(gamma_PCR_pre) <- n_strains
+gamma_PCR_pre_step[] <- user()
+n_gamma_PCR_pre_steps <- user()
+dim(gamma_PCR_pre_step) <- n_gamma_PCR_pre_steps
+rel_gamma_PCR_pre[] <- user()
+dim(rel_gamma_PCR_pre) <- n_strains
 
 k_PCR_pos <- user()
 dim(gamma_PCR_pos) <- n_strains

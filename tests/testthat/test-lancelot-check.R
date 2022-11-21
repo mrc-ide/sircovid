@@ -599,7 +599,7 @@ test_that("setting a gamma to Inf results immediate progression", {
   helper("gamma_sero_pos_1", "k_sero_pos_1", "T_sero_pos_1", FALSE)
   helper("gamma_sero_pre_2", "k_sero_pre_2", "T_sero_pre_2", FALSE)
   helper("gamma_sero_pos_2", "k_sero_pos_2", "T_sero_pos_2", FALSE)
-  helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
+  helper("gamma_PCR_pre_step", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos_step", "k_PCR_pos", "T_PCR_pos", FALSE)
 })
 
@@ -678,7 +678,7 @@ test_that("setting a gamma to 0 results in no progression", {
   helper("gamma_sero_pos_1", "k_sero_pos_1", "T_sero_pos_1", FALSE)
   helper("gamma_sero_pre_2", "k_sero_pre_2", "T_sero_pre_2", FALSE)
   helper("gamma_sero_pos_2", "k_sero_pos_2", "T_sero_pos_2", FALSE)
-  helper("gamma_PCR_pre", "k_PCR_pre", "T_PCR_pre", FALSE)
+  helper("gamma_PCR_pre_step", "k_PCR_pre", "T_PCR_pre", FALSE)
   helper("gamma_PCR_pos_step", "k_PCR_pos", "T_PCR_pos", FALSE)
 })
 

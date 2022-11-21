@@ -96,6 +96,12 @@ NULL
 ##'   same length as `strain_transmission`, with entries that determines the
 ##'   relative scaling of the defaults for each strain.
 ##'
+##' @param  strain_rel_gamma_PCR_pre Vector of relative rates of PCR
+##'   pre-positive duration for each strain modelled. if '1' all strains have
+##'   same rates. Otherwise vector of same length as `strain_transmission`, with
+##'   entries that determines the relative scaling of the defaults for each
+##'   strain.
+##'
 ##' @param  strain_rel_gamma_PCR_pos Vector of relative rates of PCR positivity
 ##'   duration for each strain modelled. if '1' all strains have same rates.
 ##'   Otherwise vector of same length as `strain_transmission`, with entries
@@ -470,6 +476,7 @@ lancelot_parameters <- function(start_date, region,
                                 strain_rel_gamma_P = 1,
                                 strain_rel_gamma_C_1 = 1,
                                 strain_rel_gamma_C_2 = 1,
+                                strain_rel_gamma_PCR_pre = 1,
                                 strain_rel_gamma_PCR_pos = 1,
                                 strain_rel_p_sympt = 1,
                                 strain_rel_p_hosp_if_sympt = 1,
@@ -673,6 +680,7 @@ lancelot_parameters <- function(start_date, region,
                             P = strain_rel_gamma_P,
                             C_1 = strain_rel_gamma_C_1,
                             C_2 = strain_rel_gamma_C_2,
+                            PCR_pre = strain_rel_gamma_PCR_pre,
                             PCR_pos = strain_rel_gamma_PCR_pos,
                             ICU_pre = NULL,
                             H_D = NULL,
@@ -2253,7 +2261,11 @@ lancelot_parameters_waning <- function(waning_rate) {
 ##'   not confirmed on admission. Note this duration is a single-stage Erlang.
 ##'   See Details.
 ##'
-##' @param gamma_PCR_pos Time-varying parameters for the Erland rate parameter
+##' @param gamma_PCR_pre Time-varying parameters for the Erlang rate parameter
+##'   the duration of PCR pre-positivity affecting REACT and ONS infection
+##'   prevalence. See Details.
+##'
+##' @param gamma_PCR_pos Time-varying parameters for the Erlang rate parameter
 ##'   the duration of PCR positivity affecting REACT and ONS infection
 ##'   prevalence. See Details.
 ##'
@@ -2276,6 +2288,7 @@ lancelot_parameters_progression <- function(dt,
                                             gamma_W_R = NULL,
                                             gamma_G_D = NULL,
                                             gamma_U = NULL,
+                                            gamma_PCR_pre = NULL,
                                             gamma_PCR_pos = NULL) {
 
   ## The k_ parameters are the shape parameters for the Erlang
@@ -2340,6 +2353,7 @@ lancelot_parameters_progression <- function(dt,
                               W_R = gamma_W_R,
                               G_D = gamma_G_D,
                               U = gamma_U,
+                              PCR_pre = gamma_PCR_pre,
                               PCR_pos = gamma_PCR_pos)
 
   get_gamma_step <- function(x, name) {
