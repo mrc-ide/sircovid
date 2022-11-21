@@ -2074,13 +2074,17 @@ test_that("strain_rel_gamma works as expected in lancelot_parameters", {
                                     strain_rel_gamma_A = 1,
                                     strain_rel_gamma_P = 1,
                                     strain_rel_gamma_C_1 = 1,
-                                    strain_rel_gamma_C_2 = 1))
+                                    strain_rel_gamma_C_2 = 1,
+                                    strain_rel_gamma_PCR_pre = 1,
+                                    strain_rel_gamma_PCR_pos = 1))
   expect_silent(lancelot_parameters(sircovid_date("2020-02-07"), "england",
                                     strain_rel_gamma_E = 1:2,
                                     strain_rel_gamma_A = 1:2,
                                     strain_rel_gamma_P = 1:2,
                                     strain_rel_gamma_C_1 = 1:2,
                                     strain_rel_gamma_C_2 = 1:2,
+                                    strain_rel_gamma_PCR_pre = 1:2,
+                                    strain_rel_gamma_PCR_pos = 1:2,
                                     strain_transmission = c(1, 1)))
   expect_error(lancelot_parameters(sircovid_date("2020-02-07"), "england",
                                    strain_rel_gamma_E = c(1, 5)),
@@ -2114,6 +2118,8 @@ test_that("Relative gamma = 1 makes no difference", {
                             strain_rel_gamma_P = 1,
                             strain_rel_gamma_C_1 = 1,
                             strain_rel_gamma_C_2 = 1,
+                            strain_rel_gamma_PCR_pre = 1,
+                            strain_rel_gamma_PCR_pos = 1,
                             strain_transmission = c(1, 1),
                             cross_immunity = 0)
   np <- 10
@@ -2216,6 +2222,8 @@ test_that("Stuck when gamma =  0", {
                            strain_rel_gamma_P = 1,
                            strain_rel_gamma_C_1 = 1,
                            strain_rel_gamma_C_2 = 1,
+                           strain_rel_gamma_PCR_pre = 1,
+                           strain_rel_gamma_PCR_pos = 1,
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
@@ -2248,6 +2256,8 @@ test_that("Stuck when gamma =  0", {
                            strain_rel_gamma_P = 1,
                            strain_rel_gamma_C_1 = 1,
                            strain_rel_gamma_C_2 = 1,
+                           strain_rel_gamma_PCR_pre = 1,
+                           strain_rel_gamma_PCR_pos = 1,
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
@@ -2280,6 +2290,8 @@ test_that("Stuck when gamma =  0", {
                            strain_rel_gamma_P = 1,
                            strain_rel_gamma_C_1 = 1,
                            strain_rel_gamma_C_2 = 1,
+                           strain_rel_gamma_PCR_pre = 1,
+                           strain_rel_gamma_PCR_pos = 1,
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4))
@@ -2305,6 +2317,72 @@ test_that("Stuck when gamma =  0", {
   expect_true(all(unlist(y[index_R, , ]) == 0))
   expect_false(all(unlist(y[index_I_C_2, , ]) == 0))
   expect_false(all(unlist(y[index_I_A, , ]) == 0))
+
+
+  ## gammaPCR_pre is 0 so PCR_pos is 0
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_E = 1,
+                           strain_rel_gamma_A = 1,
+                           strain_rel_gamma_P = 1,
+                           strain_rel_gamma_C_1 = 1,
+                           strain_rel_gamma_C_2 = 1,
+                           strain_rel_gamma_PCR_pre = 1,
+                           strain_rel_gamma_PCR_pos = 1,
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4))
+  p$gamma_PCR_pre_step <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+
+  index_PCR_pre <- mod$info()$index$T_PCR_pre
+  index_PCR_pos <- mod$info()$index$T_PCR_pos
+  index_PCR_neg <- mod$info()$index$T_PCR_neg
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_PCR_pos, , ]) == 0))
+  expect_false(all(unlist(y[index_PCR_pre, , ]) == 0))
+
+
+  ## gammaPCR_pos is 0 so PCR_neg is 0
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_E = 1,
+                           strain_rel_gamma_A = 1,
+                           strain_rel_gamma_P = 1,
+                           strain_rel_gamma_C_1 = 1,
+                           strain_rel_gamma_C_2 = 1,
+                           strain_rel_gamma_PCR_pre = 1,
+                           strain_rel_gamma_PCR_pos = 1,
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4))
+  p$gamma_PCR_pos_step <- 0
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+
+  initial <- lancelot_initial(mod$info(), 10, p)
+  mod$update_state(state = initial)
+
+  index_PCR_pre <- mod$info()$index$T_PCR_pre
+  index_PCR_pos <- mod$info()$index$T_PCR_pos
+  index_PCR_neg <- mod$info()$index$T_PCR_neg
+
+  end <- sircovid_date("2020-05-01") / p$dt
+  steps <- seq(0, end, by = 1 / p$dt)
+
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_true(all(unlist(y[index_PCR_neg, , ]) == 0))
+  expect_false(all(unlist(y[index_PCR_pos, , ]) == 0))
 })
 
 
@@ -2323,6 +2401,8 @@ test_that("Stuck when gamma =  0 for second strain", {
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
+  p$k_PCR_pre <- 1
+  p$k_PCR_pos <- 1
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
 
@@ -2347,6 +2427,15 @@ test_that("Stuck when gamma =  0 for second strain", {
   index_I_C_2 <- mod$info()$index$I_C_2
   index_I_C_2_strain_1 <- index_I_C_2[strain_1]
   index_I_C_2_strain_2 <- index_I_C_2[strain_2]
+  index_PCR_pre <- mod$info()$index$T_PCR_pre
+  index_PCR_pre_strain_1 <- index_PCR_pre[strain_1]
+  index_PCR_pre_strain_2 <- index_PCR_pre[strain_2]
+  index_PCR_pos <- mod$info()$index$T_PCR_pos
+  index_PCR_pos_strain_1 <- index_PCR_pos[strain_1]
+  index_PCR_pos_strain_2 <- index_PCR_pos[strain_2]
+  index_PCR_neg <- mod$info()$index$T_PCR_neg
+  index_PCR_neg_strain_1 <- index_PCR_neg[strain_1]
+  index_PCR_neg_strain_2 <- index_PCR_neg[strain_2]
 
   end <- sircovid_date("2020-05-01") / p$dt
   steps <- seq(0, end, by = 1 / p$dt)
@@ -2365,10 +2454,14 @@ test_that("Stuck when gamma =  0 for second strain", {
                            strain_rel_gamma_P = c(1, 1),
                            strain_rel_gamma_C_1 = c(1, 0),
                            strain_rel_gamma_C_2 = c(1, 1),
+                           strain_rel_gamma_PCR_pre = c(1, 1),
+                           strain_rel_gamma_PCR_pos = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
+  p$k_PCR_pre <- 1
+  p$k_PCR_pos <- 1
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   mod$update_state(state = initial)
@@ -2387,10 +2480,14 @@ test_that("Stuck when gamma =  0 for second strain", {
                            strain_rel_gamma_P = c(1, 1),
                            strain_rel_gamma_C_1 = c(1, 1),
                            strain_rel_gamma_C_2 = c(1, 0),
+                           strain_rel_gamma_PCR_pre = c(1, 1),
+                           strain_rel_gamma_PCR_pos = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
+  p$k_PCR_pre <- 1
+  p$k_PCR_pos <- 1
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   mod$update_state(state = initial)
@@ -2409,10 +2506,14 @@ test_that("Stuck when gamma =  0 for second strain", {
                            strain_rel_gamma_P = c(1, 1),
                            strain_rel_gamma_C_1 = c(1, 1),
                            strain_rel_gamma_C_2 = c(1, 0),
+                           strain_rel_gamma_PCR_pre = c(1, 1),
+                           strain_rel_gamma_PCR_pos = c(1, 1),
                            strain_seed_date = sircovid_date("2020-02-07"),
                            strain_seed_size = 10,
                            strain_seed_pattern = rep(1, 4),
                            cross_immunity = 0)
+  p$k_PCR_pre <- 1
+  p$k_PCR_pos <- 1
 
   mod <- lancelot$new(p, 0, np, seed = 1L)
   mod$update_state(state = initial)
@@ -2425,6 +2526,58 @@ test_that("Stuck when gamma =  0 for second strain", {
   expect_true(all(unlist(y[index_I_P_strain_2, , ]) == 0))
   expect_true(all(unlist(y[index_I_C_1_strain_2, , ]) == 0))
   expect_true(all(unlist(y[index_I_C_2_strain_2, , ]) == 0))
+
+  ## gammaPCR_pre is 0 so PCR_pos is 0 for second strain
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_E = c(1, 1),
+                           strain_rel_gamma_A = c(1, 1),
+                           strain_rel_gamma_P = c(1, 1),
+                           strain_rel_gamma_C_1 = c(1, 1),
+                           strain_rel_gamma_C_2 = c(1, 1),
+                           strain_rel_gamma_PCR_pre = c(1, 0),
+                           strain_rel_gamma_PCR_pos = c(1, 1),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+  p$k_PCR_pre <- 1
+  p$k_PCR_pos <- 1
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  mod$update_state(state = initial)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_false(all(unlist(y[index_PCR_pos_strain_1, , ]) == 0))
+  expect_true(all(unlist(y[index_PCR_pos_strain_2, , ]) == 0))
+  expect_false(all(unlist(y[index_PCR_pre_strain_2, , ]) == 0))
+
+
+  ## gammaPCR_pos is 0 so PCR_neg is 0 for second strain
+  p <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                           strain_transmission = c(1, 1),
+                           strain_rel_gamma_E = c(1, 1),
+                           strain_rel_gamma_A = c(1, 1),
+                           strain_rel_gamma_P = c(1, 1),
+                           strain_rel_gamma_C_1 = c(1, 1),
+                           strain_rel_gamma_C_2 = c(1, 1),
+                           strain_rel_gamma_PCR_pre = c(1, 1),
+                           strain_rel_gamma_PCR_pos = c(1, 0),
+                           strain_seed_date = sircovid_date("2020-02-07"),
+                           strain_seed_size = 10,
+                           strain_seed_pattern = rep(1, 4),
+                           cross_immunity = 0)
+  p$k_PCR_pre <- 1
+  p$k_PCR_pos <- 1
+
+  mod <- lancelot$new(p, 0, np, seed = 1L)
+  mod$update_state(state = initial)
+  set.seed(1)
+  y <- mod$simulate(steps)
+  expect_false(all(unlist(y[index_PCR_neg_strain_1, , ]) == 0))
+  expect_true(all(unlist(y[index_PCR_neg_strain_2, , ]) == 0))
+  expect_false(all(unlist(y[index_PCR_pos_strain_2, , ]) == 0))
+
 })
 
 
