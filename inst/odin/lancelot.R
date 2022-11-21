@@ -1457,15 +1457,6 @@ n_gamma_PCR_pos_steps <- user()
 dim(gamma_PCR_pos_step) <- n_gamma_PCR_pos_steps
 rel_gamma_PCR_pos[] <- user()
 dim(rel_gamma_PCR_pos) <- n_strains
-####### gamma_PCR_pos <- user(0.1)
-
-# k_C_2 <- user()
-# dim(gamma_C_2) <- n_strains
-# gamma_C_2_step[] <- user()
-# n_gamma_C_2_steps <- user()
-# dim(gamma_C_2_step) <- n_gamma_C_2_steps
-# rel_gamma_C_2[] <- user()
-# dim(rel_gamma_C_2) <- n_strains
 
 ## Waning of immunity
 waning_rate[] <- user()
