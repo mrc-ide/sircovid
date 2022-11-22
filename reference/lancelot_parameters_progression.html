@@ -22,7 +22,7 @@ two."><meta property="og:image" content="/logo.png"><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sircovid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.14.9</span>
       </span>
     </div>
 
@@ -79,7 +79,9 @@ two.</p>
 <span>  gamma_W_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gamma_W_R <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gamma_G_D <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  gamma_U <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  gamma_U <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_PCR_pre <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gamma_PCR_pos <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -175,6 +177,18 @@ compartment. See Details.</p></dd>
 the duration of the delay from hospital admission to diagnosis for those
 not confirmed on admission. Note this duration is a single-stage Erlang.
 See Details.</p></dd>
+
+
+<dt>gamma_PCR_pre</dt>
+<dd><p>Time-varying parameters for the Erlang rate parameter
+the duration of PCR pre-positivity affecting REACT and ONS infection
+prevalence. See Details.</p></dd>
+
+
+<dt>gamma_PCR_pos</dt>
+<dd><p>Time-varying parameters for the Erlang rate parameter
+the duration of PCR positivity affecting REACT and ONS infection
+prevalence. See Details.</p></dd>
 
 </dl></div>
     <div id="value">
