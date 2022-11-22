@@ -30,6 +30,8 @@ lancelot_parameters(
   strain_rel_gamma_P = 1,
   strain_rel_gamma_C_1 = 1,
   strain_rel_gamma_C_2 = 1,
+  strain_rel_gamma_PCR_pre = 1,
+  strain_rel_gamma_PCR_pos = 1,
   strain_rel_p_sympt = 1,
   strain_rel_p_hosp_if_sympt = 1,
   strain_rel_p_icu = 1,
@@ -182,6 +184,17 @@ I_C_2 (gamma_C_2) for each
 strain modelled. If \code{1} all strains have same rates. Otherwise vector of
 same length as \code{strain_transmission}, with entries that determines the
 relative scaling of the defaults for each strain.}
+
+\item{strain_rel_gamma_PCR_pre}{Vector of relative rates of PCR
+pre-positive duration for each strain modelled. if '1' all strains have
+same rates. Otherwise vector of same length as \code{strain_transmission}, with
+entries that determines the relative scaling of the defaults for each
+strain.}
+
+\item{strain_rel_gamma_PCR_pos}{Vector of relative rates of PCR positivity
+duration for each strain modelled. if '1' all strains have same rates.
+Otherwise vector of same length as \code{strain_transmission}, with entries
+that determines the relative scaling of the defaults for each strain.}
 
 \item{strain_rel_p_sympt}{Vector of relative probabilities of
 symptoms for

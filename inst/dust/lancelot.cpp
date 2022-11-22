@@ -824,6 +824,8 @@ typename T::real_type
 // [[dust::param(gamma_ICU_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU_W_R_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_ICU_pre_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_PCR_pos_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(gamma_PCR_pre_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_P_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_U_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_W_D_step, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -877,6 +879,8 @@ typename T::real_type
 // [[dust::param(n_gamma_ICU_W_D_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_ICU_W_R_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_ICU_pre_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_gamma_PCR_pos_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_gamma_PCR_pre_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_P_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_U_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_gamma_W_D_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -956,6 +960,8 @@ typename T::real_type
 // [[dust::param(rel_gamma_ICU_W_R, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_gamma_ICU_pre, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_gamma_P, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(rel_gamma_PCR_pos, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(rel_gamma_PCR_pre, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_gamma_W_D, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_gamma_W_R, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(rel_infectivity, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
@@ -996,8 +1002,6 @@ typename T::real_type
 // [[dust::param(vaccine_dose_step, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_progression_rate_base, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(waning_rate, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_PCR_pos, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(gamma_PCR_pre, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pos_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pos_2, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(gamma_sero_pre_1, has_default = TRUE, default_value = 0.1, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1598,6 +1602,10 @@ public:
     int dim_gamma_ICU_pre;
     int dim_gamma_ICU_pre_step;
     int dim_gamma_P;
+    int dim_gamma_PCR_pos;
+    int dim_gamma_PCR_pos_step;
+    int dim_gamma_PCR_pre;
+    int dim_gamma_PCR_pre_step;
     int dim_gamma_P_step;
     int dim_gamma_U_step;
     int dim_gamma_W_D;
@@ -2494,6 +2502,8 @@ public:
     int dim_p_S_vacc_skip;
     int dim_p_S_vacc_skip_1;
     int dim_p_S_vacc_skip_2;
+    int dim_p_T_PCR_pos_progress;
+    int dim_p_T_PCR_pre_progress;
     int dim_p_W_D;
     int dim_p_W_D_1;
     int dim_p_W_D_12;
@@ -2542,6 +2552,8 @@ public:
     int dim_rel_gamma_ICU_W_R;
     int dim_rel_gamma_ICU_pre;
     int dim_rel_gamma_P;
+    int dim_rel_gamma_PCR_pos;
+    int dim_rel_gamma_PCR_pre;
     int dim_rel_gamma_W_D;
     int dim_rel_gamma_W_R;
     int dim_rel_infectivity;
@@ -2671,8 +2683,8 @@ public:
     std::vector<real_type> gamma_ICU_W_D_step;
     std::vector<real_type> gamma_ICU_W_R_step;
     std::vector<real_type> gamma_ICU_pre_step;
-    real_type gamma_PCR_pos;
-    real_type gamma_PCR_pre;
+    std::vector<real_type> gamma_PCR_pos_step;
+    std::vector<real_type> gamma_PCR_pre_step;
     std::vector<real_type> gamma_P_step;
     std::vector<real_type> gamma_U_step;
     std::vector<real_type> gamma_W_D_step;
@@ -2896,6 +2908,8 @@ public:
     int n_gamma_ICU_W_D_steps;
     int n_gamma_ICU_W_R_steps;
     int n_gamma_ICU_pre_steps;
+    int n_gamma_PCR_pos_steps;
+    int n_gamma_PCR_pre_steps;
     int n_gamma_P_steps;
     int n_gamma_U_steps;
     int n_gamma_W_D_steps;
@@ -3010,8 +3024,6 @@ public:
     real_type p_NC_weekend_80_plus;
     real_type p_NC_weekend_under15;
     std::vector<real_type> p_R_step;
-    real_type p_T_PCR_pos_progress;
-    real_type p_T_PCR_pre_progress;
     real_type p_T_sero_pos_1_progress;
     real_type p_T_sero_pos_2_progress;
     real_type p_T_sero_pre_1_progress;
@@ -3057,6 +3069,8 @@ public:
     std::vector<real_type> rel_gamma_ICU_W_R;
     std::vector<real_type> rel_gamma_ICU_pre;
     std::vector<real_type> rel_gamma_P;
+    std::vector<real_type> rel_gamma_PCR_pos;
+    std::vector<real_type> rel_gamma_PCR_pre;
     std::vector<real_type> rel_gamma_W_D;
     std::vector<real_type> rel_gamma_W_R;
     std::vector<real_type> rel_infectivity;
@@ -3147,6 +3161,8 @@ public:
     std::vector<real_type> gamma_ICU_W_R;
     std::vector<real_type> gamma_ICU_pre;
     std::vector<real_type> gamma_P;
+    std::vector<real_type> gamma_PCR_pos;
+    std::vector<real_type> gamma_PCR_pre;
     std::vector<real_type> gamma_W_D;
     std::vector<real_type> gamma_W_R;
     std::vector<real_type> lambda;
@@ -3309,6 +3325,8 @@ public:
     std::vector<real_type> p_SE;
     std::vector<real_type> p_S_next_vacc_class;
     std::vector<real_type> p_S_vacc_skip;
+    std::vector<real_type> p_T_PCR_pos_progress;
+    std::vector<real_type> p_T_PCR_pre_progress;
     std::vector<real_type> p_W_D;
     std::vector<real_type> p_W_D_progress;
     std::vector<real_type> p_W_R_progress;
@@ -3672,6 +3690,12 @@ public:
     for (int i = 1; i <= shared->dim_gamma_P; ++i) {
       internal.gamma_P[i - 1] = (static_cast<int>(step) >= shared->n_gamma_P_steps ? shared->gamma_P_step[shared->n_gamma_P_steps - 1] * shared->rel_gamma_P[i - 1] : shared->gamma_P_step[step + 1 - 1] * shared->rel_gamma_P[i - 1]);
     }
+    for (int i = 1; i <= shared->dim_gamma_PCR_pos; ++i) {
+      internal.gamma_PCR_pos[i - 1] = (static_cast<int>(step) >= shared->n_gamma_PCR_pos_steps ? shared->gamma_PCR_pos_step[shared->n_gamma_PCR_pos_steps - 1] * shared->rel_gamma_PCR_pos[i - 1] : shared->gamma_PCR_pos_step[step + 1 - 1] * shared->rel_gamma_PCR_pos[i - 1]);
+    }
+    for (int i = 1; i <= shared->dim_gamma_PCR_pre; ++i) {
+      internal.gamma_PCR_pre[i - 1] = (static_cast<int>(step) >= shared->n_gamma_PCR_pre_steps ? shared->gamma_PCR_pre_step[shared->n_gamma_PCR_pre_steps - 1] * shared->rel_gamma_PCR_pre[i - 1] : shared->gamma_PCR_pre_step[step + 1 - 1] * shared->rel_gamma_PCR_pre[i - 1]);
+    }
     real_type gamma_U = (static_cast<int>(step) >= shared->n_gamma_U_steps ? shared->gamma_U_step[shared->n_gamma_U_steps - 1] : shared->gamma_U_step[step + 1 - 1]);
     for (int i = 1; i <= shared->dim_gamma_W_D; ++i) {
       internal.gamma_W_D[i - 1] = (static_cast<int>(step) >= shared->n_gamma_W_D_steps ? shared->gamma_W_D_step[shared->n_gamma_W_D_steps - 1] * shared->rel_gamma_W_D[i - 1] : shared->gamma_W_D_step[step + 1 - 1] * shared->rel_gamma_W_D[i - 1]);
@@ -3689,24 +3713,6 @@ public:
       for (int j = 1; j <= shared->dim_I_with_diff_trans_2; ++j) {
         for (int k = 1; k <= shared->dim_I_with_diff_trans_3; ++k) {
           internal.I_with_diff_trans[i - 1 + shared->dim_I_with_diff_trans_1 * (j - 1) + shared->dim_I_with_diff_trans_12 * (k - 1)] = shared->rel_infectivity[shared->dim_rel_infectivity_12 * (k - 1) + shared->dim_rel_infectivity_1 * (j - 1) + i - 1] * shared->strain_transmission[j - 1] * (shared->I_A_transmission * odin_sum4<real_type>(I_A, i - 1, i, j - 1, j, 0, shared->dim_I_A_3, k - 1, k, shared->dim_I_A_1, shared->dim_I_A_12, shared->dim_I_A_123) + shared->I_P_transmission * odin_sum4<real_type>(I_P, i - 1, i, j - 1, j, 0, shared->dim_I_P_3, k - 1, k, shared->dim_I_P_1, shared->dim_I_P_12, shared->dim_I_P_123) + shared->I_C_1_transmission * odin_sum4<real_type>(I_C_1, i - 1, i, j - 1, j, 0, shared->dim_I_C_1_3, k - 1, k, shared->dim_I_C_1_1, shared->dim_I_C_1_12, shared->dim_I_C_1_123) + shared->I_C_2_transmission * odin_sum4<real_type>(I_C_2, i - 1, i, j - 1, j, 0, shared->dim_I_C_2_3, k - 1, k, shared->dim_I_C_2_1, shared->dim_I_C_2_12, shared->dim_I_C_2_123) + shared->hosp_transmission * (odin_sum4<real_type>(ICU_pre_unconf, i - 1, i, j - 1, j, 0, shared->dim_ICU_pre_unconf_3, k - 1, k, shared->dim_ICU_pre_unconf_1, shared->dim_ICU_pre_unconf_12, shared->dim_ICU_pre_unconf_123) + odin_sum4<real_type>(ICU_pre_conf, i - 1, i, j - 1, j, 0, shared->dim_ICU_pre_conf_3, k - 1, k, shared->dim_ICU_pre_conf_1, shared->dim_ICU_pre_conf_12, shared->dim_ICU_pre_conf_123) + odin_sum4<real_type>(H_R_unconf, i - 1, i, j - 1, j, 0, shared->dim_H_R_unconf_3, k - 1, k, shared->dim_H_R_unconf_1, shared->dim_H_R_unconf_12, shared->dim_H_R_unconf_123) + odin_sum4<real_type>(H_R_conf, i - 1, i, j - 1, j, 0, shared->dim_H_R_conf_3, k - 1, k, shared->dim_H_R_conf_1, shared->dim_H_R_conf_12, shared->dim_H_R_conf_123) + odin_sum4<real_type>(H_D_unconf, i - 1, i, j - 1, j, 0, shared->dim_H_D_unconf_3, k - 1, k, shared->dim_H_D_unconf_1, shared->dim_H_D_unconf_12, shared->dim_H_D_unconf_123) + odin_sum4<real_type>(H_D_conf, i - 1, i, j - 1, j, 0, shared->dim_H_D_conf_3, k - 1, k, shared->dim_H_D_conf_1, shared->dim_H_D_conf_12, shared->dim_H_D_conf_123)) + shared->ICU_transmission * (odin_sum4<real_type>(ICU_W_R_unconf, i - 1, i, j - 1, j, 0, shared->dim_ICU_W_R_unconf_3, k - 1, k, shared->dim_ICU_W_R_unconf_1, shared->dim_ICU_W_R_unconf_12, shared->dim_ICU_W_R_unconf_123) + odin_sum4<real_type>(ICU_W_R_conf, i - 1, i, j - 1, j, 0, shared->dim_ICU_W_R_conf_3, k - 1, k, shared->dim_ICU_W_R_conf_1, shared->dim_ICU_W_R_conf_12, shared->dim_ICU_W_R_conf_123) + odin_sum4<real_type>(ICU_W_D_unconf, i - 1, i, j - 1, j, 0, shared->dim_ICU_W_D_unconf_3, k - 1, k, shared->dim_ICU_W_D_unconf_1, shared->dim_ICU_W_D_unconf_12, shared->dim_ICU_W_D_unconf_123) + odin_sum4<real_type>(ICU_W_D_conf, i - 1, i, j - 1, j, 0, shared->dim_ICU_W_D_conf_3, k - 1, k, shared->dim_ICU_W_D_conf_1, shared->dim_ICU_W_D_conf_12, shared->dim_ICU_W_D_conf_123) + odin_sum4<real_type>(ICU_D_unconf, i - 1, i, j - 1, j, 0, shared->dim_ICU_D_unconf_3, k - 1, k, shared->dim_ICU_D_unconf_1, shared->dim_ICU_D_unconf_12, shared->dim_ICU_D_unconf_123) + odin_sum4<real_type>(ICU_D_conf, i - 1, i, j - 1, j, 0, shared->dim_ICU_D_conf_3, k - 1, k, shared->dim_ICU_D_conf_1, shared->dim_ICU_D_conf_12, shared->dim_ICU_D_conf_123)) + shared->G_D_transmission * odin_sum4<real_type>(G_D, i - 1, i, j - 1, j, 0, shared->dim_G_D_3, k - 1, k, shared->dim_G_D_1, shared->dim_G_D_12, shared->dim_G_D_123));
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_T_PCR_pos_progress_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_T_PCR_pos_progress_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_T_PCR_pos_progress_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_T_PCR_pos_progress_4; ++l) {
-            internal.n_T_PCR_pos_progress[i - 1 + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1], shared->p_T_PCR_pos_progress);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_T_PCR_pre_progress_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_T_PCR_pre_progress_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_T_PCR_pre_progress_3; ++k) {
-          for (int l = 1; l <= shared->dim_n_T_PCR_pre_progress_4; ++l) {
-            internal.n_T_PCR_pre_progress[i - 1 + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1) + shared->dim_n_T_PCR_pre_progress_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, T_PCR_pre[shared->dim_T_PCR_pre_123 * (l - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_1 * (j - 1) + i - 1], shared->p_T_PCR_pre_progress);
-          }
         }
       }
     }
@@ -3830,6 +3836,12 @@ public:
           internal.p_R[i - 1 + shared->dim_p_R_1 * (j - 1) + shared->dim_p_R_12 * (k - 1)] = (static_cast<int>(step) >= shared->n_p_R_steps ? std::min(shared->p_R_step[shared->dim_p_R_step_1 * (i - 1) + shared->n_p_R_steps - 1] * shared->rel_p_R[shared->dim_rel_p_R_12 * (k - 1) + shared->dim_rel_p_R_1 * (j - 1) + i - 1], static_cast<real_type>(1)) : std::min(shared->p_R_step[shared->dim_p_R_step_1 * (i - 1) + step + 1 - 1] * shared->rel_p_R[shared->dim_rel_p_R_12 * (k - 1) + shared->dim_rel_p_R_1 * (j - 1) + i - 1], static_cast<real_type>(1)));
         }
       }
+    }
+    for (int i = 1; i <= shared->dim_p_T_PCR_pos_progress; ++i) {
+      internal.p_T_PCR_pos_progress[i - 1] = 1 - std::exp(- internal.gamma_PCR_pos[i - 1] * shared->dt);
+    }
+    for (int i = 1; i <= shared->dim_p_T_PCR_pre_progress; ++i) {
+      internal.p_T_PCR_pre_progress[i - 1] = 1 - std::exp(- internal.gamma_PCR_pre[i - 1] * shared->dt);
     }
     for (int i = 1; i <= shared->dim_p_W_D_1; ++i) {
       for (int j = 1; j <= shared->dim_p_W_D_2; ++j) {
@@ -4041,6 +4053,24 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_n_T_PCR_pos_progress_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_T_PCR_pos_progress_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_T_PCR_pos_progress_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_T_PCR_pos_progress_4; ++l) {
+            internal.n_T_PCR_pos_progress[i - 1 + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1], internal.p_T_PCR_pos_progress[j - 1]);
+          }
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_n_T_PCR_pre_progress_1; ++i) {
+      for (int j = 1; j <= shared->dim_n_T_PCR_pre_progress_2; ++j) {
+        for (int k = 1; k <= shared->dim_n_T_PCR_pre_progress_3; ++k) {
+          for (int l = 1; l <= shared->dim_n_T_PCR_pre_progress_4; ++l) {
+            internal.n_T_PCR_pre_progress[i - 1 + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + shared->dim_n_T_PCR_pre_progress_12 * (k - 1) + shared->dim_n_T_PCR_pre_progress_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, T_PCR_pre[shared->dim_T_PCR_pre_123 * (l - 1) + shared->dim_T_PCR_pre_12 * (k - 1) + shared->dim_T_PCR_pre_1 * (j - 1) + i - 1], internal.p_T_PCR_pre_progress[j - 1]);
+          }
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_n_T_sero_pre_1_to_T_sero_pos_1_1; ++i) {
       for (int j = 1; j <= shared->dim_n_T_sero_pre_1_to_T_sero_pos_1_2; ++j) {
         for (int k = 1; k <= shared->dim_n_T_sero_pre_1_to_T_sero_pos_1_3; ++k) {
@@ -4087,22 +4117,6 @@ public:
         for (int k = 1; k <= shared->dim_n_W_R_unconf_progress_3; ++k) {
           for (int l = 1; l <= shared->dim_n_W_R_unconf_progress_4; ++l) {
             internal.n_W_R_unconf_progress[i - 1 + shared->dim_n_W_R_unconf_progress_1 * (j - 1) + shared->dim_n_W_R_unconf_progress_12 * (k - 1) + shared->dim_n_W_R_unconf_progress_123 * (l - 1)] = dust::random::binomial<real_type>(rng_state, W_R_unconf[shared->dim_W_R_unconf_123 * (l - 1) + shared->dim_W_R_unconf_12 * (k - 1) + shared->dim_W_R_unconf_1 * (j - 1) + i - 1], internal.p_W_R_progress[j - 1]);
-          }
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_neg_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_neg_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_T_PCR_neg_3; ++k) {
-          internal.new_T_PCR_neg[i - 1 + shared->dim_new_T_PCR_neg_1 * (j - 1) + shared->dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[shared->dim_T_PCR_neg_12 * (k - 1) + shared->dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (k - 1) + shared->dim_n_T_PCR_pos_progress_12 * (shared->k_PCR_pos - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_T_PCR_pos_3; ++k) {
-          for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
-            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (shared->k_PCR_pre - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] : internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1]));
           }
         }
       }
@@ -4303,6 +4317,22 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_new_T_PCR_neg_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_T_PCR_neg_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_T_PCR_neg_3; ++k) {
+          internal.new_T_PCR_neg[i - 1 + shared->dim_new_T_PCR_neg_1 * (j - 1) + shared->dim_new_T_PCR_neg_12 * (k - 1)] = T_PCR_neg[shared->dim_T_PCR_neg_12 * (k - 1) + shared->dim_T_PCR_neg_1 * (j - 1) + i - 1] + internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (k - 1) + shared->dim_n_T_PCR_pos_progress_12 * (shared->k_PCR_pos - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_new_T_PCR_pos_1; ++i) {
+      for (int j = 1; j <= shared->dim_new_T_PCR_pos_2; ++j) {
+        for (int k = 1; k <= shared->dim_new_T_PCR_pos_3; ++k) {
+          for (int l = 1; l <= shared->dim_new_T_PCR_pos_4; ++l) {
+            internal.new_T_PCR_pos[i - 1 + shared->dim_new_T_PCR_pos_1 * (j - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_123 * (l - 1)] = T_PCR_pos[shared->dim_T_PCR_pos_123 * (l - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_1 * (j - 1) + i - 1] - internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1] + ((k == 1 ? internal.n_T_PCR_pre_progress[shared->dim_n_T_PCR_pre_progress_123 * (l - 1) + shared->dim_n_T_PCR_pre_progress_12 * (shared->k_PCR_pre - 1) + shared->dim_n_T_PCR_pre_progress_1 * (j - 1) + i - 1] : internal.n_T_PCR_pos_progress[shared->dim_n_T_PCR_pos_progress_123 * (l - 1) + shared->dim_n_T_PCR_pos_progress_12 * (k - 1 - 1) + shared->dim_n_T_PCR_pos_progress_1 * (j - 1) + i - 1]));
+          }
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_new_T_sero_neg_1_1; ++i) {
       for (int j = 1; j <= shared->dim_new_T_sero_neg_1_2; ++j) {
         for (int k = 1; k <= shared->dim_new_T_sero_neg_1_3; ++k) {
@@ -4335,30 +4365,6 @@ public:
         }
       }
     }
-    for (int i = 1; i <= shared->dim_T_PCR_neg_1; ++i) {
-      for (int j = 1; j <= shared->dim_T_PCR_neg_2; ++j) {
-        for (int k = 1; k <= shared->dim_T_PCR_neg_3; ++k) {
-          state_next[shared->offset_variable_T_PCR_neg + i - 1 + shared->dim_T_PCR_neg_1 * (j - 1) + shared->dim_T_PCR_neg_12 * (k - 1)] = internal.new_T_PCR_neg[shared->dim_new_T_PCR_neg_12 * (k - 1) + shared->dim_new_T_PCR_neg_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_T_PCR_pos_1; ++i) {
-      for (int j = 1; j <= shared->dim_T_PCR_pos_2; ++j) {
-        for (int k = 1; k <= shared->dim_T_PCR_pos_3; ++k) {
-          for (int l = 1; l <= shared->dim_T_PCR_pos_4; ++l) {
-            state_next[shared->offset_variable_T_PCR_pos + i - 1 + shared->dim_T_PCR_pos_1 * (j - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[shared->dim_new_T_PCR_pos_123 * (l - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_1 * (j - 1) + i - 1];
-          }
-        }
-      }
-    }
-    state_next[78] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 0, 1, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 3 / (real_type) 5 + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[81] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 5, 7, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[82] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 7, 9, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[83] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 9, 11, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[84] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 11, 13, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
-    state_next[80] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 5, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[85] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 13, 17, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
-    state_next[79] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     for (int i = 1; i <= shared->dim_vacc_skip_attempted_doses_1; ++i) {
       for (int j = 1; j <= shared->dim_vacc_skip_attempted_doses_2; ++j) {
         internal.vacc_skip_attempted_doses[i - 1 + shared->dim_vacc_skip_attempted_doses_1 * (j - 1)] = ((shared->vacc_skip_dose_weight[j - 1] > 0 ? ((shared->vacc_skip_dose[j - 1] > 0 ? internal.total_attempted_doses[shared->dim_total_attempted_doses_1 * (j - 1) + i - 1] - internal.vaccine_attempted_doses[shared->dim_vaccine_attempted_doses_1 * (j - 1) + i - 1] : 0)) : 0));
@@ -4526,6 +4532,22 @@ public:
         }
       }
     }
+    for (int i = 1; i <= shared->dim_T_PCR_neg_1; ++i) {
+      for (int j = 1; j <= shared->dim_T_PCR_neg_2; ++j) {
+        for (int k = 1; k <= shared->dim_T_PCR_neg_3; ++k) {
+          state_next[shared->offset_variable_T_PCR_neg + i - 1 + shared->dim_T_PCR_neg_1 * (j - 1) + shared->dim_T_PCR_neg_12 * (k - 1)] = internal.new_T_PCR_neg[shared->dim_new_T_PCR_neg_12 * (k - 1) + shared->dim_new_T_PCR_neg_1 * (j - 1) + i - 1];
+        }
+      }
+    }
+    for (int i = 1; i <= shared->dim_T_PCR_pos_1; ++i) {
+      for (int j = 1; j <= shared->dim_T_PCR_pos_2; ++j) {
+        for (int k = 1; k <= shared->dim_T_PCR_pos_3; ++k) {
+          for (int l = 1; l <= shared->dim_T_PCR_pos_4; ++l) {
+            state_next[shared->offset_variable_T_PCR_pos + i - 1 + shared->dim_T_PCR_pos_1 * (j - 1) + shared->dim_T_PCR_pos_12 * (k - 1) + shared->dim_T_PCR_pos_123 * (l - 1)] = internal.new_T_PCR_pos[shared->dim_new_T_PCR_pos_123 * (l - 1) + shared->dim_new_T_PCR_pos_12 * (k - 1) + shared->dim_new_T_PCR_pos_1 * (j - 1) + i - 1];
+          }
+        }
+      }
+    }
     for (int i = 1; i <= shared->dim_T_sero_neg_1_1; ++i) {
       for (int j = 1; j <= shared->dim_T_sero_neg_1_2; ++j) {
         for (int k = 1; k <= shared->dim_T_sero_neg_1_3; ++k) {
@@ -4558,6 +4580,14 @@ public:
         }
       }
     }
+    state_next[78] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 0, 1, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 3 / (real_type) 5 + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    state_next[81] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 5, 7, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[82] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 7, 9, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[83] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 9, 11, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[84] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 11, 13, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) + odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 17, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123) * 2 / (real_type) 8;
+    state_next[80] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 5, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    state_next[85] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 13, 17, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
+    state_next[79] = odin_sum4<real_type>(internal.new_T_PCR_pos.data(), 1, 18, 0, shared->dim_new_T_PCR_pos_2, 0, shared->dim_new_T_PCR_pos_3, 0, shared->dim_new_T_PCR_pos_4, shared->dim_new_T_PCR_pos_1, shared->dim_new_T_PCR_pos_12, shared->dim_new_T_PCR_pos_123);
     state_next[56] = odin_sum4<real_type>(internal.new_T_sero_pos_1.data(), 3, 13, 0, shared->dim_new_T_sero_pos_1_2, 0, shared->dim_new_T_sero_pos_1_3, 0, shared->dim_new_T_sero_pos_1_4, shared->dim_new_T_sero_pos_1_1, shared->dim_new_T_sero_pos_1_12, shared->dim_new_T_sero_pos_1_123);
     state_next[57] = odin_sum4<real_type>(internal.new_T_sero_pos_2.data(), 3, 13, 0, shared->dim_new_T_sero_pos_2_2, 0, shared->dim_new_T_sero_pos_2_3, 0, shared->dim_new_T_sero_pos_2_4, shared->dim_new_T_sero_pos_2_1, shared->dim_new_T_sero_pos_2_12, shared->dim_new_T_sero_pos_2_123);
     for (int i = 1; i <= shared->dim_vacc_skip_probability_1; ++i) {
@@ -6230,6 +6260,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->n_gamma_ICU_W_D_steps = NA_INTEGER;
   shared->n_gamma_ICU_W_R_steps = NA_INTEGER;
   shared->n_gamma_ICU_pre_steps = NA_INTEGER;
+  shared->n_gamma_PCR_pos_steps = NA_INTEGER;
+  shared->n_gamma_PCR_pre_steps = NA_INTEGER;
   shared->n_gamma_P_steps = NA_INTEGER;
   shared->n_gamma_U_steps = NA_INTEGER;
   shared->n_gamma_W_D_steps = NA_INTEGER;
@@ -6294,8 +6326,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->sero_specificity_2 = NA_REAL;
   shared->steps_per_day = NA_INTEGER;
   shared->strain_seed_step_start = NA_REAL;
-  shared->gamma_PCR_pos = 0.10000000000000001;
-  shared->gamma_PCR_pre = 0.10000000000000001;
   shared->gamma_sero_pos_1 = 0.10000000000000001;
   shared->gamma_sero_pos_2 = 0.10000000000000001;
   shared->gamma_sero_pre_1 = 0.10000000000000001;
@@ -6328,8 +6358,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->beta_step = user_get_array_variable<real_type, 1>(user, "beta_step", shared->beta_step, dim_beta_step, NA_REAL, NA_REAL);
   shared->dim_beta_step = shared->beta_step.size();
   shared->exp_noise = user_get_scalar<real_type>(user, "exp_noise", shared->exp_noise, NA_REAL, NA_REAL);
-  shared->gamma_PCR_pos = user_get_scalar<real_type>(user, "gamma_PCR_pos", shared->gamma_PCR_pos, NA_REAL, NA_REAL);
-  shared->gamma_PCR_pre = user_get_scalar<real_type>(user, "gamma_PCR_pre", shared->gamma_PCR_pre, NA_REAL, NA_REAL);
   shared->gamma_sero_pos_1 = user_get_scalar<real_type>(user, "gamma_sero_pos_1", shared->gamma_sero_pos_1, NA_REAL, NA_REAL);
   shared->gamma_sero_pos_2 = user_get_scalar<real_type>(user, "gamma_sero_pos_2", shared->gamma_sero_pos_2, NA_REAL, NA_REAL);
   shared->gamma_sero_pre_1 = user_get_scalar<real_type>(user, "gamma_sero_pre_1", shared->gamma_sero_pre_1, NA_REAL, NA_REAL);
@@ -6380,6 +6408,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->n_gamma_ICU_W_D_steps = user_get_scalar<int>(user, "n_gamma_ICU_W_D_steps", shared->n_gamma_ICU_W_D_steps, NA_INTEGER, NA_INTEGER);
   shared->n_gamma_ICU_W_R_steps = user_get_scalar<int>(user, "n_gamma_ICU_W_R_steps", shared->n_gamma_ICU_W_R_steps, NA_INTEGER, NA_INTEGER);
   shared->n_gamma_ICU_pre_steps = user_get_scalar<int>(user, "n_gamma_ICU_pre_steps", shared->n_gamma_ICU_pre_steps, NA_INTEGER, NA_INTEGER);
+  shared->n_gamma_PCR_pos_steps = user_get_scalar<int>(user, "n_gamma_PCR_pos_steps", shared->n_gamma_PCR_pos_steps, NA_INTEGER, NA_INTEGER);
+  shared->n_gamma_PCR_pre_steps = user_get_scalar<int>(user, "n_gamma_PCR_pre_steps", shared->n_gamma_PCR_pre_steps, NA_INTEGER, NA_INTEGER);
   shared->n_gamma_P_steps = user_get_scalar<int>(user, "n_gamma_P_steps", shared->n_gamma_P_steps, NA_INTEGER, NA_INTEGER);
   shared->n_gamma_U_steps = user_get_scalar<int>(user, "n_gamma_U_steps", shared->n_gamma_U_steps, NA_INTEGER, NA_INTEGER);
   shared->n_gamma_W_D_steps = user_get_scalar<int>(user, "n_gamma_W_D_steps", shared->n_gamma_W_D_steps, NA_INTEGER, NA_INTEGER);
@@ -6745,6 +6775,10 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_gamma_ICU_pre = shared->n_strains;
   shared->dim_gamma_ICU_pre_step = shared->n_gamma_ICU_pre_steps;
   shared->dim_gamma_P = shared->n_strains;
+  shared->dim_gamma_PCR_pos = shared->n_strains;
+  shared->dim_gamma_PCR_pos_step = shared->n_gamma_PCR_pos_steps;
+  shared->dim_gamma_PCR_pre = shared->n_strains;
+  shared->dim_gamma_PCR_pre_step = shared->n_gamma_PCR_pre_steps;
   shared->dim_gamma_P_step = shared->n_gamma_P_steps;
   shared->dim_gamma_U_step = shared->n_gamma_U_steps;
   shared->dim_gamma_W_D = shared->n_strains;
@@ -7278,6 +7312,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_p_S_next_vacc_class_2 = shared->n_vacc_classes;
   shared->dim_p_S_vacc_skip_1 = shared->n_groups;
   shared->dim_p_S_vacc_skip_2 = shared->n_vacc_classes;
+  shared->dim_p_T_PCR_pos_progress = shared->n_strains;
+  shared->dim_p_T_PCR_pre_progress = shared->n_strains;
   shared->dim_p_W_D_1 = shared->n_groups;
   shared->dim_p_W_D_2 = shared->n_strains;
   shared->dim_p_W_D_3 = shared->n_vacc_classes;
@@ -7306,6 +7342,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->dim_rel_gamma_ICU_W_R = shared->n_strains;
   shared->dim_rel_gamma_ICU_pre = shared->n_strains;
   shared->dim_rel_gamma_P = shared->n_strains;
+  shared->dim_rel_gamma_PCR_pos = shared->n_strains;
+  shared->dim_rel_gamma_PCR_pre = shared->n_strains;
   shared->dim_rel_gamma_W_D = shared->n_strains;
   shared->dim_rel_gamma_W_R = shared->n_strains;
   shared->dim_rel_infectivity_1 = shared->n_groups;
@@ -7402,6 +7440,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   internal.gamma_ICU_W_R = std::vector<real_type>(shared->dim_gamma_ICU_W_R);
   internal.gamma_ICU_pre = std::vector<real_type>(shared->dim_gamma_ICU_pre);
   internal.gamma_P = std::vector<real_type>(shared->dim_gamma_P);
+  internal.gamma_PCR_pos = std::vector<real_type>(shared->dim_gamma_PCR_pos);
+  internal.gamma_PCR_pre = std::vector<real_type>(shared->dim_gamma_PCR_pre);
   internal.gamma_W_D = std::vector<real_type>(shared->dim_gamma_W_D);
   internal.gamma_W_R = std::vector<real_type>(shared->dim_gamma_W_R);
   shared->initial_D_non_hosp = std::vector<real_type>(shared->dim_D_non_hosp);
@@ -7432,6 +7472,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   internal.p_I_C_1_progress = std::vector<real_type>(shared->dim_p_I_C_1_progress);
   internal.p_I_C_2_progress = std::vector<real_type>(shared->dim_p_I_C_2_progress);
   internal.p_I_P_progress = std::vector<real_type>(shared->dim_p_I_P_progress);
+  internal.p_T_PCR_pos_progress = std::vector<real_type>(shared->dim_p_T_PCR_pos_progress);
+  internal.p_T_PCR_pre_progress = std::vector<real_type>(shared->dim_p_T_PCR_pre_progress);
   internal.p_W_D_progress = std::vector<real_type>(shared->dim_p_W_D_progress);
   internal.p_W_R_progress = std::vector<real_type>(shared->dim_p_W_R_progress);
   internal.p_star = std::vector<real_type>(shared->dim_p_star);
@@ -8043,6 +8085,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->gamma_ICU_W_D_step = user_get_array_fixed<real_type, 1>(user, "gamma_ICU_W_D_step", shared->gamma_ICU_W_D_step, {shared->dim_gamma_ICU_W_D_step}, NA_REAL, NA_REAL);
   shared->gamma_ICU_W_R_step = user_get_array_fixed<real_type, 1>(user, "gamma_ICU_W_R_step", shared->gamma_ICU_W_R_step, {shared->dim_gamma_ICU_W_R_step}, NA_REAL, NA_REAL);
   shared->gamma_ICU_pre_step = user_get_array_fixed<real_type, 1>(user, "gamma_ICU_pre_step", shared->gamma_ICU_pre_step, {shared->dim_gamma_ICU_pre_step}, NA_REAL, NA_REAL);
+  shared->gamma_PCR_pos_step = user_get_array_fixed<real_type, 1>(user, "gamma_PCR_pos_step", shared->gamma_PCR_pos_step, {shared->dim_gamma_PCR_pos_step}, NA_REAL, NA_REAL);
+  shared->gamma_PCR_pre_step = user_get_array_fixed<real_type, 1>(user, "gamma_PCR_pre_step", shared->gamma_PCR_pre_step, {shared->dim_gamma_PCR_pre_step}, NA_REAL, NA_REAL);
   shared->gamma_P_step = user_get_array_fixed<real_type, 1>(user, "gamma_P_step", shared->gamma_P_step, {shared->dim_gamma_P_step}, NA_REAL, NA_REAL);
   shared->gamma_U_step = user_get_array_fixed<real_type, 1>(user, "gamma_U_step", shared->gamma_U_step, {shared->dim_gamma_U_step}, NA_REAL, NA_REAL);
   shared->gamma_W_D_step = user_get_array_fixed<real_type, 1>(user, "gamma_W_D_step", shared->gamma_W_D_step, {shared->dim_gamma_W_D_step}, NA_REAL, NA_REAL);
@@ -8093,8 +8137,6 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->offset_variable_infections_inc_age = shared->dim_cum_infections_strain + shared->dim_infections_inc_strain + 90;
   shared->offset_variable_infections_inc_strain = shared->dim_cum_infections_strain + 90;
   shared->offset_variable_prob_strain = shared->dim_D_non_hosp + shared->dim_N_tot + shared->dim_cum_admit_by_age + shared->dim_cum_infections_strain + shared->dim_hospitalisations_inc_age + shared->dim_hospitalisations_inc_strain + shared->dim_infections_inc_age + shared->dim_infections_inc_strain + 90;
-  shared->p_T_PCR_pos_progress = 1 - std::exp(- shared->gamma_PCR_pos * shared->dt);
-  shared->p_T_PCR_pre_progress = 1 - std::exp(- shared->gamma_PCR_pre * shared->dt);
   shared->p_T_sero_pos_1_progress = 1 - std::exp(- shared->gamma_sero_pos_1 * shared->dt);
   shared->p_T_sero_pos_2_progress = 1 - std::exp(- shared->gamma_sero_pos_2 * shared->dt);
   shared->p_T_sero_pre_1_progress = 1 - std::exp(- shared->gamma_sero_pre_1 * shared->dt);
@@ -8113,6 +8155,8 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->rel_gamma_ICU_W_R = user_get_array_fixed<real_type, 1>(user, "rel_gamma_ICU_W_R", shared->rel_gamma_ICU_W_R, {shared->dim_rel_gamma_ICU_W_R}, NA_REAL, NA_REAL);
   shared->rel_gamma_ICU_pre = user_get_array_fixed<real_type, 1>(user, "rel_gamma_ICU_pre", shared->rel_gamma_ICU_pre, {shared->dim_rel_gamma_ICU_pre}, NA_REAL, NA_REAL);
   shared->rel_gamma_P = user_get_array_fixed<real_type, 1>(user, "rel_gamma_P", shared->rel_gamma_P, {shared->dim_rel_gamma_P}, NA_REAL, NA_REAL);
+  shared->rel_gamma_PCR_pos = user_get_array_fixed<real_type, 1>(user, "rel_gamma_PCR_pos", shared->rel_gamma_PCR_pos, {shared->dim_rel_gamma_PCR_pos}, NA_REAL, NA_REAL);
+  shared->rel_gamma_PCR_pre = user_get_array_fixed<real_type, 1>(user, "rel_gamma_PCR_pre", shared->rel_gamma_PCR_pre, {shared->dim_rel_gamma_PCR_pre}, NA_REAL, NA_REAL);
   shared->rel_gamma_W_D = user_get_array_fixed<real_type, 1>(user, "rel_gamma_W_D", shared->rel_gamma_W_D, {shared->dim_rel_gamma_W_D}, NA_REAL, NA_REAL);
   shared->rel_gamma_W_R = user_get_array_fixed<real_type, 1>(user, "rel_gamma_W_R", shared->rel_gamma_W_R, {shared->dim_rel_gamma_W_R}, NA_REAL, NA_REAL);
   shared->seed_step_end = shared->seed_step_start + shared->dim_seed_value;

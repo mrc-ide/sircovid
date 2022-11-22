@@ -20,7 +20,9 @@ lancelot_parameters_progression(
   gamma_W_D = NULL,
   gamma_W_R = NULL,
   gamma_G_D = NULL,
-  gamma_U = NULL
+  gamma_U = NULL,
+  gamma_PCR_pre = NULL,
+  gamma_PCR_pos = NULL
 )
 }
 \arguments{
@@ -83,6 +85,14 @@ compartment. See Details.}
 the duration of the delay from hospital admission to diagnosis for those
 not confirmed on admission. Note this duration is a single-stage Erlang.
 See Details.}
+
+\item{gamma_PCR_pre}{Time-varying parameters for the Erlang rate parameter
+the duration of PCR pre-positivity affecting REACT and ONS infection
+prevalence. See Details.}
+
+\item{gamma_PCR_pos}{Time-varying parameters for the Erlang rate parameter
+the duration of PCR positivity affecting REACT and ONS infection
+prevalence. See Details.}
 }
 \value{
 A list of parameter values
