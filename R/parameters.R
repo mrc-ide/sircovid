@@ -217,8 +217,9 @@ sircovid_parameters_piecewise_constant <- function(date, value, dt) {
     }
   }
 
+  times <- seq(0, date[[length(date)]], by = dt)
   stats::approx(date, value, method = "constant",
-                xout = seq(0, date[[length(date)]], by = dt))$y
+                xout = times)$y
 
 }
 
