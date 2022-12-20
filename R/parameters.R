@@ -129,8 +129,9 @@ sircovid_parameters_piecewise_linear <- function(date, value, dt) {
     value <- rbind(value[1, ], value)
   }
 
+  times <- seq(0, date[[length(date)]], by = dt)
   value <- apply(value, 2, function(x) {
-    stats::approx(date, x, seq(0, date[[length(date)]], by = dt))$y
+    stats::approx(date, x, times)$y
   })
 
   ## coerce back
