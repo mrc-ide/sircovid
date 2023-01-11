@@ -8,12 +8,12 @@ dust_basic_gpu_info <- function() {
   .Call(`_sircovid_dust_basic_gpu_info`)
 }
 
-dust_cpu_basic_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_sircovid_dust_cpu_basic_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_basic_alloc <- function(r_pars, pars_multi, r_time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_sircovid_dust_cpu_basic_alloc`, r_pars, pars_multi, r_time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
-dust_cpu_basic_run <- function(ptr, time_end) {
-  .Call(`_sircovid_dust_cpu_basic_run`, ptr, time_end)
+dust_cpu_basic_run <- function(ptr, r_time_end) {
+  .Call(`_sircovid_dust_cpu_basic_run`, ptr, r_time_end)
 }
 
 dust_cpu_basic_simulate <- function(ptr, time_end) {
@@ -72,6 +72,14 @@ dust_cpu_basic_n_state <- function(ptr) {
   .Call(`_sircovid_dust_cpu_basic_n_state`, ptr)
 }
 
+dust_cpu_basic_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_sircovid_dust_cpu_basic_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_basic_ode_statistics <- function(ptr) {
+  invisible(.Call(`_sircovid_dust_cpu_basic_ode_statistics`, ptr))
+}
+
 dust_lancelot_capabilities <- function() {
   .Call(`_sircovid_dust_lancelot_capabilities`)
 }
@@ -80,12 +88,12 @@ dust_lancelot_gpu_info <- function() {
   .Call(`_sircovid_dust_lancelot_gpu_info`)
 }
 
-dust_cpu_lancelot_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_sircovid_dust_cpu_lancelot_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_lancelot_alloc <- function(r_pars, pars_multi, r_time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_sircovid_dust_cpu_lancelot_alloc`, r_pars, pars_multi, r_time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
-dust_cpu_lancelot_run <- function(ptr, time_end) {
-  .Call(`_sircovid_dust_cpu_lancelot_run`, ptr, time_end)
+dust_cpu_lancelot_run <- function(ptr, r_time_end) {
+  .Call(`_sircovid_dust_cpu_lancelot_run`, ptr, r_time_end)
 }
 
 dust_cpu_lancelot_simulate <- function(ptr, time_end) {
@@ -142,4 +150,12 @@ dust_cpu_lancelot_set_n_threads <- function(ptr, n_threads) {
 
 dust_cpu_lancelot_n_state <- function(ptr) {
   .Call(`_sircovid_dust_cpu_lancelot_n_state`, ptr)
+}
+
+dust_cpu_lancelot_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_sircovid_dust_cpu_lancelot_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_lancelot_ode_statistics <- function(ptr) {
+  invisible(.Call(`_sircovid_dust_cpu_lancelot_ode_statistics`, ptr))
 }

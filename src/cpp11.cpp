@@ -20,17 +20,17 @@ extern "C" SEXP _sircovid_dust_basic_gpu_info() {
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
-extern "C" SEXP _sircovid_dust_cpu_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
+SEXP dust_cpu_basic_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _sircovid_dust_cpu_basic_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
+    return cpp11::as_sexp(dust_cpu_basic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // basic.cpp
-SEXP dust_cpu_basic_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _sircovid_dust_cpu_basic_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_basic_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _sircovid_dust_cpu_basic_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_basic_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_basic_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // basic.cpp
@@ -62,7 +62,7 @@ extern "C" SEXP _sircovid_dust_cpu_basic_state(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // basic.cpp
-size_t dust_cpu_basic_time(SEXP ptr);
+SEXP dust_cpu_basic_time(SEXP ptr);
 extern "C" SEXP _sircovid_dust_cpu_basic_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_basic_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -133,6 +133,22 @@ extern "C" SEXP _sircovid_dust_cpu_basic_n_state(SEXP ptr) {
     return cpp11::as_sexp(dust_cpu_basic_n_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
+// basic.cpp
+void dust_cpu_basic_set_stochastic_schedule(SEXP ptr, SEXP time);
+extern "C" SEXP _sircovid_dust_cpu_basic_set_stochastic_schedule(SEXP ptr, SEXP time) {
+  BEGIN_CPP11
+    dust_cpu_basic_set_stochastic_schedule(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(time));
+    return R_NilValue;
+  END_CPP11
+}
+// basic.cpp
+void dust_cpu_basic_ode_statistics(SEXP ptr);
+extern "C" SEXP _sircovid_dust_cpu_basic_ode_statistics(SEXP ptr) {
+  BEGIN_CPP11
+    dust_cpu_basic_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
+    return R_NilValue;
+  END_CPP11
+}
 // lancelot.cpp
 cpp11::sexp dust_lancelot_capabilities();
 extern "C" SEXP _sircovid_dust_lancelot_capabilities() {
@@ -148,17 +164,17 @@ extern "C" SEXP _sircovid_dust_lancelot_gpu_info() {
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config) {
+SEXP dust_cpu_lancelot_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config)));
+    return cpp11::as_sexp(dust_cpu_lancelot_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // lancelot.cpp
-SEXP dust_cpu_lancelot_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _sircovid_dust_cpu_lancelot_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_lancelot_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_lancelot_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_lancelot_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // lancelot.cpp
@@ -190,7 +206,7 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_state(SEXP ptr, SEXP r_index) {
   END_CPP11
 }
 // lancelot.cpp
-size_t dust_cpu_lancelot_time(SEXP ptr);
+SEXP dust_cpu_lancelot_time(SEXP ptr);
 extern "C" SEXP _sircovid_dust_cpu_lancelot_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_lancelot_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -261,45 +277,65 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_n_state(SEXP ptr) {
     return cpp11::as_sexp(dust_cpu_lancelot_n_state(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
+// lancelot.cpp
+void dust_cpu_lancelot_set_stochastic_schedule(SEXP ptr, SEXP time);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_set_stochastic_schedule(SEXP ptr, SEXP time) {
+  BEGIN_CPP11
+    dust_cpu_lancelot_set_stochastic_schedule(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<SEXP>>(time));
+    return R_NilValue;
+  END_CPP11
+}
+// lancelot.cpp
+void dust_cpu_lancelot_ode_statistics(SEXP ptr);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_ode_statistics(SEXP ptr) {
+  BEGIN_CPP11
+    dust_cpu_lancelot_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
+    return R_NilValue;
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_sircovid_dust_basic_capabilities",         (DL_FUNC) &_sircovid_dust_basic_capabilities,         0},
-    {"_sircovid_dust_basic_gpu_info",             (DL_FUNC) &_sircovid_dust_basic_gpu_info,             0},
-    {"_sircovid_dust_cpu_basic_alloc",            (DL_FUNC) &_sircovid_dust_cpu_basic_alloc,            8},
-    {"_sircovid_dust_cpu_basic_compare_data",     (DL_FUNC) &_sircovid_dust_cpu_basic_compare_data,     1},
-    {"_sircovid_dust_cpu_basic_filter",           (DL_FUNC) &_sircovid_dust_cpu_basic_filter,           5},
-    {"_sircovid_dust_cpu_basic_n_state",          (DL_FUNC) &_sircovid_dust_cpu_basic_n_state,          1},
-    {"_sircovid_dust_cpu_basic_reorder",          (DL_FUNC) &_sircovid_dust_cpu_basic_reorder,          2},
-    {"_sircovid_dust_cpu_basic_resample",         (DL_FUNC) &_sircovid_dust_cpu_basic_resample,         2},
-    {"_sircovid_dust_cpu_basic_rng_state",        (DL_FUNC) &_sircovid_dust_cpu_basic_rng_state,        3},
-    {"_sircovid_dust_cpu_basic_run",              (DL_FUNC) &_sircovid_dust_cpu_basic_run,              2},
-    {"_sircovid_dust_cpu_basic_set_data",         (DL_FUNC) &_sircovid_dust_cpu_basic_set_data,         3},
-    {"_sircovid_dust_cpu_basic_set_index",        (DL_FUNC) &_sircovid_dust_cpu_basic_set_index,        2},
-    {"_sircovid_dust_cpu_basic_set_n_threads",    (DL_FUNC) &_sircovid_dust_cpu_basic_set_n_threads,    2},
-    {"_sircovid_dust_cpu_basic_set_rng_state",    (DL_FUNC) &_sircovid_dust_cpu_basic_set_rng_state,    2},
-    {"_sircovid_dust_cpu_basic_simulate",         (DL_FUNC) &_sircovid_dust_cpu_basic_simulate,         2},
-    {"_sircovid_dust_cpu_basic_state",            (DL_FUNC) &_sircovid_dust_cpu_basic_state,            2},
-    {"_sircovid_dust_cpu_basic_time",             (DL_FUNC) &_sircovid_dust_cpu_basic_time,             1},
-    {"_sircovid_dust_cpu_basic_update_state",     (DL_FUNC) &_sircovid_dust_cpu_basic_update_state,     7},
-    {"_sircovid_dust_cpu_lancelot_alloc",         (DL_FUNC) &_sircovid_dust_cpu_lancelot_alloc,         8},
-    {"_sircovid_dust_cpu_lancelot_compare_data",  (DL_FUNC) &_sircovid_dust_cpu_lancelot_compare_data,  1},
-    {"_sircovid_dust_cpu_lancelot_filter",        (DL_FUNC) &_sircovid_dust_cpu_lancelot_filter,        5},
-    {"_sircovid_dust_cpu_lancelot_n_state",       (DL_FUNC) &_sircovid_dust_cpu_lancelot_n_state,       1},
-    {"_sircovid_dust_cpu_lancelot_reorder",       (DL_FUNC) &_sircovid_dust_cpu_lancelot_reorder,       2},
-    {"_sircovid_dust_cpu_lancelot_resample",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_resample,      2},
-    {"_sircovid_dust_cpu_lancelot_rng_state",     (DL_FUNC) &_sircovid_dust_cpu_lancelot_rng_state,     3},
-    {"_sircovid_dust_cpu_lancelot_run",           (DL_FUNC) &_sircovid_dust_cpu_lancelot_run,           2},
-    {"_sircovid_dust_cpu_lancelot_set_data",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_data,      3},
-    {"_sircovid_dust_cpu_lancelot_set_index",     (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_index,     2},
-    {"_sircovid_dust_cpu_lancelot_set_n_threads", (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_n_threads, 2},
-    {"_sircovid_dust_cpu_lancelot_set_rng_state", (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_rng_state, 2},
-    {"_sircovid_dust_cpu_lancelot_simulate",      (DL_FUNC) &_sircovid_dust_cpu_lancelot_simulate,      2},
-    {"_sircovid_dust_cpu_lancelot_state",         (DL_FUNC) &_sircovid_dust_cpu_lancelot_state,         2},
-    {"_sircovid_dust_cpu_lancelot_time",          (DL_FUNC) &_sircovid_dust_cpu_lancelot_time,          1},
-    {"_sircovid_dust_cpu_lancelot_update_state",  (DL_FUNC) &_sircovid_dust_cpu_lancelot_update_state,  7},
-    {"_sircovid_dust_lancelot_capabilities",      (DL_FUNC) &_sircovid_dust_lancelot_capabilities,      0},
-    {"_sircovid_dust_lancelot_gpu_info",          (DL_FUNC) &_sircovid_dust_lancelot_gpu_info,          0},
+    {"_sircovid_dust_basic_capabilities",                   (DL_FUNC) &_sircovid_dust_basic_capabilities,                   0},
+    {"_sircovid_dust_basic_gpu_info",                       (DL_FUNC) &_sircovid_dust_basic_gpu_info,                       0},
+    {"_sircovid_dust_cpu_basic_alloc",                      (DL_FUNC) &_sircovid_dust_cpu_basic_alloc,                      9},
+    {"_sircovid_dust_cpu_basic_compare_data",               (DL_FUNC) &_sircovid_dust_cpu_basic_compare_data,               1},
+    {"_sircovid_dust_cpu_basic_filter",                     (DL_FUNC) &_sircovid_dust_cpu_basic_filter,                     5},
+    {"_sircovid_dust_cpu_basic_n_state",                    (DL_FUNC) &_sircovid_dust_cpu_basic_n_state,                    1},
+    {"_sircovid_dust_cpu_basic_ode_statistics",             (DL_FUNC) &_sircovid_dust_cpu_basic_ode_statistics,             1},
+    {"_sircovid_dust_cpu_basic_reorder",                    (DL_FUNC) &_sircovid_dust_cpu_basic_reorder,                    2},
+    {"_sircovid_dust_cpu_basic_resample",                   (DL_FUNC) &_sircovid_dust_cpu_basic_resample,                   2},
+    {"_sircovid_dust_cpu_basic_rng_state",                  (DL_FUNC) &_sircovid_dust_cpu_basic_rng_state,                  3},
+    {"_sircovid_dust_cpu_basic_run",                        (DL_FUNC) &_sircovid_dust_cpu_basic_run,                        2},
+    {"_sircovid_dust_cpu_basic_set_data",                   (DL_FUNC) &_sircovid_dust_cpu_basic_set_data,                   3},
+    {"_sircovid_dust_cpu_basic_set_index",                  (DL_FUNC) &_sircovid_dust_cpu_basic_set_index,                  2},
+    {"_sircovid_dust_cpu_basic_set_n_threads",              (DL_FUNC) &_sircovid_dust_cpu_basic_set_n_threads,              2},
+    {"_sircovid_dust_cpu_basic_set_rng_state",              (DL_FUNC) &_sircovid_dust_cpu_basic_set_rng_state,              2},
+    {"_sircovid_dust_cpu_basic_set_stochastic_schedule",    (DL_FUNC) &_sircovid_dust_cpu_basic_set_stochastic_schedule,    2},
+    {"_sircovid_dust_cpu_basic_simulate",                   (DL_FUNC) &_sircovid_dust_cpu_basic_simulate,                   2},
+    {"_sircovid_dust_cpu_basic_state",                      (DL_FUNC) &_sircovid_dust_cpu_basic_state,                      2},
+    {"_sircovid_dust_cpu_basic_time",                       (DL_FUNC) &_sircovid_dust_cpu_basic_time,                       1},
+    {"_sircovid_dust_cpu_basic_update_state",               (DL_FUNC) &_sircovid_dust_cpu_basic_update_state,               7},
+    {"_sircovid_dust_cpu_lancelot_alloc",                   (DL_FUNC) &_sircovid_dust_cpu_lancelot_alloc,                   9},
+    {"_sircovid_dust_cpu_lancelot_compare_data",            (DL_FUNC) &_sircovid_dust_cpu_lancelot_compare_data,            1},
+    {"_sircovid_dust_cpu_lancelot_filter",                  (DL_FUNC) &_sircovid_dust_cpu_lancelot_filter,                  5},
+    {"_sircovid_dust_cpu_lancelot_n_state",                 (DL_FUNC) &_sircovid_dust_cpu_lancelot_n_state,                 1},
+    {"_sircovid_dust_cpu_lancelot_ode_statistics",          (DL_FUNC) &_sircovid_dust_cpu_lancelot_ode_statistics,          1},
+    {"_sircovid_dust_cpu_lancelot_reorder",                 (DL_FUNC) &_sircovid_dust_cpu_lancelot_reorder,                 2},
+    {"_sircovid_dust_cpu_lancelot_resample",                (DL_FUNC) &_sircovid_dust_cpu_lancelot_resample,                2},
+    {"_sircovid_dust_cpu_lancelot_rng_state",               (DL_FUNC) &_sircovid_dust_cpu_lancelot_rng_state,               3},
+    {"_sircovid_dust_cpu_lancelot_run",                     (DL_FUNC) &_sircovid_dust_cpu_lancelot_run,                     2},
+    {"_sircovid_dust_cpu_lancelot_set_data",                (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_data,                3},
+    {"_sircovid_dust_cpu_lancelot_set_index",               (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_index,               2},
+    {"_sircovid_dust_cpu_lancelot_set_n_threads",           (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_n_threads,           2},
+    {"_sircovid_dust_cpu_lancelot_set_rng_state",           (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_rng_state,           2},
+    {"_sircovid_dust_cpu_lancelot_set_stochastic_schedule", (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_stochastic_schedule, 2},
+    {"_sircovid_dust_cpu_lancelot_simulate",                (DL_FUNC) &_sircovid_dust_cpu_lancelot_simulate,                2},
+    {"_sircovid_dust_cpu_lancelot_state",                   (DL_FUNC) &_sircovid_dust_cpu_lancelot_state,                   2},
+    {"_sircovid_dust_cpu_lancelot_time",                    (DL_FUNC) &_sircovid_dust_cpu_lancelot_time,                    1},
+    {"_sircovid_dust_cpu_lancelot_update_state",            (DL_FUNC) &_sircovid_dust_cpu_lancelot_update_state,            7},
+    {"_sircovid_dust_lancelot_capabilities",                (DL_FUNC) &_sircovid_dust_lancelot_capabilities,                0},
+    {"_sircovid_dust_lancelot_gpu_info",                    (DL_FUNC) &_sircovid_dust_lancelot_gpu_info,                    0},
     {NULL, NULL, 0}
 };
 }
