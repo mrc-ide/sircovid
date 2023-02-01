@@ -2774,29 +2774,18 @@ lancelot_n_groups <- function() {
 ##' @export
 lancelot_check_severity <- function(pars) {
   check_parameters <- function(p_step, rel_p) {
-    vapply(
-      seq_len(pars$n_groups),
-      function(i) {
-        if (is.null(pars[[rel_p]])) {
-          stop(sprintf("Parameter '%s' is missing", rel_p))
-        } else if (is.null(pars[[p_step]])) {
-          stop(sprintf("Parameter '%s' is missing", p_step))
-        }
+    if (is.null(pars[[rel_p]])) {
+      stop(sprintf("Parameter '%s' is missing", rel_p))
+    } else if (is.null(pars[[p_step]])) {
+      stop(sprintf("Parameter '%s' is missing", p_step))
+    }
 
-        ## simple but crude checks
-        min_p <- min(pars[[rel_p]][i, , ]) * min(pars[[p_step]][, i])
+    if (!(ncol(pars[[rel_p]]) %in% c(1, 4))) {
+      stop(sprintf("%s should have 1 or 4 columns", rel_p))
+    }
 
-        if (any(min_p < 0)) {
-          stop(sprintf("%s * %s is not in [0, 1] for group %d",
-                       rel_p, p_step, i))
-        } else {
-          if (!(ncol(pars[[rel_p]]) %in% c(1, 4))) {
-            stop(sprintf("%s should have 1 or 4 columns", rel_p))
-          }
-        }
-        TRUE
-      }, logical(1)
-    )
+    assert_non_negative(pars[[rel_p]], rel_p)
+    assert_non_negative(pars[[p_step]], p_step)
   }
 
   step_pars <- c("p_C_step", "p_H_step", "p_ICU_step", "p_ICU_D_step",

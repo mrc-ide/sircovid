@@ -1487,10 +1487,18 @@ test_that("lancelot check severity works as expected", {
     p[[rels[[i]]]][] <- -1
     expect_error(
       lancelot_check_severity(p),
-      sprintf("%s * %s is not in [0, 1] for group 1", rels[[i]], steps[[i]]),
+      sprintf("'%s' must have only non-negative values", rels[[i]]),
       fixed = TRUE
     )
     p[[rels[[i]]]][] <- 1
+
+    p[[steps[[i]]]][] <- -1
+    expect_error(
+      lancelot_check_severity(p),
+      sprintf("'%s' must have only non-negative values", steps[[i]]),
+      fixed = TRUE
+    )
+    p[[steps[[i]]]][] <- 1
   }
 })
 
