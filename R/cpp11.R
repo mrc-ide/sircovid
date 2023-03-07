@@ -77,7 +77,7 @@ dust_cpu_basic_set_stochastic_schedule <- function(ptr, time) {
 }
 
 dust_cpu_basic_ode_statistics <- function(ptr) {
-  invisible(.Call(`_sircovid_dust_cpu_basic_ode_statistics`, ptr))
+  .Call(`_sircovid_dust_cpu_basic_ode_statistics`, ptr)
 }
 
 dust_lancelot_capabilities <- function() {
@@ -157,5 +157,5 @@ dust_cpu_lancelot_set_stochastic_schedule <- function(ptr, time) {
 }
 
 dust_cpu_lancelot_ode_statistics <- function(ptr) {
-  invisible(.Call(`_sircovid_dust_cpu_lancelot_ode_statistics`, ptr))
+  .Call(`_sircovid_dust_cpu_lancelot_ode_statistics`, ptr)
 }

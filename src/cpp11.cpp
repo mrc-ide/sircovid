@@ -142,11 +142,10 @@ extern "C" SEXP _sircovid_dust_cpu_basic_set_stochastic_schedule(SEXP ptr, SEXP 
   END_CPP11
 }
 // basic.cpp
-void dust_cpu_basic_ode_statistics(SEXP ptr);
+SEXP dust_cpu_basic_ode_statistics(SEXP ptr);
 extern "C" SEXP _sircovid_dust_cpu_basic_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_basic_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
+    return cpp11::as_sexp(dust_cpu_basic_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // lancelot.cpp
@@ -286,11 +285,10 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_set_stochastic_schedule(SEXP ptr, SE
   END_CPP11
 }
 // lancelot.cpp
-void dust_cpu_lancelot_ode_statistics(SEXP ptr);
+SEXP dust_cpu_lancelot_ode_statistics(SEXP ptr);
 extern "C" SEXP _sircovid_dust_cpu_lancelot_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_lancelot_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
+    return cpp11::as_sexp(dust_cpu_lancelot_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 
