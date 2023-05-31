@@ -6,8 +6,7 @@ real_type ll_nbinom(real_type data, real_type model, real_type kappa,
   if (std::isnan(data)) {
     return 0;
   }
-  real_type mu = model +
-    dust::random::exponential<real_type>(rng_state, exp_noise);
+  real_type mu = model;
   return dust::density::negative_binomial_mu(data, kappa, mu, true);
 }
 
@@ -21,10 +20,10 @@ compare(const typename T::real_type * state,
         std::shared_ptr<const typename T::shared_type> shared,
         typename T::rng_state_type& rng_state) {
   typedef typename T::real_type real_type;
-  real_type ll_icu = ll_nbinom(data.icu, odin(phi_ICU) * odin(I_ICU_tot),
+  real_type ll_icu = ll_nbinom(data.icu, odin(fitted_icu),
                             odin(kappa_ICU), odin(exp_noise),
                             rng_state);
-  real_type ll_deaths = ll_nbinom(data.deaths, odin(phi_death) * odin(D_inc),
+  real_type ll_deaths = ll_nbinom(data.deaths, odin(fitted_deaths_inc),
                                odin(kappa_death), odin(exp_noise),
                                rng_state);
   return ll_icu + ll_deaths;

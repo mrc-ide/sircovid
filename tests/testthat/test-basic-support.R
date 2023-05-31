@@ -62,7 +62,9 @@ test_that("basic_index identifies ICU and D_tot in real model", {
   mod$set_index(index$run)
   expect_equal(
     mod$run(date),
-    matrix(0, 3, 10, dimnames = list(c("icu", "deaths", "deaths_inc"), NULL)))
+    matrix(0, 5, 10, dimnames =
+             list(c("icu", "deaths", "deaths_inc",
+                    "fitted_icu", "fitted_deaths_inc"), NULL)))
 })
 
 
@@ -75,7 +77,7 @@ test_that("basic compare function returns NULL if no data present", {
 
 
 test_that("observation function correctly combines likelihoods", {
-  state <- rbind(icu = 10:15, deaths_inc = 0:5)
+  state <- rbind(fitted_icu = 10:15, fitted_deaths_inc = 0:5)
   observed1 <- list(icu = 13, deaths = NA)
   observed2 <- list(icu = NA, deaths = 3)
   observed3 <- list(icu = 13, deaths = 3)
@@ -87,10 +89,10 @@ test_that("observation function correctly combines likelihoods", {
 
   expect_length(ll3, 6)
 
-  ll_itu <- ll_nbinom(observed3$icu, pars$phi_ICU * state[1, ],
+  ll_itu <- ll_nbinom(observed3$icu, state[1, ],
                       pars$kappa_ICU, Inf)
   ll_deaths <- ll_nbinom(observed3$deaths,
-                         pars$phi_death * state[2, ],
+                         state[2, ],
                          pars$kappa_death, Inf)
   expect_equal(ll1, ll_itu)
   expect_equal(ll2, ll_deaths)

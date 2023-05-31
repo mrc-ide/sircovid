@@ -110,8 +110,7 @@ real_type ll_nbinom(real_type data, real_type model, real_type kappa,
   if (std::isnan(data)) {
     return 0;
   }
-  real_type mu = model +
-    dust::random::exponential<real_type>(rng_state, exp_noise);
+  real_type mu = model;
   return dust::density::negative_binomial_mu(data, kappa, mu, true);
 }
 
@@ -125,10 +124,10 @@ compare(const typename T::real_type * state,
         std::shared_ptr<const typename T::shared_type> shared,
         typename T::rng_state_type& rng_state) {
   typedef typename T::real_type real_type;
-  real_type ll_icu = ll_nbinom(data.icu, shared->phi_ICU * state[2],
+  real_type ll_icu = ll_nbinom(data.icu, state[5],
                             shared->kappa_ICU, shared->exp_noise,
                             rng_state);
-  real_type ll_deaths = ll_nbinom(data.deaths, shared->phi_death * state[4],
+  real_type ll_deaths = ll_nbinom(data.deaths, state[6],
                                shared->kappa_death, shared->exp_noise,
                                rng_state);
   return ll_icu + ll_deaths;
@@ -378,6 +377,8 @@ public:
     std::vector<real_type> initial_R_hosp;
     std::vector<real_type> initial_S;
     real_type initial_beta_out;
+    real_type initial_fitted_deaths_inc;
+    real_type initial_fitted_icu;
     real_type initial_time;
     int k_A;
     int k_C;
@@ -458,17 +459,19 @@ public:
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() const {
-    return shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_ICU + shared->dim_I_hosp + shared->dim_R + shared->dim_R_hosp + shared->dim_S + 6;
+    return shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_ICU + shared->dim_I_hosp + shared->dim_R + shared->dim_R_hosp + shared->dim_S + 8;
   }
   std::vector<real_type> initial(size_t step, rng_state_type& rng_state) {
-    std::vector<real_type> state(shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_ICU + shared->dim_I_hosp + shared->dim_R + shared->dim_R_hosp + shared->dim_S + 6);
+    std::vector<real_type> state(shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_ICU + shared->dim_I_hosp + shared->dim_R + shared->dim_R_hosp + shared->dim_S + 8);
     state[0] = shared->initial_time;
     state[1] = shared->initial_N_tot;
     state[2] = shared->initial_I_ICU_tot;
     state[3] = shared->initial_D_tot;
     state[4] = shared->initial_D_inc;
-    state[5] = shared->initial_beta_out;
-    std::copy(shared->initial_S.begin(), shared->initial_S.end(), state.begin() + 6);
+    state[5] = shared->initial_fitted_icu;
+    state[6] = shared->initial_fitted_deaths_inc;
+    state[7] = shared->initial_beta_out;
+    std::copy(shared->initial_S.begin(), shared->initial_S.end(), state.begin() + 8);
     std::copy(shared->initial_R.begin(), shared->initial_R.end(), state.begin() + shared->offset_variable_R);
     std::copy(shared->initial_D.begin(), shared->initial_D.end(), state.begin() + shared->offset_variable_D);
     std::copy(shared->initial_E.begin(), shared->initial_E.end(), state.begin() + shared->offset_variable_E);
@@ -480,7 +483,7 @@ public:
     return state;
   }
   void update(size_t step, const real_type * state, rng_state_type& rng_state, real_type * state_next) {
-    const real_type * S = state + 6;
+    const real_type * S = state + 8;
     const real_type * E = state + shared->offset_variable_E;
     const real_type * I_A = state + shared->offset_variable_I_A;
     const real_type * I_C = state + shared->offset_variable_I_C;
@@ -495,7 +498,7 @@ public:
     real_type beta = (static_cast<int>(step) >= shared->dim_beta_step ? shared->beta_step[shared->dim_beta_step - 1] : shared->beta_step[step + 1 - 1]);
     state_next[0] = (step + 1) * shared->dt;
     real_type seed = (step >= shared->seed_step_start && step < shared->seed_step_end ? shared->seed_value[static_cast<int>(step - shared->seed_step_start + 1) - 1] : 0);
-    state_next[5] = beta;
+    state_next[7] = beta;
     for (int i = 1; i <= shared->dim_n_EE_1; ++i) {
       for (int j = 1; j <= shared->dim_n_EE_2; ++j) {
         for (int k = 1; k <= shared->dim_n_EE_3; ++k) {
@@ -779,6 +782,7 @@ public:
         }
       }
     }
+    state_next[6] = (fmodr<real_type>((step + 1), shared->steps_per_day) == 0 ? shared->phi_death * (D_inc + tot_new_D) + dust::random::exponential<real_type>(rng_state, shared->exp_noise) : 0);
     for (int i = 1; i <= shared->dim_aux_EE_1; ++i) {
       int j = 1;
       int k = 1;
@@ -818,8 +822,9 @@ public:
     }
     state_next[2] = odin_sum1<real_type>(internal.new_I_ICU.data(), 0, shared->dim_new_I_ICU);
     for (int i = 1; i <= shared->dim_S; ++i) {
-      state_next[6 + i - 1] = S[i - 1] - internal.n_SE[i - 1];
+      state_next[8 + i - 1] = S[i - 1] - internal.n_SE[i - 1];
     }
+    state_next[5] = (fmodr<real_type>((step + 1), shared->steps_per_day) == 0 ? shared->phi_ICU * odin_sum1<real_type>(internal.new_I_ICU.data(), 0, shared->dim_new_I_ICU) + dust::random::exponential<real_type>(rng_state, shared->exp_noise) : 0);
     for (int i = 1; i <= shared->dim_delta_E_1; ++i) {
       for (int j = 1; j <= shared->dim_delta_E_2; ++j) {
         for (int k = 1; k <= shared->dim_delta_E_3; ++k) {
@@ -1091,6 +1096,8 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
   shared->initial_D_tot = 0;
   shared->initial_I_ICU_tot = 0;
   shared->initial_N_tot = 0;
+  shared->initial_fitted_deaths_inc = 0;
+  shared->initial_fitted_icu = 0;
   shared->initial_time = 0;
   shared->seed_age_band = static_cast<int>(4);
   shared->ICU_transmission = NA_REAL;
@@ -1340,9 +1347,9 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
   for (int i = 1; i <= shared->dim_S; ++i) {
     shared->initial_S[i - 1] = 0;
   }
-  shared->offset_variable_D = shared->dim_R + shared->dim_S + 6;
-  shared->offset_variable_E = shared->dim_D + shared->dim_R + shared->dim_S + 6;
-  shared->offset_variable_R = shared->dim_S + 6;
+  shared->offset_variable_D = shared->dim_R + shared->dim_S + 8;
+  shared->offset_variable_E = shared->dim_D + shared->dim_R + shared->dim_S + 8;
+  shared->offset_variable_R = shared->dim_S + 8;
   shared->p_C = user_get_array_fixed<real_type, 1>(user, "p_C", shared->p_C, {shared->dim_p_C}, NA_REAL, NA_REAL);
   shared->p_EE = 1 - dust::math::exp(- shared->gamma_E * shared->dt);
   shared->p_II_A = 1 - dust::math::exp(- shared->gamma_A * shared->dt);
@@ -1434,11 +1441,11 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
     }
   }
   shared->m = user_get_array_fixed<real_type, 2>(user, "m", shared->m, {shared->dim_m_1, shared->dim_m_2}, NA_REAL, NA_REAL);
-  shared->offset_variable_I_A = shared->dim_D + shared->dim_E + shared->dim_R + shared->dim_S + 6;
-  shared->offset_variable_I_C = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_R + shared->dim_S + 6;
-  shared->offset_variable_I_ICU = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_R + shared->dim_S + 6;
-  shared->offset_variable_I_hosp = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_R + shared->dim_S + 6;
-  shared->offset_variable_R_hosp = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_ICU + shared->dim_I_hosp + shared->dim_R + shared->dim_S + 6;
+  shared->offset_variable_I_A = shared->dim_D + shared->dim_E + shared->dim_R + shared->dim_S + 8;
+  shared->offset_variable_I_C = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_R + shared->dim_S + 8;
+  shared->offset_variable_I_ICU = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_hosp + shared->dim_R + shared->dim_S + 8;
+  shared->offset_variable_I_hosp = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_R + shared->dim_S + 8;
+  shared->offset_variable_R_hosp = shared->dim_D + shared->dim_E + shared->dim_I_A + shared->dim_I_C + shared->dim_I_ICU + shared->dim_I_hosp + shared->dim_R + shared->dim_S + 8;
   for (int i = 1; i <= shared->dim_trans_increase_1; ++i) {
     for (int j = 1; j <= shared->dim_trans_increase_2; ++j) {
       shared->trans_increase[i - 1 + shared->dim_trans_increase_1 * (j - 1)] = 1;
@@ -1463,40 +1470,44 @@ dust::pars_type<basic> dust_pars<basic>(cpp11::list user) {
 template <>
 cpp11::sexp dust_info<basic>(const dust::pars_type<basic>& pars) {
   const std::shared_ptr<const basic::shared_type> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "N_tot", "I_ICU_tot", "D_tot", "D_inc", "beta_out", "S", "R", "D", "E", "I_A", "I_C", "I_hosp", "I_ICU", "R_hosp"});
-  cpp11::writable::list dim(15);
+  cpp11::writable::strings nms({"time", "N_tot", "I_ICU_tot", "D_tot", "D_inc", "fitted_icu", "fitted_deaths_inc", "beta_out", "S", "R", "D", "E", "I_A", "I_C", "I_hosp", "I_ICU", "R_hosp"});
+  cpp11::writable::list dim(17);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
   dim[2] = cpp11::writable::integers({1});
   dim[3] = cpp11::writable::integers({1});
   dim[4] = cpp11::writable::integers({1});
   dim[5] = cpp11::writable::integers({1});
-  dim[6] = cpp11::writable::integers({shared->dim_S});
-  dim[7] = cpp11::writable::integers({shared->dim_R});
-  dim[8] = cpp11::writable::integers({shared->dim_D});
-  dim[9] = cpp11::writable::integers({shared->dim_E_1, shared->dim_E_2, shared->dim_E_3});
-  dim[10] = cpp11::writable::integers({shared->dim_I_A_1, shared->dim_I_A_2, shared->dim_I_A_3});
-  dim[11] = cpp11::writable::integers({shared->dim_I_C_1, shared->dim_I_C_2, shared->dim_I_C_3});
-  dim[12] = cpp11::writable::integers({shared->dim_I_hosp_1, shared->dim_I_hosp_2, shared->dim_I_hosp_3});
-  dim[13] = cpp11::writable::integers({shared->dim_I_ICU_1, shared->dim_I_ICU_2, shared->dim_I_ICU_3});
-  dim[14] = cpp11::writable::integers({shared->dim_R_hosp_1, shared->dim_R_hosp_2, shared->dim_R_hosp_3});
+  dim[6] = cpp11::writable::integers({1});
+  dim[7] = cpp11::writable::integers({1});
+  dim[8] = cpp11::writable::integers({shared->dim_S});
+  dim[9] = cpp11::writable::integers({shared->dim_R});
+  dim[10] = cpp11::writable::integers({shared->dim_D});
+  dim[11] = cpp11::writable::integers({shared->dim_E_1, shared->dim_E_2, shared->dim_E_3});
+  dim[12] = cpp11::writable::integers({shared->dim_I_A_1, shared->dim_I_A_2, shared->dim_I_A_3});
+  dim[13] = cpp11::writable::integers({shared->dim_I_C_1, shared->dim_I_C_2, shared->dim_I_C_3});
+  dim[14] = cpp11::writable::integers({shared->dim_I_hosp_1, shared->dim_I_hosp_2, shared->dim_I_hosp_3});
+  dim[15] = cpp11::writable::integers({shared->dim_I_ICU_1, shared->dim_I_ICU_2, shared->dim_I_ICU_3});
+  dim[16] = cpp11::writable::integers({shared->dim_R_hosp_1, shared->dim_R_hosp_2, shared->dim_R_hosp_3});
   dim.names() = nms;
-  cpp11::writable::list index(15);
+  cpp11::writable::list index(17);
   index[0] = cpp11::writable::integers({1});
   index[1] = cpp11::writable::integers({2});
   index[2] = cpp11::writable::integers({3});
   index[3] = cpp11::writable::integers({4});
   index[4] = cpp11::writable::integers({5});
   index[5] = cpp11::writable::integers({6});
-  index[6] = integer_sequence(7, shared->dim_S);
-  index[7] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
-  index[8] = integer_sequence(shared->offset_variable_D + 1, shared->dim_D);
-  index[9] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
-  index[10] = integer_sequence(shared->offset_variable_I_A + 1, shared->dim_I_A);
-  index[11] = integer_sequence(shared->offset_variable_I_C + 1, shared->dim_I_C);
-  index[12] = integer_sequence(shared->offset_variable_I_hosp + 1, shared->dim_I_hosp);
-  index[13] = integer_sequence(shared->offset_variable_I_ICU + 1, shared->dim_I_ICU);
-  index[14] = integer_sequence(shared->offset_variable_R_hosp + 1, shared->dim_R_hosp);
+  index[6] = cpp11::writable::integers({7});
+  index[7] = cpp11::writable::integers({8});
+  index[8] = integer_sequence(9, shared->dim_S);
+  index[9] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
+  index[10] = integer_sequence(shared->offset_variable_D + 1, shared->dim_D);
+  index[11] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
+  index[12] = integer_sequence(shared->offset_variable_I_A + 1, shared->dim_I_A);
+  index[13] = integer_sequence(shared->offset_variable_I_C + 1, shared->dim_I_C);
+  index[14] = integer_sequence(shared->offset_variable_I_hosp + 1, shared->dim_I_hosp);
+  index[15] = integer_sequence(shared->offset_variable_I_ICU + 1, shared->dim_I_ICU);
+  index[16] = integer_sequence(shared->offset_variable_R_hosp + 1, shared->dim_R_hosp);
   index.names() = nms;
   size_t len = shared->offset_variable_R_hosp + shared->dim_R_hosp;
   using namespace cpp11::literals;

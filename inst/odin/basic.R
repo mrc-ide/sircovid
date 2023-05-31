@@ -174,6 +174,13 @@ initial(D_inc) <- 0
 update(D_inc) <-
   if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
 
+initial(fitted_icu) <- 0
+update(fitted_icu) <- if ((step + 1) %% steps_per_day == 0)
+  phi_ICU * sum(new_I_ICU) + rexp(exp_noise) else 0
+initial(fitted_deaths_inc) <- 0
+update(fitted_deaths_inc) <- if ((step + 1) %% steps_per_day == 0)
+  phi_death * (D_inc + tot_new_D) + rexp(exp_noise) else 0
+
 ## User defined parameters - default in parentheses:
 
 ## Parameters of the E classes

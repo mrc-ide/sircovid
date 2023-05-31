@@ -149,7 +149,9 @@ basic_index <- function(info) {
   index <- info$index
   list(run = c(icu = index[["I_ICU_tot"]],
                deaths = index[["D_tot"]],
-               deaths_inc = index[["D_inc"]]))
+               deaths_inc = index[["D_inc"]],
+               fitted_icu = index[["fitted_icu"]],
+               fitted_deaths_inc = index[["fitted_deaths_inc"]]))
 }
 
 
@@ -184,16 +186,13 @@ basic_compare <- function(state, observed, pars) {
     return(NULL)
   }
 
-  model_icu <- state["icu", ]
-  model_deaths <- state["deaths_inc", ]
+  model_icu <- state["fitted_icu", ]
+  model_deaths <- state["fitted_deaths_inc", ]
 
-  ## Noise parameter shared across both deaths and icu
-  exp_noise <- pars$exp_noise
-
-  ll_icu <- ll_nbinom(observed$icu, pars$phi_ICU * model_icu,
-                      pars$kappa_ICU, exp_noise)
-  ll_deaths <- ll_nbinom(observed$deaths, pars$phi_death * model_deaths,
-                         pars$kappa_death, exp_noise)
+  ll_icu <- ll_nbinom(observed$icu, model_icu,
+                      pars$kappa_ICU, Inf)
+  ll_deaths <- ll_nbinom(observed$deaths, model_deaths,
+                         pars$kappa_death, Inf)
 
   ll_icu + ll_deaths
 }
