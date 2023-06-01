@@ -695,6 +695,7 @@ public:
        int i = shared->seed_age_band;
        internal.n_SE[i - 1] = dust::math::min(S[i - 1], internal.n_SE[i - 1] + dust::random::poisson<real_type>(rng_state, seed));
     }
+    real_type new_D_inc = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? tot_new_D : D_inc + tot_new_D);
     for (int i = 1; i <= shared->dim_new_I_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_new_I_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_new_I_ICU_3; ++k) {
@@ -702,7 +703,6 @@ public:
         }
       }
     }
-    state_next[4] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? tot_new_D : D_inc + tot_new_D);
     state_next[3] = D_tot + tot_new_D;
     for (int i = 1; i <= shared->dim_I_C_1; ++i) {
       for (int j = 1; j <= shared->dim_I_C_2; ++j) {
@@ -711,7 +711,6 @@ public:
         }
       }
     }
-    state_next[6] = (fmodr<real_type>((step + 1), shared->steps_per_day) == 0 ? shared->phi_death * (D_inc + tot_new_D) + dust::random::exponential<real_type>(rng_state, shared->exp_noise) : 0);
     for (int i = 1; i <= shared->dim_aux_EE_1; ++i) {
       int j = 1;
       int k = 1;
@@ -742,6 +741,7 @@ public:
         }
       }
     }
+    state_next[4] = new_D_inc;
     for (int i = 1; i <= shared->dim_I_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_I_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_I_ICU_3; ++k) {
@@ -753,7 +753,8 @@ public:
     for (int i = 1; i <= shared->dim_S; ++i) {
       state_next[8 + i - 1] = S[i - 1] - internal.n_SE[i - 1];
     }
-    state_next[5] = (fmodr<real_type>((step + 1), shared->steps_per_day) == 0 ? shared->phi_ICU * odin_sum1<real_type>(internal.new_I_ICU.data(), 0, shared->dim_new_I_ICU) + dust::random::exponential<real_type>(rng_state, shared->exp_noise) : 0);
+    state_next[6] = shared->phi_death * (new_D_inc) + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
+    state_next[5] = shared->phi_ICU * odin_sum1<real_type>(internal.new_I_ICU.data(), 0, shared->dim_new_I_ICU) + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     for (int i = 1; i <= shared->dim_delta_E_1; ++i) {
       for (int j = 1; j <= shared->dim_delta_E_2; ++j) {
         for (int k = 1; k <= shared->dim_delta_E_3; ++k) {
