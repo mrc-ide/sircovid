@@ -3231,7 +3231,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
              initial <- lancelot_initial(info, np, p)
              ## Add some individuals in R historic variants layer
              index_R <- array(info$index$R, info$dim$R)
-             initial[index_R[, 5, ]] <- 1e4
+             initial[index_R[, 5, ]] <- 2e4
              mod$update_state(state = initial)
              end <- sircovid_date("2020-05-01") / p$dt
              steps <- seq(0, end, by = 1 / p$dt)
@@ -3253,7 +3253,7 @@ test_that("some cross-immunity means less Strain 3 or 4 infections than none
              initial <- lancelot_initial(info, np, p)
              ## Add some individuals in R historic variants layer
              index_R <- array(info$index$R, info$dim$R)
-             initial[index_R[, 5, ]] <- 1e4
+             initial[index_R[, 5, ]] <- 2e4
              mod$update_state(state = initial)
              set.seed(1)
              y <- mod$transform_variables(
