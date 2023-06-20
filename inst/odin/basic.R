@@ -170,9 +170,10 @@ update(I_ICU_tot) <- sum(new_I_ICU)
 tot_new_D <- sum(new_D)
 initial(D_tot) <- 0
 update(D_tot) <- D_tot + tot_new_D
+new_D_inc <- if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
 initial(D_inc) <- 0
-update(D_inc) <-
-  if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
+update(D_inc) <- new_D_inc
+
 
 ## User defined parameters - default in parentheses:
 
@@ -320,9 +321,19 @@ dim(I_with_diff_trans) <- c(n_age_groups, n_trans_classes)
 update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_A) +
   sum(I_C) + sum(I_hosp) + sum(I_ICU) + sum(R_hosp)
 
-config(compare) <- "compare_basic.cpp"
-exp_noise <- user() # ignore.unused
-phi_ICU <- user() # ignore.unused
-kappa_ICU <- user() # ignore.unused
-phi_death <- user() # ignore.unused
-kappa_death <- user() # ignore.unused
+
+## compare
+exp_noise <- user()
+phi_ICU <- user()
+kappa_ICU <- user()
+phi_death <- user()
+kappa_death <- user()
+
+icu <- data()
+deaths <- data()
+
+icu_with_noise <- phi_ICU * sum(new_I_ICU) + rexp(exp_noise)
+compare(icu) ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
+
+deaths_with_noise <- phi_death * new_D_inc + rexp(exp_noise)
+compare(deaths) ~ negative_binomial_mu(kappa_death, deaths_with_noise)
