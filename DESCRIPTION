@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.14.13
+Version: 0.15.0
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -81,4 +81,4 @@ Remotes:
     mrc-ide/eigen1,
     mrc-ide/mcstate,
     mrc-ide/odin,
-    mrc-ide/odin.dust
+    mrc-ide/odin.dust@mrc-4278
