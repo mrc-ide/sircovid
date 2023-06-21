@@ -2715,33 +2715,163 @@ exp_noise <- user()
 # compare(all_admission_80_plus) ~
 #   negative_binomial_mu(kappa_all_admission, all_admission_80_plus_with_noise)
 
+## Pillar 2 positivity
+# pillar2_sensitivity <- user()
+# pillar2_specificity <- user()
+# rho_pillar2_tests <- user()
+
+# pillar2_under15_pos <- data()
+# pillar2_under15_tot <- data()
+# N_tot_under15 <- user()
+# p_NC_under15 <- user()
+# p_NC_weekend_under15 <- user()
+# p_NC_today_under15 <-
+#   if ((time + 3) %% 7 < 2) p_NC_weekend_under15 else p_NC_under15
+# mod_pillar2_under15_pos <- sympt_cases_under15_inc + rexp(exp_noise)
+# mod_pillar2_under15_neg <-
+#   p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
+#   rexp(exp_noise)
+# mod_pillar2_under15_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_under15_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_under15_neg) /
+#   (mod_pillar2_under15_pos + mod_pillar2_under15_neg)
+# compare(pillar2_under15_pos) ~
+#   beta_binomial(pillar2_under15_tot, mod_pillar2_under15_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_15_24_pos <- data()
+# pillar2_15_24_tot <- data()
+# N_tot_15_24 <- user()
+# p_NC_15_24 <- user()
+# p_NC_weekend_15_24 <- user()
+# p_NC_today_15_24 <- if ((time + 3) %% 7 < 2) p_NC_weekend_15_24 else p_NC_15_24
+# mod_pillar2_15_24_pos <- sympt_cases_15_24_inc + rexp(exp_noise)
+# mod_pillar2_15_24_neg <-
+#   p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + rexp(exp_noise)
+# mod_pillar2_15_24_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_15_24_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_15_24_neg) /
+#   (mod_pillar2_15_24_pos + mod_pillar2_15_24_neg)
+# compare(pillar2_15_24_pos) ~
+#   beta_binomial(pillar2_15_24_tot, mod_pillar2_15_24_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_25_49_pos <- data()
+# pillar2_25_49_tot <- data()
+# N_tot_25_49 <- user()
+# p_NC_25_49 <- user()
+# p_NC_weekend_25_49 <- user()
+# p_NC_today_25_49 <- if ((time + 3) %% 7 < 2) p_NC_weekend_25_49 else p_NC_25_49
+# mod_pillar2_25_49_pos <- sympt_cases_25_49_inc + rexp(exp_noise)
+# mod_pillar2_25_49_neg <-
+#   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + rexp(exp_noise)
+# mod_pillar2_25_49_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_25_49_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_25_49_neg) /
+#   (mod_pillar2_25_49_pos + mod_pillar2_25_49_neg)
+# compare(pillar2_25_49_pos) ~
+#   beta_binomial(pillar2_25_49_tot, mod_pillar2_25_49_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_50_64_pos <- data()
+# pillar2_50_64_tot <- data()
+# N_tot_50_64 <- user()
+# p_NC_50_64 <- user()
+# p_NC_weekend_50_64 <- user()
+# p_NC_today_50_64 <- if ((time + 3) %% 7 < 2) p_NC_weekend_50_64 else p_NC_50_64
+# mod_pillar2_50_64_pos <- sympt_cases_50_64_inc + rexp(exp_noise)
+# mod_pillar2_50_64_neg <-
+#   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + rexp(exp_noise)
+# mod_pillar2_50_64_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_50_64_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_50_64_neg) /
+#   (mod_pillar2_50_64_pos + mod_pillar2_50_64_neg)
+# compare(pillar2_50_64_pos) ~
+#   beta_binomial(pillar2_50_64_tot, mod_pillar2_50_64_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_65_79_pos <- data()
+# pillar2_65_79_tot <- data()
+# N_tot_65_79 <- user()
+# p_NC_65_79 <- user()
+# p_NC_weekend_65_79 <- user()
+# p_NC_today_65_79 <- if ((time + 3) %% 7 < 2) p_NC_weekend_65_79 else p_NC_65_79
+# mod_pillar2_65_79_pos <- sympt_cases_65_79_inc + rexp(exp_noise)
+# mod_pillar2_65_79_neg <-
+#   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + rexp(exp_noise)
+# mod_pillar2_65_79_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_65_79_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_65_79_neg) /
+#   (mod_pillar2_65_79_pos + mod_pillar2_65_79_neg)
+# compare(pillar2_65_79_pos) ~
+#   beta_binomial(pillar2_65_79_tot, mod_pillar2_65_79_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_80_plus_pos <- data()
+# pillar2_80_plus_tot <- data()
+# N_tot_80_plus <- user()
+# p_NC_80_plus <- user()
+# p_NC_weekend_80_plus <- user()
+# p_NC_today_80_plus <-
+#   if ((time + 3) %% 7 < 2) p_NC_weekend_80_plus else p_NC_80_plus
+# mod_pillar2_80_plus_pos <- sympt_cases_80_plus_inc + rexp(exp_noise)
+# mod_pillar2_80_plus_neg <-
+#   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+#   rexp(exp_noise)
+# mod_pillar2_80_plus_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_80_plus_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_80_plus_neg) /
+#   (mod_pillar2_80_plus_pos + mod_pillar2_80_plus_neg)
+# compare(pillar2_80_plus_pos) ~
+#   beta_binomial(pillar2_80_plus_tot, mod_pillar2_80_plus_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_over25_pos <- data()
+# pillar2_over25_tot <- data()
+# mod_pillar2_over25_pos <- sympt_cases_over25_inc + rexp(exp_noise)
+# mod_pillar2_over25_neg <-
+#   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+#   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+#   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+#   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+#   rexp(exp_noise)
+# mod_pillar2_over25_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_over25_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_over25_neg) /
+#   (mod_pillar2_over25_pos + mod_pillar2_over25_neg)
+# compare(pillar2_over25_pos) ~
+#   beta_binomial(pillar2_over25_tot, mod_pillar2_over25_prob_pos,
+#                 rho_pillar2_tests)
+
+# pillar2_pos <- data()
+# pillar2_tot <- data()
+# mod_pillar2_pos <- sympt_cases_inc + rexp(exp_noise)
+# mod_pillar2_neg <-
+#   p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
+#   p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) +
+#   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+#   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+#   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+#   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+#   rexp(exp_noise)
+# mod_pillar2_prob_pos <-
+#   (pillar2_sensitivity * mod_pillar2_pos +
+#      (1 - pillar2_specificity) * mod_pillar2_neg) /
+#   (mod_pillar2_pos + mod_pillar2_neg)
+# compare(pillar2_pos) ~
+#   beta_binomial(pillar2_tot, mod_pillar2_prob_pos, rho_pillar2_tests)
+
 # sero_pos_15_64_1 <- data()
 # sero_tot_15_64_1 <- data()
 # sero_pos_15_64_2 <- data()
 # sero_tot_15_64_2 <- data()
-# pillar2_pos <- data()
-# pillar2_tot <- data()
 # pillar2_cases <- data()
-# pillar2_over25_pos <- data()
-# pillar2_over25_tot <- data()
 # pillar2_over25_cases <- data()
-# pillar2_under15_pos <- data()
-# pillar2_under15_tot <- data()
 # pillar2_under15_cases <- data()
-# pillar2_15_24_pos <- data()
-# pillar2_15_24_tot <- data()
 # pillar2_15_24_cases <- data()
-# pillar2_25_49_pos <- data()
-# pillar2_25_49_tot <- data()
 # pillar2_25_49_cases <- data()
-# pillar2_50_64_pos <- data()
-# pillar2_50_64_tot <- data()
 # pillar2_50_64_cases <- data()
-# pillar2_65_79_pos <- data()
-# pillar2_65_79_tot <- data()
 # pillar2_65_79_cases <- data()
-# pillar2_80_plus_pos <- data()
-# pillar2_80_plus_tot <- data()
 # pillar2_80_plus_cases <- data()
 # ons_pos <- data()
 # ons_tot <- data()
@@ -2764,14 +2894,6 @@ exp_noise <- user()
 # strain_over25_non_variant <- data()
 # strain_over25_tot <- data()
 
-N_tot_all <- user() # ignore.unused
-N_tot_over25 <- user() # ignore.unused
-N_tot_under15 <- user() # ignore.unused
-N_tot_15_24 <- user() # ignore.unused
-N_tot_25_49 <- user() # ignore.unused
-N_tot_50_64 <- user() # ignore.unused
-N_tot_65_79 <- user() # ignore.unused
-N_tot_80_plus <- user() # ignore.unused
 N_tot_ons <- user() # ignore.unused
 N_tot_react <- user() # ignore.unused
 N_5_24_react <- user() # ignore.unused
@@ -2782,20 +2904,6 @@ N_55_64_react <- user() # ignore.unused
 N_65_plus_react <- user() # ignore.unused
 N_tot_15_64 <- user() # ignore.unused
 
-p_NC_under15 <- user() # ignore.unused
-p_NC_weekend_under15 <- user() # ignore.unused
-p_NC_15_24 <- user() # ignore.unused
-p_NC_weekend_15_24 <- user() # ignore.unused
-p_NC_25_49 <- user() # ignore.unused
-p_NC_weekend_25_49 <- user() # ignore.unused
-p_NC_50_64 <- user() # ignore.unused
-p_NC_weekend_50_64 <- user() # ignore.unused
-p_NC_65_79 <- user() # ignore.unused
-p_NC_weekend_65_79 <- user() # ignore.unused
-p_NC_80_plus <- user() # ignore.unused
-p_NC_weekend_80_plus <- user() # ignore.unused
-pillar2_sensitivity <- user() # ignore.unused
-pillar2_specificity <- user() # ignore.unused
 ons_sensitivity <- user() # ignore.unused
 ons_specificity <- user() # ignore.unused
 react_sensitivity <- user() # ignore.unused
@@ -2804,7 +2912,7 @@ sero_sensitivity_1 <- user() # ignore.unused
 sero_specificity_1 <- user() # ignore.unused
 sero_sensitivity_2 <- user() # ignore.unused
 sero_specificity_2 <- user() # ignore.unused
-rho_pillar2_tests <- user() # ignore.unused
+
 kappa_pillar2_cases <- user() # ignore.unused
 phi_pillar2_cases_under15 <- user() # ignore.unused
 phi_pillar2_cases_weekend_under15 <- user() # ignore.unused
@@ -2819,10 +2927,7 @@ phi_pillar2_cases_weekend_65_79 <- user() # ignore.unused
 phi_pillar2_cases_80_plus <- user() # ignore.unused
 phi_pillar2_cases_weekend_80_plus <- user() # ignore.unused
 
-#   ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
-#   ll_pillar2_over25_tests + ll_pillar2_under15_tests +
-#   ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
-#   ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
+#   ll_serology_1 + ll_serology_2 + ll_pillar2_cases +
 #   ll_pillar2_over25_cases + ll_pillar2_under15_cases +
 #   ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
 #   ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_ons + ll_react +
