@@ -172,9 +172,7 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(k_sero_pos_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_sero_pre_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_sero_pre_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -234,9 +232,7 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(p_sero_pos_1, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pos_2, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -316,7 +312,9 @@ class lancelot {
 public:
   using real_type = double;
   using rng_state_type = dust::random::generator<real_type>;
-  using data_type = dust::no_data;
+  struct __align__(16) data_type {
+    real_type all_admission_80_plus;
+  };
   struct shared_type {
     real_type G_D_transmission;
     real_type ICU_transmission;
@@ -2102,9 +2100,7 @@ public:
     int k_sero_pos_2;
     int k_sero_pre_1;
     int k_sero_pre_2;
-    real_type kappa_admitted;
     real_type kappa_all_admission;
-    real_type kappa_diagnoses;
     real_type kappa_pillar2_cases;
     std::vector<real_type> m;
     int n_age_groups;
@@ -2244,9 +2240,7 @@ public:
     std::vector<real_type> p_sero_pos_1;
     std::vector<real_type> p_sero_pos_2;
     std::vector<real_type> p_star_step;
-    real_type phi_admitted;
     real_type phi_all_admission;
-    real_type phi_diagnoses;
     real_type phi_pillar2_cases_15_24;
     real_type phi_pillar2_cases_25_49;
     real_type phi_pillar2_cases_50_64;
@@ -5040,6 +5034,12 @@ public:
       state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
     }
   }
+  real_type compare_data(const real_type * state, const data_type& data, rng_state_type& rng_state) {
+    const real_type all_admission_80_plus_conf_inc = state[11];
+    real_type all_admission_80_plus_with_noise = shared->phi_all_admission * all_admission_80_plus_conf_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
+    const auto compare_all_admission_80_plus = dust::density::negative_binomial_mu(data.all_admission_80_plus, shared->kappa_all_admission, all_admission_80_plus_with_noise, true);
+    return compare_all_admission_80_plus;
+  }
 private:
   std::shared_ptr<const shared_type> shared;
   internal_type internal;
@@ -5438,9 +5438,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->k_sero_pos_2 = NA_INTEGER;
   shared->k_sero_pre_1 = NA_INTEGER;
   shared->k_sero_pre_2 = NA_INTEGER;
-  shared->kappa_admitted = NA_REAL;
   shared->kappa_all_admission = NA_REAL;
-  shared->kappa_diagnoses = NA_REAL;
   shared->kappa_pillar2_cases = NA_REAL;
   shared->n_age_groups = NA_INTEGER;
   shared->n_doses = NA_INTEGER;
@@ -5488,9 +5486,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->p_NC_weekend_65_79 = NA_REAL;
   shared->p_NC_weekend_80_plus = NA_REAL;
   shared->p_NC_weekend_under15 = NA_REAL;
-  shared->phi_admitted = NA_REAL;
   shared->phi_all_admission = NA_REAL;
-  shared->phi_diagnoses = NA_REAL;
   shared->phi_pillar2_cases_15_24 = NA_REAL;
   shared->phi_pillar2_cases_25_49 = NA_REAL;
   shared->phi_pillar2_cases_50_64 = NA_REAL;
@@ -5572,9 +5568,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->k_sero_pos_2 = user_get_scalar<int>(user, "k_sero_pos_2", shared->k_sero_pos_2, NA_INTEGER, NA_INTEGER);
   shared->k_sero_pre_1 = user_get_scalar<int>(user, "k_sero_pre_1", shared->k_sero_pre_1, NA_INTEGER, NA_INTEGER);
   shared->k_sero_pre_2 = user_get_scalar<int>(user, "k_sero_pre_2", shared->k_sero_pre_2, NA_INTEGER, NA_INTEGER);
-  shared->kappa_admitted = user_get_scalar<real_type>(user, "kappa_admitted", shared->kappa_admitted, NA_REAL, NA_REAL);
   shared->kappa_all_admission = user_get_scalar<real_type>(user, "kappa_all_admission", shared->kappa_all_admission, NA_REAL, NA_REAL);
-  shared->kappa_diagnoses = user_get_scalar<real_type>(user, "kappa_diagnoses", shared->kappa_diagnoses, NA_REAL, NA_REAL);
   shared->kappa_pillar2_cases = user_get_scalar<real_type>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_INTEGER, NA_INTEGER);
   shared->n_doses = user_get_scalar<int>(user, "n_doses", shared->n_doses, NA_INTEGER, NA_INTEGER);
@@ -5622,9 +5616,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->p_NC_weekend_65_79 = user_get_scalar<real_type>(user, "p_NC_weekend_65_79", shared->p_NC_weekend_65_79, NA_REAL, NA_REAL);
   shared->p_NC_weekend_80_plus = user_get_scalar<real_type>(user, "p_NC_weekend_80_plus", shared->p_NC_weekend_80_plus, NA_REAL, NA_REAL);
   shared->p_NC_weekend_under15 = user_get_scalar<real_type>(user, "p_NC_weekend_under15", shared->p_NC_weekend_under15, NA_REAL, NA_REAL);
-  shared->phi_admitted = user_get_scalar<real_type>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);
   shared->phi_all_admission = user_get_scalar<real_type>(user, "phi_all_admission", shared->phi_all_admission, NA_REAL, NA_REAL);
-  shared->phi_diagnoses = user_get_scalar<real_type>(user, "phi_diagnoses", shared->phi_diagnoses, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_15_24 = user_get_scalar<real_type>(user, "phi_pillar2_cases_15_24", shared->phi_pillar2_cases_15_24, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_25_49 = user_get_scalar<real_type>(user, "phi_pillar2_cases_25_49", shared->phi_pillar2_cases_25_49, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_50_64 = user_get_scalar<real_type>(user, "phi_pillar2_cases_50_64", shared->phi_pillar2_cases_50_64, NA_REAL, NA_REAL);
@@ -8483,6 +8475,13 @@ cpp11::sexp dust_info<lancelot>(const dust::pars_type<lancelot>& pars) {
            "dim"_nm = dim,
            "len"_nm = len,
            "index"_nm = index});
+}
+template <>
+lancelot::data_type dust_data<lancelot>(cpp11::list data) {
+  using real_type = lancelot::real_type;
+  return lancelot::data_type{
+      cpp11::as_cpp<real_type>(data["all_admission_80_plus"])
+    };
 }
 }
 

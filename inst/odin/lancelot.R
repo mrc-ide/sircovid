@@ -2640,18 +2640,81 @@ exp_noise <- user()
 # compare(deaths) ~
 #   negative_binomial_mu(kappa_death, D_inc_with_noise)
 
+## Hospital admissions
 # admitted <- data()
+# phi_admitted <- user()
+# kappa_admitted <- user()
+# admitted_with_noise <- phi_admitted * admit_conf_inc + rexp(exp_noise)
+# compare(admitted) ~ negative_binomial_mu(kappa_admitted, admitted_with_noise)
+
 # diagnoses <- data()
+# phi_diagnoses <- user()
+# kappa_diagnoses <- user()
+# diagnoses_with_noise <- phi_diagnoses * new_conf_inc + rexp(exp_noise)
+# compare(diagnoses) ~ negative_binomial_mu(kappa_diagnoses, diagnoses_with_noise)
+
 # all_admission <- data()
+# phi_all_admission <- user()
+# kappa_all_admission <- user()
+# all_admission_with_noise <-
+#   phi_all_admission * (admit_conf_inc + new_conf_inc) + rexp(exp_noise)
+# compare(all_admission) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_with_noise)
+
 # all_admission_0_9 <- data()
+# all_admission_0_9_with_noise <-
+#   phi_all_admission * all_admission_0_9_conf_inc + rexp(exp_noise)
+# compare(all_admission_0_9) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_0_9_with_noise)
+
 # all_admission_10_19 <- data()
+# all_admission_10_19_with_noise <-
+#   phi_all_admission * all_admission_10_19_conf_inc + rexp(exp_noise)
+# compare(all_admission_10_19) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_10_19_with_noise)
+
 # all_admission_20_29 <- data()
+# all_admission_20_29_with_noise <-
+#   phi_all_admission * all_admission_20_29_conf_inc + rexp(exp_noise)
+# compare(all_admission_20_29) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_20_29_with_noise)
+
 # all_admission_30_39 <- data()
+# all_admission_30_39_with_noise <-
+#   phi_all_admission * all_admission_30_39_conf_inc + rexp(exp_noise)
+# compare(all_admission_30_39) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_30_39_with_noise)
+
 # all_admission_40_49 <- data()
+# all_admission_40_49_with_noise <-
+#   phi_all_admission * all_admission_40_49_conf_inc + rexp(exp_noise)
+# compare(all_admission_40_49) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_40_49_with_noise)
+
 # all_admission_50_59 <- data()
+# all_admission_50_59_with_noise <-
+#   phi_all_admission * all_admission_50_59_conf_inc + rexp(exp_noise)
+# compare(all_admission_50_59) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_50_59_with_noise)
+
 # all_admission_60_69 <- data()
+# all_admission_60_69_with_noise <-
+#   phi_all_admission * all_admission_60_69_conf_inc + rexp(exp_noise)
+# compare(all_admission_60_69) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_60_69_with_noise)
+
 # all_admission_70_79 <- data()
+# all_admission_70_79_with_noise <-
+#   phi_all_admission * all_admission_70_79_conf_inc + rexp(exp_noise)
+# compare(all_admission_70_79) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_70_79_with_noise)
+
 # all_admission_80_plus <- data()
+# all_admission_80_plus_with_noise <-
+#   phi_all_admission * all_admission_80_plus_conf_inc + rexp(exp_noise)
+# compare(all_admission_80_plus) ~
+#   negative_binomial_mu(kappa_all_admission, all_admission_80_plus_with_noise)
+
 # sero_pos_15_64_1 <- data()
 # sero_tot_15_64_1 <- data()
 # sero_pos_15_64_2 <- data()
@@ -2741,12 +2804,6 @@ sero_sensitivity_1 <- user() # ignore.unused
 sero_specificity_1 <- user() # ignore.unused
 sero_sensitivity_2 <- user() # ignore.unused
 sero_specificity_2 <- user() # ignore.unused
-phi_admitted <- user() # ignore.unused
-kappa_admitted <- user() # ignore.unused
-phi_diagnoses <- user() # ignore.unused
-kappa_diagnoses <- user() # ignore.unused
-phi_all_admission <- user() # ignore.unused
-kappa_all_admission <- user() # ignore.unused
 rho_pillar2_tests <- user() # ignore.unused
 kappa_pillar2_cases <- user() # ignore.unused
 phi_pillar2_cases_under15 <- user() # ignore.unused
@@ -2762,17 +2819,6 @@ phi_pillar2_cases_weekend_65_79 <- user() # ignore.unused
 phi_pillar2_cases_80_plus <- user() # ignore.unused
 phi_pillar2_cases_weekend_80_plus <- user() # ignore.unused
 
-# ll_deaths_hosp + ll_deaths_carehomes +
-#   ll_admitted + ll_diagnoses + ll_all_admission +
-#   ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
-#   ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
-#   ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
-#   ll_deaths_hosp_80_plus + ll_deaths_comm_0_49 + ll_deaths_comm_50_54 +
-#   ll_deaths_comm_55_59 + ll_deaths_comm_60_64 + ll_deaths_comm_65_69 +
-#   ll_deaths_comm_70_74 + ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
-#   ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
-#   ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
-#   ll_all_admission_60_69 + ll_all_admission_70_79 + ll_all_admission_80_plus +
 #   ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
 #   ll_pillar2_over25_tests + ll_pillar2_under15_tests +
 #   ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
