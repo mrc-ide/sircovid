@@ -104,764 +104,6 @@ template <typename T>
 __host__ __device__ T odin_sign(T x) {
   return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
-// Can't use std::min on GPU
-template <typename T>
-__host__ __device__
-T min(const T& a, const T&b) {
-  return a < b ? a : b;
-}
-
-template <typename real_type, typename rng_state_type>
-__host__ __device__
-real_type ll_nbinom(real_type data, real_type model, real_type kappa,
-                    real_type exp_noise, rng_state_type& rng_state) {
-  if (std::isnan(data)) {
-    return 0;
-  }
-  real_type mu = model +
-    dust::random::exponential<real_type>(rng_state, exp_noise);
-  return dust::density::negative_binomial_mu(data, kappa, mu, true);
-}
-
-template <typename real_type>
-__host__ __device__
-real_type ll_binom(real_type data_x, real_type data_size,
-                   real_type model_prob) {
-  if (std::isnan(data_x) || std::isnan(data_size)) {
-    return 0;
-  }
-  return dust::density::binomial(data_x, data_size, model_prob, true);
-}
-
-template <typename real_type>
-__host__ __device__
-real_type ll_betabinom(real_type data_x, real_type data_size,
-                       real_type model_prob, real_type rho) {
-  if (std::isnan(data_x) || std::isnan(data_size)) {
-    return 0;
-  }
-  return dust::density::beta_binomial(data_x, data_size, model_prob, rho, true);
-}
-
-template <typename real_type, typename rng_state_type>
-__host__ __device__
-real_type test_prob_pos(real_type pos, real_type neg, real_type sensitivity,
-                        real_type specificity, real_type exp_noise,
-                        rng_state_type& rng_state) {
-  // We add some exponential noise to the number of positives and negatives
-  // to help ensure prob_pos is not 0 or 1. If e.g. prob_pos were 0 and there
-  // were individuals who tested positive, this would result in a weight of 0
-  // for a particle. If all particles have weights of 0, the particle filter
-  // breaks. The exponential noise produces small non-zero weights in these
-  // circumstances to prevent the particle filter from breaking.
-  pos += dust::random::exponential<real_type>(rng_state, exp_noise);
-  neg += dust::random::exponential<real_type>(rng_state, exp_noise);
-  return (sensitivity * pos + (1 - specificity) * neg) / (pos + neg);
-}
-
-// Lots of data items here. Even though some of these are counts (in
-// fact, most of them are counts) we'll pull them in as floating point
-// numbers (double or float) because that will help with the NA
-// handling. Once this is working reliably we could cast these
-// explicitly as ints, but there is not likely to be any major gain
-// here.
-//
-// [[odin.dust::compare_data(icu = real_type)]]
-// [[odin.dust::compare_data(general = real_type)]]
-// [[odin.dust::compare_data(hosp = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_0_49 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_50_54 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_55_59 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_60_64 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_65_69 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_70_74 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_75_79 = real_type)]]
-// [[odin.dust::compare_data(deaths_hosp_80_plus = real_type)]]
-// [[odin.dust::compare_data(deaths_comm = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_0_49 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_50_54 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_55_59 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_60_64 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_65_69 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_70_74 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_75_79 = real_type)]]
-// [[odin.dust::compare_data(deaths_comm_80_plus = real_type)]]
-// [[odin.dust::compare_data(deaths_carehomes = real_type)]]
-// [[odin.dust::compare_data(deaths = real_type)]]
-// [[odin.dust::compare_data(deaths_non_hosp = real_type)]]
-// [[odin.dust::compare_data(admitted = real_type)]]
-// [[odin.dust::compare_data(diagnoses = real_type)]]
-// [[odin.dust::compare_data(all_admission = real_type)]]
-// [[odin.dust::compare_data(all_admission_0_9 = real_type)]]
-// [[odin.dust::compare_data(all_admission_10_19 = real_type)]]
-// [[odin.dust::compare_data(all_admission_20_29 = real_type)]]
-// [[odin.dust::compare_data(all_admission_30_39 = real_type)]]
-// [[odin.dust::compare_data(all_admission_40_49 = real_type)]]
-// [[odin.dust::compare_data(all_admission_50_59 = real_type)]]
-// [[odin.dust::compare_data(all_admission_60_69 = real_type)]]
-// [[odin.dust::compare_data(all_admission_70_79 = real_type)]]
-// [[odin.dust::compare_data(all_admission_80_plus = real_type)]]
-// [[odin.dust::compare_data(sero_pos_15_64_1 = real_type)]]
-// [[odin.dust::compare_data(sero_tot_15_64_1 = real_type)]]
-// [[odin.dust::compare_data(sero_pos_15_64_2 = real_type)]]
-// [[odin.dust::compare_data(sero_tot_15_64_2 = real_type)]]
-// [[odin.dust::compare_data(pillar2_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_over25_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_over25_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_over25_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_under15_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_under15_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_under15_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_15_24_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_15_24_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_15_24_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_25_49_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_25_49_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_25_49_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_50_64_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_50_64_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_50_64_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_65_79_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_65_79_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_65_79_cases = real_type)]]
-// [[odin.dust::compare_data(pillar2_80_plus_pos = real_type)]]
-// [[odin.dust::compare_data(pillar2_80_plus_tot = real_type)]]
-// [[odin.dust::compare_data(pillar2_80_plus_cases = real_type)]]
-// [[odin.dust::compare_data(ons_pos = real_type)]]
-// [[odin.dust::compare_data(ons_tot = real_type)]]
-// [[odin.dust::compare_data(react_pos = real_type)]]
-// [[odin.dust::compare_data(react_tot = real_type)]]
-// [[odin.dust::compare_data(react_5_24_pos = real_type)]]
-// [[odin.dust::compare_data(react_5_24_tot = real_type)]]
-// [[odin.dust::compare_data(react_25_34_pos = real_type)]]
-// [[odin.dust::compare_data(react_25_34_tot = real_type)]]
-// [[odin.dust::compare_data(react_35_44_pos = real_type)]]
-// [[odin.dust::compare_data(react_35_44_tot = real_type)]]
-// [[odin.dust::compare_data(react_45_54_pos = real_type)]]
-// [[odin.dust::compare_data(react_45_54_tot = real_type)]]
-// [[odin.dust::compare_data(react_55_64_pos = real_type)]]
-// [[odin.dust::compare_data(react_55_64_tot = real_type)]]
-// [[odin.dust::compare_data(react_65_plus_pos = real_type)]]
-// [[odin.dust::compare_data(react_65_plus_tot = real_type)]]
-// [[odin.dust::compare_data(strain_non_variant = real_type)]]
-// [[odin.dust::compare_data(strain_tot = real_type)]]
-// [[odin.dust::compare_data(strain_over25_non_variant = real_type)]]
-// [[odin.dust::compare_data(strain_over25_tot = real_type)]]
-// [[odin.dust::compare_function]]
-template <typename T>
-typename T::real_type
-  compare(const typename T::real_type * state,
-          const typename T::data_type& data,
-          const typename T::internal_type internal,
-          std::shared_ptr<const typename T::shared_type> shared,
-          typename T::rng_state_type& rng_state) {
-    typedef typename T::real_type real_type;
-
-    // State variables; these largely correspond to the quantities in data
-    const real_type model_icu = state[21];
-    const real_type model_general = state[22];
-    const real_type model_hosp = model_icu + model_general;
-    const real_type model_deaths_carehomes = state[44];
-    const real_type model_deaths_comm = state[34];
-    const real_type model_deaths_comm_0_49 = state[35];
-    const real_type model_deaths_comm_50_54 = state[36];
-    const real_type model_deaths_comm_55_59 = state[37];
-    const real_type model_deaths_comm_60_64 = state[38];
-    const real_type model_deaths_comm_65_69 = state[39];
-    const real_type model_deaths_comm_70_74 = state[40];
-    const real_type model_deaths_comm_75_79 = state[41];
-    const real_type model_deaths_comm_80_plus = state[42];
-    const real_type model_deaths_hosp = state[47];
-    const real_type model_deaths_hosp_0_49 = state[48];
-    const real_type model_deaths_hosp_50_54 = state[49];
-    const real_type model_deaths_hosp_55_59 = state[50];
-    const real_type model_deaths_hosp_60_64 = state[51];
-    const real_type model_deaths_hosp_65_69 = state[52];
-    const real_type model_deaths_hosp_70_74 = state[53];
-    const real_type model_deaths_hosp_75_79 = state[54];
-    const real_type model_deaths_hosp_80_plus = state[55];
-    const real_type model_admitted = state[1];
-    const real_type model_diagnoses = state[2];
-    const real_type model_all_admission_0_9 = state[3];
-    const real_type model_all_admission_10_19 =
-      state[4];
-    const real_type model_all_admission_20_29 =
-      state[5];
-    const real_type model_all_admission_30_39 =
-      state[6];
-    const real_type model_all_admission_40_49 =
-      state[7];
-    const real_type model_all_admission_50_59 =
-      state[8];
-    const real_type model_all_admission_60_69 =
-      state[9];
-    const real_type model_all_admission_70_79 =
-      state[10];
-    const real_type model_all_admission_80_plus =
-      state[11];
-    const real_type model_all_admission = model_admitted + model_diagnoses;
-    const real_type model_sero_pos_1 = state[56];
-    const real_type model_sero_pos_2 = state[57];
-    const real_type model_sympt_cases = state[68];
-    const real_type model_sympt_cases_over25 = state[70];
-    const real_type model_sympt_cases_under15 = state[72];
-    const real_type model_sympt_cases_15_24 = state[73];
-    const real_type model_sympt_cases_25_49 = state[74];
-    const real_type model_sympt_cases_50_64 = state[75];
-    const real_type model_sympt_cases_65_79 = state[76];
-    const real_type model_sympt_cases_80_plus = state[77];
-    const real_type model_sympt_cases_non_variant =
-      state[69];
-    const real_type model_sympt_cases_non_variant_over25 =
-      state[71];
-    const real_type model_ons_pos = state[78];
-    const real_type model_react_pos = state[79];
-    const real_type model_react_5_24_pos = state[80];
-    const real_type model_react_25_34_pos = state[81];
-    const real_type model_react_35_44_pos = state[82];
-    const real_type model_react_45_54_pos = state[83];
-    const real_type model_react_55_64_pos = state[84];
-    const real_type model_react_65_plus_pos = state[85];
-
-    const int time_p_3 = static_cast<int>(state[0] + 3);
-
-    const real_type p_NC_today_under15 =
-      (time_p_3 % 7 < 2) ?
-      shared->p_NC_weekend_under15 : shared->p_NC_under15;
-    const real_type p_NC_today_15_24 =
-      (time_p_3 % 7 < 2) ?
-      shared->p_NC_weekend_15_24 : shared->p_NC_15_24;
-    const real_type p_NC_today_25_49 =
-      (time_p_3 % 7 < 2) ?
-      shared->p_NC_weekend_25_49 : shared->p_NC_25_49;
-    const real_type p_NC_today_50_64 =
-      (time_p_3 % 7 < 2) ?
-      shared->p_NC_weekend_50_64 : shared->p_NC_50_64;
-    const real_type p_NC_today_65_79 =
-      (time_p_3 % 7 < 2) ?
-      shared->p_NC_weekend_65_79 : shared->p_NC_65_79;
-    const real_type p_NC_today_80_plus =
-      (time_p_3 % 7 < 2) ?
-      shared->p_NC_weekend_80_plus : shared->p_NC_80_plus;
-
-    const real_type pillar2_under15_negs =
-      p_NC_today_under15 * (shared->N_tot_under15 - model_sympt_cases_under15);
-    const real_type model_pillar2_under15_prob_pos =
-      test_prob_pos(model_sympt_cases_under15,
-                    pillar2_under15_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_15_24_negs =
-      p_NC_today_15_24 * (shared->N_tot_15_24 - model_sympt_cases_15_24);
-    const real_type model_pillar2_15_24_prob_pos =
-      test_prob_pos(model_sympt_cases_15_24,
-                    pillar2_15_24_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_25_49_negs =
-      p_NC_today_25_49 * (shared->N_tot_25_49 - model_sympt_cases_25_49);
-    const real_type model_pillar2_25_49_prob_pos =
-      test_prob_pos(model_sympt_cases_25_49,
-                    pillar2_25_49_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_50_64_negs =
-      p_NC_today_50_64 * (shared->N_tot_50_64 - model_sympt_cases_50_64);
-    const real_type model_pillar2_50_64_prob_pos =
-      test_prob_pos(model_sympt_cases_50_64,
-                    pillar2_50_64_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_65_79_negs =
-      p_NC_today_65_79 * (shared->N_tot_65_79 - model_sympt_cases_65_79);
-    const real_type model_pillar2_65_79_prob_pos =
-      test_prob_pos(model_sympt_cases_65_79,
-                    pillar2_65_79_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_80_plus_negs =
-      p_NC_today_80_plus * (shared->N_tot_80_plus - model_sympt_cases_80_plus);
-    const real_type model_pillar2_80_plus_prob_pos =
-      test_prob_pos(model_sympt_cases_80_plus,
-                    pillar2_80_plus_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_over25_negs =
-      pillar2_25_49_negs + pillar2_50_64_negs +
-      pillar2_65_79_negs + pillar2_80_plus_negs;
-    const real_type model_pillar2_over25_prob_pos =
-      test_prob_pos(model_sympt_cases_over25,
-                    pillar2_over25_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type pillar2_negs =
-      pillar2_under15_negs + pillar2_15_24_negs + pillar2_over25_negs;
-    const real_type model_pillar2_prob_pos =
-      test_prob_pos(model_sympt_cases,
-                    pillar2_negs,
-                    shared->pillar2_sensitivity,
-                    shared->pillar2_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type phi_pillar2_cases_today_under15 =
-      (time_p_3 % 7 < 2) ?
-      shared->phi_pillar2_cases_weekend_under15 : shared->phi_pillar2_cases_under15;
-    const real_type phi_pillar2_cases_today_15_24 =
-      (time_p_3 % 7 < 2) ?
-      shared->phi_pillar2_cases_weekend_15_24 : shared->phi_pillar2_cases_15_24;
-    const real_type phi_pillar2_cases_today_25_49 =
-      (time_p_3 % 7 < 2) ?
-      shared->phi_pillar2_cases_weekend_25_49 : shared->phi_pillar2_cases_25_49;
-    const real_type phi_pillar2_cases_today_50_64 =
-      (time_p_3 % 7 < 2) ?
-      shared->phi_pillar2_cases_weekend_50_64 : shared->phi_pillar2_cases_50_64;
-    const real_type phi_pillar2_cases_today_65_79 =
-      (time_p_3 % 7 < 2) ?
-      shared->phi_pillar2_cases_weekend_65_79 : shared->phi_pillar2_cases_65_79;
-    const real_type phi_pillar2_cases_today_80_plus =
-      (time_p_3 % 7 < 2) ?
-      shared->phi_pillar2_cases_weekend_80_plus : shared->phi_pillar2_cases_80_plus;
-
-    const real_type model_pillar2_under15_cases =
-      phi_pillar2_cases_today_under15 * model_sympt_cases_under15;
-    const real_type model_pillar2_15_24_cases =
-      phi_pillar2_cases_today_15_24 * model_sympt_cases_15_24;
-    const real_type model_pillar2_25_49_cases =
-      phi_pillar2_cases_today_25_49 * model_sympt_cases_25_49;
-    const real_type model_pillar2_50_64_cases =
-      phi_pillar2_cases_today_50_64 * model_sympt_cases_50_64;
-    const real_type model_pillar2_65_79_cases =
-      phi_pillar2_cases_today_65_79 * model_sympt_cases_65_79;
-    const real_type model_pillar2_80_plus_cases =
-      phi_pillar2_cases_today_80_plus * model_sympt_cases_80_plus;
-    const real_type model_pillar2_over25_cases =
-      model_pillar2_25_49_cases + model_pillar2_50_64_cases +
-      model_pillar2_65_79_cases + model_pillar2_80_plus_cases;
-    const real_type model_pillar2_cases =
-      model_pillar2_under15_cases + model_pillar2_15_24_cases +
-      model_pillar2_over25_cases;
-
-    const real_type model_ons_pos_capped =
-      min(model_ons_pos, shared->N_tot_ons);
-    const real_type model_ons_prob_pos =
-      test_prob_pos(model_ons_pos_capped,
-                    shared->N_tot_ons - model_ons_pos_capped,
-                    shared->ons_sensitivity,
-                    shared->ons_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_pos_capped =
-      min(model_react_pos, shared->N_tot_react);
-    const real_type model_react_prob_pos =
-      test_prob_pos(model_react_pos_capped,
-                    shared->N_tot_react - model_react_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_5_24_pos_capped =
-      min(model_react_5_24_pos, shared->N_5_24_react);
-    const real_type model_react_5_24_prob_pos =
-      test_prob_pos(model_react_5_24_pos_capped,
-                    shared->N_5_24_react - model_react_5_24_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_25_34_pos_capped =
-      min(model_react_25_34_pos, shared->N_25_34_react);
-    const real_type model_react_25_34_prob_pos =
-      test_prob_pos(model_react_25_34_pos_capped,
-                    shared->N_25_34_react - model_react_25_34_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_35_44_pos_capped =
-      min(model_react_35_44_pos, shared->N_35_44_react);
-    const real_type model_react_35_44_prob_pos =
-      test_prob_pos(model_react_35_44_pos_capped,
-                    shared->N_35_44_react - model_react_35_44_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_45_54_pos_capped =
-      min(model_react_45_54_pos, shared->N_45_54_react);
-    const real_type model_react_45_54_prob_pos =
-      test_prob_pos(model_react_45_54_pos_capped,
-                    shared->N_45_54_react - model_react_45_54_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_55_64_pos_capped =
-      min(model_react_55_64_pos, shared->N_55_64_react);
-    const real_type model_react_55_64_prob_pos =
-      test_prob_pos(model_react_55_64_pos_capped,
-                    shared->N_55_64_react - model_react_55_64_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    const real_type model_react_65_plus_pos_capped =
-      min(model_react_65_plus_pos, shared->N_65_plus_react);
-    const real_type model_react_65_plus_prob_pos =
-      test_prob_pos(model_react_65_plus_pos_capped,
-                    shared->N_65_plus_react - model_react_65_plus_pos_capped,
-                    shared->react_sensitivity,
-                    shared->react_specificity,
-                    shared->exp_noise,
-                    rng_state);
-
-    // serology assay 1
-    const real_type model_sero_pos_1_capped =
-      min(model_sero_pos_1, shared->N_tot_15_64);
-    const real_type model_sero_prob_pos_1 =
-      test_prob_pos(model_sero_pos_1_capped,
-                    shared->N_tot_15_64 - model_sero_pos_1_capped,
-                    shared->sero_sensitivity_1,
-                    shared->sero_specificity_1,
-                    shared->exp_noise,
-                    rng_state);
-
-    // serology assay 2
-    const real_type model_sero_pos_2_capped =
-      min(model_sero_pos_2, shared->N_tot_15_64);
-    const real_type model_sero_prob_pos_2 =
-      test_prob_pos(model_sero_pos_2_capped,
-                    shared->N_tot_15_64 - model_sero_pos_2_capped,
-                    shared->sero_sensitivity_2,
-                    shared->sero_specificity_2,
-                    shared->exp_noise,
-                    rng_state);
-
-    // Strain
-    real_type strain_sensitivity = 1.0;
-    real_type strain_specificity = 1.0;
-    const real_type model_strain_prob_pos =
-      test_prob_pos(model_sympt_cases_non_variant,
-                    model_sympt_cases -
-                      model_sympt_cases_non_variant,
-                      strain_sensitivity,
-                      strain_specificity,
-                      shared->exp_noise,
-                      rng_state);
-    const real_type model_strain_over25_prob_pos =
-      test_prob_pos(model_sympt_cases_non_variant_over25,
-                    model_sympt_cases_over25 -
-                      model_sympt_cases_non_variant_over25,
-                      strain_sensitivity,
-                      strain_specificity,
-                      shared->exp_noise,
-                      rng_state);
-
-    // Note that in ll_nbinom, the purpose of exp_noise is to allow a
-    // non-zero probability when the model value is 0 and the observed
-    // value is non-zero (i.e. there is overreporting)
-    const real_type ll_icu =
-      ll_nbinom(data.icu, shared->phi_ICU * model_icu,
-                shared->kappa_ICU, shared->exp_noise, rng_state);
-    const real_type ll_general =
-      ll_nbinom(data.general, shared->phi_general * model_general,
-                shared->kappa_general, shared->exp_noise, rng_state);
-    const real_type ll_hosp =
-      ll_nbinom(data.hosp, shared->phi_hosp * model_hosp,
-                shared->kappa_hosp, shared->exp_noise, rng_state);
-
-    // We will compute one of the following:
-    // 1. ll_deaths_hosp, ll_deaths_carehomes and ll_deaths_comm
-    // 2. ll_deaths_hosp and ll_deaths_non_hosp
-    // 3. ll_deaths
-    const real_type ll_deaths_hosp_0_49 =
-      ll_nbinom(data.deaths_hosp_0_49,
-                shared->phi_death_hosp * model_deaths_hosp_0_49,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_50_54 =
-      ll_nbinom(data.deaths_hosp_50_54,
-                shared->phi_death_hosp * model_deaths_hosp_50_54,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_55_59 =
-      ll_nbinom(data.deaths_hosp_55_59,
-                shared->phi_death_hosp * model_deaths_hosp_55_59,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_60_64 =
-      ll_nbinom(data.deaths_hosp_60_64,
-                shared->phi_death_hosp * model_deaths_hosp_60_64,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_65_69 =
-      ll_nbinom(data.deaths_hosp_65_69,
-                shared->phi_death_hosp * model_deaths_hosp_65_69,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_70_74 =
-      ll_nbinom(data.deaths_hosp_70_74,
-                shared->phi_death_hosp * model_deaths_hosp_70_74,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_75_79 =
-      ll_nbinom(data.deaths_hosp_75_79,
-                shared->phi_death_hosp * model_deaths_hosp_75_79,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp_80_plus =
-      ll_nbinom(data.deaths_hosp_80_plus,
-                shared->phi_death_hosp * model_deaths_hosp_80_plus,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths_hosp =
-      ll_nbinom(data.deaths_hosp, shared->phi_death_hosp * model_deaths_hosp,
-                shared->kappa_death_hosp, shared->exp_noise, rng_state);
-
-    const real_type ll_deaths_carehomes =
-      ll_nbinom(data.deaths_carehomes,
-                shared->phi_death_carehomes * model_deaths_carehomes,
-                shared->kappa_death_carehomes, shared->exp_noise, rng_state);
-
-    const real_type ll_deaths_comm =
-      ll_nbinom(data.deaths_comm, shared->phi_death_comm * model_deaths_comm,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_0_49 =
-      ll_nbinom(data.deaths_comm_0_49,
-                shared->phi_death_comm * model_deaths_comm_0_49,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_50_54 =
-      ll_nbinom(data.deaths_comm_50_54,
-                shared->phi_death_comm * model_deaths_comm_50_54,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_55_59 =
-      ll_nbinom(data.deaths_comm_55_59,
-                shared->phi_death_comm * model_deaths_comm_55_59,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_60_64 =
-      ll_nbinom(data.deaths_comm_60_64,
-                shared->phi_death_comm * model_deaths_comm_60_64,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_65_69 =
-      ll_nbinom(data.deaths_comm_65_69,
-                shared->phi_death_comm * model_deaths_comm_65_69,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_70_74 =
-      ll_nbinom(data.deaths_comm_70_74,
-                shared->phi_death_comm * model_deaths_comm_70_74,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_75_79 =
-      ll_nbinom(data.deaths_comm_75_79,
-                shared->phi_death_comm * model_deaths_comm_75_79,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-    const real_type ll_deaths_comm_80_plus =
-      ll_nbinom(data.deaths_comm_80_plus,
-                shared->phi_death_comm * model_deaths_comm_80_plus,
-                shared->kappa_death_comm, shared->exp_noise, rng_state);
-
-    const real_type ll_deaths_non_hosp =
-      ll_nbinom(data.deaths_non_hosp,
-                shared->phi_death_carehomes * model_deaths_carehomes +
-                  shared->phi_death_comm * model_deaths_comm,
-                  shared->kappa_death_non_hosp, shared->exp_noise, rng_state);
-    const real_type ll_deaths =
-      ll_nbinom(data.deaths,
-                shared->phi_death_hosp * model_deaths_hosp +
-                  shared->phi_death_carehomes * model_deaths_carehomes +
-                  shared->phi_death_comm * model_deaths_comm,
-                  shared->kappa_death, shared->exp_noise, rng_state);
-
-    const real_type ll_admitted =
-      ll_nbinom(data.admitted, shared->phi_admitted * model_admitted,
-                shared->kappa_admitted, shared->exp_noise, rng_state);
-    const real_type ll_diagnoses =
-      ll_nbinom(data.diagnoses, shared->phi_diagnoses * model_diagnoses,
-                shared->kappa_diagnoses, shared->exp_noise, rng_state);
-    const real_type ll_all_admission =
-      ll_nbinom(data.all_admission,
-                shared->phi_all_admission * model_all_admission,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_0_9 =
-      ll_nbinom(data.all_admission_0_9,
-                shared->phi_all_admission * model_all_admission_0_9,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_10_19 =
-      ll_nbinom(data.all_admission_10_19,
-                shared->phi_all_admission * model_all_admission_10_19,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_20_29 =
-      ll_nbinom(data.all_admission_20_29,
-                shared->phi_all_admission * model_all_admission_20_29,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_30_39 =
-      ll_nbinom(data.all_admission_30_39,
-                shared->phi_all_admission * model_all_admission_30_39,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_40_49 =
-      ll_nbinom(data.all_admission_40_49,
-                shared->phi_all_admission * model_all_admission_40_49,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_50_59 =
-      ll_nbinom(data.all_admission_50_59,
-                shared->phi_all_admission * model_all_admission_50_59,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_60_69 =
-      ll_nbinom(data.all_admission_60_69,
-                shared->phi_all_admission * model_all_admission_60_69,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_70_79 =
-      ll_nbinom(data.all_admission_70_79,
-                shared->phi_all_admission * model_all_admission_70_79,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-    const real_type ll_all_admission_80_plus =
-      ll_nbinom(data.all_admission_80_plus,
-                shared->phi_all_admission * model_all_admission_80_plus,
-                shared->kappa_all_admission, shared->exp_noise, rng_state);
-
-    const real_type ll_serology_1 =
-      ll_binom(data.sero_pos_15_64_1, data.sero_tot_15_64_1,
-               model_sero_prob_pos_1);
-    const real_type ll_serology_2 =
-      ll_binom(data.sero_pos_15_64_2, data.sero_tot_15_64_2,
-               model_sero_prob_pos_2);
-
-    const real_type ll_pillar2_tests =
-      ll_betabinom(data.pillar2_pos, data.pillar2_tot,
-                   model_pillar2_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_over25_tests =
-      ll_betabinom(data.pillar2_over25_pos, data.pillar2_over25_tot,
-                   model_pillar2_over25_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_under15_tests =
-      ll_betabinom(data.pillar2_under15_pos, data.pillar2_under15_tot,
-                   model_pillar2_under15_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_15_24_tests =
-      ll_betabinom(data.pillar2_15_24_pos, data.pillar2_15_24_tot,
-                   model_pillar2_15_24_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_25_49_tests =
-      ll_betabinom(data.pillar2_25_49_pos, data.pillar2_25_49_tot,
-                   model_pillar2_25_49_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_50_64_tests =
-      ll_betabinom(data.pillar2_50_64_pos, data.pillar2_50_64_tot,
-                   model_pillar2_50_64_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_65_79_tests =
-      ll_betabinom(data.pillar2_65_79_pos, data.pillar2_65_79_tot,
-                   model_pillar2_65_79_prob_pos, shared->rho_pillar2_tests);
-    const real_type ll_pillar2_80_plus_tests =
-      ll_betabinom(data.pillar2_80_plus_pos, data.pillar2_80_plus_tot,
-                   model_pillar2_80_plus_prob_pos, shared->rho_pillar2_tests);
-
-    const real_type ll_pillar2_under15_cases =
-      ll_nbinom(data.pillar2_under15_cases,
-                model_pillar2_under15_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_15_24_cases =
-      ll_nbinom(data.pillar2_15_24_cases,
-                model_pillar2_15_24_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_25_49_cases =
-      ll_nbinom(data.pillar2_25_49_cases,
-                model_pillar2_25_49_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_50_64_cases =
-      ll_nbinom(data.pillar2_50_64_cases,
-                model_pillar2_50_64_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_65_79_cases =
-      ll_nbinom(data.pillar2_65_79_cases,
-                model_pillar2_65_79_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_80_plus_cases =
-      ll_nbinom(data.pillar2_80_plus_cases,
-                model_pillar2_80_plus_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_over25_cases =
-      ll_nbinom(data.pillar2_over25_cases,
-                model_pillar2_over25_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-    const real_type ll_pillar2_cases =
-      ll_nbinom(data.pillar2_cases,
-                model_pillar2_cases,
-                shared->kappa_pillar2_cases, shared->exp_noise, rng_state);
-
-    const real_type ll_ons =
-      ll_binom(data.ons_pos, data.ons_tot,
-               model_ons_prob_pos);
-
-    const real_type ll_react =
-      ll_binom(data.react_pos, data.react_tot,
-               model_react_prob_pos);
-    const real_type ll_5_24_react =
-      ll_binom(data.react_5_24_pos, data.react_5_24_tot,
-               model_react_5_24_prob_pos);
-    const real_type ll_25_34_react =
-      ll_binom(data.react_25_34_pos, data.react_25_34_tot,
-               model_react_25_34_prob_pos);
-    const real_type ll_35_44_react =
-      ll_binom(data.react_35_44_pos, data.react_35_44_tot,
-               model_react_35_44_prob_pos);
-    const real_type ll_45_54_react =
-      ll_binom(data.react_45_54_pos, data.react_45_54_tot,
-               model_react_45_54_prob_pos);
-    const real_type ll_55_64_react =
-      ll_binom(data.react_55_64_pos, data.react_55_64_tot,
-               model_react_55_64_prob_pos);
-    const real_type ll_65_plus_react =
-      ll_binom(data.react_65_plus_pos, data.react_65_plus_tot,
-               model_react_65_plus_prob_pos);
-
-    const real_type ll_strain =
-      ll_binom(data.strain_non_variant, data.strain_tot,
-               model_strain_prob_pos);
-    const real_type ll_strain_over25 =
-      ll_binom(data.strain_over25_non_variant, data.strain_over25_tot,
-               model_strain_over25_prob_pos);
-
-    return ll_icu + ll_general + ll_hosp + ll_deaths_hosp_0_49 +
-      ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
-      ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
-      ll_deaths_hosp_80_plus + ll_deaths_hosp + ll_deaths_carehomes +
-      ll_deaths_comm_0_49 + ll_deaths_comm_50_54 + ll_deaths_comm_55_59 +
-      ll_deaths_comm_60_64 + ll_deaths_comm_65_69 + ll_deaths_comm_70_74 +
-      ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
-      ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_admitted +
-      ll_diagnoses + ll_all_admission +
-      ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
-      ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
-      ll_all_admission_60_69 + ll_all_admission_70_79 +
-      ll_all_admission_80_plus + ll_serology_1 + ll_serology_2 +
-      ll_pillar2_tests + ll_pillar2_over25_tests + ll_pillar2_under15_tests +
-      ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
-      ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
-      ll_pillar2_cases + ll_pillar2_over25_cases + ll_pillar2_under15_cases +
-      ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
-      ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases +
-      ll_ons + ll_react + ll_5_24_react + ll_25_34_react + ll_35_44_react +
-      ll_45_54_react + ll_55_64_react + ll_65_plus_react + ll_strain +
-      ll_strain_over25;
-  }
 // [[dust::class(lancelot)]]
 // [[dust::time_type(discrete)]]
 // [[dust::param(G_D_transmission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -930,17 +172,9 @@ typename T::real_type
 // [[dust::param(k_sero_pos_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_sero_pre_1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(k_sero_pre_2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_death, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_death_carehomes, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_death_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_death_non_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(kappa_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(kappa_pillar2_cases, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(m, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_age_groups, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1000,15 +234,9 @@ typename T::real_type
 // [[dust::param(p_sero_pos_1, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_sero_pos_2, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_star_step, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_ICU, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_admitted, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_all_admission, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_death_carehomes, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_death_comm, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_death_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_diagnoses, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_general, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(phi_hosp, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_15_24, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_25_49, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(phi_pillar2_cases_50_64, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -1088,92 +316,7 @@ class lancelot {
 public:
   using real_type = double;
   using rng_state_type = dust::random::generator<real_type>;
-  struct __align__(16) data_type {
-    real_type icu;
-    real_type general;
-    real_type hosp;
-    real_type deaths_hosp;
-    real_type deaths_hosp_0_49;
-    real_type deaths_hosp_50_54;
-    real_type deaths_hosp_55_59;
-    real_type deaths_hosp_60_64;
-    real_type deaths_hosp_65_69;
-    real_type deaths_hosp_70_74;
-    real_type deaths_hosp_75_79;
-    real_type deaths_hosp_80_plus;
-    real_type deaths_comm;
-    real_type deaths_comm_0_49;
-    real_type deaths_comm_50_54;
-    real_type deaths_comm_55_59;
-    real_type deaths_comm_60_64;
-    real_type deaths_comm_65_69;
-    real_type deaths_comm_70_74;
-    real_type deaths_comm_75_79;
-    real_type deaths_comm_80_plus;
-    real_type deaths_carehomes;
-    real_type deaths;
-    real_type deaths_non_hosp;
-    real_type admitted;
-    real_type diagnoses;
-    real_type all_admission;
-    real_type all_admission_0_9;
-    real_type all_admission_10_19;
-    real_type all_admission_20_29;
-    real_type all_admission_30_39;
-    real_type all_admission_40_49;
-    real_type all_admission_50_59;
-    real_type all_admission_60_69;
-    real_type all_admission_70_79;
-    real_type all_admission_80_plus;
-    real_type sero_pos_15_64_1;
-    real_type sero_tot_15_64_1;
-    real_type sero_pos_15_64_2;
-    real_type sero_tot_15_64_2;
-    real_type pillar2_pos;
-    real_type pillar2_tot;
-    real_type pillar2_cases;
-    real_type pillar2_over25_pos;
-    real_type pillar2_over25_tot;
-    real_type pillar2_over25_cases;
-    real_type pillar2_under15_pos;
-    real_type pillar2_under15_tot;
-    real_type pillar2_under15_cases;
-    real_type pillar2_15_24_pos;
-    real_type pillar2_15_24_tot;
-    real_type pillar2_15_24_cases;
-    real_type pillar2_25_49_pos;
-    real_type pillar2_25_49_tot;
-    real_type pillar2_25_49_cases;
-    real_type pillar2_50_64_pos;
-    real_type pillar2_50_64_tot;
-    real_type pillar2_50_64_cases;
-    real_type pillar2_65_79_pos;
-    real_type pillar2_65_79_tot;
-    real_type pillar2_65_79_cases;
-    real_type pillar2_80_plus_pos;
-    real_type pillar2_80_plus_tot;
-    real_type pillar2_80_plus_cases;
-    real_type ons_pos;
-    real_type ons_tot;
-    real_type react_pos;
-    real_type react_tot;
-    real_type react_5_24_pos;
-    real_type react_5_24_tot;
-    real_type react_25_34_pos;
-    real_type react_25_34_tot;
-    real_type react_35_44_pos;
-    real_type react_35_44_tot;
-    real_type react_45_54_pos;
-    real_type react_45_54_tot;
-    real_type react_55_64_pos;
-    real_type react_55_64_tot;
-    real_type react_65_plus_pos;
-    real_type react_65_plus_tot;
-    real_type strain_non_variant;
-    real_type strain_tot;
-    real_type strain_over25_non_variant;
-    real_type strain_over25_tot;
-  };
+  using data_type = dust::no_data;
   struct shared_type {
     real_type G_D_transmission;
     real_type ICU_transmission;
@@ -2909,18 +2052,18 @@ public:
     std::vector<real_type> initial_infections_inc_age;
     std::vector<real_type> initial_infections_inc_strain;
     real_type initial_new_conf_inc;
-    real_type initial_ons_pos;
+    real_type initial_ons_positives;
     std::vector<real_type> initial_prob_strain;
     std::vector<real_type> initial_protected_R_unvaccinated;
     std::vector<real_type> initial_protected_R_vaccinated;
     std::vector<real_type> initial_protected_S_vaccinated;
-    real_type initial_react_25_34_pos;
-    real_type initial_react_35_44_pos;
-    real_type initial_react_45_54_pos;
-    real_type initial_react_55_64_pos;
-    real_type initial_react_5_24_pos;
-    real_type initial_react_65_plus_pos;
-    real_type initial_react_pos;
+    real_type initial_react_25_34_positives;
+    real_type initial_react_35_44_positives;
+    real_type initial_react_45_54_positives;
+    real_type initial_react_55_64_positives;
+    real_type initial_react_5_24_positives;
+    real_type initial_react_65_plus_positives;
+    real_type initial_react_positives;
     std::vector<real_type> initial_recovered;
     real_type initial_sero_pos_1;
     real_type initial_sero_pos_2;
@@ -2959,17 +2102,9 @@ public:
     int k_sero_pos_2;
     int k_sero_pre_1;
     int k_sero_pre_2;
-    real_type kappa_ICU;
     real_type kappa_admitted;
     real_type kappa_all_admission;
-    real_type kappa_death;
-    real_type kappa_death_carehomes;
-    real_type kappa_death_comm;
-    real_type kappa_death_hosp;
-    real_type kappa_death_non_hosp;
     real_type kappa_diagnoses;
-    real_type kappa_general;
-    real_type kappa_hosp;
     real_type kappa_pillar2_cases;
     std::vector<real_type> m;
     int n_age_groups;
@@ -3109,15 +2244,9 @@ public:
     std::vector<real_type> p_sero_pos_1;
     std::vector<real_type> p_sero_pos_2;
     std::vector<real_type> p_star_step;
-    real_type phi_ICU;
     real_type phi_admitted;
     real_type phi_all_admission;
-    real_type phi_death_carehomes;
-    real_type phi_death_comm;
-    real_type phi_death_hosp;
     real_type phi_diagnoses;
-    real_type phi_general;
-    real_type phi_hosp;
     real_type phi_pillar2_cases_15_24;
     real_type phi_pillar2_cases_25_49;
     real_type phi_pillar2_cases_50_64;
@@ -3507,14 +2636,14 @@ public:
     state[75] = shared->initial_sympt_cases_50_64_inc;
     state[76] = shared->initial_sympt_cases_65_79_inc;
     state[77] = shared->initial_sympt_cases_80_plus_inc;
-    state[78] = shared->initial_ons_pos;
-    state[79] = shared->initial_react_pos;
-    state[80] = shared->initial_react_5_24_pos;
-    state[81] = shared->initial_react_25_34_pos;
-    state[82] = shared->initial_react_35_44_pos;
-    state[83] = shared->initial_react_45_54_pos;
-    state[84] = shared->initial_react_55_64_pos;
-    state[85] = shared->initial_react_65_plus_pos;
+    state[78] = shared->initial_ons_positives;
+    state[79] = shared->initial_react_positives;
+    state[80] = shared->initial_react_5_24_positives;
+    state[81] = shared->initial_react_25_34_positives;
+    state[82] = shared->initial_react_35_44_positives;
+    state[83] = shared->initial_react_45_54_positives;
+    state[84] = shared->initial_react_55_64_positives;
+    state[85] = shared->initial_react_65_plus_positives;
     state[86] = shared->initial_susceptible;
     state[87] = shared->initial_ihr;
     state[88] = shared->initial_hfr;
@@ -5911,9 +5040,6 @@ public:
       state_next[shared->offset_variable_prob_strain + i - 1] = (i == 1 ? prob_strain_1 : 1 - prob_strain_1);
     }
   }
-  real_type compare_data(const real_type * state, const data_type& data, rng_state_type& rng_state) {
-    return compare<lancelot>(state, data, internal, shared, rng_state);
-  }
 private:
   std::shared_ptr<const shared_type> shared;
   internal_type internal;
@@ -6244,14 +5370,14 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->initial_hospitalisations_inc = 0;
   shared->initial_infections_inc = 0;
   shared->initial_new_conf_inc = 0;
-  shared->initial_ons_pos = 0;
-  shared->initial_react_25_34_pos = 0;
-  shared->initial_react_35_44_pos = 0;
-  shared->initial_react_45_54_pos = 0;
-  shared->initial_react_55_64_pos = 0;
-  shared->initial_react_5_24_pos = 0;
-  shared->initial_react_65_plus_pos = 0;
-  shared->initial_react_pos = 0;
+  shared->initial_ons_positives = 0;
+  shared->initial_react_25_34_positives = 0;
+  shared->initial_react_35_44_positives = 0;
+  shared->initial_react_45_54_positives = 0;
+  shared->initial_react_55_64_positives = 0;
+  shared->initial_react_5_24_positives = 0;
+  shared->initial_react_65_plus_positives = 0;
+  shared->initial_react_positives = 0;
   shared->initial_sero_pos_1 = 0;
   shared->initial_sero_pos_2 = 0;
   shared->initial_susceptible = 0;
@@ -6312,17 +5438,9 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->k_sero_pos_2 = NA_INTEGER;
   shared->k_sero_pre_1 = NA_INTEGER;
   shared->k_sero_pre_2 = NA_INTEGER;
-  shared->kappa_ICU = NA_REAL;
   shared->kappa_admitted = NA_REAL;
   shared->kappa_all_admission = NA_REAL;
-  shared->kappa_death = NA_REAL;
-  shared->kappa_death_carehomes = NA_REAL;
-  shared->kappa_death_comm = NA_REAL;
-  shared->kappa_death_hosp = NA_REAL;
-  shared->kappa_death_non_hosp = NA_REAL;
   shared->kappa_diagnoses = NA_REAL;
-  shared->kappa_general = NA_REAL;
-  shared->kappa_hosp = NA_REAL;
   shared->kappa_pillar2_cases = NA_REAL;
   shared->n_age_groups = NA_INTEGER;
   shared->n_doses = NA_INTEGER;
@@ -6370,15 +5488,9 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->p_NC_weekend_65_79 = NA_REAL;
   shared->p_NC_weekend_80_plus = NA_REAL;
   shared->p_NC_weekend_under15 = NA_REAL;
-  shared->phi_ICU = NA_REAL;
   shared->phi_admitted = NA_REAL;
   shared->phi_all_admission = NA_REAL;
-  shared->phi_death_carehomes = NA_REAL;
-  shared->phi_death_comm = NA_REAL;
-  shared->phi_death_hosp = NA_REAL;
   shared->phi_diagnoses = NA_REAL;
-  shared->phi_general = NA_REAL;
-  shared->phi_hosp = NA_REAL;
   shared->phi_pillar2_cases_15_24 = NA_REAL;
   shared->phi_pillar2_cases_25_49 = NA_REAL;
   shared->phi_pillar2_cases_50_64 = NA_REAL;
@@ -6460,17 +5572,9 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->k_sero_pos_2 = user_get_scalar<int>(user, "k_sero_pos_2", shared->k_sero_pos_2, NA_INTEGER, NA_INTEGER);
   shared->k_sero_pre_1 = user_get_scalar<int>(user, "k_sero_pre_1", shared->k_sero_pre_1, NA_INTEGER, NA_INTEGER);
   shared->k_sero_pre_2 = user_get_scalar<int>(user, "k_sero_pre_2", shared->k_sero_pre_2, NA_INTEGER, NA_INTEGER);
-  shared->kappa_ICU = user_get_scalar<real_type>(user, "kappa_ICU", shared->kappa_ICU, NA_REAL, NA_REAL);
   shared->kappa_admitted = user_get_scalar<real_type>(user, "kappa_admitted", shared->kappa_admitted, NA_REAL, NA_REAL);
   shared->kappa_all_admission = user_get_scalar<real_type>(user, "kappa_all_admission", shared->kappa_all_admission, NA_REAL, NA_REAL);
-  shared->kappa_death = user_get_scalar<real_type>(user, "kappa_death", shared->kappa_death, NA_REAL, NA_REAL);
-  shared->kappa_death_carehomes = user_get_scalar<real_type>(user, "kappa_death_carehomes", shared->kappa_death_carehomes, NA_REAL, NA_REAL);
-  shared->kappa_death_comm = user_get_scalar<real_type>(user, "kappa_death_comm", shared->kappa_death_comm, NA_REAL, NA_REAL);
-  shared->kappa_death_hosp = user_get_scalar<real_type>(user, "kappa_death_hosp", shared->kappa_death_hosp, NA_REAL, NA_REAL);
-  shared->kappa_death_non_hosp = user_get_scalar<real_type>(user, "kappa_death_non_hosp", shared->kappa_death_non_hosp, NA_REAL, NA_REAL);
   shared->kappa_diagnoses = user_get_scalar<real_type>(user, "kappa_diagnoses", shared->kappa_diagnoses, NA_REAL, NA_REAL);
-  shared->kappa_general = user_get_scalar<real_type>(user, "kappa_general", shared->kappa_general, NA_REAL, NA_REAL);
-  shared->kappa_hosp = user_get_scalar<real_type>(user, "kappa_hosp", shared->kappa_hosp, NA_REAL, NA_REAL);
   shared->kappa_pillar2_cases = user_get_scalar<real_type>(user, "kappa_pillar2_cases", shared->kappa_pillar2_cases, NA_REAL, NA_REAL);
   shared->n_age_groups = user_get_scalar<int>(user, "n_age_groups", shared->n_age_groups, NA_INTEGER, NA_INTEGER);
   shared->n_doses = user_get_scalar<int>(user, "n_doses", shared->n_doses, NA_INTEGER, NA_INTEGER);
@@ -6518,15 +5622,9 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->p_NC_weekend_65_79 = user_get_scalar<real_type>(user, "p_NC_weekend_65_79", shared->p_NC_weekend_65_79, NA_REAL, NA_REAL);
   shared->p_NC_weekend_80_plus = user_get_scalar<real_type>(user, "p_NC_weekend_80_plus", shared->p_NC_weekend_80_plus, NA_REAL, NA_REAL);
   shared->p_NC_weekend_under15 = user_get_scalar<real_type>(user, "p_NC_weekend_under15", shared->p_NC_weekend_under15, NA_REAL, NA_REAL);
-  shared->phi_ICU = user_get_scalar<real_type>(user, "phi_ICU", shared->phi_ICU, NA_REAL, NA_REAL);
   shared->phi_admitted = user_get_scalar<real_type>(user, "phi_admitted", shared->phi_admitted, NA_REAL, NA_REAL);
   shared->phi_all_admission = user_get_scalar<real_type>(user, "phi_all_admission", shared->phi_all_admission, NA_REAL, NA_REAL);
-  shared->phi_death_carehomes = user_get_scalar<real_type>(user, "phi_death_carehomes", shared->phi_death_carehomes, NA_REAL, NA_REAL);
-  shared->phi_death_comm = user_get_scalar<real_type>(user, "phi_death_comm", shared->phi_death_comm, NA_REAL, NA_REAL);
-  shared->phi_death_hosp = user_get_scalar<real_type>(user, "phi_death_hosp", shared->phi_death_hosp, NA_REAL, NA_REAL);
   shared->phi_diagnoses = user_get_scalar<real_type>(user, "phi_diagnoses", shared->phi_diagnoses, NA_REAL, NA_REAL);
-  shared->phi_general = user_get_scalar<real_type>(user, "phi_general", shared->phi_general, NA_REAL, NA_REAL);
-  shared->phi_hosp = user_get_scalar<real_type>(user, "phi_hosp", shared->phi_hosp, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_15_24 = user_get_scalar<real_type>(user, "phi_pillar2_cases_15_24", shared->phi_pillar2_cases_15_24, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_25_49 = user_get_scalar<real_type>(user, "phi_pillar2_cases_25_49", shared->phi_pillar2_cases_25_49, NA_REAL, NA_REAL);
   shared->phi_pillar2_cases_50_64 = user_get_scalar<real_type>(user, "phi_pillar2_cases_50_64", shared->phi_pillar2_cases_50_64, NA_REAL, NA_REAL);
@@ -9042,7 +8140,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
 template <>
 cpp11::sexp dust_info<lancelot>(const dust::pars_type<lancelot>& pars) {
   const std::shared_ptr<const lancelot::shared_type> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "admit_conf_inc", "new_conf_inc", "all_admission_0_9_conf_inc", "all_admission_10_19_conf_inc", "all_admission_20_29_conf_inc", "all_admission_30_39_conf_inc", "all_admission_40_49_conf_inc", "all_admission_50_59_conf_inc", "all_admission_60_69_conf_inc", "all_admission_70_79_conf_inc", "all_admission_80_plus_conf_inc", "cum_infections", "infections_inc", "hospitalisations_inc", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot_sero_1", "N_tot_sero_2", "N_tot_PCR", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_hosp_0_49_tot", "D_hosp_50_54_tot", "D_hosp_55_59_tot", "D_hosp_60_64_tot", "D_hosp_65_69_tot", "D_hosp_70_74_tot", "D_hosp_75_79_tot", "D_hosp_80_plus_tot", "D_comm_tot", "D_comm_inc", "D_comm_0_49_inc", "D_comm_50_54_inc", "D_comm_55_59_inc", "D_comm_60_64_inc", "D_comm_65_69_inc", "D_comm_70_74_inc", "D_comm_75_79_inc", "D_comm_80_plus_inc", "D_carehomes_tot", "D_carehomes_inc", "D_tot", "D_inc", "D_hosp_inc", "D_hosp_0_49_inc", "D_hosp_50_54_inc", "D_hosp_55_59_inc", "D_hosp_60_64_inc", "D_hosp_65_69_inc", "D_hosp_70_74_inc", "D_hosp_75_79_inc", "D_hosp_80_plus_inc", "sero_pos_1", "sero_pos_2", "cum_sympt_cases", "cum_sympt_cases_non_variant", "cum_sympt_cases_over25", "cum_sympt_cases_non_variant_over25", "cum_sympt_cases_under15", "cum_sympt_cases_15_24", "cum_sympt_cases_25_49", "cum_sympt_cases_50_64", "cum_sympt_cases_65_79", "cum_sympt_cases_80_plus", "sympt_cases_inc", "sympt_cases_non_variant_inc", "sympt_cases_over25_inc", "sympt_cases_non_variant_over25_inc", "sympt_cases_under15_inc", "sympt_cases_15_24_inc", "sympt_cases_25_49_inc", "sympt_cases_50_64_inc", "sympt_cases_65_79_inc", "sympt_cases_80_plus_inc", "ons_pos", "react_pos", "react_5_24_pos", "react_25_34_pos", "react_35_44_pos", "react_45_54_pos", "react_55_64_pos", "react_65_plus_pos", "susceptible", "ihr", "hfr", "ifr", "cum_infections_strain", "infections_inc_strain", "infections_inc_age", "hospitalisations_inc_strain", "hospitalisations_inc_age", "D_non_hosp", "cum_admit_by_age", "N_tot", "prob_strain", "effective_susceptible", "recovered", "protected_S_vaccinated", "protected_R_unvaccinated", "protected_R_vaccinated", "ifr_strain", "ihr_strain", "hfr_strain", "ifr_age", "ihr_age", "hfr_age", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_I_P_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "cum_n_S_vacc_skip", "cum_n_E_vacc_skip", "cum_n_I_A_vacc_skip", "cum_n_I_P_vacc_skip", "cum_n_R_vacc_skip", "cum_n_vacc_skip", "diagnoses_admitted", "cum_infections_disag", "D", "S", "D_hosp", "vaccine_missed_doses", "tmp_vaccine_n_candidates", "tmp_vaccine_probability", "T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg", "I_weighted", "IHR_disag_weighted_inc", "HFR_disag_weighted_inc", "IFR_disag_weighted_inc", "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre_1", "T_sero_pos_1", "T_sero_pre_2", "T_sero_pos_2", "T_PCR_pre", "T_PCR_pos"});
+  cpp11::writable::strings nms({"time", "admit_conf_inc", "new_conf_inc", "all_admission_0_9_conf_inc", "all_admission_10_19_conf_inc", "all_admission_20_29_conf_inc", "all_admission_30_39_conf_inc", "all_admission_40_49_conf_inc", "all_admission_50_59_conf_inc", "all_admission_60_69_conf_inc", "all_admission_70_79_conf_inc", "all_admission_80_plus_conf_inc", "cum_infections", "infections_inc", "hospitalisations_inc", "cum_admit_conf", "cum_new_conf", "beta_out", "N_tot_sero_1", "N_tot_sero_2", "N_tot_PCR", "ICU_tot", "general_tot", "hosp_tot", "D_hosp_tot", "D_hosp_0_49_tot", "D_hosp_50_54_tot", "D_hosp_55_59_tot", "D_hosp_60_64_tot", "D_hosp_65_69_tot", "D_hosp_70_74_tot", "D_hosp_75_79_tot", "D_hosp_80_plus_tot", "D_comm_tot", "D_comm_inc", "D_comm_0_49_inc", "D_comm_50_54_inc", "D_comm_55_59_inc", "D_comm_60_64_inc", "D_comm_65_69_inc", "D_comm_70_74_inc", "D_comm_75_79_inc", "D_comm_80_plus_inc", "D_carehomes_tot", "D_carehomes_inc", "D_tot", "D_inc", "D_hosp_inc", "D_hosp_0_49_inc", "D_hosp_50_54_inc", "D_hosp_55_59_inc", "D_hosp_60_64_inc", "D_hosp_65_69_inc", "D_hosp_70_74_inc", "D_hosp_75_79_inc", "D_hosp_80_plus_inc", "sero_pos_1", "sero_pos_2", "cum_sympt_cases", "cum_sympt_cases_non_variant", "cum_sympt_cases_over25", "cum_sympt_cases_non_variant_over25", "cum_sympt_cases_under15", "cum_sympt_cases_15_24", "cum_sympt_cases_25_49", "cum_sympt_cases_50_64", "cum_sympt_cases_65_79", "cum_sympt_cases_80_plus", "sympt_cases_inc", "sympt_cases_non_variant_inc", "sympt_cases_over25_inc", "sympt_cases_non_variant_over25_inc", "sympt_cases_under15_inc", "sympt_cases_15_24_inc", "sympt_cases_25_49_inc", "sympt_cases_50_64_inc", "sympt_cases_65_79_inc", "sympt_cases_80_plus_inc", "ons_positives", "react_positives", "react_5_24_positives", "react_25_34_positives", "react_35_44_positives", "react_45_54_positives", "react_55_64_positives", "react_65_plus_positives", "susceptible", "ihr", "hfr", "ifr", "cum_infections_strain", "infections_inc_strain", "infections_inc_age", "hospitalisations_inc_strain", "hospitalisations_inc_age", "D_non_hosp", "cum_admit_by_age", "N_tot", "prob_strain", "effective_susceptible", "recovered", "protected_S_vaccinated", "protected_R_unvaccinated", "protected_R_vaccinated", "ifr_strain", "ihr_strain", "hfr_strain", "ifr_age", "ihr_age", "hfr_age", "cum_n_S_vaccinated", "cum_n_E_vaccinated", "cum_n_I_A_vaccinated", "cum_n_I_P_vaccinated", "cum_n_R_vaccinated", "cum_n_vaccinated", "cum_n_S_vacc_skip", "cum_n_E_vacc_skip", "cum_n_I_A_vacc_skip", "cum_n_I_P_vacc_skip", "cum_n_R_vacc_skip", "cum_n_vacc_skip", "diagnoses_admitted", "cum_infections_disag", "D", "S", "D_hosp", "vaccine_missed_doses", "tmp_vaccine_n_candidates", "tmp_vaccine_probability", "T_sero_neg_1", "T_sero_neg_2", "R", "T_PCR_neg", "I_weighted", "IHR_disag_weighted_inc", "HFR_disag_weighted_inc", "IFR_disag_weighted_inc", "E", "I_A", "I_P", "I_C_1", "I_C_2", "G_D", "ICU_pre_unconf", "ICU_pre_conf", "H_R_unconf", "H_R_conf", "H_D_unconf", "H_D_conf", "ICU_W_R_unconf", "ICU_W_R_conf", "ICU_W_D_unconf", "ICU_W_D_conf", "ICU_D_unconf", "ICU_D_conf", "W_R_unconf", "W_R_conf", "W_D_unconf", "W_D_conf", "T_sero_pre_1", "T_sero_pos_1", "T_sero_pre_2", "T_sero_pos_2", "T_PCR_pre", "T_PCR_pos"});
   cpp11::writable::list dim(166);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
@@ -9385,96 +8483,6 @@ cpp11::sexp dust_info<lancelot>(const dust::pars_type<lancelot>& pars) {
            "dim"_nm = dim,
            "len"_nm = len,
            "index"_nm = index});
-}
-template <>
-lancelot::data_type dust_data<lancelot>(cpp11::list data) {
-  using real_type = lancelot::real_type;
-  return lancelot::data_type{
-      cpp11::as_cpp<real_type>(data["icu"]),
-      cpp11::as_cpp<real_type>(data["general"]),
-      cpp11::as_cpp<real_type>(data["hosp"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_0_49"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_50_54"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_55_59"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_60_64"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_65_69"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_70_74"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_75_79"]),
-      cpp11::as_cpp<real_type>(data["deaths_hosp_80_plus"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_0_49"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_50_54"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_55_59"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_60_64"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_65_69"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_70_74"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_75_79"]),
-      cpp11::as_cpp<real_type>(data["deaths_comm_80_plus"]),
-      cpp11::as_cpp<real_type>(data["deaths_carehomes"]),
-      cpp11::as_cpp<real_type>(data["deaths"]),
-      cpp11::as_cpp<real_type>(data["deaths_non_hosp"]),
-      cpp11::as_cpp<real_type>(data["admitted"]),
-      cpp11::as_cpp<real_type>(data["diagnoses"]),
-      cpp11::as_cpp<real_type>(data["all_admission"]),
-      cpp11::as_cpp<real_type>(data["all_admission_0_9"]),
-      cpp11::as_cpp<real_type>(data["all_admission_10_19"]),
-      cpp11::as_cpp<real_type>(data["all_admission_20_29"]),
-      cpp11::as_cpp<real_type>(data["all_admission_30_39"]),
-      cpp11::as_cpp<real_type>(data["all_admission_40_49"]),
-      cpp11::as_cpp<real_type>(data["all_admission_50_59"]),
-      cpp11::as_cpp<real_type>(data["all_admission_60_69"]),
-      cpp11::as_cpp<real_type>(data["all_admission_70_79"]),
-      cpp11::as_cpp<real_type>(data["all_admission_80_plus"]),
-      cpp11::as_cpp<real_type>(data["sero_pos_15_64_1"]),
-      cpp11::as_cpp<real_type>(data["sero_tot_15_64_1"]),
-      cpp11::as_cpp<real_type>(data["sero_pos_15_64_2"]),
-      cpp11::as_cpp<real_type>(data["sero_tot_15_64_2"]),
-      cpp11::as_cpp<real_type>(data["pillar2_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_over25_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_over25_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_over25_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_under15_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_under15_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_under15_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_15_24_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_15_24_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_15_24_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_25_49_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_25_49_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_25_49_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_50_64_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_50_64_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_50_64_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_65_79_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_65_79_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_65_79_cases"]),
-      cpp11::as_cpp<real_type>(data["pillar2_80_plus_pos"]),
-      cpp11::as_cpp<real_type>(data["pillar2_80_plus_tot"]),
-      cpp11::as_cpp<real_type>(data["pillar2_80_plus_cases"]),
-      cpp11::as_cpp<real_type>(data["ons_pos"]),
-      cpp11::as_cpp<real_type>(data["ons_tot"]),
-      cpp11::as_cpp<real_type>(data["react_pos"]),
-      cpp11::as_cpp<real_type>(data["react_tot"]),
-      cpp11::as_cpp<real_type>(data["react_5_24_pos"]),
-      cpp11::as_cpp<real_type>(data["react_5_24_tot"]),
-      cpp11::as_cpp<real_type>(data["react_25_34_pos"]),
-      cpp11::as_cpp<real_type>(data["react_25_34_tot"]),
-      cpp11::as_cpp<real_type>(data["react_35_44_pos"]),
-      cpp11::as_cpp<real_type>(data["react_35_44_tot"]),
-      cpp11::as_cpp<real_type>(data["react_45_54_pos"]),
-      cpp11::as_cpp<real_type>(data["react_45_54_tot"]),
-      cpp11::as_cpp<real_type>(data["react_55_64_pos"]),
-      cpp11::as_cpp<real_type>(data["react_55_64_tot"]),
-      cpp11::as_cpp<real_type>(data["react_65_plus_pos"]),
-      cpp11::as_cpp<real_type>(data["react_65_plus_tot"]),
-      cpp11::as_cpp<real_type>(data["strain_non_variant"]),
-      cpp11::as_cpp<real_type>(data["strain_tot"]),
-      cpp11::as_cpp<real_type>(data["strain_over25_non_variant"]),
-      cpp11::as_cpp<real_type>(data["strain_over25_tot"])
-    };
 }
 }
 

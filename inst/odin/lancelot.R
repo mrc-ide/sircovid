@@ -2118,35 +2118,35 @@ update(sympt_cases_80_plus_inc) <- (
   else sympt_cases_80_plus_inc + new_sympt_cases_80_plus)
 
 ## For ONS we exclude the 0-1 (40% of 1) and CHR (19) groups
-initial(ons_pos) <- 0
-update(ons_pos) <- sum(new_T_PCR_pos[1, , , ]) * 3 / 5 +
+initial(ons_positives) <- 0
+update(ons_positives) <- sum(new_T_PCR_pos[1, , , ]) * 3 / 5 +
   sum(new_T_PCR_pos[2:18, , , ])
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
-initial(react_pos) <- 0
-update(react_pos) <- sum(new_T_PCR_pos[2:18, , , ])
+initial(react_positives) <- 0
+update(react_positives) <- sum(new_T_PCR_pos[2:18, , , ])
 
-initial(react_5_24_pos) <- 0
-update(react_5_24_pos) <- sum(new_T_PCR_pos[2:5, , , ])
+initial(react_5_24_positives) <- 0
+update(react_5_24_positives) <- sum(new_T_PCR_pos[2:5, , , ])
 
-initial(react_25_34_pos) <- 0
-update(react_25_34_pos) <- sum(new_T_PCR_pos[6:7, , , ]) +
+initial(react_25_34_positives) <- 0
+update(react_25_34_positives) <- sum(new_T_PCR_pos[6:7, , , ]) +
   sum(new_T_PCR_pos[18, , , ]) * 2 / 8
 
-initial(react_35_44_pos) <- 0
-update(react_35_44_pos) <- sum(new_T_PCR_pos[8:9, , , ]) +
+initial(react_35_44_positives) <- 0
+update(react_35_44_positives) <- sum(new_T_PCR_pos[8:9, , , ]) +
   sum(new_T_PCR_pos[18, , , ]) * 2 / 8
 
-initial(react_45_54_pos) <- 0
-update(react_45_54_pos) <- sum(new_T_PCR_pos[10:11, , , ]) +
+initial(react_45_54_positives) <- 0
+update(react_45_54_positives) <- sum(new_T_PCR_pos[10:11, , , ]) +
   sum(new_T_PCR_pos[18, , , ]) * 2 / 8
 
-initial(react_55_64_pos) <- 0
-update(react_55_64_pos) <- sum(new_T_PCR_pos[12:13, , , ]) +
+initial(react_55_64_positives) <- 0
+update(react_55_64_positives) <- sum(new_T_PCR_pos[12:13, , , ]) +
   sum(new_T_PCR_pos[18, , , ]) * 2 / 8
 
-initial(react_65_plus_pos) <- 0
-update(react_65_plus_pos) <- sum(new_T_PCR_pos[14:17, , , ])
+initial(react_65_plus_positives) <- 0
+update(react_65_plus_positives) <- sum(new_T_PCR_pos[14:17, , , ])
 
 
 ## rel_foi_strain is probability of an infection in group i, vaccination class k
@@ -2482,12 +2482,225 @@ update(hfr_age[]) <- sum(new_HFR_disag_weighted_inc[i, , ]) /
   new_hospitalisations_inc_age[i]
 
 
-config(compare) <- "compare_lancelot.cpp"
-## Parameters and code to support the compare function. Because these
-## do not appear in any odin equation we mark them as "ignore.unused"
-## so that odin doesn't complain that they appear redundant. This
-## means that unwanted things can accumulate here so keep on top of
-## it.
+
+## COMPARE
+exp_noise <- user()
+
+## Hospital bed prevalences
+# icu <- data()
+# phi_ICU <- user()
+# kappa_ICU <- user()
+# icu_with_noise <- phi_ICU * ICU_tot + rexp(exp_noise)
+# compare(icu) ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
+
+# general <- data()
+# phi_general <- user()
+# kappa_general <- user()
+# general_with_noise <- phi_general * general_tot + rexp(exp_noise)
+# compare(general) ~ negative_binomial_mu(kappa_general, general_with_noise)
+
+# hosp <- data()
+# phi_hosp <- user()
+# kappa_hosp <- user()
+# hosp_with_noise <- phi_hosp * hosp_tot + rexp(exp_noise)
+# compare(hosp) ~ negative_binomial_mu(kappa_hosp, hosp_with_noise)
+
+## Hospital deaths
+# phi_death_hosp <- user()
+# kappa_death_hosp <- user()
+
+# deaths_hosp <- data()
+# D_hosp_inc_with_noise <- phi_death_hosp * D_hosp_inc + rexp(exp_noise)
+# compare(deaths_hosp) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_inc_with_noise)
+
+# deaths_hosp_0_49 <- data()
+# D_hosp_0_49_inc_with_noise <- phi_death_hosp * D_hosp_0_49_inc + rexp(exp_noise)
+# compare(deaths_hosp_0_49) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_0_49_inc_with_noise)
+
+# deaths_hosp_50_54 <- data()
+# D_hosp_50_54_inc_with_noise <-
+#   phi_death_hosp * D_hosp_50_54_inc + rexp(exp_noise)
+# compare(deaths_hosp_50_54) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_50_54_inc_with_noise)
+
+# deaths_hosp_55_59 <- data()
+# D_hosp_55_59_inc_with_noise <-
+#   phi_death_hosp * D_hosp_55_59_inc + rexp(exp_noise)
+# compare(deaths_hosp_55_59) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_55_59_inc_with_noise)
+
+# deaths_hosp_60_64 <- data()
+# D_hosp_60_64_inc_with_noise <-
+#   phi_death_hosp * D_hosp_60_64_inc + rexp(exp_noise)
+# compare(deaths_hosp_60_64) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_60_64_inc_with_noise)
+
+# deaths_hosp_65_69 <- data()
+# D_hosp_65_69_inc_with_noise <-
+#   phi_death_hosp * D_hosp_65_69_inc + rexp(exp_noise)
+# compare(deaths_hosp_65_69) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_65_69_inc_with_noise)
+
+# deaths_hosp_70_74 <- data()
+# D_hosp_70_74_inc_with_noise <-
+#   phi_death_hosp * D_hosp_70_74_inc + rexp(exp_noise)
+# compare(deaths_hosp_70_74) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_70_74_inc_with_noise)
+
+# deaths_hosp_75_79 <- data()
+# D_hosp_75_79_inc_with_noise <-
+#   phi_death_hosp * D_hosp_75_79_inc + rexp(exp_noise)
+# compare(deaths_hosp_75_79) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_75_79_inc_with_noise)
+
+# deaths_hosp_80_plus <- data()
+# D_hosp_80_plus_inc_with_noise <-
+#   phi_death_hosp * D_hosp_80_plus_inc + rexp(exp_noise)
+# compare(deaths_hosp_80_plus) ~
+#   negative_binomial_mu(kappa_death_hosp, D_hosp_80_plus_inc_with_noise)
+
+## Community deaths
+# phi_death_comm <- user()
+# kappa_death_comm <- user()
+
+# deaths_comm <- data()
+# D_comm_inc_with_noise <- phi_death_comm * D_comm_inc + rexp(exp_noise)
+# compare(deaths_comm) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_inc_with_noise)
+
+# deaths_comm_0_49 <- data()
+# D_comm_0_49_inc_with_noise <- phi_death_comm * D_comm_0_49_inc + rexp(exp_noise)
+# compare(deaths_comm_0_49) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_0_49_inc_with_noise)
+
+# deaths_comm_50_54 <- data()
+# D_comm_50_54_inc_with_noise <-
+#   phi_death_comm * D_comm_50_54_inc + rexp(exp_noise)
+# compare(deaths_comm_50_54) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_50_54_inc_with_noise)
+
+# deaths_comm_55_59 <- data()
+# D_comm_55_59_inc_with_noise <-
+#   phi_death_comm * D_comm_55_59_inc + rexp(exp_noise)
+# compare(deaths_comm_55_59) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_55_59_inc_with_noise)
+
+# deaths_comm_60_64 <- data()
+# D_comm_60_64_inc_with_noise <-
+#   phi_death_comm * D_comm_60_64_inc + rexp(exp_noise)
+# compare(deaths_comm_60_64) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_60_64_inc_with_noise)
+
+# deaths_comm_65_69 <- data()
+# D_comm_65_69_inc_with_noise <-
+#   phi_death_comm * D_comm_65_69_inc + rexp(exp_noise)
+# compare(deaths_comm_65_69) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_65_69_inc_with_noise)
+
+# deaths_comm_70_74 <- data()
+# D_comm_70_74_inc_with_noise <-
+#   phi_death_comm * D_comm_70_74_inc + rexp(exp_noise)
+# compare(deaths_comm_70_74) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_70_74_inc_with_noise)
+
+# deaths_comm_75_79 <- data()
+# D_comm_75_79_inc_with_noise <-
+#   phi_death_comm * D_comm_75_79_inc + rexp(exp_noise)
+# compare(deaths_comm_75_79) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_75_79_inc_with_noise)
+
+# deaths_comm_80_plus <- data()
+# D_comm_80_plus_inc_with_noise <-
+#   phi_death_comm * D_comm_80_plus_inc + rexp(exp_noise)
+# compare(deaths_comm_80_plus) ~
+#   negative_binomial_mu(kappa_death_comm, D_comm_80_plus_inc_with_noise)
+
+## Other death datastreams
+# deaths_carehomes <- data()
+# phi_death_carehomes <- user()
+# kappa_death_carehomes <- user()
+# D_carehomes_inc_with_noise <-
+#   phi_death_carehomes * D_carehomes_inc + rexp(exp_noise)
+# compare(deaths_carehomes) ~
+#   negative_binomial_mu(kappa_death_carehomes, D_carehomes_inc_with_noise)
+
+# deaths_non_hosp <- data()
+# kappa_death_non_hosp <- user()
+# D_non_hosp_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+#   phi_death_comm * D_comm_inc + rexp(exp_noise)
+# compare(deaths_non_hosp) ~
+#   negative_binomial_mu(kappa_death_non_hosp, D_non_hosp_inc_with_noise)
+
+# deaths <- data()
+# kappa_death <- user()
+# D_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+#   phi_death_comm * D_comm_inc + phi_death_hosp * D_hosp_inc + rexp(exp_noise)
+# compare(deaths) ~
+#   negative_binomial_mu(kappa_death, D_inc_with_noise)
+
+# admitted <- data()
+# diagnoses <- data()
+# all_admission <- data()
+# all_admission_0_9 <- data()
+# all_admission_10_19 <- data()
+# all_admission_20_29 <- data()
+# all_admission_30_39 <- data()
+# all_admission_40_49 <- data()
+# all_admission_50_59 <- data()
+# all_admission_60_69 <- data()
+# all_admission_70_79 <- data()
+# all_admission_80_plus <- data()
+# sero_pos_15_64_1 <- data()
+# sero_tot_15_64_1 <- data()
+# sero_pos_15_64_2 <- data()
+# sero_tot_15_64_2 <- data()
+# pillar2_pos <- data()
+# pillar2_tot <- data()
+# pillar2_cases <- data()
+# pillar2_over25_pos <- data()
+# pillar2_over25_tot <- data()
+# pillar2_over25_cases <- data()
+# pillar2_under15_pos <- data()
+# pillar2_under15_tot <- data()
+# pillar2_under15_cases <- data()
+# pillar2_15_24_pos <- data()
+# pillar2_15_24_tot <- data()
+# pillar2_15_24_cases <- data()
+# pillar2_25_49_pos <- data()
+# pillar2_25_49_tot <- data()
+# pillar2_25_49_cases <- data()
+# pillar2_50_64_pos <- data()
+# pillar2_50_64_tot <- data()
+# pillar2_50_64_cases <- data()
+# pillar2_65_79_pos <- data()
+# pillar2_65_79_tot <- data()
+# pillar2_65_79_cases <- data()
+# pillar2_80_plus_pos <- data()
+# pillar2_80_plus_tot <- data()
+# pillar2_80_plus_cases <- data()
+# ons_pos <- data()
+# ons_tot <- data()
+# react_pos <- data()
+# react_tot <- data()
+# react_5_24_pos <- data()
+# react_5_24_tot <- data()
+# react_25_34_pos <- data()
+# react_25_34_tot <- data()
+# react_35_44_pos <- data()
+# react_35_44_tot <- data()
+# react_45_54_pos <- data()
+# react_45_54_tot <- data()
+# react_55_64_pos <- data()
+# react_55_64_tot <- data()
+# react_65_plus_pos <- data()
+# react_65_plus_tot <- data()
+# strain_non_variant <- data()
+# strain_tot <- data()
+# strain_over25_non_variant <- data()
+# strain_over25_tot <- data()
+
 N_tot_all <- user() # ignore.unused
 N_tot_over25 <- user() # ignore.unused
 N_tot_under15 <- user() # ignore.unused
@@ -2528,21 +2741,6 @@ sero_sensitivity_1 <- user() # ignore.unused
 sero_specificity_1 <- user() # ignore.unused
 sero_sensitivity_2 <- user() # ignore.unused
 sero_specificity_2 <- user() # ignore.unused
-exp_noise <- user() # ignore.unused
-phi_ICU <- user() # ignore.unused
-kappa_ICU <- user() # ignore.unused
-phi_general <- user() # ignore.unused
-kappa_general <- user() # ignore.unused
-phi_hosp <- user() # ignore.unused
-kappa_hosp <- user() # ignore.unused
-phi_death_hosp <- user() # ignore.unused
-kappa_death_hosp <- user() # ignore.unused
-phi_death_comm <- user() # ignore.unused
-kappa_death_comm <- user() # ignore.unused
-phi_death_carehomes <- user() # ignore.unused
-kappa_death_carehomes <- user() # ignore.unused
-kappa_death <- user() # ignore.unused
-kappa_death_non_hosp <- user() # ignore.unused
 phi_admitted <- user() # ignore.unused
 kappa_admitted <- user() # ignore.unused
 phi_diagnoses <- user() # ignore.unused
@@ -2563,3 +2761,24 @@ phi_pillar2_cases_65_79 <- user() # ignore.unused
 phi_pillar2_cases_weekend_65_79 <- user() # ignore.unused
 phi_pillar2_cases_80_plus <- user() # ignore.unused
 phi_pillar2_cases_weekend_80_plus <- user() # ignore.unused
+
+# ll_deaths_hosp + ll_deaths_carehomes +
+#   ll_admitted + ll_diagnoses + ll_all_admission +
+#   ll_deaths_comm + ll_deaths_non_hosp + ll_deaths + ll_deaths_hosp_0_49 +
+#   ll_deaths_hosp_50_54 + ll_deaths_hosp_55_59 + ll_deaths_hosp_60_64 +
+#   ll_deaths_hosp_65_69 + ll_deaths_hosp_70_74 + ll_deaths_hosp_75_79 +
+#   ll_deaths_hosp_80_plus + ll_deaths_comm_0_49 + ll_deaths_comm_50_54 +
+#   ll_deaths_comm_55_59 + ll_deaths_comm_60_64 + ll_deaths_comm_65_69 +
+#   ll_deaths_comm_70_74 + ll_deaths_comm_75_79 + ll_deaths_comm_80_plus +
+#   ll_all_admission_0_9 + ll_all_admission_10_19 + ll_all_admission_20_29 +
+#   ll_all_admission_30_39 + ll_all_admission_40_49 + ll_all_admission_50_59 +
+#   ll_all_admission_60_69 + ll_all_admission_70_79 + ll_all_admission_80_plus +
+#   ll_serology_1 + ll_serology_2 + ll_pillar2_tests + ll_pillar2_cases +
+#   ll_pillar2_over25_tests + ll_pillar2_under15_tests +
+#   ll_pillar2_15_24_tests + ll_pillar2_25_49_tests + ll_pillar2_50_64_tests +
+#   ll_pillar2_65_79_tests + ll_pillar2_80_plus_tests +
+#   ll_pillar2_over25_cases + ll_pillar2_under15_cases +
+#   ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
+#   ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_ons + ll_react +
+#   ll_5_24_react + ll_25_34_react + ll_35_44_react + ll_45_54_react +
+#   ll_55_64_react + ll_65_plus_react + ll_strain + ll_strain_over25

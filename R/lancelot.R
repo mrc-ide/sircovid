@@ -840,14 +840,14 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   sympt_cases_80_plus_inc = index[["sympt_cases_80_plus_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
-                  ons_pos = index[["ons_pos"]],
-                  react_pos = index[["react_pos"]],
-                  react_5_24_pos = index[["react_5_24_pos"]],
-                  react_25_34_pos = index[["react_25_34_pos"]],
-                  react_35_44_pos = index[["react_35_44_pos"]],
-                  react_45_54_pos = index[["react_45_54_pos"]],
-                  react_55_64_pos = index[["react_55_64_pos"]],
-                  react_65_plus_pos = index[["react_65_plus_pos"]])
+                  ons_pos = index[["ons_positives"]],
+                  react_pos = index[["react_positives"]],
+                  react_5_24_pos = index[["react_5_24_positives"]],
+                  react_25_34_pos = index[["react_25_34_positives"]],
+                  react_35_44_pos = index[["react_35_44_positives"]],
+                  react_45_54_pos = index[["react_45_54_positives"]],
+                  react_55_64_pos = index[["react_55_64_positives"]],
+                  react_65_plus_pos = index[["react_65_plus_positives"]])
 
   ## Only incidence versions for the likelihood now. We add time here so it
   ## can be used in the compare, without having to save it.
