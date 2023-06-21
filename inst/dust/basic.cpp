@@ -661,7 +661,6 @@ public:
        int i = shared->seed_age_band;
        internal.n_SE[i - 1] = dust::math::min(S[i - 1], internal.n_SE[i - 1] + dust::random::poisson<real_type>(rng_state, seed));
     }
-    real_type new_D_inc = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? tot_new_D : D_inc + tot_new_D);
     for (int i = 1; i <= shared->dim_new_I_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_new_I_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_new_I_ICU_3; ++k) {
@@ -669,6 +668,7 @@ public:
         }
       }
     }
+    state_next[4] = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? tot_new_D : D_inc + tot_new_D);
     state_next[3] = D_tot + tot_new_D;
     for (int i = 1; i <= shared->dim_I_C_1; ++i) {
       for (int j = 1; j <= shared->dim_I_C_2; ++j) {
@@ -707,7 +707,6 @@ public:
         }
       }
     }
-    state_next[4] = new_D_inc;
     for (int i = 1; i <= shared->dim_I_ICU_1; ++i) {
       for (int j = 1; j <= shared->dim_I_ICU_2; ++j) {
         for (int k = 1; k <= shared->dim_I_ICU_3; ++k) {
@@ -735,82 +734,10 @@ public:
     }
   }
   real_type compare_data(const real_type * state, const data_type& data, rng_state_type& rng_state) {
-    const real_type * I_hosp = state + shared->offset_variable_I_hosp;
-    const real_type * I_ICU = state + shared->offset_variable_I_ICU;
+    const real_type I_ICU_tot = state[2];
     const real_type D_inc = state[4];
-    for (int i = 1; i <= shared->dim_n_II_ICU_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_II_ICU_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_II_ICU_3; ++k) {
-          internal.n_II_ICU[i - 1 + shared->dim_n_II_ICU_1 * (j - 1) + shared->dim_n_II_ICU_12 * (k - 1)] = dust::random::binomial<real_type>(rng_state, I_ICU[shared->dim_I_ICU_12 * (k - 1) + shared->dim_I_ICU_1 * (j - 1) + i - 1], shared->p_II_ICU);
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_II_hosp_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_II_hosp_2; ++j) {
-        for (int k = 1; k <= shared->dim_n_II_hosp_3; ++k) {
-          internal.n_II_hosp[i - 1 + shared->dim_n_II_hosp_1 * (j - 1) + shared->dim_n_II_hosp_12 * (k - 1)] = dust::random::binomial<real_type>(rng_state, I_hosp[shared->dim_I_hosp_12 * (k - 1) + shared->dim_I_hosp_1 * (j - 1) + i - 1], shared->p_II_hosp);
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_ICU_to_R_hosp_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_ICU_to_R_hosp_2; ++j) {
-        internal.n_ICU_to_R_hosp[i - 1 + shared->dim_n_ICU_to_R_hosp_1 * (j - 1)] = dust::random::binomial<real_type>(rng_state, internal.n_II_ICU[shared->dim_n_II_ICU_12 * (j - 1) + shared->dim_n_II_ICU_1 * (shared->k_ICU - 1) + i - 1], shared->p_recov_ICU[i - 1]);
-      }
-    }
-    for (int i = 1; i <= shared->dim_n_death_hosp_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_death_hosp_2; ++j) {
-        internal.n_death_hosp[i - 1 + shared->dim_n_death_hosp_1 * (j - 1)] = dust::random::binomial<real_type>(rng_state, internal.n_II_hosp[shared->dim_n_II_hosp_12 * (j - 1) + shared->dim_n_II_hosp_1 * (shared->k_hosp - 1) + i - 1], shared->p_death_hosp[i - 1]);
-      }
-    }
-    for (int i = 1; i <= shared->dim_delta_D; ++i) {
-      internal.delta_D[i - 1] = odin_sum3<real_type>(internal.n_II_ICU.data(), i - 1, i, shared->k_ICU - 1, shared->k_ICU, 0, shared->dim_n_II_ICU_3, shared->dim_n_II_ICU_1, shared->dim_n_II_ICU_12) - odin_sum2<real_type>(internal.n_ICU_to_R_hosp.data(), i - 1, i, 0, shared->dim_n_ICU_to_R_hosp_2, shared->dim_n_ICU_to_R_hosp_1) + odin_sum2<real_type>(internal.n_death_hosp.data(), i - 1, i, 0, shared->dim_n_death_hosp_2, shared->dim_n_death_hosp_1);
-    }
-    for (int i = 1; i <= shared->dim_n_hosp_to_ICU_1; ++i) {
-      for (int j = 1; j <= shared->dim_n_hosp_to_ICU_2; ++j) {
-        internal.n_hosp_to_ICU[i - 1 + shared->dim_n_hosp_to_ICU_1 * (j - 1)] = dust::random::binomial<real_type>(rng_state, internal.n_II_hosp[shared->dim_n_II_hosp_12 * (j - 1) + shared->dim_n_II_hosp_1 * (shared->k_hosp - 1) + i - 1] - internal.n_death_hosp[shared->dim_n_death_hosp_1 * (j - 1) + i - 1], 1 - shared->p_recov_hosp[i - 1] - shared->p_death_hosp[i - 1]);
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_II_ICU_1; ++i) {
-      int j = 1;
-      for (int k = 1; k <= shared->dim_aux_II_ICU_3; ++k) {
-        internal.aux_II_ICU[i - 1 + shared->dim_aux_II_ICU_1 * (j - 1) + shared->dim_aux_II_ICU_12 * (k - 1)] = internal.n_hosp_to_ICU[shared->dim_n_hosp_to_ICU_1 * (k - 1) + i - 1];
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_II_ICU_1; ++i) {
-      for (int j = 2; j <= shared->k_ICU; ++j) {
-        for (int k = 1; k <= shared->dim_aux_II_ICU_3; ++k) {
-          internal.aux_II_ICU[i - 1 + shared->dim_aux_II_ICU_1 * (j - 1) + shared->dim_aux_II_ICU_12 * (k - 1)] = internal.n_II_ICU[shared->dim_n_II_ICU_12 * (k - 1) + shared->dim_n_II_ICU_1 * (j - 1 - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_aux_II_ICU_1; ++i) {
-      for (int j = 1; j <= shared->k_ICU; ++j) {
-        for (int k = 1; k <= shared->dim_aux_II_ICU_3; ++k) {
-          internal.aux_II_ICU[i - 1 + shared->dim_aux_II_ICU_1 * (j - 1) + shared->dim_aux_II_ICU_12 * (k - 1)] = internal.aux_II_ICU[shared->dim_aux_II_ICU_12 * (k - 1) + shared->dim_aux_II_ICU_1 * (j - 1) + i - 1] - internal.n_II_ICU[shared->dim_n_II_ICU_12 * (k - 1) + shared->dim_n_II_ICU_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    for (int i = 1; i <= shared->dim_new_D; ++i) {
-      internal.new_D[i - 1] = internal.delta_D[i - 1];
-    }
-    for (int i = 1; i <= shared->dim_delta_I_ICU_1; ++i) {
-      for (int j = 1; j <= shared->dim_delta_I_ICU_2; ++j) {
-        for (int k = 1; k <= shared->dim_delta_I_ICU_3; ++k) {
-          internal.delta_I_ICU[i - 1 + shared->dim_delta_I_ICU_1 * (j - 1) + shared->dim_delta_I_ICU_12 * (k - 1)] = internal.aux_II_ICU[shared->dim_aux_II_ICU_12 * (k - 1) + shared->dim_aux_II_ICU_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    real_type tot_new_D = odin_sum1<real_type>(internal.new_D.data(), 0, shared->dim_new_D);
-    real_type new_D_inc = (fmodr<real_type>(step, shared->steps_per_day) == 0 ? tot_new_D : D_inc + tot_new_D);
-    for (int i = 1; i <= shared->dim_new_I_ICU_1; ++i) {
-      for (int j = 1; j <= shared->dim_new_I_ICU_2; ++j) {
-        for (int k = 1; k <= shared->dim_new_I_ICU_3; ++k) {
-          internal.new_I_ICU[i - 1 + shared->dim_new_I_ICU_1 * (j - 1) + shared->dim_new_I_ICU_12 * (k - 1)] = I_ICU[shared->dim_I_ICU_12 * (k - 1) + shared->dim_I_ICU_1 * (j - 1) + i - 1] + internal.delta_I_ICU[shared->dim_delta_I_ICU_12 * (k - 1) + shared->dim_delta_I_ICU_1 * (j - 1) + i - 1];
-        }
-      }
-    }
-    real_type deaths_with_noise = shared->phi_death * new_D_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
-    real_type icu_with_noise = shared->phi_ICU * odin_sum1<real_type>(internal.new_I_ICU.data(), 0, shared->dim_new_I_ICU) + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
+    real_type deaths_with_noise = shared->phi_death * D_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
+    real_type icu_with_noise = shared->phi_ICU * I_ICU_tot + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     const auto compare_deaths = dust::density::negative_binomial_mu(data.deaths, shared->kappa_death, deaths_with_noise, true);
     const auto compare_icu = dust::density::negative_binomial_mu(data.icu, shared->kappa_ICU, icu_with_noise, true);
     return compare_deaths + compare_icu;

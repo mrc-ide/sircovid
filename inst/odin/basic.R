@@ -170,9 +170,9 @@ update(I_ICU_tot) <- sum(new_I_ICU)
 tot_new_D <- sum(new_D)
 initial(D_tot) <- 0
 update(D_tot) <- D_tot + tot_new_D
-new_D_inc <- if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
 initial(D_inc) <- 0
-update(D_inc) <- new_D_inc
+update(D_inc) <-
+  if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
 
 
 ## User defined parameters - default in parentheses:
@@ -332,8 +332,8 @@ kappa_death <- user()
 icu <- data()
 deaths <- data()
 
-icu_with_noise <- phi_ICU * sum(new_I_ICU) + rexp(exp_noise)
+icu_with_noise <- phi_ICU * I_ICU_tot + rexp(exp_noise)
 compare(icu) ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
 
-deaths_with_noise <- phi_death * new_D_inc + rexp(exp_noise)
+deaths_with_noise <- phi_death * D_inc + rexp(exp_noise)
 compare(deaths) ~ negative_binomial_mu(kappa_death, deaths_with_noise)
