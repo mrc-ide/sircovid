@@ -348,6 +348,8 @@ test_that("Test compiled lancelot components", {
     c(pillar2_50_64_cases = 50),
     c(pillar2_65_79_cases = 50),
     c(pillar2_80_plus_cases = 50),
+    c(sero_pos_15_64_1 = 15, sero_tot_15_64_1 = 70),
+    c(sero_pos_15_64_2 = 25, sero_tot_15_64_2 = 80),
     c(ons_pos = 20, ons_tot = 60),
     c(react_pos = 10, react_tot = 50),
     c(react_5_24_pos = 1, react_5_24_tot = 5),
@@ -356,7 +358,8 @@ test_that("Test compiled lancelot components", {
     c(react_45_54_pos = 2, react_45_54_tot = 10),
     c(react_55_64_pos = 2, react_55_64_tot = 10),
     c(react_65_plus_pos = 2, react_65_plus_tot = 10),
-    c(strain_non_variant = 10, strain_tot = 50))
+    c(strain_non_variant = 10, strain_tot = 50),
+    c(strain_over25_non_variant = 15, strain_over25_tot = 65))
 
   for (p in partial) {
     d_test <- update_data(p)

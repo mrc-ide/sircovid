@@ -2487,449 +2487,622 @@ update(hfr_age[]) <- sum(new_HFR_disag_weighted_inc[i, , ]) /
 exp_noise <- user()
 
 ## Hospital bed prevalences
-# icu <- data()
-# phi_ICU <- user()
-# kappa_ICU <- user()
-# icu_with_noise <- phi_ICU * ICU_tot + rexp(exp_noise)
-# compare(icu) ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
+icu <- data()
+phi_ICU <- user()
+kappa_ICU <- user()
+icu_with_noise <- phi_ICU * ICU_tot + rexp(exp_noise)
+compare(icu) ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
 
-# general <- data()
-# phi_general <- user()
-# kappa_general <- user()
-# general_with_noise <- phi_general * general_tot + rexp(exp_noise)
-# compare(general) ~ negative_binomial_mu(kappa_general, general_with_noise)
+general <- data()
+phi_general <- user()
+kappa_general <- user()
+general_with_noise <- phi_general * general_tot + rexp(exp_noise)
+compare(general) ~ negative_binomial_mu(kappa_general, general_with_noise)
 
-# hosp <- data()
-# phi_hosp <- user()
-# kappa_hosp <- user()
-# hosp_with_noise <- phi_hosp * hosp_tot + rexp(exp_noise)
-# compare(hosp) ~ negative_binomial_mu(kappa_hosp, hosp_with_noise)
+hosp <- data()
+phi_hosp <- user()
+kappa_hosp <- user()
+hosp_with_noise <- phi_hosp * hosp_tot + rexp(exp_noise)
+compare(hosp) ~ negative_binomial_mu(kappa_hosp, hosp_with_noise)
 
 ## Hospital deaths
-# phi_death_hosp <- user()
-# kappa_death_hosp <- user()
+phi_death_hosp <- user()
+kappa_death_hosp <- user()
 
-# deaths_hosp <- data()
-# D_hosp_inc_with_noise <- phi_death_hosp * D_hosp_inc + rexp(exp_noise)
-# compare(deaths_hosp) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_inc_with_noise)
+deaths_hosp <- data()
+D_hosp_inc_with_noise <- phi_death_hosp * D_hosp_inc + rexp(exp_noise)
+compare(deaths_hosp) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_inc_with_noise)
 
-# deaths_hosp_0_49 <- data()
-# D_hosp_0_49_inc_with_noise <- phi_death_hosp * D_hosp_0_49_inc + rexp(exp_noise)
-# compare(deaths_hosp_0_49) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_0_49_inc_with_noise)
+deaths_hosp_0_49 <- data()
+D_hosp_0_49_inc_with_noise <- phi_death_hosp * D_hosp_0_49_inc + rexp(exp_noise)
+compare(deaths_hosp_0_49) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_0_49_inc_with_noise)
 
-# deaths_hosp_50_54 <- data()
-# D_hosp_50_54_inc_with_noise <-
-#   phi_death_hosp * D_hosp_50_54_inc + rexp(exp_noise)
-# compare(deaths_hosp_50_54) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_50_54_inc_with_noise)
+deaths_hosp_50_54 <- data()
+D_hosp_50_54_inc_with_noise <-
+  phi_death_hosp * D_hosp_50_54_inc + rexp(exp_noise)
+compare(deaths_hosp_50_54) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_50_54_inc_with_noise)
 
-# deaths_hosp_55_59 <- data()
-# D_hosp_55_59_inc_with_noise <-
-#   phi_death_hosp * D_hosp_55_59_inc + rexp(exp_noise)
-# compare(deaths_hosp_55_59) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_55_59_inc_with_noise)
+deaths_hosp_55_59 <- data()
+D_hosp_55_59_inc_with_noise <-
+  phi_death_hosp * D_hosp_55_59_inc + rexp(exp_noise)
+compare(deaths_hosp_55_59) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_55_59_inc_with_noise)
 
-# deaths_hosp_60_64 <- data()
-# D_hosp_60_64_inc_with_noise <-
-#   phi_death_hosp * D_hosp_60_64_inc + rexp(exp_noise)
-# compare(deaths_hosp_60_64) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_60_64_inc_with_noise)
+deaths_hosp_60_64 <- data()
+D_hosp_60_64_inc_with_noise <-
+  phi_death_hosp * D_hosp_60_64_inc + rexp(exp_noise)
+compare(deaths_hosp_60_64) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_60_64_inc_with_noise)
 
-# deaths_hosp_65_69 <- data()
-# D_hosp_65_69_inc_with_noise <-
-#   phi_death_hosp * D_hosp_65_69_inc + rexp(exp_noise)
-# compare(deaths_hosp_65_69) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_65_69_inc_with_noise)
+deaths_hosp_65_69 <- data()
+D_hosp_65_69_inc_with_noise <-
+  phi_death_hosp * D_hosp_65_69_inc + rexp(exp_noise)
+compare(deaths_hosp_65_69) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_65_69_inc_with_noise)
 
-# deaths_hosp_70_74 <- data()
-# D_hosp_70_74_inc_with_noise <-
-#   phi_death_hosp * D_hosp_70_74_inc + rexp(exp_noise)
-# compare(deaths_hosp_70_74) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_70_74_inc_with_noise)
+deaths_hosp_70_74 <- data()
+D_hosp_70_74_inc_with_noise <-
+  phi_death_hosp * D_hosp_70_74_inc + rexp(exp_noise)
+compare(deaths_hosp_70_74) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_70_74_inc_with_noise)
 
-# deaths_hosp_75_79 <- data()
-# D_hosp_75_79_inc_with_noise <-
-#   phi_death_hosp * D_hosp_75_79_inc + rexp(exp_noise)
-# compare(deaths_hosp_75_79) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_75_79_inc_with_noise)
+deaths_hosp_75_79 <- data()
+D_hosp_75_79_inc_with_noise <-
+  phi_death_hosp * D_hosp_75_79_inc + rexp(exp_noise)
+compare(deaths_hosp_75_79) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_75_79_inc_with_noise)
 
-# deaths_hosp_80_plus <- data()
-# D_hosp_80_plus_inc_with_noise <-
-#   phi_death_hosp * D_hosp_80_plus_inc + rexp(exp_noise)
-# compare(deaths_hosp_80_plus) ~
-#   negative_binomial_mu(kappa_death_hosp, D_hosp_80_plus_inc_with_noise)
+deaths_hosp_80_plus <- data()
+D_hosp_80_plus_inc_with_noise <-
+  phi_death_hosp * D_hosp_80_plus_inc + rexp(exp_noise)
+compare(deaths_hosp_80_plus) ~
+  negative_binomial_mu(kappa_death_hosp, D_hosp_80_plus_inc_with_noise)
 
 ## Community deaths
-# phi_death_comm <- user()
-# kappa_death_comm <- user()
+phi_death_comm <- user()
+kappa_death_comm <- user()
 
-# deaths_comm <- data()
-# D_comm_inc_with_noise <- phi_death_comm * D_comm_inc + rexp(exp_noise)
-# compare(deaths_comm) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_inc_with_noise)
+deaths_comm <- data()
+D_comm_inc_with_noise <- phi_death_comm * D_comm_inc + rexp(exp_noise)
+compare(deaths_comm) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_inc_with_noise)
 
-# deaths_comm_0_49 <- data()
-# D_comm_0_49_inc_with_noise <- phi_death_comm * D_comm_0_49_inc + rexp(exp_noise)
-# compare(deaths_comm_0_49) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_0_49_inc_with_noise)
+deaths_comm_0_49 <- data()
+D_comm_0_49_inc_with_noise <- phi_death_comm * D_comm_0_49_inc + rexp(exp_noise)
+compare(deaths_comm_0_49) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_0_49_inc_with_noise)
 
-# deaths_comm_50_54 <- data()
-# D_comm_50_54_inc_with_noise <-
-#   phi_death_comm * D_comm_50_54_inc + rexp(exp_noise)
-# compare(deaths_comm_50_54) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_50_54_inc_with_noise)
+deaths_comm_50_54 <- data()
+D_comm_50_54_inc_with_noise <-
+  phi_death_comm * D_comm_50_54_inc + rexp(exp_noise)
+compare(deaths_comm_50_54) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_50_54_inc_with_noise)
 
-# deaths_comm_55_59 <- data()
-# D_comm_55_59_inc_with_noise <-
-#   phi_death_comm * D_comm_55_59_inc + rexp(exp_noise)
-# compare(deaths_comm_55_59) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_55_59_inc_with_noise)
+deaths_comm_55_59 <- data()
+D_comm_55_59_inc_with_noise <-
+  phi_death_comm * D_comm_55_59_inc + rexp(exp_noise)
+compare(deaths_comm_55_59) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_55_59_inc_with_noise)
 
-# deaths_comm_60_64 <- data()
-# D_comm_60_64_inc_with_noise <-
-#   phi_death_comm * D_comm_60_64_inc + rexp(exp_noise)
-# compare(deaths_comm_60_64) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_60_64_inc_with_noise)
+deaths_comm_60_64 <- data()
+D_comm_60_64_inc_with_noise <-
+  phi_death_comm * D_comm_60_64_inc + rexp(exp_noise)
+compare(deaths_comm_60_64) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_60_64_inc_with_noise)
 
-# deaths_comm_65_69 <- data()
-# D_comm_65_69_inc_with_noise <-
-#   phi_death_comm * D_comm_65_69_inc + rexp(exp_noise)
-# compare(deaths_comm_65_69) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_65_69_inc_with_noise)
+deaths_comm_65_69 <- data()
+D_comm_65_69_inc_with_noise <-
+  phi_death_comm * D_comm_65_69_inc + rexp(exp_noise)
+compare(deaths_comm_65_69) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_65_69_inc_with_noise)
 
-# deaths_comm_70_74 <- data()
-# D_comm_70_74_inc_with_noise <-
-#   phi_death_comm * D_comm_70_74_inc + rexp(exp_noise)
-# compare(deaths_comm_70_74) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_70_74_inc_with_noise)
+deaths_comm_70_74 <- data()
+D_comm_70_74_inc_with_noise <-
+  phi_death_comm * D_comm_70_74_inc + rexp(exp_noise)
+compare(deaths_comm_70_74) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_70_74_inc_with_noise)
 
-# deaths_comm_75_79 <- data()
-# D_comm_75_79_inc_with_noise <-
-#   phi_death_comm * D_comm_75_79_inc + rexp(exp_noise)
-# compare(deaths_comm_75_79) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_75_79_inc_with_noise)
+deaths_comm_75_79 <- data()
+D_comm_75_79_inc_with_noise <-
+  phi_death_comm * D_comm_75_79_inc + rexp(exp_noise)
+compare(deaths_comm_75_79) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_75_79_inc_with_noise)
 
-# deaths_comm_80_plus <- data()
-# D_comm_80_plus_inc_with_noise <-
-#   phi_death_comm * D_comm_80_plus_inc + rexp(exp_noise)
-# compare(deaths_comm_80_plus) ~
-#   negative_binomial_mu(kappa_death_comm, D_comm_80_plus_inc_with_noise)
+deaths_comm_80_plus <- data()
+D_comm_80_plus_inc_with_noise <-
+  phi_death_comm * D_comm_80_plus_inc + rexp(exp_noise)
+compare(deaths_comm_80_plus) ~
+  negative_binomial_mu(kappa_death_comm, D_comm_80_plus_inc_with_noise)
 
 ## Other death datastreams
-# deaths_carehomes <- data()
-# phi_death_carehomes <- user()
-# kappa_death_carehomes <- user()
-# D_carehomes_inc_with_noise <-
-#   phi_death_carehomes * D_carehomes_inc + rexp(exp_noise)
-# compare(deaths_carehomes) ~
-#   negative_binomial_mu(kappa_death_carehomes, D_carehomes_inc_with_noise)
+deaths_carehomes <- data()
+phi_death_carehomes <- user()
+kappa_death_carehomes <- user()
+D_carehomes_inc_with_noise <-
+  phi_death_carehomes * D_carehomes_inc + rexp(exp_noise)
+compare(deaths_carehomes) ~
+  negative_binomial_mu(kappa_death_carehomes, D_carehomes_inc_with_noise)
 
-# deaths_non_hosp <- data()
-# kappa_death_non_hosp <- user()
-# D_non_hosp_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
-#   phi_death_comm * D_comm_inc + rexp(exp_noise)
-# compare(deaths_non_hosp) ~
-#   negative_binomial_mu(kappa_death_non_hosp, D_non_hosp_inc_with_noise)
+deaths_non_hosp <- data()
+kappa_death_non_hosp <- user()
+D_non_hosp_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+  phi_death_comm * D_comm_inc + rexp(exp_noise)
+compare(deaths_non_hosp) ~
+  negative_binomial_mu(kappa_death_non_hosp, D_non_hosp_inc_with_noise)
 
-# deaths <- data()
-# kappa_death <- user()
-# D_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
-#   phi_death_comm * D_comm_inc + phi_death_hosp * D_hosp_inc + rexp(exp_noise)
-# compare(deaths) ~
-#   negative_binomial_mu(kappa_death, D_inc_with_noise)
+deaths <- data()
+kappa_death <- user()
+D_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+  phi_death_comm * D_comm_inc + phi_death_hosp * D_hosp_inc + rexp(exp_noise)
+compare(deaths) ~
+  negative_binomial_mu(kappa_death, D_inc_with_noise)
 
 ## Hospital admissions
-# admitted <- data()
-# phi_admitted <- user()
-# kappa_admitted <- user()
-# admitted_with_noise <- phi_admitted * admit_conf_inc + rexp(exp_noise)
-# compare(admitted) ~ negative_binomial_mu(kappa_admitted, admitted_with_noise)
+admitted <- data()
+phi_admitted <- user()
+kappa_admitted <- user()
+admitted_with_noise <- phi_admitted * admit_conf_inc + rexp(exp_noise)
+compare(admitted) ~ negative_binomial_mu(kappa_admitted, admitted_with_noise)
 
-# diagnoses <- data()
-# phi_diagnoses <- user()
-# kappa_diagnoses <- user()
-# diagnoses_with_noise <- phi_diagnoses * new_conf_inc + rexp(exp_noise)
-# compare(diagnoses) ~ negative_binomial_mu(kappa_diagnoses, diagnoses_with_noise)
+diagnoses <- data()
+phi_diagnoses <- user()
+kappa_diagnoses <- user()
+diagnoses_with_noise <- phi_diagnoses * new_conf_inc + rexp(exp_noise)
+compare(diagnoses) ~ negative_binomial_mu(kappa_diagnoses, diagnoses_with_noise)
 
-# all_admission <- data()
-# phi_all_admission <- user()
-# kappa_all_admission <- user()
-# all_admission_with_noise <-
-#   phi_all_admission * (admit_conf_inc + new_conf_inc) + rexp(exp_noise)
-# compare(all_admission) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_with_noise)
+all_admission <- data()
+phi_all_admission <- user()
+kappa_all_admission <- user()
+all_admission_with_noise <-
+  phi_all_admission * (admit_conf_inc + new_conf_inc) + rexp(exp_noise)
+compare(all_admission) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_with_noise)
 
-# all_admission_0_9 <- data()
-# all_admission_0_9_with_noise <-
-#   phi_all_admission * all_admission_0_9_conf_inc + rexp(exp_noise)
-# compare(all_admission_0_9) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_0_9_with_noise)
+all_admission_0_9 <- data()
+all_admission_0_9_with_noise <-
+  phi_all_admission * all_admission_0_9_conf_inc + rexp(exp_noise)
+compare(all_admission_0_9) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_0_9_with_noise)
 
-# all_admission_10_19 <- data()
-# all_admission_10_19_with_noise <-
-#   phi_all_admission * all_admission_10_19_conf_inc + rexp(exp_noise)
-# compare(all_admission_10_19) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_10_19_with_noise)
+all_admission_10_19 <- data()
+all_admission_10_19_with_noise <-
+  phi_all_admission * all_admission_10_19_conf_inc + rexp(exp_noise)
+compare(all_admission_10_19) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_10_19_with_noise)
 
-# all_admission_20_29 <- data()
-# all_admission_20_29_with_noise <-
-#   phi_all_admission * all_admission_20_29_conf_inc + rexp(exp_noise)
-# compare(all_admission_20_29) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_20_29_with_noise)
+all_admission_20_29 <- data()
+all_admission_20_29_with_noise <-
+  phi_all_admission * all_admission_20_29_conf_inc + rexp(exp_noise)
+compare(all_admission_20_29) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_20_29_with_noise)
 
-# all_admission_30_39 <- data()
-# all_admission_30_39_with_noise <-
-#   phi_all_admission * all_admission_30_39_conf_inc + rexp(exp_noise)
-# compare(all_admission_30_39) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_30_39_with_noise)
+all_admission_30_39 <- data()
+all_admission_30_39_with_noise <-
+  phi_all_admission * all_admission_30_39_conf_inc + rexp(exp_noise)
+compare(all_admission_30_39) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_30_39_with_noise)
 
-# all_admission_40_49 <- data()
-# all_admission_40_49_with_noise <-
-#   phi_all_admission * all_admission_40_49_conf_inc + rexp(exp_noise)
-# compare(all_admission_40_49) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_40_49_with_noise)
+all_admission_40_49 <- data()
+all_admission_40_49_with_noise <-
+  phi_all_admission * all_admission_40_49_conf_inc + rexp(exp_noise)
+compare(all_admission_40_49) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_40_49_with_noise)
 
-# all_admission_50_59 <- data()
-# all_admission_50_59_with_noise <-
-#   phi_all_admission * all_admission_50_59_conf_inc + rexp(exp_noise)
-# compare(all_admission_50_59) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_50_59_with_noise)
+all_admission_50_59 <- data()
+all_admission_50_59_with_noise <-
+  phi_all_admission * all_admission_50_59_conf_inc + rexp(exp_noise)
+compare(all_admission_50_59) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_50_59_with_noise)
 
-# all_admission_60_69 <- data()
-# all_admission_60_69_with_noise <-
-#   phi_all_admission * all_admission_60_69_conf_inc + rexp(exp_noise)
-# compare(all_admission_60_69) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_60_69_with_noise)
+all_admission_60_69 <- data()
+all_admission_60_69_with_noise <-
+  phi_all_admission * all_admission_60_69_conf_inc + rexp(exp_noise)
+compare(all_admission_60_69) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_60_69_with_noise)
 
-# all_admission_70_79 <- data()
-# all_admission_70_79_with_noise <-
-#   phi_all_admission * all_admission_70_79_conf_inc + rexp(exp_noise)
-# compare(all_admission_70_79) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_70_79_with_noise)
+all_admission_70_79 <- data()
+all_admission_70_79_with_noise <-
+  phi_all_admission * all_admission_70_79_conf_inc + rexp(exp_noise)
+compare(all_admission_70_79) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_70_79_with_noise)
 
-# all_admission_80_plus <- data()
-# all_admission_80_plus_with_noise <-
-#   phi_all_admission * all_admission_80_plus_conf_inc + rexp(exp_noise)
-# compare(all_admission_80_plus) ~
-#   negative_binomial_mu(kappa_all_admission, all_admission_80_plus_with_noise)
+all_admission_80_plus <- data()
+all_admission_80_plus_with_noise <-
+  phi_all_admission * all_admission_80_plus_conf_inc + rexp(exp_noise)
+compare(all_admission_80_plus) ~
+  negative_binomial_mu(kappa_all_admission, all_admission_80_plus_with_noise)
 
 ## Pillar 2 positivity
-# pillar2_sensitivity <- user()
-# pillar2_specificity <- user()
-# rho_pillar2_tests <- user()
+pillar2_sensitivity <- user()
+pillar2_specificity <- user()
+rho_pillar2_tests <- user()
 
-# pillar2_under15_pos <- data()
-# pillar2_under15_tot <- data()
-# N_tot_under15 <- user()
-# p_NC_under15 <- user()
-# p_NC_weekend_under15 <- user()
-# p_NC_today_under15 <-
-#   if ((time + 3) %% 7 < 2) p_NC_weekend_under15 else p_NC_under15
-# mod_pillar2_under15_pos <- sympt_cases_under15_inc + rexp(exp_noise)
-# mod_pillar2_under15_neg <-
-#   p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
-#   rexp(exp_noise)
-# mod_pillar2_under15_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_under15_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_under15_neg) /
-#   (mod_pillar2_under15_pos + mod_pillar2_under15_neg)
-# compare(pillar2_under15_pos) ~
-#   beta_binomial(pillar2_under15_tot, mod_pillar2_under15_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_under15_pos <- data()
+pillar2_under15_tot <- data()
+N_tot_under15 <- user()
+p_NC_under15 <- user()
+p_NC_weekend_under15 <- user()
+p_NC_today_under15 <-
+  if ((time + 3) %% 7 < 2) p_NC_weekend_under15 else p_NC_under15
+mod_pillar2_under15_pos <- sympt_cases_under15_inc + rexp(exp_noise)
+mod_pillar2_under15_neg <-
+  p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
+  rexp(exp_noise)
+mod_pillar2_under15_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_under15_pos +
+     (1 - pillar2_specificity) * mod_pillar2_under15_neg) /
+  (mod_pillar2_under15_pos + mod_pillar2_under15_neg)
+compare(pillar2_under15_pos) ~
+  beta_binomial(pillar2_under15_tot, mod_pillar2_under15_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_15_24_pos <- data()
-# pillar2_15_24_tot <- data()
-# N_tot_15_24 <- user()
-# p_NC_15_24 <- user()
-# p_NC_weekend_15_24 <- user()
-# p_NC_today_15_24 <- if ((time + 3) %% 7 < 2) p_NC_weekend_15_24 else p_NC_15_24
-# mod_pillar2_15_24_pos <- sympt_cases_15_24_inc + rexp(exp_noise)
-# mod_pillar2_15_24_neg <-
-#   p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + rexp(exp_noise)
-# mod_pillar2_15_24_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_15_24_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_15_24_neg) /
-#   (mod_pillar2_15_24_pos + mod_pillar2_15_24_neg)
-# compare(pillar2_15_24_pos) ~
-#   beta_binomial(pillar2_15_24_tot, mod_pillar2_15_24_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_15_24_pos <- data()
+pillar2_15_24_tot <- data()
+N_tot_15_24 <- user()
+p_NC_15_24 <- user()
+p_NC_weekend_15_24 <- user()
+p_NC_today_15_24 <- if ((time + 3) %% 7 < 2) p_NC_weekend_15_24 else p_NC_15_24
+mod_pillar2_15_24_pos <- sympt_cases_15_24_inc + rexp(exp_noise)
+mod_pillar2_15_24_neg <-
+  p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + rexp(exp_noise)
+mod_pillar2_15_24_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_15_24_pos +
+     (1 - pillar2_specificity) * mod_pillar2_15_24_neg) /
+  (mod_pillar2_15_24_pos + mod_pillar2_15_24_neg)
+compare(pillar2_15_24_pos) ~
+  beta_binomial(pillar2_15_24_tot, mod_pillar2_15_24_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_25_49_pos <- data()
-# pillar2_25_49_tot <- data()
-# N_tot_25_49 <- user()
-# p_NC_25_49 <- user()
-# p_NC_weekend_25_49 <- user()
-# p_NC_today_25_49 <- if ((time + 3) %% 7 < 2) p_NC_weekend_25_49 else p_NC_25_49
-# mod_pillar2_25_49_pos <- sympt_cases_25_49_inc + rexp(exp_noise)
-# mod_pillar2_25_49_neg <-
-#   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + rexp(exp_noise)
-# mod_pillar2_25_49_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_25_49_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_25_49_neg) /
-#   (mod_pillar2_25_49_pos + mod_pillar2_25_49_neg)
-# compare(pillar2_25_49_pos) ~
-#   beta_binomial(pillar2_25_49_tot, mod_pillar2_25_49_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_25_49_pos <- data()
+pillar2_25_49_tot <- data()
+N_tot_25_49 <- user()
+p_NC_25_49 <- user()
+p_NC_weekend_25_49 <- user()
+p_NC_today_25_49 <- if ((time + 3) %% 7 < 2) p_NC_weekend_25_49 else p_NC_25_49
+mod_pillar2_25_49_pos <- sympt_cases_25_49_inc + rexp(exp_noise)
+mod_pillar2_25_49_neg <-
+  p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + rexp(exp_noise)
+mod_pillar2_25_49_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_25_49_pos +
+     (1 - pillar2_specificity) * mod_pillar2_25_49_neg) /
+  (mod_pillar2_25_49_pos + mod_pillar2_25_49_neg)
+compare(pillar2_25_49_pos) ~
+  beta_binomial(pillar2_25_49_tot, mod_pillar2_25_49_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_50_64_pos <- data()
-# pillar2_50_64_tot <- data()
-# N_tot_50_64 <- user()
-# p_NC_50_64 <- user()
-# p_NC_weekend_50_64 <- user()
-# p_NC_today_50_64 <- if ((time + 3) %% 7 < 2) p_NC_weekend_50_64 else p_NC_50_64
-# mod_pillar2_50_64_pos <- sympt_cases_50_64_inc + rexp(exp_noise)
-# mod_pillar2_50_64_neg <-
-#   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + rexp(exp_noise)
-# mod_pillar2_50_64_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_50_64_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_50_64_neg) /
-#   (mod_pillar2_50_64_pos + mod_pillar2_50_64_neg)
-# compare(pillar2_50_64_pos) ~
-#   beta_binomial(pillar2_50_64_tot, mod_pillar2_50_64_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_50_64_pos <- data()
+pillar2_50_64_tot <- data()
+N_tot_50_64 <- user()
+p_NC_50_64 <- user()
+p_NC_weekend_50_64 <- user()
+p_NC_today_50_64 <- if ((time + 3) %% 7 < 2) p_NC_weekend_50_64 else p_NC_50_64
+mod_pillar2_50_64_pos <- sympt_cases_50_64_inc + rexp(exp_noise)
+mod_pillar2_50_64_neg <-
+  p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + rexp(exp_noise)
+mod_pillar2_50_64_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_50_64_pos +
+     (1 - pillar2_specificity) * mod_pillar2_50_64_neg) /
+  (mod_pillar2_50_64_pos + mod_pillar2_50_64_neg)
+compare(pillar2_50_64_pos) ~
+  beta_binomial(pillar2_50_64_tot, mod_pillar2_50_64_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_65_79_pos <- data()
-# pillar2_65_79_tot <- data()
-# N_tot_65_79 <- user()
-# p_NC_65_79 <- user()
-# p_NC_weekend_65_79 <- user()
-# p_NC_today_65_79 <- if ((time + 3) %% 7 < 2) p_NC_weekend_65_79 else p_NC_65_79
-# mod_pillar2_65_79_pos <- sympt_cases_65_79_inc + rexp(exp_noise)
-# mod_pillar2_65_79_neg <-
-#   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + rexp(exp_noise)
-# mod_pillar2_65_79_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_65_79_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_65_79_neg) /
-#   (mod_pillar2_65_79_pos + mod_pillar2_65_79_neg)
-# compare(pillar2_65_79_pos) ~
-#   beta_binomial(pillar2_65_79_tot, mod_pillar2_65_79_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_65_79_pos <- data()
+pillar2_65_79_tot <- data()
+N_tot_65_79 <- user()
+p_NC_65_79 <- user()
+p_NC_weekend_65_79 <- user()
+p_NC_today_65_79 <- if ((time + 3) %% 7 < 2) p_NC_weekend_65_79 else p_NC_65_79
+mod_pillar2_65_79_pos <- sympt_cases_65_79_inc + rexp(exp_noise)
+mod_pillar2_65_79_neg <-
+  p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + rexp(exp_noise)
+mod_pillar2_65_79_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_65_79_pos +
+     (1 - pillar2_specificity) * mod_pillar2_65_79_neg) /
+  (mod_pillar2_65_79_pos + mod_pillar2_65_79_neg)
+compare(pillar2_65_79_pos) ~
+  beta_binomial(pillar2_65_79_tot, mod_pillar2_65_79_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_80_plus_pos <- data()
-# pillar2_80_plus_tot <- data()
-# N_tot_80_plus <- user()
-# p_NC_80_plus <- user()
-# p_NC_weekend_80_plus <- user()
-# p_NC_today_80_plus <-
-#   if ((time + 3) %% 7 < 2) p_NC_weekend_80_plus else p_NC_80_plus
-# mod_pillar2_80_plus_pos <- sympt_cases_80_plus_inc + rexp(exp_noise)
-# mod_pillar2_80_plus_neg <-
-#   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
-#   rexp(exp_noise)
-# mod_pillar2_80_plus_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_80_plus_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_80_plus_neg) /
-#   (mod_pillar2_80_plus_pos + mod_pillar2_80_plus_neg)
-# compare(pillar2_80_plus_pos) ~
-#   beta_binomial(pillar2_80_plus_tot, mod_pillar2_80_plus_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_80_plus_pos <- data()
+pillar2_80_plus_tot <- data()
+N_tot_80_plus <- user()
+p_NC_80_plus <- user()
+p_NC_weekend_80_plus <- user()
+p_NC_today_80_plus <-
+  if ((time + 3) %% 7 < 2) p_NC_weekend_80_plus else p_NC_80_plus
+mod_pillar2_80_plus_pos <- sympt_cases_80_plus_inc + rexp(exp_noise)
+mod_pillar2_80_plus_neg <-
+  p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+  rexp(exp_noise)
+mod_pillar2_80_plus_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_80_plus_pos +
+     (1 - pillar2_specificity) * mod_pillar2_80_plus_neg) /
+  (mod_pillar2_80_plus_pos + mod_pillar2_80_plus_neg)
+compare(pillar2_80_plus_pos) ~
+  beta_binomial(pillar2_80_plus_tot, mod_pillar2_80_plus_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_over25_pos <- data()
-# pillar2_over25_tot <- data()
-# mod_pillar2_over25_pos <- sympt_cases_over25_inc + rexp(exp_noise)
-# mod_pillar2_over25_neg <-
-#   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
-#   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
-#   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
-#   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
-#   rexp(exp_noise)
-# mod_pillar2_over25_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_over25_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_over25_neg) /
-#   (mod_pillar2_over25_pos + mod_pillar2_over25_neg)
-# compare(pillar2_over25_pos) ~
-#   beta_binomial(pillar2_over25_tot, mod_pillar2_over25_prob_pos,
-#                 rho_pillar2_tests)
+pillar2_over25_pos <- data()
+pillar2_over25_tot <- data()
+mod_pillar2_over25_pos <- sympt_cases_over25_inc + rexp(exp_noise)
+mod_pillar2_over25_neg <-
+  p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+  p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+  p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+  p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+  rexp(exp_noise)
+mod_pillar2_over25_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_over25_pos +
+     (1 - pillar2_specificity) * mod_pillar2_over25_neg) /
+  (mod_pillar2_over25_pos + mod_pillar2_over25_neg)
+compare(pillar2_over25_pos) ~
+  beta_binomial(pillar2_over25_tot, mod_pillar2_over25_prob_pos,
+                rho_pillar2_tests)
 
-# pillar2_pos <- data()
-# pillar2_tot <- data()
-# mod_pillar2_pos <- sympt_cases_inc + rexp(exp_noise)
-# mod_pillar2_neg <-
-#   p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
-#   p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) +
-#   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
-#   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
-#   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
-#   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
-#   rexp(exp_noise)
-# mod_pillar2_prob_pos <-
-#   (pillar2_sensitivity * mod_pillar2_pos +
-#      (1 - pillar2_specificity) * mod_pillar2_neg) /
-#   (mod_pillar2_pos + mod_pillar2_neg)
-# compare(pillar2_pos) ~
-#   beta_binomial(pillar2_tot, mod_pillar2_prob_pos, rho_pillar2_tests)
+pillar2_pos <- data()
+pillar2_tot <- data()
+mod_pillar2_pos <- sympt_cases_inc + rexp(exp_noise)
+mod_pillar2_neg <-
+  p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
+  p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) +
+  p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+  p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+  p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+  p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+  rexp(exp_noise)
+mod_pillar2_prob_pos <-
+  (pillar2_sensitivity * mod_pillar2_pos +
+     (1 - pillar2_specificity) * mod_pillar2_neg) /
+  (mod_pillar2_pos + mod_pillar2_neg)
+compare(pillar2_pos) ~
+  beta_binomial(pillar2_tot, mod_pillar2_prob_pos, rho_pillar2_tests)
 
-# sero_pos_15_64_1 <- data()
-# sero_tot_15_64_1 <- data()
-# sero_pos_15_64_2 <- data()
-# sero_tot_15_64_2 <- data()
-# pillar2_cases <- data()
-# pillar2_over25_cases <- data()
-# pillar2_under15_cases <- data()
-# pillar2_15_24_cases <- data()
-# pillar2_25_49_cases <- data()
-# pillar2_50_64_cases <- data()
-# pillar2_65_79_cases <- data()
-# pillar2_80_plus_cases <- data()
-# ons_pos <- data()
-# ons_tot <- data()
-# react_pos <- data()
-# react_tot <- data()
-# react_5_24_pos <- data()
-# react_5_24_tot <- data()
-# react_25_34_pos <- data()
-# react_25_34_tot <- data()
-# react_35_44_pos <- data()
-# react_35_44_tot <- data()
-# react_45_54_pos <- data()
-# react_45_54_tot <- data()
-# react_55_64_pos <- data()
-# react_55_64_tot <- data()
-# react_65_plus_pos <- data()
-# react_65_plus_tot <- data()
-# strain_non_variant <- data()
-# strain_tot <- data()
-# strain_over25_non_variant <- data()
-# strain_over25_tot <- data()
+## Pillar 2 cases
+kappa_pillar2_cases <- user()
 
-N_tot_ons <- user() # ignore.unused
-N_tot_react <- user() # ignore.unused
-N_5_24_react <- user() # ignore.unused
-N_25_34_react <- user() # ignore.unused
-N_35_44_react <- user() # ignore.unused
-N_45_54_react <- user() # ignore.unused
-N_55_64_react <- user() # ignore.unused
-N_65_plus_react <- user() # ignore.unused
-N_tot_15_64 <- user() # ignore.unused
+pillar2_under15_cases <- data()
+phi_pillar2_cases_under15 <- user()
+phi_pillar2_cases_weekend_under15 <- user()
+phi_pillar2_cases_today_under15 <-
+  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_under15 else
+    phi_pillar2_cases_under15
+mod_pillar2_cases_under15 <-
+  phi_pillar2_cases_today_under15 * sympt_cases_under15_inc + rexp(exp_noise)
+compare(pillar2_under15_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_under15)
 
-ons_sensitivity <- user() # ignore.unused
-ons_specificity <- user() # ignore.unused
-react_sensitivity <- user() # ignore.unused
-react_specificity <- user() # ignore.unused
-sero_sensitivity_1 <- user() # ignore.unused
-sero_specificity_1 <- user() # ignore.unused
-sero_sensitivity_2 <- user() # ignore.unused
-sero_specificity_2 <- user() # ignore.unused
+pillar2_15_24_cases <- data()
+phi_pillar2_cases_15_24 <- user()
+phi_pillar2_cases_weekend_15_24 <- user()
+phi_pillar2_cases_today_15_24 <-
+  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_15_24 else
+    phi_pillar2_cases_15_24
+mod_pillar2_cases_15_24 <-
+  phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc + rexp(exp_noise)
+compare(pillar2_15_24_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_15_24)
 
-kappa_pillar2_cases <- user() # ignore.unused
-phi_pillar2_cases_under15 <- user() # ignore.unused
-phi_pillar2_cases_weekend_under15 <- user() # ignore.unused
-phi_pillar2_cases_15_24 <- user() # ignore.unused
-phi_pillar2_cases_weekend_15_24 <- user() # ignore.unused
-phi_pillar2_cases_25_49 <- user() # ignore.unused
-phi_pillar2_cases_weekend_25_49 <- user() # ignore.unused
-phi_pillar2_cases_50_64 <- user() # ignore.unused
-phi_pillar2_cases_weekend_50_64 <- user() # ignore.unused
-phi_pillar2_cases_65_79 <- user() # ignore.unused
-phi_pillar2_cases_weekend_65_79 <- user() # ignore.unused
-phi_pillar2_cases_80_plus <- user() # ignore.unused
-phi_pillar2_cases_weekend_80_plus <- user() # ignore.unused
+pillar2_25_49_cases <- data()
+phi_pillar2_cases_25_49 <- user()
+phi_pillar2_cases_weekend_25_49 <- user()
+phi_pillar2_cases_today_25_49 <-
+  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_25_49 else
+    phi_pillar2_cases_25_49
+mod_pillar2_cases_25_49 <-
+  phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc + rexp(exp_noise)
+compare(pillar2_25_49_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_25_49)
 
-#   ll_serology_1 + ll_serology_2 + ll_pillar2_cases +
-#   ll_pillar2_over25_cases + ll_pillar2_under15_cases +
-#   ll_pillar2_15_24_cases + ll_pillar2_25_49_cases + ll_pillar2_50_64_cases +
-#   ll_pillar2_65_79_cases + ll_pillar2_80_plus_cases + ll_ons + ll_react +
-#   ll_5_24_react + ll_25_34_react + ll_35_44_react + ll_45_54_react +
-#   ll_55_64_react + ll_65_plus_react + ll_strain + ll_strain_over25
+pillar2_50_64_cases <- data()
+phi_pillar2_cases_50_64 <- user()
+phi_pillar2_cases_weekend_50_64 <- user()
+phi_pillar2_cases_today_50_64 <-
+  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_50_64 else
+    phi_pillar2_cases_50_64
+mod_pillar2_cases_50_64 <-
+  phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc + rexp(exp_noise)
+compare(pillar2_50_64_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_50_64)
+
+pillar2_65_79_cases <- data()
+phi_pillar2_cases_65_79 <- user()
+phi_pillar2_cases_weekend_65_79 <- user()
+phi_pillar2_cases_today_65_79 <-
+  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_65_79 else
+    phi_pillar2_cases_65_79
+mod_pillar2_cases_65_79 <-
+  phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc + rexp(exp_noise)
+compare(pillar2_65_79_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_65_79)
+
+pillar2_80_plus_cases <- data()
+phi_pillar2_cases_80_plus <- user()
+phi_pillar2_cases_weekend_80_plus <- user()
+phi_pillar2_cases_today_80_plus <-
+  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_80_plus else
+    phi_pillar2_cases_80_plus
+mod_pillar2_cases_80_plus <-
+  phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + rexp(exp_noise)
+compare(pillar2_80_plus_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_80_plus)
+
+pillar2_over25_cases <- data()
+mod_pillar2_cases_over25 <-
+  phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc +
+  phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc +
+  phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc +
+  phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + rexp(exp_noise)
+compare(pillar2_over25_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases_over25)
+
+pillar2_cases <- data()
+mod_pillar2_cases <-
+  phi_pillar2_cases_today_under15 * sympt_cases_under15_inc +
+  phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc +
+  phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc +
+  phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc +
+  phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc +
+  phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + rexp(exp_noise)
+compare(pillar2_cases) ~
+  negative_binomial_mu(kappa_pillar2_cases, mod_pillar2_cases)
+
+## Seropositivity
+N_tot_15_64 <- user()
+
+sero_pos_15_64_1 <- data()
+sero_tot_15_64_1 <- data()
+sero_sensitivity_1 <- user()
+sero_specificity_1 <- user()
+sero_pos_1_capped <- min(sero_pos_1, N_tot_15_64)
+mod_sero_pos_1 <- sero_pos_1_capped + rexp(exp_noise)
+mod_sero_neg_1 <- N_tot_15_64 - sero_pos_1_capped + rexp(exp_noise)
+mod_sero_prob_pos_1 <-
+  (sero_sensitivity_1 * mod_sero_pos_1 +
+     (1 - sero_specificity_1) * mod_sero_neg_1) /
+  (mod_sero_pos_1 + mod_sero_neg_1)
+compare(sero_pos_15_64_1) ~ binomial(sero_tot_15_64_1, mod_sero_prob_pos_1)
+
+sero_pos_15_64_2 <- data()
+sero_tot_15_64_2 <- data()
+sero_sensitivity_2 <- user()
+sero_specificity_2 <- user()
+sero_pos_2_capped <- min(sero_pos_2, N_tot_15_64)
+mod_sero_pos_2 <- sero_pos_2_capped + rexp(exp_noise)
+mod_sero_neg_2 <- N_tot_15_64 - sero_pos_2_capped + rexp(exp_noise)
+mod_sero_prob_pos_2 <-
+  (sero_sensitivity_2 * mod_sero_pos_2 +
+     (1 - sero_specificity_2) * mod_sero_neg_2) /
+  (mod_sero_pos_2 + mod_sero_neg_2)
+compare(sero_pos_15_64_2) ~ binomial(sero_tot_15_64_2, mod_sero_prob_pos_2)
+
+## ONS positivity
+ons_pos <- data()
+ons_tot <- data()
+N_tot_ons <- user()
+ons_sensitivity <- user()
+ons_specificity <- user()
+ons_positives_capped <- min(ons_positives, N_tot_ons)
+mod_ons_pos <- ons_positives_capped + rexp(exp_noise)
+mod_ons_neg <- N_tot_ons - ons_positives_capped + rexp(exp_noise)
+mod_ons_prob_pos <-
+  (ons_sensitivity * mod_ons_pos + (1 - ons_specificity) * mod_ons_neg) /
+  (mod_ons_pos + mod_ons_neg)
+compare(ons_pos) ~ binomial(ons_tot, mod_ons_prob_pos)
+
+## REACT positivity
+react_sensitivity <- user()
+react_specificity <- user()
+
+react_pos <- data()
+react_tot <- data()
+N_tot_react <- user()
+react_positives_capped <- min(react_positives, N_tot_react)
+mod_react_pos <- react_positives_capped + rexp(exp_noise)
+mod_react_neg <- N_tot_react - react_positives_capped + rexp(exp_noise)
+mod_react_prob_pos <-
+  (react_sensitivity * mod_react_pos +
+     (1 - react_specificity) * mod_react_neg) /
+  (mod_react_pos + mod_react_neg)
+compare(react_pos) ~ binomial(react_tot, mod_react_prob_pos)
+
+react_5_24_pos <- data()
+react_5_24_tot <- data()
+N_5_24_react <- user()
+react_5_24_positives_capped <- min(react_5_24_positives, N_5_24_react)
+mod_react_5_24_pos <- react_5_24_positives_capped + rexp(exp_noise)
+mod_react_5_24_neg <-
+  N_5_24_react - react_5_24_positives_capped + rexp(exp_noise)
+mod_react_5_24_prob_pos <-
+  (react_sensitivity * mod_react_5_24_pos +
+     (1 - react_specificity) * mod_react_5_24_neg) /
+  (mod_react_5_24_pos + mod_react_5_24_neg)
+compare(react_5_24_pos) ~ binomial(react_5_24_tot, mod_react_5_24_prob_pos)
+
+react_25_34_pos <- data()
+react_25_34_tot <- data()
+N_25_34_react <- user()
+react_25_34_positives_capped <- min(react_25_34_positives, N_25_34_react)
+mod_react_25_34_pos <- react_25_34_positives_capped + rexp(exp_noise)
+mod_react_25_34_neg <-
+  N_25_34_react - react_25_34_positives_capped + rexp(exp_noise)
+mod_react_25_34_prob_pos <-
+  (react_sensitivity * mod_react_25_34_pos +
+     (1 - react_specificity) * mod_react_25_34_neg) /
+  (mod_react_25_34_pos + mod_react_25_34_neg)
+compare(react_25_34_pos) ~ binomial(react_25_34_tot, mod_react_25_34_prob_pos)
+
+react_35_44_pos <- data()
+react_35_44_tot <- data()
+N_35_44_react <- user()
+react_35_44_positives_capped <- min(react_35_44_positives, N_35_44_react)
+mod_react_35_44_pos <- react_35_44_positives_capped + rexp(exp_noise)
+mod_react_35_44_neg <-
+  N_35_44_react - react_35_44_positives_capped + rexp(exp_noise)
+mod_react_35_44_prob_pos <-
+  (react_sensitivity * mod_react_35_44_pos +
+     (1 - react_specificity) * mod_react_35_44_neg) /
+  (mod_react_35_44_pos + mod_react_35_44_neg)
+compare(react_35_44_pos) ~ binomial(react_35_44_tot, mod_react_35_44_prob_pos)
+
+react_45_54_pos <- data()
+react_45_54_tot <- data()
+N_45_54_react <- user()
+react_45_54_positives_capped <- min(react_45_54_positives, N_45_54_react)
+mod_react_45_54_pos <- react_45_54_positives_capped + rexp(exp_noise)
+mod_react_45_54_neg <-
+  N_45_54_react - react_45_54_positives_capped + rexp(exp_noise)
+mod_react_45_54_prob_pos <-
+  (react_sensitivity * mod_react_45_54_pos +
+     (1 - react_specificity) * mod_react_45_54_neg) /
+  (mod_react_45_54_pos + mod_react_45_54_neg)
+compare(react_45_54_pos) ~ binomial(react_45_54_tot, mod_react_45_54_prob_pos)
+
+react_55_64_pos <- data()
+react_55_64_tot <- data()
+N_55_64_react <- user()
+react_55_64_positives_capped <- min(react_55_64_positives, N_55_64_react)
+mod_react_55_64_pos <- react_55_64_positives_capped + rexp(exp_noise)
+mod_react_55_64_neg <-
+  N_55_64_react - react_55_64_positives_capped + rexp(exp_noise)
+mod_react_55_64_prob_pos <-
+  (react_sensitivity * mod_react_55_64_pos +
+     (1 - react_specificity) * mod_react_55_64_neg) /
+  (mod_react_55_64_pos + mod_react_55_64_neg)
+compare(react_55_64_pos) ~ binomial(react_55_64_tot, mod_react_55_64_prob_pos)
+
+react_65_plus_pos <- data()
+react_65_plus_tot <- data()
+N_65_plus_react <- user()
+react_65_plus_positives_capped <- min(react_65_plus_positives, N_65_plus_react)
+mod_react_65_plus_pos <- react_65_plus_positives_capped + rexp(exp_noise)
+mod_react_65_plus_neg <-
+  N_65_plus_react - react_65_plus_positives_capped + rexp(exp_noise)
+mod_react_65_plus_prob_pos <-
+  (react_sensitivity * mod_react_65_plus_pos +
+     (1 - react_specificity) * mod_react_65_plus_neg) /
+  (mod_react_65_plus_pos + mod_react_65_plus_neg)
+compare(react_65_plus_pos) ~ binomial(react_65_plus_tot, mod_react_65_plus_prob_pos)
+
+## Strains
+strain_non_variant <- data()
+strain_tot <- data()
+mod_strain_non_variant <- sympt_cases_non_variant_inc + rexp(exp_noise)
+mod_strain_variant <-
+  sympt_cases_inc - sympt_cases_non_variant_inc + rexp(exp_noise)
+mod_strain_prob_non_variant <- mod_strain_non_variant /
+  (mod_strain_non_variant + mod_strain_variant)
+compare(strain_non_variant) ~ binomial(strain_tot, mod_strain_prob_non_variant)
+
+strain_over25_non_variant <- data()
+strain_over25_tot <- data()
+mod_strain_over25_non_variant <- sympt_cases_non_variant_inc + rexp(exp_noise)
+mod_strain_over25_variant <-
+  sympt_cases_inc - sympt_cases_non_variant_inc + rexp(exp_noise)
+mod_strain_over25_prob_non_variant <- mod_strain_over25_non_variant /
+  (mod_strain_over25_non_variant + mod_strain_over25_variant)
+compare(strain_over25_non_variant) ~
+  binomial(strain_over25_tot, mod_strain_over25_prob_non_variant)
