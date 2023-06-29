@@ -70,8 +70,8 @@ Suggests:
     EpiEstim,
     distcrete,
     mockery,
-    odin (>= 1.1.16),
-    odin.dust (>= 0.3.3),
+    odin (>= 1.5.0),
+    odin.dust (>= 0.3.6),
     testthat
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
@@ -80,5 +80,5 @@ Remotes:
     mrc-ide/dust@mrc-4347,
     mrc-ide/eigen1,
     mrc-ide/mcstate,
-    mrc-ide/odin@mrc-4277,
+    mrc-ide/odin,
     mrc-ide/odin.dust@mrc-4278
