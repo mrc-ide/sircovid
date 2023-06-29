@@ -3085,7 +3085,8 @@ mod_react_65_plus_prob_pos <-
   (react_sensitivity * mod_react_65_plus_pos +
      (1 - react_specificity) * mod_react_65_plus_neg) /
   (mod_react_65_plus_pos + mod_react_65_plus_neg)
-compare(react_65_plus_pos) ~ binomial(react_65_plus_tot, mod_react_65_plus_prob_pos)
+compare(react_65_plus_pos) ~
+  binomial(react_65_plus_tot, mod_react_65_plus_prob_pos)
 
 ## Strains
 strain_non_variant <- data()
