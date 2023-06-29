@@ -738,8 +738,8 @@ public:
     const real_type D_inc = state[4];
     real_type deaths_with_noise = shared->phi_death * D_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     real_type icu_with_noise = shared->phi_ICU * I_ICU_tot + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
-    const auto compare_deaths = dust::density::negative_binomial_mu(data.deaths, shared->kappa_death, deaths_with_noise, true);
-    const auto compare_icu = dust::density::negative_binomial_mu(data.icu, shared->kappa_ICU, icu_with_noise, true);
+    const auto compare_deaths = (std::isnan(data.deaths)) ? 0 : dust::density::negative_binomial_mu(data.deaths, shared->kappa_death, deaths_with_noise, true);
+    const auto compare_icu = (std::isnan(data.icu)) ? 0 : dust::density::negative_binomial_mu(data.icu, shared->kappa_ICU, icu_with_noise, true);
     return compare_deaths + compare_icu;
   }
 private:
