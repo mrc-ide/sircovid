@@ -473,8 +473,8 @@ test_that("lancelot_index identifies ICU and D_tot in real model", {
                which(names(info$index) == "sympt_cases_inc"))
   expect_equal(index$run[["sympt_cases_over25_inc"]],
                which(names(info$index) == "sympt_cases_over25_inc"))
-  expect_equal(index$run[["react_pos"]],
-               which(names(info$index) == "react_pos"))
+  expect_equal(index$run[["react_positi"]],
+               which(names(info$index) == "react_positives"))
 })
 
 
