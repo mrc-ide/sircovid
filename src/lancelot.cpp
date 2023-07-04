@@ -5189,6 +5189,7 @@ public:
     const real_type sympt_cases_inc = state[68];
     const real_type sympt_cases_non_variant_inc = state[69];
     const real_type sympt_cases_over25_inc = state[70];
+    const real_type sympt_cases_non_variant_over25_inc = state[71];
     const real_type sympt_cases_under15_inc = state[72];
     const real_type sympt_cases_15_24_inc = state[73];
     const real_type sympt_cases_25_49_inc = state[74];
@@ -5248,8 +5249,8 @@ public:
     real_type mod_pillar2_pos = sympt_cases_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     real_type mod_pillar2_under15_pos = sympt_cases_under15_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     real_type mod_strain_non_variant = sympt_cases_non_variant_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
-    real_type mod_strain_over25_non_variant = sympt_cases_non_variant_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
-    real_type mod_strain_over25_variant = sympt_cases_inc - sympt_cases_non_variant_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
+    real_type mod_strain_over25_non_variant = sympt_cases_non_variant_over25_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
+    real_type mod_strain_over25_variant = sympt_cases_over25_inc - sympt_cases_non_variant_over25_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     real_type mod_strain_variant = sympt_cases_inc - sympt_cases_non_variant_inc + dust::random::exponential<real_type>(rng_state, shared->exp_noise);
     real_type ons_positives_capped = dust::math::min(ons_positives, shared->N_tot_ons);
     real_type p_NC_today_15_24 = (fmodr<real_type>((time + 3), 7) < 2 ? shared->p_NC_weekend_15_24 : shared->p_NC_15_24);

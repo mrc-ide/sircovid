@@ -3100,9 +3100,10 @@ compare(strain_non_variant) ~ binomial(strain_tot, mod_strain_prob_non_variant)
 
 strain_over25_non_variant <- data()
 strain_over25_tot <- data()
-mod_strain_over25_non_variant <- sympt_cases_non_variant_inc + rexp(exp_noise)
-mod_strain_over25_variant <-
-  sympt_cases_inc - sympt_cases_non_variant_inc + rexp(exp_noise)
+mod_strain_over25_non_variant <-
+  sympt_cases_non_variant_over25_inc + rexp(exp_noise)
+mod_strain_over25_variant <- sympt_cases_over25_inc -
+  sympt_cases_non_variant_over25_inc + rexp(exp_noise)
 mod_strain_over25_prob_non_variant <- mod_strain_over25_non_variant /
   (mod_strain_over25_non_variant + mod_strain_over25_variant)
 compare(strain_over25_non_variant) ~
