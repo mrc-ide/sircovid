@@ -1115,31 +1115,32 @@ lancelot_compare <- function(state, observed, pars) {
   ## whether it is a weekday or a weekend and age band. Note all values of the
   ## time state will be the same so we can just use the first value
   time <- state["time", 1L]
+  is_weekend <- (time + 3) %% 7 < 2
 
-  p_NC_under15 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under15 else
+  p_NC_under15 <- if (is_weekend) pars$p_NC_weekend_under15 else
     pars$p_NC_under15
-  p_NC_15_24 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_15_24 else
+  p_NC_15_24 <- if (is_weekend) pars$p_NC_weekend_15_24 else
     pars$p_NC_15_24
-  p_NC_25_49 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_25_49 else
+  p_NC_25_49 <- if (is_weekend) pars$p_NC_weekend_25_49 else
     pars$p_NC_25_49
-  p_NC_50_64 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_50_64 else
+  p_NC_50_64 <- if (is_weekend) pars$p_NC_weekend_50_64 else
     pars$p_NC_50_64
-  p_NC_65_79 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_65_79 else
+  p_NC_65_79 <- if (is_weekend) pars$p_NC_weekend_65_79 else
     pars$p_NC_65_79
-  p_NC_80_plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80_plus else
+  p_NC_80_plus <- if (is_weekend) pars$p_NC_weekend_80_plus else
     pars$p_NC_80_plus
 
-  phi_pillar2_cases_under15 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_under15 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_under15 else pars$phi_pillar2_cases_under15
-  phi_pillar2_cases_15_24 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_15_24 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_15_24 else pars$phi_pillar2_cases_15_24
-  phi_pillar2_cases_25_49 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_25_49 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_25_49 else pars$phi_pillar2_cases_25_49
-  phi_pillar2_cases_50_64 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_50_64 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_50_64 else pars$phi_pillar2_cases_50_64
-  phi_pillar2_cases_65_79 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_65_79 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_65_79 else pars$phi_pillar2_cases_65_79
-  phi_pillar2_cases_80_plus <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_80_plus <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_80_plus else pars$phi_pillar2_cases_80_plus
 
   ## Calculate Pillar 2 probability of positive test
