@@ -2720,13 +2720,14 @@ pillar2_sensitivity <- user()
 pillar2_specificity <- user()
 rho_pillar2_tests <- user()
 
+is_weekend <- (time + 3) %% 7 < 2
+
 pillar2_under15_pos <- data()
 pillar2_under15_tot <- data()
 N_tot_under15 <- user()
 p_NC_under15 <- user()
 p_NC_weekend_under15 <- user()
-p_NC_today_under15 <-
-  if ((time + 3) %% 7 < 2) p_NC_weekend_under15 else p_NC_under15
+p_NC_today_under15 <- if (is_weekend) p_NC_weekend_under15 else p_NC_under15
 mod_pillar2_under15_pos <- sympt_cases_under15_inc + rexp(exp_noise)
 mod_pillar2_under15_neg <-
   p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
@@ -2744,7 +2745,7 @@ pillar2_15_24_tot <- data()
 N_tot_15_24 <- user()
 p_NC_15_24 <- user()
 p_NC_weekend_15_24 <- user()
-p_NC_today_15_24 <- if ((time + 3) %% 7 < 2) p_NC_weekend_15_24 else p_NC_15_24
+p_NC_today_15_24 <- if (is_weekend) p_NC_weekend_15_24 else p_NC_15_24
 mod_pillar2_15_24_pos <- sympt_cases_15_24_inc + rexp(exp_noise)
 mod_pillar2_15_24_neg <-
   p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + rexp(exp_noise)
@@ -2761,7 +2762,7 @@ pillar2_25_49_tot <- data()
 N_tot_25_49 <- user()
 p_NC_25_49 <- user()
 p_NC_weekend_25_49 <- user()
-p_NC_today_25_49 <- if ((time + 3) %% 7 < 2) p_NC_weekend_25_49 else p_NC_25_49
+p_NC_today_25_49 <- if (is_weekend) p_NC_weekend_25_49 else p_NC_25_49
 mod_pillar2_25_49_pos <- sympt_cases_25_49_inc + rexp(exp_noise)
 mod_pillar2_25_49_neg <-
   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + rexp(exp_noise)
@@ -2778,7 +2779,7 @@ pillar2_50_64_tot <- data()
 N_tot_50_64 <- user()
 p_NC_50_64 <- user()
 p_NC_weekend_50_64 <- user()
-p_NC_today_50_64 <- if ((time + 3) %% 7 < 2) p_NC_weekend_50_64 else p_NC_50_64
+p_NC_today_50_64 <- if (is_weekend) p_NC_weekend_50_64 else p_NC_50_64
 mod_pillar2_50_64_pos <- sympt_cases_50_64_inc + rexp(exp_noise)
 mod_pillar2_50_64_neg <-
   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + rexp(exp_noise)
@@ -2795,7 +2796,7 @@ pillar2_65_79_tot <- data()
 N_tot_65_79 <- user()
 p_NC_65_79 <- user()
 p_NC_weekend_65_79 <- user()
-p_NC_today_65_79 <- if ((time + 3) %% 7 < 2) p_NC_weekend_65_79 else p_NC_65_79
+p_NC_today_65_79 <- if (is_weekend) p_NC_weekend_65_79 else p_NC_65_79
 mod_pillar2_65_79_pos <- sympt_cases_65_79_inc + rexp(exp_noise)
 mod_pillar2_65_79_neg <-
   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + rexp(exp_noise)
@@ -2812,8 +2813,7 @@ pillar2_80_plus_tot <- data()
 N_tot_80_plus <- user()
 p_NC_80_plus <- user()
 p_NC_weekend_80_plus <- user()
-p_NC_today_80_plus <-
-  if ((time + 3) %% 7 < 2) p_NC_weekend_80_plus else p_NC_80_plus
+p_NC_today_80_plus <- if (is_weekend) p_NC_weekend_80_plus else p_NC_80_plus
 mod_pillar2_80_plus_pos <- sympt_cases_80_plus_inc + rexp(exp_noise)
 mod_pillar2_80_plus_neg <-
   p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
@@ -2868,7 +2868,7 @@ pillar2_under15_cases <- data()
 phi_pillar2_cases_under15 <- user()
 phi_pillar2_cases_weekend_under15 <- user()
 phi_pillar2_cases_today_under15 <-
-  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_under15 else
+  if (is_weekend) phi_pillar2_cases_weekend_under15 else
     phi_pillar2_cases_under15
 mod_pillar2_cases_under15 <-
   phi_pillar2_cases_today_under15 * sympt_cases_under15_inc + rexp(exp_noise)
@@ -2879,8 +2879,7 @@ pillar2_15_24_cases <- data()
 phi_pillar2_cases_15_24 <- user()
 phi_pillar2_cases_weekend_15_24 <- user()
 phi_pillar2_cases_today_15_24 <-
-  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_15_24 else
-    phi_pillar2_cases_15_24
+  if (is_weekend) phi_pillar2_cases_weekend_15_24 else phi_pillar2_cases_15_24
 mod_pillar2_cases_15_24 <-
   phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc + rexp(exp_noise)
 compare(pillar2_15_24_cases) ~
@@ -2890,8 +2889,7 @@ pillar2_25_49_cases <- data()
 phi_pillar2_cases_25_49 <- user()
 phi_pillar2_cases_weekend_25_49 <- user()
 phi_pillar2_cases_today_25_49 <-
-  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_25_49 else
-    phi_pillar2_cases_25_49
+  if (is_weekend) phi_pillar2_cases_weekend_25_49 else phi_pillar2_cases_25_49
 mod_pillar2_cases_25_49 <-
   phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc + rexp(exp_noise)
 compare(pillar2_25_49_cases) ~
@@ -2901,8 +2899,7 @@ pillar2_50_64_cases <- data()
 phi_pillar2_cases_50_64 <- user()
 phi_pillar2_cases_weekend_50_64 <- user()
 phi_pillar2_cases_today_50_64 <-
-  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_50_64 else
-    phi_pillar2_cases_50_64
+  if (is_weekend) phi_pillar2_cases_weekend_50_64 else phi_pillar2_cases_50_64
 mod_pillar2_cases_50_64 <-
   phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc + rexp(exp_noise)
 compare(pillar2_50_64_cases) ~
@@ -2912,8 +2909,7 @@ pillar2_65_79_cases <- data()
 phi_pillar2_cases_65_79 <- user()
 phi_pillar2_cases_weekend_65_79 <- user()
 phi_pillar2_cases_today_65_79 <-
-  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_65_79 else
-    phi_pillar2_cases_65_79
+  if (is_weekend) phi_pillar2_cases_weekend_65_79 else phi_pillar2_cases_65_79
 mod_pillar2_cases_65_79 <-
   phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc + rexp(exp_noise)
 compare(pillar2_65_79_cases) ~
@@ -2923,7 +2919,7 @@ pillar2_80_plus_cases <- data()
 phi_pillar2_cases_80_plus <- user()
 phi_pillar2_cases_weekend_80_plus <- user()
 phi_pillar2_cases_today_80_plus <-
-  if ((time + 3) %% 7 < 2) phi_pillar2_cases_weekend_80_plus else
+  if (is_weekend) phi_pillar2_cases_weekend_80_plus else
     phi_pillar2_cases_80_plus
 mod_pillar2_cases_80_plus <-
   phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + rexp(exp_noise)
