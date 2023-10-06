@@ -41,6 +41,13 @@ extern "C" SEXP _sircovid_dust_cpu_basic_simulate(SEXP ptr, SEXP time_end) {
   END_CPP11
 }
 // basic.cpp
+SEXP dust_cpu_basic_run_adjoint(SEXP ptr);
+extern "C" SEXP _sircovid_dust_cpu_basic_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_basic_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+  END_CPP11
+}
+// basic.cpp
 SEXP dust_cpu_basic_set_index(SEXP ptr, cpp11::sexp r_index);
 extern "C" SEXP _sircovid_dust_cpu_basic_set_index(SEXP ptr, SEXP r_index) {
   BEGIN_CPP11
@@ -184,6 +191,13 @@ extern "C" SEXP _sircovid_dust_cpu_lancelot_simulate(SEXP ptr, SEXP time_end) {
   END_CPP11
 }
 // lancelot.cpp
+SEXP dust_cpu_lancelot_run_adjoint(SEXP ptr);
+extern "C" SEXP _sircovid_dust_cpu_lancelot_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_lancelot_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+  END_CPP11
+}
+// lancelot.cpp
 SEXP dust_cpu_lancelot_set_index(SEXP ptr, cpp11::sexp r_index);
 extern "C" SEXP _sircovid_dust_cpu_lancelot_set_index(SEXP ptr, SEXP r_index) {
   BEGIN_CPP11
@@ -305,6 +319,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_basic_resample",                   (DL_FUNC) &_sircovid_dust_cpu_basic_resample,                   2},
     {"_sircovid_dust_cpu_basic_rng_state",                  (DL_FUNC) &_sircovid_dust_cpu_basic_rng_state,                  3},
     {"_sircovid_dust_cpu_basic_run",                        (DL_FUNC) &_sircovid_dust_cpu_basic_run,                        2},
+    {"_sircovid_dust_cpu_basic_run_adjoint",                (DL_FUNC) &_sircovid_dust_cpu_basic_run_adjoint,                1},
     {"_sircovid_dust_cpu_basic_set_data",                   (DL_FUNC) &_sircovid_dust_cpu_basic_set_data,                   3},
     {"_sircovid_dust_cpu_basic_set_index",                  (DL_FUNC) &_sircovid_dust_cpu_basic_set_index,                  2},
     {"_sircovid_dust_cpu_basic_set_n_threads",              (DL_FUNC) &_sircovid_dust_cpu_basic_set_n_threads,              2},
@@ -324,6 +339,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sircovid_dust_cpu_lancelot_resample",                (DL_FUNC) &_sircovid_dust_cpu_lancelot_resample,                2},
     {"_sircovid_dust_cpu_lancelot_rng_state",               (DL_FUNC) &_sircovid_dust_cpu_lancelot_rng_state,               3},
     {"_sircovid_dust_cpu_lancelot_run",                     (DL_FUNC) &_sircovid_dust_cpu_lancelot_run,                     2},
+    {"_sircovid_dust_cpu_lancelot_run_adjoint",             (DL_FUNC) &_sircovid_dust_cpu_lancelot_run_adjoint,             1},
     {"_sircovid_dust_cpu_lancelot_set_data",                (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_data,                3},
     {"_sircovid_dust_cpu_lancelot_set_index",               (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_index,               2},
     {"_sircovid_dust_cpu_lancelot_set_n_threads",           (DL_FUNC) &_sircovid_dust_cpu_lancelot_set_n_threads,           2},
