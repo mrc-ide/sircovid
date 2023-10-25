@@ -2734,7 +2734,7 @@ mod_pillar2_under15_neg <-
   rexp(exp_noise)
 mod_pillar2_under15_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_under15_pos +
-     (1 - pillar2_specificity) * mod_pillar2_under15_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_under15_neg) /
   (mod_pillar2_under15_pos + mod_pillar2_under15_neg)
 compare(pillar2_under15_pos) ~
   beta_binomial(pillar2_under15_tot, mod_pillar2_under15_prob_pos,
@@ -2751,7 +2751,7 @@ mod_pillar2_15_24_neg <-
   p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + rexp(exp_noise)
 mod_pillar2_15_24_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_15_24_pos +
-     (1 - pillar2_specificity) * mod_pillar2_15_24_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_15_24_neg) /
   (mod_pillar2_15_24_pos + mod_pillar2_15_24_neg)
 compare(pillar2_15_24_pos) ~
   beta_binomial(pillar2_15_24_tot, mod_pillar2_15_24_prob_pos,
@@ -2768,7 +2768,7 @@ mod_pillar2_25_49_neg <-
   p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + rexp(exp_noise)
 mod_pillar2_25_49_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_25_49_pos +
-     (1 - pillar2_specificity) * mod_pillar2_25_49_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_25_49_neg) /
   (mod_pillar2_25_49_pos + mod_pillar2_25_49_neg)
 compare(pillar2_25_49_pos) ~
   beta_binomial(pillar2_25_49_tot, mod_pillar2_25_49_prob_pos,
@@ -2785,7 +2785,7 @@ mod_pillar2_50_64_neg <-
   p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + rexp(exp_noise)
 mod_pillar2_50_64_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_50_64_pos +
-     (1 - pillar2_specificity) * mod_pillar2_50_64_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_50_64_neg) /
   (mod_pillar2_50_64_pos + mod_pillar2_50_64_neg)
 compare(pillar2_50_64_pos) ~
   beta_binomial(pillar2_50_64_tot, mod_pillar2_50_64_prob_pos,
@@ -2802,7 +2802,7 @@ mod_pillar2_65_79_neg <-
   p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + rexp(exp_noise)
 mod_pillar2_65_79_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_65_79_pos +
-     (1 - pillar2_specificity) * mod_pillar2_65_79_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_65_79_neg) /
   (mod_pillar2_65_79_pos + mod_pillar2_65_79_neg)
 compare(pillar2_65_79_pos) ~
   beta_binomial(pillar2_65_79_tot, mod_pillar2_65_79_prob_pos,
@@ -2820,7 +2820,7 @@ mod_pillar2_80_plus_neg <-
   rexp(exp_noise)
 mod_pillar2_80_plus_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_80_plus_pos +
-     (1 - pillar2_specificity) * mod_pillar2_80_plus_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_80_plus_neg) /
   (mod_pillar2_80_plus_pos + mod_pillar2_80_plus_neg)
 compare(pillar2_80_plus_pos) ~
   beta_binomial(pillar2_80_plus_tot, mod_pillar2_80_plus_prob_pos,
@@ -2837,7 +2837,7 @@ mod_pillar2_over25_neg <-
   rexp(exp_noise)
 mod_pillar2_over25_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_over25_pos +
-     (1 - pillar2_specificity) * mod_pillar2_over25_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_over25_neg) /
   (mod_pillar2_over25_pos + mod_pillar2_over25_neg)
 compare(pillar2_over25_pos) ~
   beta_binomial(pillar2_over25_tot, mod_pillar2_over25_prob_pos,
@@ -2856,7 +2856,7 @@ mod_pillar2_neg <-
   rexp(exp_noise)
 mod_pillar2_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_pos +
-     (1 - pillar2_specificity) * mod_pillar2_neg) /
+    (1 - pillar2_specificity) * mod_pillar2_neg) /
   (mod_pillar2_pos + mod_pillar2_neg)
 compare(pillar2_pos) ~
   beta_binomial(pillar2_tot, mod_pillar2_prob_pos, rho_pillar2_tests)
@@ -2958,7 +2958,7 @@ mod_sero_pos_1 <- sero_pos_1_capped + rexp(exp_noise)
 mod_sero_neg_1 <- N_tot_15_64 - sero_pos_1_capped + rexp(exp_noise)
 mod_sero_prob_pos_1 <-
   (sero_sensitivity_1 * mod_sero_pos_1 +
-     (1 - sero_specificity_1) * mod_sero_neg_1) /
+    (1 - sero_specificity_1) * mod_sero_neg_1) /
   (mod_sero_pos_1 + mod_sero_neg_1)
 compare(sero_pos_15_64_1) ~ binomial(sero_tot_15_64_1, mod_sero_prob_pos_1)
 
@@ -2971,7 +2971,7 @@ mod_sero_pos_2 <- sero_pos_2_capped + rexp(exp_noise)
 mod_sero_neg_2 <- N_tot_15_64 - sero_pos_2_capped + rexp(exp_noise)
 mod_sero_prob_pos_2 <-
   (sero_sensitivity_2 * mod_sero_pos_2 +
-     (1 - sero_specificity_2) * mod_sero_neg_2) /
+    (1 - sero_specificity_2) * mod_sero_neg_2) /
   (mod_sero_pos_2 + mod_sero_neg_2)
 compare(sero_pos_15_64_2) ~ binomial(sero_tot_15_64_2, mod_sero_prob_pos_2)
 
@@ -3001,7 +3001,7 @@ mod_react_pos <- react_positives_capped + rexp(exp_noise)
 mod_react_neg <- N_tot_react - react_positives_capped + rexp(exp_noise)
 mod_react_prob_pos <-
   (react_sensitivity * mod_react_pos +
-     (1 - react_specificity) * mod_react_neg) /
+    (1 - react_specificity) * mod_react_neg) /
   (mod_react_pos + mod_react_neg)
 compare(react_pos) ~ binomial(react_tot, mod_react_prob_pos)
 
@@ -3014,7 +3014,7 @@ mod_react_5_24_neg <-
   N_5_24_react - react_5_24_positives_capped + rexp(exp_noise)
 mod_react_5_24_prob_pos <-
   (react_sensitivity * mod_react_5_24_pos +
-     (1 - react_specificity) * mod_react_5_24_neg) /
+    (1 - react_specificity) * mod_react_5_24_neg) /
   (mod_react_5_24_pos + mod_react_5_24_neg)
 compare(react_5_24_pos) ~ binomial(react_5_24_tot, mod_react_5_24_prob_pos)
 
@@ -3027,7 +3027,7 @@ mod_react_25_34_neg <-
   N_25_34_react - react_25_34_positives_capped + rexp(exp_noise)
 mod_react_25_34_prob_pos <-
   (react_sensitivity * mod_react_25_34_pos +
-     (1 - react_specificity) * mod_react_25_34_neg) /
+    (1 - react_specificity) * mod_react_25_34_neg) /
   (mod_react_25_34_pos + mod_react_25_34_neg)
 compare(react_25_34_pos) ~ binomial(react_25_34_tot, mod_react_25_34_prob_pos)
 
@@ -3040,7 +3040,7 @@ mod_react_35_44_neg <-
   N_35_44_react - react_35_44_positives_capped + rexp(exp_noise)
 mod_react_35_44_prob_pos <-
   (react_sensitivity * mod_react_35_44_pos +
-     (1 - react_specificity) * mod_react_35_44_neg) /
+    (1 - react_specificity) * mod_react_35_44_neg) /
   (mod_react_35_44_pos + mod_react_35_44_neg)
 compare(react_35_44_pos) ~ binomial(react_35_44_tot, mod_react_35_44_prob_pos)
 
