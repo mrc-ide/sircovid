@@ -20,6 +20,10 @@ dust_cpu_basic_simulate <- function(ptr, time_end) {
   .Call(`_sircovid_dust_cpu_basic_simulate`, ptr, time_end)
 }
 
+dust_cpu_basic_run_adjoint <- function(ptr) {
+  .Call(`_sircovid_dust_cpu_basic_run_adjoint`, ptr)
+}
+
 dust_cpu_basic_set_index <- function(ptr, r_index) {
   .Call(`_sircovid_dust_cpu_basic_set_index`, ptr, r_index)
 }
@@ -98,6 +102,10 @@ dust_cpu_lancelot_run <- function(ptr, r_time_end) {
 
 dust_cpu_lancelot_simulate <- function(ptr, time_end) {
   .Call(`_sircovid_dust_cpu_lancelot_simulate`, ptr, time_end)
+}
+
+dust_cpu_lancelot_run_adjoint <- function(ptr) {
+  .Call(`_sircovid_dust_cpu_lancelot_run_adjoint`, ptr)
 }
 
 dust_cpu_lancelot_set_index <- function(ptr, r_index) {

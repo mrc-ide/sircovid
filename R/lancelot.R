@@ -840,14 +840,14 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   sympt_cases_80_plus_inc = index[["sympt_cases_80_plus_inc"]],
                   sympt_cases_non_variant_over25_inc =
                     index[["sympt_cases_non_variant_over25_inc"]],
-                  ons_pos = index[["ons_pos"]],
-                  react_pos = index[["react_pos"]],
-                  react_5_24_pos = index[["react_5_24_pos"]],
-                  react_25_34_pos = index[["react_25_34_pos"]],
-                  react_35_44_pos = index[["react_35_44_pos"]],
-                  react_45_54_pos = index[["react_45_54_pos"]],
-                  react_55_64_pos = index[["react_55_64_pos"]],
-                  react_65_plus_pos = index[["react_65_plus_pos"]])
+                  ons_pos = index[["ons_positives"]],
+                  react_pos = index[["react_positives"]],
+                  react_5_24_pos = index[["react_5_24_positives"]],
+                  react_25_34_pos = index[["react_25_34_positives"]],
+                  react_35_44_pos = index[["react_35_44_positives"]],
+                  react_45_54_pos = index[["react_45_54_positives"]],
+                  react_55_64_pos = index[["react_55_64_positives"]],
+                  react_65_plus_pos = index[["react_65_plus_positives"]])
 
   ## Only incidence versions for the likelihood now. We add time here so it
   ## can be used in the compare, without having to save it.
@@ -1115,31 +1115,32 @@ lancelot_compare <- function(state, observed, pars) {
   ## whether it is a weekday or a weekend and age band. Note all values of the
   ## time state will be the same so we can just use the first value
   time <- state["time", 1L]
+  is_weekend <- (time + 3) %% 7 < 2
 
-  p_NC_under15 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_under15 else
+  p_NC_under15 <- if (is_weekend) pars$p_NC_weekend_under15 else
     pars$p_NC_under15
-  p_NC_15_24 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_15_24 else
+  p_NC_15_24 <- if (is_weekend) pars$p_NC_weekend_15_24 else
     pars$p_NC_15_24
-  p_NC_25_49 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_25_49 else
+  p_NC_25_49 <- if (is_weekend) pars$p_NC_weekend_25_49 else
     pars$p_NC_25_49
-  p_NC_50_64 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_50_64 else
+  p_NC_50_64 <- if (is_weekend) pars$p_NC_weekend_50_64 else
     pars$p_NC_50_64
-  p_NC_65_79 <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_65_79 else
+  p_NC_65_79 <- if (is_weekend) pars$p_NC_weekend_65_79 else
     pars$p_NC_65_79
-  p_NC_80_plus <- if ((time + 3) %% 7 < 2) pars$p_NC_weekend_80_plus else
+  p_NC_80_plus <- if (is_weekend) pars$p_NC_weekend_80_plus else
     pars$p_NC_80_plus
 
-  phi_pillar2_cases_under15 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_under15 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_under15 else pars$phi_pillar2_cases_under15
-  phi_pillar2_cases_15_24 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_15_24 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_15_24 else pars$phi_pillar2_cases_15_24
-  phi_pillar2_cases_25_49 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_25_49 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_25_49 else pars$phi_pillar2_cases_25_49
-  phi_pillar2_cases_50_64 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_50_64 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_50_64 else pars$phi_pillar2_cases_50_64
-  phi_pillar2_cases_65_79 <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_65_79 <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_65_79 else pars$phi_pillar2_cases_65_79
-  phi_pillar2_cases_80_plus <- if ((time + 3) %% 7 < 2)
+  phi_pillar2_cases_80_plus <- if (is_weekend)
     pars$phi_pillar2_cases_weekend_80_plus else pars$phi_pillar2_cases_80_plus
 
   ## Calculate Pillar 2 probability of positive test
