@@ -10,6 +10,7 @@
 ## Carehome residents. This will be 19 in all but experimental uses.
 n_age_groups <- user()
 n_groups <- user()
+has_carehomes <- user()
 
 ## Definition of the time-step and output as "time"
 steps_per_day <- user(integer = TRUE)
@@ -184,32 +185,39 @@ delta_all_admission_10_19_conf <-
 
 delta_all_admission_20_29_conf <-
   sum(delta_diagnoses_admitted[5:6, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 1 / 8
+  (if (has_carehomes) sum(delta_diagnoses_admitted[18, ]) * 1 / 8
+   else 0)
 
 delta_all_admission_30_39_conf <-
   sum(delta_diagnoses_admitted[7:8, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+  (if (has_carehomes) sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+   else 0)
 
 delta_all_admission_40_49_conf <-
   sum(delta_diagnoses_admitted[9:10, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+  (if (has_carehomes) sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+   else 0)
 
 delta_all_admission_50_59_conf <-
   sum(delta_diagnoses_admitted[11:12, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+  (if (has_carehomes) sum(delta_diagnoses_admitted[18, ]) * 2 / 8
+   else 0)
 
 delta_all_admission_60_69_conf <-
   sum(delta_diagnoses_admitted[13:14, ]) +
-  sum(delta_diagnoses_admitted[18, ]) * 1 / 8 +
+  (if (has_carehomes) sum(delta_diagnoses_admitted[18, ]) * 1 / 8 +
   sum(delta_diagnoses_admitted[19, ]) * 0.05
+  else 0)
 
 delta_all_admission_70_79_conf <-
   sum(delta_diagnoses_admitted[15:16, ]) +
-  sum(delta_diagnoses_admitted[19, ]) * 0.2
+  (if (has_carehomes) sum(delta_diagnoses_admitted[19, ]) * 0.2
+   else 0)
 
 delta_all_admission_80_plus_conf <-
   sum(delta_diagnoses_admitted[17, ]) +
-  sum(delta_diagnoses_admitted[19, ]) * 0.75
+  (if (has_carehomes) sum(delta_diagnoses_admitted[19, ]) * 0.75
+   else 0)
 
 initial(diagnoses_admitted[, ]) <- 0
 update(diagnoses_admitted[, ]) <- diagnoses_admitted[i, j] +
@@ -1854,35 +1862,43 @@ delta_D_hosp_tot <- sum(delta_D_hosp)
 update(D_hosp_tot) <- D_hosp_tot + delta_D_hosp_tot
 
 initial(D_hosp_0_49_tot) <- 0
-delta_D_hosp_0_49_tot <- sum(delta_D_hosp[1:10]) + delta_D_hosp[18] * 3 / 8
+delta_D_hosp_0_49_tot <- sum(delta_D_hosp[1:10]) +
+  (if (has_carehomes) delta_D_hosp[18] * 3 / 8 else 0)
 update(D_hosp_0_49_tot) <- D_hosp_0_49_tot + delta_D_hosp_0_49_tot
 
 initial(D_hosp_50_54_tot) <- 0
-delta_D_hosp_50_54_tot <- delta_D_hosp[11] + delta_D_hosp[18] * 1 / 8
+delta_D_hosp_50_54_tot <- delta_D_hosp[11] +
+  (if (has_carehomes) delta_D_hosp[18] * 1 / 8 else 0)
 update(D_hosp_50_54_tot) <- D_hosp_50_54_tot + delta_D_hosp_50_54_tot
 
 initial(D_hosp_55_59_tot) <- 0
-delta_D_hosp_55_59_tot <- delta_D_hosp[12] + delta_D_hosp[18] * 2 / 8
+delta_D_hosp_55_59_tot <- delta_D_hosp[12] +
+  (if (has_carehomes) delta_D_hosp[18] * 2 / 8 else 0)
 update(D_hosp_55_59_tot) <- D_hosp_55_59_tot + delta_D_hosp_55_59_tot
 
 initial(D_hosp_60_64_tot) <- 0
-delta_D_hosp_60_64_tot <- delta_D_hosp[13] + delta_D_hosp[18] * 2 / 8
+delta_D_hosp_60_64_tot <- delta_D_hosp[13] +
+  (if (has_carehomes) delta_D_hosp[18] * 2 / 8 else 0)
 update(D_hosp_60_64_tot) <- D_hosp_60_64_tot + delta_D_hosp_60_64_tot
 
 initial(D_hosp_65_69_tot) <- 0
-delta_D_hosp_65_69_tot <- delta_D_hosp[14] + delta_D_hosp[19] * 0.05
+delta_D_hosp_65_69_tot <- delta_D_hosp[14] +
+  (if (has_carehomes) delta_D_hosp[19] * 0.05 else 0)
 update(D_hosp_65_69_tot) <- D_hosp_65_69_tot + delta_D_hosp_65_69_tot
 
 initial(D_hosp_70_74_tot) <- 0
-delta_D_hosp_70_74_tot <- delta_D_hosp[15] + delta_D_hosp[19] * 0.05
+delta_D_hosp_70_74_tot <- delta_D_hosp[15] +
+  (if (has_carehomes) delta_D_hosp[19] * 0.05 else 0)
 update(D_hosp_70_74_tot) <- D_hosp_70_74_tot + delta_D_hosp_70_74_tot
 
 initial(D_hosp_75_79_tot) <- 0
-delta_D_hosp_75_79_tot <- delta_D_hosp[16] + delta_D_hosp[19] * 0.15
+delta_D_hosp_75_79_tot <- delta_D_hosp[16] +
+  (if (has_carehomes) delta_D_hosp[19] * 0.15 else 0)
 update(D_hosp_75_79_tot) <- D_hosp_75_79_tot + delta_D_hosp_75_79_tot
 
 initial(D_hosp_80_plus_tot) <- 0
-delta_D_hosp_80_plus_tot <- delta_D_hosp[17] + delta_D_hosp[19] * 0.75
+delta_D_hosp_80_plus_tot <- delta_D_hosp[17] +
+  (if (has_carehomes) delta_D_hosp[19] * 0.75 else 0)
 update(D_hosp_80_plus_tot) <- D_hosp_80_plus_tot + delta_D_hosp_80_plus_tot
 
 ## community deaths are non-hospital deaths in groups 1 to 18
@@ -1895,22 +1911,26 @@ update(D_comm_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_tot else D_comm_inc + delta_D_comm_tot
 
 initial(D_comm_0_49_inc) <- 0
-delta_D_comm_0_49 <- sum(delta_D_non_hosp[1:10]) + delta_D_non_hosp[18] * 3 / 8
+delta_D_comm_0_49 <- sum(delta_D_non_hosp[1:10]) +
+  (if (has_carehomes) delta_D_non_hosp[18] * 3 / 8 else 0)
 update(D_comm_0_49_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_0_49 else D_comm_0_49_inc + delta_D_comm_0_49
 
 initial(D_comm_50_54_inc) <- 0
-delta_D_comm_50_54 <- delta_D_non_hosp[11] + delta_D_non_hosp[18] * 1 / 8
+delta_D_comm_50_54 <- delta_D_non_hosp[11] +
+  (if (has_carehomes) delta_D_non_hosp[18] * 1 / 8 else 0)
 update(D_comm_50_54_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_50_54 else D_comm_50_54_inc + delta_D_comm_50_54
 
 initial(D_comm_55_59_inc) <- 0
-delta_D_comm_55_59 <- delta_D_non_hosp[12] + delta_D_non_hosp[18] * 2 / 8
+delta_D_comm_55_59 <- delta_D_non_hosp[12] +
+  (if (has_carehomes) delta_D_non_hosp[18] * 2 / 8 else 0)
 update(D_comm_55_59_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_55_59 else D_comm_55_59_inc + delta_D_comm_55_59
 
 initial(D_comm_60_64_inc) <- 0
-delta_D_comm_60_64 <- delta_D_non_hosp[13] + delta_D_non_hosp[18] * 2 / 8
+delta_D_comm_60_64 <- delta_D_non_hosp[13] +
+  (if (has_carehomes) delta_D_non_hosp[18] * 2 / 8 else 0)
 update(D_comm_60_64_inc) <- if (step %% steps_per_day == 0)
   delta_D_comm_60_64 else D_comm_60_64_inc + delta_D_comm_60_64
 
@@ -1937,7 +1957,7 @@ update(D_comm_80_plus_inc) <- if (step %% steps_per_day == 0)
 
 ## carehome deaths are non-hospital deaths in group 19
 initial(D_carehomes_tot) <- 0
-delta_D_carehomes_tot <- delta_D_non_hosp[19]
+delta_D_carehomes_tot <- if (has_carehomes) delta_D_non_hosp[19] else 0
 update(D_carehomes_tot) <- D_carehomes_tot + delta_D_carehomes_tot
 
 initial(D_carehomes_inc) <- 0
@@ -2046,23 +2066,27 @@ update(cum_sympt_cases_15_24) <- cum_sympt_cases_15_24 +
 
 ## assume CHW [18] are equally distributed amongst 25-64 age bands
 initial(cum_sympt_cases_25_49) <- 0
-new_sympt_cases_25_49 <- sum(n_EI_P[6:10, , ]) + (sum(n_EI_P[18, , ]) / 8) * 5
+new_sympt_cases_25_49 <- sum(n_EI_P[6:10, , ]) +
+  (if (has_carehomes) (sum(n_EI_P[18, , ]) / 8) * 5 else 0)
 update(cum_sympt_cases_25_49) <- cum_sympt_cases_25_49 +
   new_sympt_cases_25_49
 
 initial(cum_sympt_cases_50_64) <- 0
-new_sympt_cases_50_64 <- sum(n_EI_P[11:13, , ]) + (sum(n_EI_P[18, , ]) / 8) * 3
+new_sympt_cases_50_64 <- sum(n_EI_P[11:13, , ]) +
+  (if (has_carehomes) (sum(n_EI_P[18, , ]) / 8) * 3 else 0)
 update(cum_sympt_cases_50_64) <- cum_sympt_cases_50_64 +
   new_sympt_cases_50_64
 
 ## assume CHR [19] are 1/4 aged 65-79 and 3/4 80 plus
 initial(cum_sympt_cases_65_79) <- 0
-new_sympt_cases_65_79 <- sum(n_EI_P[14:16, , ]) + (sum(n_EI_P[19, , ]) * 0.25)
+new_sympt_cases_65_79 <- sum(n_EI_P[14:16, , ]) +
+  (if (has_carehomes) (sum(n_EI_P[19, , ]) * 0.25) else 0)
 update(cum_sympt_cases_65_79) <- cum_sympt_cases_65_79 +
   new_sympt_cases_65_79
 
 initial(cum_sympt_cases_80_plus) <- 0
-new_sympt_cases_80_plus <- sum(n_EI_P[17, , ]) + (sum(n_EI_P[19, , ]) * 0.75)
+new_sympt_cases_80_plus <- sum(n_EI_P[17, , ]) +
+  (if (has_carehomes) (sum(n_EI_P[19, , ]) * 0.75) else 0)
 update(cum_sympt_cases_80_plus) <- cum_sympt_cases_80_plus +
   new_sympt_cases_80_plus
 
@@ -2120,30 +2144,33 @@ update(sympt_cases_80_plus_inc) <- (
 ## For ONS we exclude the 0-1 (40% of 1) and CHR (19) groups
 initial(ons_positives) <- 0
 update(ons_positives) <- sum(new_T_PCR_pos[1, , , ]) * 3 / 5 +
-  sum(new_T_PCR_pos[2:18, , , ])
+  (if (has_carehomes) sum(new_T_PCR_pos[2:18, , , ]) else
+    sum(new_T_PCR_pos[2:17, , , ]))
 
 ## For REACT we exclude the 0-4 (1) and CHR (19) groups
 initial(react_positives) <- 0
-update(react_positives) <- sum(new_T_PCR_pos[2:18, , , ])
+update(react_positives) <- (if (has_carehomes) sum(new_T_PCR_pos[2:18, , , ])
+                            else sum(new_T_PCR_pos[2:17, , , ]))
 
 initial(react_5_24_positives) <- 0
 update(react_5_24_positives) <- sum(new_T_PCR_pos[2:5, , , ])
 
+
 initial(react_25_34_positives) <- 0
 update(react_25_34_positives) <- sum(new_T_PCR_pos[6:7, , , ]) +
-  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+  (if (has_carehomes) sum(new_T_PCR_pos[18, , , ]) * 2 / 8 else 0)
 
 initial(react_35_44_positives) <- 0
 update(react_35_44_positives) <- sum(new_T_PCR_pos[8:9, , , ]) +
-  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+  (if (has_carehomes) sum(new_T_PCR_pos[18, , , ]) * 2 / 8 else 0)
 
 initial(react_45_54_positives) <- 0
 update(react_45_54_positives) <- sum(new_T_PCR_pos[10:11, , , ]) +
-  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+  (if (has_carehomes) sum(new_T_PCR_pos[18, , , ]) * 2 / 8 else 0)
 
 initial(react_55_64_positives) <- 0
 update(react_55_64_positives) <- sum(new_T_PCR_pos[12:13, , , ]) +
-  sum(new_T_PCR_pos[18, , , ]) * 2 / 8
+  (if (has_carehomes) sum(new_T_PCR_pos[18, , , ]) * 2 / 8 else 0)
 
 initial(react_65_plus_positives) <- 0
 update(react_65_plus_positives) <- sum(new_T_PCR_pos[14:17, , , ])
