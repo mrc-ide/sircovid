@@ -907,7 +907,12 @@ lancelot_index <- function(info, rt = TRUE, cum_admit = TRUE,
                   deaths_inc = index[["D_inc"]],
                   infections = index[["cum_infections"]],
                   infections_inc = index[["infections_inc"]])
-  suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
+  if (info$dim$N_tot == 17) {
+    suffix <- paste0("_", sircovid_age_bins()$start)
+  } else {
+    suffix <- paste0("_", c(sircovid_age_bins()$start, "CHW", "CHR"))
+  }
+
   ## NOTE: We do use the S category for the Rt calculation in some
   ## downstream work, so this is going to require some work to get
   ## right.
