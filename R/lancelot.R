@@ -533,17 +533,21 @@ lancelot_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
+  ret$has_carehomes <- carehome_beds != 0
+
   if (n_real_strains > 2) {
     stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
   }
 
-  severity <- severity %||% lancelot_parameters_severity(ret$dt, severity)
+  severity <- severity %||%
+    lancelot_parameters_severity(ret$dt, severity, ret$has_carehomes)
 
   progression <- progression %||% lancelot_parameters_progression(ret$dt)
 
-  waning <- lancelot_parameters_waning(waning_rate)
+  waning <- lancelot_parameters_waning(waning_rate, ret$has_carehomes)
 
-  ret$m <- lancelot_transmission_matrix(eps, m_CHW, m_CHR, region, population)
+  ret$m <- lancelot_transmission_matrix(eps, m_CHW, m_CHR, region, population,
+                                        ret$has_carehomes)
 
   ret$N_tot <- lancelot_population(ret$population, carehome_workers,
                                    carehome_residents)
@@ -595,7 +599,13 @@ lancelot_parameters <- function(start_date, region,
 
   sens_and_spec <- sens_and_spec %||% lancelot_parameters_sens_and_spec()
 
-  ret$n_groups <- ret$n_age_groups + 2L
+  if (ret$has_carehomes) {
+    ret$n_groups <- ret$n_age_groups + 2L
+  } else {
+    ret$n_groups <- ret$n_age_groups
+    ret$N_tot <- ret$N_tot[1:17]
+  }
+
 
   ## number of strains and relative transmissibility
   strain <- lancelot_parameters_strain(
@@ -616,7 +626,8 @@ lancelot_parameters <- function(start_date, region,
                                                  vaccine_index_booster,
                                                  strain$n_strains,
                                                  vaccine_catchup_fraction,
-                                                 n_doses)
+                                                 n_doses,
+                                                 ret$has_carehomes)
 
   ## vacc_skip parameters
   vacc_skip_to <- vacc_skip_to %||% integer(vaccination$n_vacc_classes)
@@ -662,7 +673,8 @@ lancelot_parameters <- function(start_date, region,
   # probability of death
 
   rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
-                                 vaccination$n_vacc_classes, "rel_p_death")
+                                 vaccination$n_vacc_classes, "rel_p_death",
+                                 ret$has_carehomes)
 
   ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
                               vaccination$n_vacc_classes))
@@ -1648,6 +1660,8 @@ lancelot_severity <- function(p) {
 ##'   `NULL` (use the default bundled data version in the package), or a
 ##'   [data.frame] object (for raw severity data).
 ##'
+##' @param has_carehomes Logical, whether or not the model has carehomes
+##'
 ##' @section Time-varying parameters:
 ##' Every time varying parameter has the same format, which can be `NULL` (in
 ##'   which case the value from `severity` is used) or a list with `date` and
@@ -1698,6 +1712,7 @@ lancelot_severity <- function(p) {
 ##' @export
 lancelot_parameters_severity <- function(dt,
                                          severity = NULL,
+                                         has_carehomes = TRUE,
                                          p_C = NULL,
                                          p_H = NULL,
                                          p_H_CHR = NULL,
@@ -1709,7 +1724,6 @@ lancelot_parameters_severity <- function(dt,
                                          p_G_D_CHR = NULL,
                                          p_R = NULL,
                                          p_star = NULL) {
-
   severity <- sircovid_parameters_severity(severity)
   severity <- lapply(severity, lancelot_severity)
 
@@ -1828,6 +1842,10 @@ lancelot_parameters_severity <- function(dt,
       p_step <- cbind(p_step, p_CHR_step, deparse.level = 0)
     }
 
+    if (!has_carehomes) {
+      p_step <- p_step[, 1:17, drop = FALSE]
+    }
+
     x[[paste0(p_name, "_step")]] <- p_step
     x[[paste0(p_name)]] <- NULL
     x[[paste0("n_", p_name, "_steps")]] <- dim(p_step)[1]
@@ -1837,6 +1855,11 @@ lancelot_parameters_severity <- function(dt,
 
   for (name in names(time_varying_severity)) {
     severity <- get_p_step(severity, name)
+  }
+
+  if (!has_carehomes) {
+    severity$p_sero_pos_1 <- severity$p_sero_pos_1[1:17]
+    severity$p_sero_pos_2 <- severity$p_sero_pos_2[1:17]
   }
 
   severity
@@ -1850,7 +1873,7 @@ lancelot_index_workers <- function() {
 
 
 lancelot_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
-                                         population) {
+                                         population, has_carehomes) {
   index_workers <- lancelot_index_workers()
   m <- sircovid_transmission_matrix(region, population)
   n_age_groups <- nrow(m)
@@ -1876,6 +1899,10 @@ lancelot_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
 
   nms <- c(rownames(m), "CHW", "CHR")
   dimnames(ret) <- list(nms, nms)
+
+  if (!has_carehomes) {
+    ret <- ret[1:n_age_groups, 1:n_age_groups]
+  }
 
   ret
 }
@@ -1943,8 +1970,9 @@ lancelot_parameters_vaccination <- function(N_tot,
                                             vaccine_index_booster = NULL,
                                             n_strains = 1,
                                             vaccine_catchup_fraction = 1,
-                                            n_doses = 2L) {
-  n_groups <- lancelot_n_groups()
+                                            n_doses = 2L,
+                                            has_carehomes = TRUE) {
+  n_groups <- lancelot_n_groups(has_carehomes)
   stopifnot(length(N_tot) == n_groups)
   calc_n_vacc_classes <- function(x) {
     if (is.array(x)) nlayer(x) else length(x)
@@ -1968,7 +1996,7 @@ lancelot_parameters_vaccination <- function(N_tot,
   n_vacc_classes <- max(n)
 
   ret <- Map(function(value, name)
-    build_rel_param(value, n_strains, n_vacc_classes, name),
+    build_rel_param(value, n_strains, n_vacc_classes, name, has_carehomes),
     rel_params, names(rel_params))
 
   if (is.null(vaccine_schedule)) {
@@ -2019,7 +2047,7 @@ lancelot_parameters_vaccination <- function(N_tot,
 
   ret$n_vacc_classes <- n_vacc_classes
   ret$vaccine_progression_rate_base <- build_vaccine_progression_rate(
-    vaccine_progression_rate, n_vacc_classes, ret$index_dose)
+    vaccine_progression_rate, n_vacc_classes, ret$index_dose, has_carehomes)
 
 
   assert_scalar(vaccine_catchup_fraction)
@@ -2178,8 +2206,11 @@ lancelot_parameters_strain <- function(strain_transmission, strain_seed_date,
 }
 
 
-lancelot_parameters_waning <- function(waning_rate) {
+lancelot_parameters_waning <- function(waning_rate, has_carehomes = TRUE) {
   waning_rate <- build_waning_rate(waning_rate)
+  if (!has_carehomes) {
+    waning_rate <- waning_rate[1:17]
+  }
   list(
     waning_rate = waning_rate
   )
@@ -2575,6 +2606,7 @@ lancelot_population <- function(population, carehome_workers,
   if (any(N_tot[index_workers] < 0)) {
     stop("Not enough population to be care workers")
   }
+
   N_tot
 }
 
@@ -2758,8 +2790,12 @@ lancelot_check_data <- function(data) {
 }
 
 
-lancelot_n_groups <- function() {
-  length(sircovid_age_bins()$start) + 2L
+lancelot_n_groups <- function(has_carehomes = TRUE) {
+  if (has_carehomes) {
+    length(sircovid_age_bins()$start) + 2L
+  } else {
+    length(sircovid_age_bins()$start)
+  }
 }
 
 

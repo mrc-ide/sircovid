@@ -1,6 +1,6 @@
 Package: sircovid
 Title: SIR Model for COVID-19
-Version: 0.15.0
+Version: 0.15.1
 Authors@R:
     c(person(given = "Marc",
            family = "Baguelin",
@@ -73,7 +73,7 @@ Suggests:
     odin (>= 1.5.9),
     odin.dust (>= 0.3.9),
     testthat
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)
 SystemRequirements: C++11
 Remotes:
