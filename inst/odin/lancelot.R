@@ -10,7 +10,7 @@
 ## Carehome residents. This will be 19 in all but experimental uses.
 n_age_groups <- user()
 n_groups <- user()
-has_carehomes <- user()
+has_carehomes <- user(integer = TRUE)
 
 ## Definition of the time-step and output as "time"
 steps_per_day <- user(integer = TRUE)

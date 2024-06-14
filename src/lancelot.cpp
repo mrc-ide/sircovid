@@ -2017,7 +2017,7 @@ public:
     real_type gamma_sero_pos_2;
     real_type gamma_sero_pre_1;
     real_type gamma_sero_pre_2;
-    real_type has_carehomes;
+    int has_carehomes;
     real_type hosp_transmission;
     std::vector<int> index_dose;
     std::vector<int> index_dose_inverse;
@@ -5782,7 +5782,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->N_tot_react = NA_REAL;
   shared->N_tot_under15 = NA_REAL;
   shared->exp_noise = NA_REAL;
-  shared->has_carehomes = NA_REAL;
+  shared->has_carehomes = NA_INTEGER;
   shared->hosp_transmission = NA_REAL;
   shared->k_A = NA_INTEGER;
   shared->k_C_1 = NA_INTEGER;
@@ -5929,7 +5929,7 @@ dust::pars_type<lancelot> dust_pars<lancelot>(cpp11::list user) {
   shared->gamma_sero_pos_2 = user_get_scalar<real_type>(user, "gamma_sero_pos_2", shared->gamma_sero_pos_2, NA_REAL, NA_REAL);
   shared->gamma_sero_pre_1 = user_get_scalar<real_type>(user, "gamma_sero_pre_1", shared->gamma_sero_pre_1, NA_REAL, NA_REAL);
   shared->gamma_sero_pre_2 = user_get_scalar<real_type>(user, "gamma_sero_pre_2", shared->gamma_sero_pre_2, NA_REAL, NA_REAL);
-  shared->has_carehomes = user_get_scalar<real_type>(user, "has_carehomes", shared->has_carehomes, NA_REAL, NA_REAL);
+  shared->has_carehomes = user_get_scalar<int>(user, "has_carehomes", shared->has_carehomes, NA_INTEGER, NA_INTEGER);
   shared->hosp_transmission = user_get_scalar<real_type>(user, "hosp_transmission", shared->hosp_transmission, NA_REAL, NA_REAL);
   shared->k_A = user_get_scalar<int>(user, "k_A", shared->k_A, NA_INTEGER, NA_INTEGER);
   shared->k_C_1 = user_get_scalar<int>(user, "k_C_1", shared->k_C_1, NA_INTEGER, NA_INTEGER);
