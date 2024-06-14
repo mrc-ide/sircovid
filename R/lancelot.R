@@ -719,6 +719,8 @@ lancelot_parameters <- function(start_date, region,
     }
   }
 
+  ret$has_carehomes <- 1 * ret$has_carehomes
+
   out <- c(ret, severity, progression, strain, vaccination, vacc_skip,
            waning, observation, sens_and_spec)
 
