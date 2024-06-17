@@ -299,7 +299,7 @@ vaccine_priority_population <- function(region,
   if (carehomes) {
     pop <- lancelot_parameters(1, region)$N_tot
   } else {
-    pop <- c(lancelot_parameters(1, region, carehome_beds = 0)$N_tot, 0, 0)
+    pop <- lancelot_parameters(1, region, carehome_beds = 0)$N_tot
   }
   pop_mat <- matrix(rep(pop, ncol(p)), nrow = nrow(p))
   round(p * pop_mat)
