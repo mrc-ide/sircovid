@@ -1894,7 +1894,7 @@ lancelot_index_workers <- function() {
 
 
 lancelot_transmission_matrix <- function(eps, m_CHW, m_CHR, region,
-                                         population, has_carehomes) {
+                                         population, has_carehomes = TRUE) {
   index_workers <- lancelot_index_workers()
   m <- sircovid_transmission_matrix(region, population)
   n_age_groups <- nrow(m)
