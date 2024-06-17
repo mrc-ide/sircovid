@@ -11,6 +11,7 @@ lancelot_parameters(
   beta_value = NULL,
   beta_type = "piecewise-linear",
   population = NULL,
+  has_carehomes = TRUE,
   carehome_beds = NULL,
   severity = NULL,
   progression = NULL,
@@ -92,6 +93,8 @@ parameter), which currently can be \code{"piecewise-linear"} or
 size for age groups 0-4, 5-9, ..., 75-79, 80+. If \code{NULL}, the population
 data will be sourced within the package for the specified \code{region} (only
 if available).}
+
+\item{has_carehomes}{Logical, whethere or not the model has carehomes.}
 
 \item{carehome_beds}{The number of care home beds in the region. If \code{NULL},
 this will be sourced within the package for the specified \code{region} (only

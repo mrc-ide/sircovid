@@ -16,6 +16,8 @@ NULL
 ##'   data will be sourced within the package for the specified `region` (only
 ##'   if available).
 ##'
+##' @param has_carehomes Logical, whethere or not the model has carehomes.
+##'
 ##' @param carehome_beds The number of care home beds in the region. If `NULL`,
 ##'   this will be sourced within the package for the specified `region` (only
 ##'   if available).
@@ -457,6 +459,7 @@ lancelot_parameters <- function(start_date, region,
                                 beta_date = NULL, beta_value = NULL,
                                 beta_type = "piecewise-linear",
                                 population = NULL,
+                                has_carehomes = TRUE,
                                 carehome_beds = NULL,
                                 severity = NULL,
                                 progression = NULL,
@@ -516,12 +519,25 @@ lancelot_parameters <- function(start_date, region,
                                     population,
                                     initial_seed_pattern, initial_seed_size)
 
+  ret$has_carehomes <- 1L * has_carehomes
+
   ## These are only used here, and are fixed
   carehome_occupancy <- 0.742
   carehome_workers_per_resident <- 1
 
   ## These are used in constructing the initial population vectors (S0)
-  carehome_beds <- carehome_beds %||% sircovid_carehome_beds(region)
+  if (has_carehomes) {
+    carehome_beds <- carehome_beds %||% sircovid_carehome_beds(region)
+  } else {
+    carehome_beds <- carehome_beds %||% 0
+    if (carehome_beds > 0) {
+      stop("Cannot have non-zero carehome beds if model does not have
+           carehomes")
+    }
+  }
+  if (!has_carehomes && carehome_beds > 0) {
+
+  }
   carehome_residents <- round(carehome_beds * carehome_occupancy)
   carehome_workers <- round(carehome_residents * carehome_workers_per_resident)
 
@@ -533,21 +549,21 @@ lancelot_parameters <- function(start_date, region,
   ret$carehome_residents <- carehome_residents
   ret$carehome_workers <- carehome_workers
 
-  ret$has_carehomes <- carehome_beds != 0
+
 
   if (n_real_strains > 2) {
     stop("Only 1 or 2 strains valid ('strain_transmission' too long)'.")
   }
 
   severity <- severity %||%
-    lancelot_parameters_severity(ret$dt, severity, ret$has_carehomes)
+    lancelot_parameters_severity(ret$dt, severity, has_carehomes)
 
   progression <- progression %||% lancelot_parameters_progression(ret$dt)
 
-  waning <- lancelot_parameters_waning(waning_rate, ret$has_carehomes)
+  waning <- lancelot_parameters_waning(waning_rate, has_carehomes)
 
   ret$m <- lancelot_transmission_matrix(eps, m_CHW, m_CHR, region, population,
-                                        ret$has_carehomes)
+                                        has_carehomes)
 
   ret$N_tot <- lancelot_population(ret$population, carehome_workers,
                                    carehome_residents)
@@ -599,7 +615,7 @@ lancelot_parameters <- function(start_date, region,
 
   sens_and_spec <- sens_and_spec %||% lancelot_parameters_sens_and_spec()
 
-  if (ret$has_carehomes) {
+  if (has_carehomes) {
     ret$n_groups <- ret$n_age_groups + 2L
   } else {
     ret$n_groups <- ret$n_age_groups
@@ -627,7 +643,7 @@ lancelot_parameters <- function(start_date, region,
                                                  strain$n_strains,
                                                  vaccine_catchup_fraction,
                                                  n_doses,
-                                                 ret$has_carehomes)
+                                                 has_carehomes)
 
   ## vacc_skip parameters
   vacc_skip_to <- vacc_skip_to %||% integer(vaccination$n_vacc_classes)
@@ -674,7 +690,7 @@ lancelot_parameters <- function(start_date, region,
 
   rel_p_death <- build_rel_param(rel_p_death, strain$n_strains,
                                  vaccination$n_vacc_classes, "rel_p_death",
-                                 ret$has_carehomes)
+                                 has_carehomes)
 
   ret$rel_p_ICU <- array(1, c(ret$n_groups, strain$n_strains,
                               vaccination$n_vacc_classes))
@@ -718,8 +734,6 @@ lancelot_parameters <- function(start_date, region,
       }
     }
   }
-
-  ret$has_carehomes <- 1L * ret$has_carehomes
 
   out <- c(ret, severity, progression, strain, vaccination, vacc_skip,
            waning, observation, sens_and_spec)
