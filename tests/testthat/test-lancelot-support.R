@@ -1526,3 +1526,17 @@ test_that("Can input population data", {
     lancelot_parameters(1, "Unknown", population = pop, carehome_beds = 0),
     "'population' must have only non-negative values")
 })
+
+
+test_that("Can exclude carehomes from model", {
+  p1 <- lancelot_parameters(1, "England", carehome_beds = 0)
+  p2 <- lancelot_parameters(1, "England", has_carehomes = FALSE)
+
+  expect_equal(p1$N_tot[1:17], p2$N_tot)
+  expect_equal(p1$m[1:17, 1:17], p2$m)
+
+  expect_error(lancelot_parameters(1, "England", has_carehomes = FALSE,
+                                   carehome_beds = 1000),
+               "Cannot have non-zero carehome beds if model does not have")
+
+})
