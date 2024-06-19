@@ -6,6 +6,8 @@
 ##'
 ##' @param pars An unnamed list of [lancelot_parameters()] objects
 ##'
+##' @importFrom stats weighted.mean
+##'
 ##' @export
 lancelot_ifr_excl_immunity <- function(time, pars) {
 

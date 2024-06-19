@@ -110,6 +110,56 @@ test_that("can run the lancelot model", {
 })
 
 
+test_that("Model runs the same without carehomes as with 0 carehome beds", {
+  p1 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                            carehome_beds = 0)
+  mod1 <- lancelot$new(p1, 0, 5, seed = 1L)
+  end <- sircovid_date("2020-07-31") / p1$dt
+
+  info1 <- mod1$info()
+  initial1 <- lancelot_initial(info1, 10, p1)
+  mod1$update_state(state = initial1)
+
+  index1 <- c(lancelot_index(info1)$run,
+              deaths_carehomes = info1$index[["D_carehomes_tot"]],
+              deaths_comm = info1$index[["D_comm_tot"]],
+              deaths_hosp = info1$index[["D_hosp_tot"]],
+              admitted = info1$index[["cum_admit_conf"]],
+              diagnoses = info1$index[["cum_new_conf"]],
+              sympt_cases = info1$index[["cum_sympt_cases"]],
+              sympt_cases_over25 = info1$index[["cum_sympt_cases_over25"]]
+              )
+
+  mod1$set_index(index1)
+  res1 <- mod1$run(end)
+
+
+  p2 <- lancelot_parameters(sircovid_date("2020-02-07"), "england",
+                            has_carehomes = FALSE)
+  mod2 <- lancelot$new(p2, 0, 5, seed = 1L)
+  end <- sircovid_date("2020-07-31") / p2$dt
+
+  info2 <- mod2$info()
+  initial2 <- lancelot_initial(info2, 10, p2)
+  mod2$update_state(state = initial2)
+
+  index2 <- c(lancelot_index(info2)$run,
+              deaths_carehomes = info2$index[["D_carehomes_tot"]],
+              deaths_comm = info2$index[["D_comm_tot"]],
+              deaths_hosp = info2$index[["D_hosp_tot"]],
+              admitted = info2$index[["cum_admit_conf"]],
+              diagnoses = info2$index[["cum_new_conf"]],
+              sympt_cases = info2$index[["cum_sympt_cases"]],
+              sympt_cases_over25 = info2$index[["cum_sympt_cases_over25"]]
+  )
+
+  mod2$set_index(index2)
+  res2 <- mod2$run(end)
+
+  expect_equal(res1, res2)
+})
+
+
 test_that("initial seeding in one big lump", {
   start_date <- sircovid_date("2020-02-07")
   n_particles <- 20

@@ -218,9 +218,11 @@ lancelot_Rt <- function(time, S, p, prob_strain = NULL,
   beta <- sircovid_parameters_expand_step(time, p$beta_step)
 
   ages <- seq_len(p$n_age_groups)
-  ch <- seq(p$n_age_groups + 1L, p$n_groups)
-  if (n_vacc_classes > 1L) {
-    ch <- c(outer(ch, (seq_len(n_vacc_classes) - 1L) * p$n_groups, "+"))
+  if (p$has_carehomes == 1) {
+    ch <- seq(p$n_age_groups + 1L, p$n_groups)
+    if (n_vacc_classes > 1L) {
+      ch <- c(outer(ch, (seq_len(n_vacc_classes) - 1L) * p$n_groups, "+"))
+    }
   }
 
   ## We only need to do this section for each different beta value,
@@ -243,7 +245,9 @@ lancelot_Rt <- function(time, S, p, prob_strain = NULL,
   ## And scale all of A, B, C (not D) by beta
   m <- block_expand(unname(p$m), n_vacc_classes)
   mt <- m %o% beta
-  mt[ch, ch, ] <- m[ch, ch]
+  if (p$has_carehomes == 1) {
+    mt[ch, ch, ] <- m[ch, ch]
+  }
 
   n_time <- length(time)
 
@@ -321,9 +325,16 @@ lancelot_Rt <- function(time, S, p, prob_strain = NULL,
                numeric(dim(ngm)[[3L]]))
     }
     if ("eff_Rt_general" %in% type) {
-      ret$eff_Rt_general <-
-        vapply(seq(n_real_strains), function(i) eigen(ngm[-ch, -ch, , i]),
-               numeric(dim(ngm)[[3L]]))
+      if (p$has_carehomes == 1) {
+        ret$eff_Rt_general <-
+          vapply(seq(n_real_strains), function(i) eigen(ngm[-ch, -ch, , i]),
+                 numeric(dim(ngm)[[3L]]))
+      } else {
+        ret$eff_Rt_general <-
+          vapply(seq(n_real_strains), function(i) eigen(ngm[, , , i]),
+                 numeric(dim(ngm)[[3L]]))
+      }
+
     }
   }
 
@@ -345,9 +356,15 @@ lancelot_Rt <- function(time, S, p, prob_strain = NULL,
                numeric(dim(ngm)[[3L]]))
     }
     if ("Rt_general" %in% type) {
-      ret$Rt_general <-
-        vapply(seq(n_real_strains), function(i) eigen(ngm[-ch, -ch, , i]),
-               numeric(dim(ngm)[[3L]]))
+      if (p$has_carehomes == 1) {
+        ret$Rt_general <-
+          vapply(seq(n_real_strains), function(i) eigen(ngm[-ch, -ch, , i]),
+                 numeric(dim(ngm)[[3L]]))
+      } else {
+        ret$Rt_general <-
+          vapply(seq(n_real_strains), function(i) eigen(ngm[, , , i]),
+                 numeric(dim(ngm)[[3L]]))
+      }
     }
   }
 

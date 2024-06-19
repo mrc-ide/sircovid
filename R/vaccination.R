@@ -56,8 +56,9 @@ vaccine_remap_state <- function(state_orig, info_orig, info_vacc) {
 }
 
 
-build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param) {
-  n_groups <- lancelot_n_groups()
+build_rel_param <- function(rel_param, n_strains, n_vacc_classes, name_param,
+                            has_carehomes = TRUE) {
+  n_groups <- lancelot_n_groups(has_carehomes)
   if (length(rel_param) == 1) {
     mat_rel_param <- array(rel_param, c(n_groups, n_strains, n_vacc_classes))
   } else if (is.array(rel_param)) {
@@ -101,9 +102,9 @@ check_rel_param <- function(rel_param, name_param) {
 
 build_vaccine_progression_rate <- function(vaccine_progression_rate,
                                            n_vacc_classes,
-                                           index_dose) {
+                                           index_dose, has_carehomes = TRUE) {
 
-  n_groups <- lancelot_n_groups()
+  n_groups <- lancelot_n_groups(has_carehomes)
   # if NULL, set vaccine_progression_rate to 0
   if (is.null(vaccine_progression_rate)) {
     mat_vaccine_progression_rate <- matrix(0, n_groups, n_vacc_classes)

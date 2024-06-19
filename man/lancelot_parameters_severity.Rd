@@ -7,6 +7,7 @@
 lancelot_parameters_severity(
   dt,
   severity = NULL,
+  has_carehomes = TRUE,
   p_C = NULL,
   p_H = NULL,
   p_H_CHR = NULL,
@@ -27,6 +28,8 @@ lancelot_parameters_severity(
 age-scalings and to provide default severity parameter values. Can be
 \code{NULL} (use the default bundled data version in the package), or a
 \link{data.frame} object (for raw severity data).}
+
+\item{has_carehomes}{Logical, whether or not the model has carehomes}
 
 \item{p_C}{Time-varying parameters for p_C (the probability of an infected
 individual becoming symptomatic). See Details.}

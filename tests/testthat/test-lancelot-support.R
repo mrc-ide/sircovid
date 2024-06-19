@@ -209,21 +209,22 @@ test_that("lancelot_parameters returns a list of parameters", {
                      names(waning), names(sens_and_spec)))
   expect_setequal(
     extra,
-    c("N_tot", "carehome_beds", "carehome_residents", "carehome_workers",
-      "rel_p_ICU", "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D", "rel_p_G_D",
-      "rel_p_R", "rel_gamma_E", "rel_gamma_A", "rel_gamma_P", "rel_gamma_C_1",
-      "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R", "rel_gamma_ICU_pre",
-      "rel_gamma_ICU_D", "rel_gamma_ICU_W_D", "rel_gamma_ICU_W_R",
-      "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D", "rel_gamma_PCR_pre",
-      "rel_gamma_PCR_pos", "strain_rel_p_ICU_D", "strain_rel_p_H_D",
-      "strain_rel_p_W_D", "strain_rel_p_G_D", "strain_rel_p_icu",
-      "strain_rel_p_hosp_if_sympt", "strain_rel_p_sympt", "N_tot_under15",
-      "N_tot_15_24", "N_tot_25_49", "N_tot_50_64", "N_tot_65_79",
-      "N_tot_80_plus", "N_tot_15_64", "N_tot_all", "N_tot_over25", "N_tot_ons",
-      "N_tot_react", "N_5_24_react", "N_25_34_react", "N_35_44_react",
-      "N_45_54_react", "N_55_64_react", "N_65_plus_react", "I_A_transmission",
-      "I_P_transmission", "I_C_1_transmission", "I_C_2_transmission",
-      "n_groups", "initial_seed_size", "cross_immunity"))
+    c("N_tot", "has_carehomes", "carehome_beds", "carehome_residents",
+      "carehome_workers", "rel_p_ICU", "rel_p_ICU_D", "rel_p_H_D", "rel_p_W_D",
+      "rel_p_G_D", "rel_p_R", "rel_gamma_E", "rel_gamma_A", "rel_gamma_P",
+      "rel_gamma_C_1", "rel_gamma_C_2", "rel_gamma_H_D", "rel_gamma_H_R",
+      "rel_gamma_ICU_pre", "rel_gamma_ICU_D", "rel_gamma_ICU_W_D",
+      "rel_gamma_ICU_W_R", "rel_gamma_W_D", "rel_gamma_W_R", "rel_gamma_G_D",
+      "rel_gamma_PCR_pre", "rel_gamma_PCR_pos", "strain_rel_p_ICU_D",
+      "strain_rel_p_H_D", "strain_rel_p_W_D", "strain_rel_p_G_D",
+      "strain_rel_p_icu", "strain_rel_p_hosp_if_sympt", "strain_rel_p_sympt",
+      "N_tot_under15", "N_tot_15_24", "N_tot_25_49", "N_tot_50_64",
+      "N_tot_65_79", "N_tot_80_plus", "N_tot_15_64", "N_tot_all",
+      "N_tot_over25", "N_tot_ons", "N_tot_react", "N_5_24_react",
+      "N_25_34_react", "N_35_44_react", "N_45_54_react", "N_55_64_react",
+      "N_65_plus_react", "I_A_transmission", "I_P_transmission",
+      "I_C_1_transmission", "I_C_2_transmission", "n_groups",
+      "initial_seed_size", "cross_immunity"))
 
   expect_equal(p$carehome_beds, sircovid_carehome_beds("uk"))
   expect_equal(p$carehome_residents, round(p$carehome_beds * 0.742))
@@ -1524,4 +1525,18 @@ test_that("Can input population data", {
   expect_error(
     lancelot_parameters(1, "Unknown", population = pop, carehome_beds = 0),
     "'population' must have only non-negative values")
+})
+
+
+test_that("Can exclude carehomes from model", {
+  p1 <- lancelot_parameters(1, "England", carehome_beds = 0)
+  p2 <- lancelot_parameters(1, "England", has_carehomes = FALSE)
+
+  expect_equal(p1$N_tot[1:17], p2$N_tot)
+  expect_equal(p1$m[1:17, 1:17], p2$m)
+
+  expect_error(lancelot_parameters(1, "England", has_carehomes = FALSE,
+                                   carehome_beds = 1000),
+               "Cannot have non-zero carehome beds if model does not have")
+
 })
