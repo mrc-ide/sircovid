@@ -4,11 +4,11 @@
 ## k for the infectivity group
 
 ## Number of age classes & number of transmissibility classes
-n_age_groups <- user()
-n_trans_classes <- user(1)
+n_age_groups <- parameter()
+n_trans_classes <- parameter(1)
 
 ## Definition of the time-step and output as "time"
-steps_per_day <- user(integer = TRUE)
+steps_per_day <- parameter(type = "integer")
 dt <- 1 / steps_per_day
 initial(time) <- 0
 update(time) <- (step + 1) * dt
@@ -19,9 +19,9 @@ seed <- if (step >= seed_step_start && step < seed_step_end)
           seed_value[as.integer(step - seed_step_start + 1)] else 0
 seed_age_band <- as.integer(4) # 15-19y band
 
-seed_step_start <- user()
-seed_value[] <- user()
-dim(seed_value) <- user()
+seed_step_start <- parameter()
+seed_value <- parameter()
+dim(seed_value) <- parameter(rank = 1)
 
 ## Core equations for transitions between compartments:
 update(S[]) <- S[i] - n_SE[i]
@@ -50,18 +50,18 @@ p_R_hosp <- 1 - exp(-gamma_rec * dt)
 
 ## Draws from binomial distributions for numbers changing between
 ## compartments:
-n_SE[] <- rbinom(S[i], p_SE[i])
-n_SE[seed_age_band] <- min(S[i], n_SE[i] + rpois(seed))
+n_SE[] <- Binomial(S[i], p_SE[i])
+n_SE[seed_age_band] <- min(S[i], n_SE[i] + Poisson(seed))
 
-n_EE[, , ] <- rbinom(E[i, j, k], p_EE)
-n_II_A[, , ] <- rbinom(I_A[i, j, k], p_II_A)
-n_II_C[, , ] <- rbinom(I_C[i, j, k], p_II_C)
-n_II_hosp[, , ] <- rbinom(I_hosp[i, j, k], p_II_hosp)
-n_II_ICU[, , ] <- rbinom(I_ICU[i, j, k], p_II_ICU)
-n_R_hosp[, , ] <- rbinom(R_hosp[i, j, k], p_R_hosp)
+n_EE[, , ] <- Binomial(E[i, j, k], p_EE)
+n_II_A[, , ] <- Binomial(I_A[i, j, k], p_II_A)
+n_II_C[, , ] <- Binomial(I_C[i, j, k], p_II_C)
+n_II_hosp[, , ] <- Binomial(I_hosp[i, j, k], p_II_hosp)
+n_II_ICU[, , ] <- Binomial(I_ICU[i, j, k], p_II_ICU)
+n_R_hosp[, , ] <- Binomial(R_hosp[i, j, k], p_R_hosp)
 
 ## Computes the number of asymptomatic
-n_EI_A[, ] <- rbinom(n_EE[i, k_E, j], 1 - p_C[i])
+n_EI_A[, ] <- Binomial(n_EE[i, k_E, j], 1 - p_C[i])
 
 
 ## Computes the number of symptomatic cases
@@ -73,9 +73,8 @@ aux_p_bin[, 2:(n_trans_classes - 1)] <-
   trans_profile[i, j] / sum(trans_profile[i, j:n_trans_classes])
 
 ## Implementation of multinom via nested binomial
-aux_EE[, 1, 1] <- rbinom(n_SE[i], aux_p_bin[i, 1])
-aux_EE[, 1, 2:(n_trans_classes - 1)] <-
-  rbinom(n_SE[i] - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
+aux_EE[, 1, 1] <- Binomial(n_SE[i], aux_p_bin[i, 1])
+aux_EE[, 1, 2:(n_trans_classes - 1)] <- Binomial(n_SE[i] - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
 aux_EE[, 1, n_trans_classes] <-
   n_SE[i] - sum(aux_EE[i, 1, 1:(n_trans_classes - 1)])
 
@@ -97,19 +96,17 @@ aux_II_C[, 1:k_C, ] <- aux_II_C[i, j, k] - n_II_C[i, j, k]
 delta_I_C[, , ] <- aux_II_C[i, j, k]
 
 ## Work out the I_hosp->I_hosp transitions
-n_sympt_to_hosp[, ] <- rbinom(n_II_C[i, k_C, j], 1 - p_recov_sympt[i])
+n_sympt_to_hosp[, ] <- Binomial(n_II_C[i, k_C, j], 1 - p_recov_sympt[i])
 aux_II_hosp[, 1, ] <- n_sympt_to_hosp[i, k]
 aux_II_hosp[, 2:k_hosp, ] <- n_II_hosp[i, j - 1, k]
 aux_II_hosp[, 1:k_hosp, ] <- aux_II_hosp[i, j, k] - n_II_hosp[i, j, k]
 delta_I_hosp[, , ] <- aux_II_hosp[i, j, k]
 
 ## Work out the death in hospital without getting critical care
-n_death_hosp[, ] <- rbinom(n_II_hosp[i, k_hosp, j], p_death_hosp[i])
+n_death_hosp[, ] <- Binomial(n_II_hosp[i, k_hosp, j], p_death_hosp[i])
 
 ## Work out the I_ICU -> I_ICU transitions
-n_hosp_to_ICU[, ] <-
-  rbinom(n_II_hosp[i, k_hosp, j] - n_death_hosp[i, j],
-         1 - p_recov_hosp[i] - p_death_hosp[i])
+n_hosp_to_ICU[, ] <- Binomial(n_II_hosp[i, k_hosp, j] - n_death_hosp[i, j], 1 - p_recov_hosp[i] - p_death_hosp[i])
 aux_II_ICU[, 1, ] <- n_hosp_to_ICU[i, k]
 aux_II_ICU[, 2:k_ICU, ] <- n_II_ICU[i, j - 1, k]
 aux_II_ICU[, 1:k_ICU, ] <- aux_II_ICU[i, j, k] - n_II_ICU[i, j, k]
@@ -118,7 +115,7 @@ delta_I_ICU[, , ] <- aux_II_ICU[i, j, k]
 new_I_ICU[, , ] <- I_ICU[i, j, k] + delta_I_ICU[i, j, k]
 
 ## Work out the R_hosp -> R_hosp transitions
-n_ICU_to_R_hosp[, ] <- rbinom(n_II_ICU[i, k_ICU, j], p_recov_ICU[i])
+n_ICU_to_R_hosp[, ] <- Binomial(n_II_ICU[i, k_ICU, j], p_recov_ICU[i])
 aux_R_hosp[, 1, ] <- n_ICU_to_R_hosp[i, k]
 aux_R_hosp[, 2:k_rec, ] <- n_R_hosp[i, j - 1, k]
 aux_R_hosp[, 1:k_rec, ] <- aux_R_hosp[i, j, k] - n_R_hosp[i, j, k]
@@ -178,40 +175,40 @@ update(D_inc) <-
 ## User defined parameters - default in parentheses:
 
 ## Parameters of the E classes
-k_E <- user()
-gamma_E <- user(0.1)
+k_E <- parameter()
+gamma_E <- parameter(0.1)
 
 ## Probability of transitioning from the E to the asymptomatic
 ## class, the rest goes in the symptomatic class
-p_C[] <- user()
+p_C <- parameter()
 
 ## Parameters of the I_A classes
-k_A <- user()
-gamma_A <- user(0.1)
+k_A <- parameter()
+gamma_A <- parameter(0.1)
 
 ## Parameters of the I_C classes
-k_C <- user()
-gamma_C <- user(0.1)
-p_recov_sympt[] <- user()
+k_C <- parameter()
+gamma_C <- parameter(0.1)
+p_recov_sympt <- parameter()
 
 ## Parameters of the I_hosp classes
-k_hosp <- user()
-gamma_hosp <- user(0.1)
-p_recov_hosp[] <- user()
-p_death_hosp[] <- user()
+k_hosp <- parameter()
+gamma_hosp <- parameter(0.1)
+p_recov_hosp <- parameter()
+p_death_hosp <- parameter()
 
 ## Parameters of the I_ICU classes
-k_ICU <- user()
-gamma_ICU <- user(0.1)
-p_recov_ICU[] <- user()
+k_ICU <- parameter()
+gamma_ICU <- parameter(0.1)
+p_recov_ICU <- parameter()
 
 ## Parameters of the R_hosp classes
-k_rec <- user()
-gamma_rec <- user(0.1)
+k_rec <- parameter()
+gamma_rec <- parameter(0.1)
 
 ## Parameters of the age stratified transmission
-beta_step[] <- user()
-dim(beta_step) <- user()
+beta_step <- parameter()
+dim(beta_step) <- parameter(rank = 1)
 ## What we really want is min(step + 1, length(beta_step)) but that's not
 ## supported by odin (it could be made to support this).
 beta <- if (as.integer(step) >= length(beta_step))
@@ -221,14 +218,14 @@ beta <- if (as.integer(step) >= length(beta_step))
 initial(beta_out) <- beta_step[1]
 update(beta_out) <- beta
 
-m[, ] <- user()
+m <- parameter()
 ## TODO: trans_profile and trans_increase can be removed as not used;
 ## this will required removing one layer off many variables so be
 ## careful.
 trans_profile[, ] <- 1
 trans_increase[, ] <- 1
-hosp_transmission <- user()
-ICU_transmission <- user()
+hosp_transmission <- parameter()
+ICU_transmission <- parameter()
 
 ## Dimensions of the different "vectors" here vectors stand for
 ## multi-dimensional arrays
@@ -323,17 +320,17 @@ update(N_tot) <- sum(S) + sum(R) + sum(D) + sum(E) + sum(I_A) +
 
 
 ## compare
-exp_noise <- user()
-phi_ICU <- user()
-kappa_ICU <- user()
-phi_death <- user()
-kappa_death <- user()
+exp_noise <- parameter()
+phi_ICU <- parameter()
+kappa_ICU <- parameter()
+phi_death <- parameter()
+kappa_death <- parameter()
 
 icu <- data()
 deaths <- data()
 
-icu_with_noise <- phi_ICU * I_ICU_tot + rexp(exp_noise)
-compare(icu) ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
+icu_with_noise <- phi_ICU * I_ICU_tot + Exponential(exp_noise)
+icu ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
 
-deaths_with_noise <- phi_death * D_inc + rexp(exp_noise)
-compare(deaths) ~ negative_binomial_mu(kappa_death, deaths_with_noise)
+deaths_with_noise <- phi_death * D_inc + Exponential(exp_noise)
+deaths ~ negative_binomial_mu(kappa_death, deaths_with_noise)
