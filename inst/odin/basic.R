@@ -4,23 +4,16 @@
 ## k for the infectivity group
 
 ## Number of age classes & number of transmissibility classes
-n_age_groups <- parameter()
-n_trans_classes <- parameter(1)
-
-## Definition of the time-step and output as "time"
-steps_per_day <- parameter(type = "integer")
-dt <- 1 / steps_per_day
-initial(time) <- 0
-update(time) <- (step + 1) * dt
+n_age_groups <- parameter(type = "integer", constant = TRUE)
+n_trans_classes <- parameter(1, type = "integer", constant = TRUE)
 
 ## Seeding of first wave; this will happen on the S->E flow
-seed_step_end <- seed_step_start + length(seed_value)
-seed <- if (step >= seed_step_start && step < seed_step_end)
-          seed_value[as.integer(step - seed_step_start + 1)] else 0
+seed <- interpolate(seed_time, seed_value, "constant")
 seed_age_band <- as.integer(4) # 15-19y band
 
-seed_step_start <- parameter()
+seed_time <- parameter()
 seed_value <- parameter()
+dim(seed_time) <- parameter(rank = 1)
 dim(seed_value) <- parameter(rank = 1)
 
 ## Core equations for transitions between compartments:
@@ -167,15 +160,14 @@ update(I_ICU_tot) <- sum(new_I_ICU)
 tot_new_D <- sum(new_D)
 initial(D_tot) <- 0
 update(D_tot) <- D_tot + tot_new_D
-initial(D_inc) <- 0
-update(D_inc) <-
-  if (step %% steps_per_day == 0) tot_new_D else D_inc + tot_new_D
+initial(D_inc, zero_every = 1) <- 0
+update(D_inc) <- D_inc + tot_new_D
 
 
 ## User defined parameters - default in parentheses:
 
 ## Parameters of the E classes
-k_E <- parameter()
+k_E <- parameter(type = "integer", constant = TRUE)
 gamma_E <- parameter(0.1)
 
 ## Probability of transitioning from the E to the asymptomatic
@@ -183,39 +175,38 @@ gamma_E <- parameter(0.1)
 p_C <- parameter()
 
 ## Parameters of the I_A classes
-k_A <- parameter()
+k_A <- parameter(type = "integer", constant = TRUE)
 gamma_A <- parameter(0.1)
 
 ## Parameters of the I_C classes
-k_C <- parameter()
+k_C <- parameter(type = "integer", constant = TRUE)
 gamma_C <- parameter(0.1)
 p_recov_sympt <- parameter()
 
 ## Parameters of the I_hosp classes
-k_hosp <- parameter()
+k_hosp <- parameter(type = "integer", constant = TRUE)
 gamma_hosp <- parameter(0.1)
 p_recov_hosp <- parameter()
 p_death_hosp <- parameter()
 
 ## Parameters of the I_ICU classes
-k_ICU <- parameter()
+k_ICU <- parameter(type = "integer", constant = TRUE)
 gamma_ICU <- parameter(0.1)
 p_recov_ICU <- parameter()
 
 ## Parameters of the R_hosp classes
-k_rec <- parameter()
+k_rec <- parameter(type = "integer", constant = TRUE)
 gamma_rec <- parameter(0.1)
 
 ## Parameters of the age stratified transmission
-beta_step <- parameter()
-dim(beta_step) <- parameter(rank = 1)
-## What we really want is min(step + 1, length(beta_step)) but that's not
-## supported by odin (it could be made to support this).
-beta <- if (as.integer(step) >= length(beta_step))
-          beta_step[length(beta_step)] else beta_step[step + 1]
+beta_time <- parameter()
+beta_value <- parameter()
+dim(beta_time) <- parameter(rank = 1)
+dim(beta_value) <- parameter(rank = 1)
+beta <- interpolate(beta_time, beta_value, "constant")
 
 ## Useful for debugging
-initial(beta_out) <- beta_step[1]
+initial(beta_out) <- beta_value[1]
 update(beta_out) <- beta
 
 m <- parameter()
