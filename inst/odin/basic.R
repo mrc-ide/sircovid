@@ -321,7 +321,7 @@ icu <- data()
 deaths <- data()
 
 icu_with_noise <- phi_ICU * I_ICU_tot + Exponential(exp_noise)
-icu ~ negative_binomial_mu(kappa_ICU, icu_with_noise)
+icu ~ NegativeBinomial(kappa_ICU, mu = icu_with_noise)
 
 deaths_with_noise <- phi_death * D_inc + Exponential(exp_noise)
-deaths ~ negative_binomial_mu(kappa_death, deaths_with_noise)
+deaths ~ NegativeBinomial(kappa_death, mu = deaths_with_noise)
