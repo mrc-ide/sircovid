@@ -501,37 +501,52 @@ n_S_progress[4, 2:n_strains, 1] <-
                    sum(n_S_progress[i, , k])) else 0
 
 ## vaccine progression
-n_S_next_vacc_class[, ] <- Binomial(S[i, j] - sum(n_S_progress[i, , j]), p_S_next_vacc_class[i, j])
+n_S_next_vacc_class[, ] <-
+  Binomial(S[i, j] - sum(n_S_progress[i, , j]), p_S_next_vacc_class[i, j])
 
-n_S_vacc_skip[, ] <- Binomial(S[i, j] - sum(n_S_progress[i, , j]) - n_S_next_vacc_class[i, j], p_S_vacc_skip[i, j])
+n_S_vacc_skip[, ] <-
+  Binomial(S[i, j] - sum(n_S_progress[i, , j]) -
+             n_S_next_vacc_class[i, j], p_S_vacc_skip[i, j])
 
 #### flow out of E ####
 
 n_E_progress[, , , ] <- Binomial(E[i, j, k, l], p_E_progress[j])
 
 ## vaccine progression
-n_E_next_vacc_class[, , , ] <- Binomial(E[i, j, k, l] - n_E_progress[i, j, k, l], p_E_next_vacc_class[i, j, k, l])
+n_E_next_vacc_class[, , , ] <-
+  Binomial(E[i, j, k, l] - n_E_progress[i, j, k, l],
+           p_E_next_vacc_class[i, j, k, l])
 
-n_E_vacc_skip[, , , ] <- Binomial(E[i, j, k, l] - n_E_progress[i, j, k, l] - n_E_next_vacc_class[i, j, k, l], p_E_vacc_skip[i, j, k, l])
+n_E_vacc_skip[, , , ] <-
+  Binomial(E[i, j, k, l] - n_E_progress[i, j, k, l] -
+             n_E_next_vacc_class[i, j, k, l], p_E_vacc_skip[i, j, k, l])
 
 #### flow out of I_A ####
 
 n_I_A_progress[, , , ] <- Binomial(I_A[i, j, k, l], p_I_A_progress[j])
 
 ## vaccine progression
-n_I_A_next_vacc_class[, , , ] <- Binomial(I_A[i, j, k, l] - n_I_A_progress[i, j, k, l], p_I_A_next_vacc_class[i, j, k, l])
+n_I_A_next_vacc_class[, , , ] <-
+  Binomial(I_A[i, j, k, l] - n_I_A_progress[i, j, k, l],
+           p_I_A_next_vacc_class[i, j, k, l])
 
 
-n_I_A_vacc_skip[, , , ] <- Binomial(I_A[i, j, k, l] - n_I_A_progress[i, j, k, l] - n_I_A_next_vacc_class[i, j, k, l], p_I_A_vacc_skip[i, j, k, l])
+n_I_A_vacc_skip[, , , ] <-
+  Binomial(I_A[i, j, k, l] - n_I_A_progress[i, j, k, l] -
+             n_I_A_next_vacc_class[i, j, k, l], p_I_A_vacc_skip[i, j, k, l])
 
 #### flow out of I_P ####
 
 n_I_P_progress[, , , ] <- Binomial(I_P[i, j, k, l], p_I_P_progress[j])
 
 ## vaccine progression
-n_I_P_next_vacc_class[, , , ] <- Binomial(I_P[i, j, k, l] - n_I_P_progress[i, j, k, l], p_I_P_next_vacc_class[i, j, k, l])
+n_I_P_next_vacc_class[, , , ] <-
+  Binomial(I_P[i, j, k, l] - n_I_P_progress[i, j, k, l],
+           p_I_P_next_vacc_class[i, j, k, l])
 
-n_I_P_vacc_skip[, , , ] <- Binomial(I_P[i, j, k, l] - n_I_P_progress[i, j, k, l] - n_I_P_next_vacc_class[i, j, k, l], p_I_P_vacc_skip[i, j, k, l])
+n_I_P_vacc_skip[, , , ] <-
+  Binomial(I_P[i, j, k, l] - n_I_P_progress[i, j, k, l] -
+             n_I_P_next_vacc_class[i, j, k, l], p_I_P_vacc_skip[i, j, k, l])
 
 #### flow out of R ####
 
@@ -581,7 +596,8 @@ p_R5_to_E3[, ] <- if (n_strains == 1) 1 else
     (rate_RE_progress[i, 1, j] /
        sum(rate_RE_progress[i, , j]))
 
-n_R5_to_E3[, ] <- if (n_strains == 1) 0 else Binomial(n_R_progress[i, 5, j] - n_RS[i, 5, j], p_R5_to_E3[i, j])
+n_R5_to_E3[, ] <- if (n_strains == 1) 0 else
+  Binomial(n_R_progress[i, 5, j] - n_RS[i, 5, j], p_R5_to_E3[i, j])
 
 dim(p_R5_to_E3) <- c(n_groups, n_vacc_classes)
 dim(n_R5_to_E3) <- c(n_groups, n_vacc_classes)
@@ -597,37 +613,61 @@ n_RE[, , ] <- if (n_strains == 1 || j < 3) 0 else
 
 ## R -> R vaccine progression
 n_R_tmp[, , ] <- R[i, j, k] - n_R_progress[i, j, k]
-n_R_next_vacc_class[, , ] <- Binomial(n_R_tmp[i, j, k], p_R_next_vacc_class[i, j, k])
+n_R_next_vacc_class[, , ] <-
+  Binomial(n_R_tmp[i, j, k], p_R_next_vacc_class[i, j, k])
 
-n_R_vacc_skip[, , ] <- Binomial(n_R_tmp[i, j, k] - n_R_next_vacc_class[i, j, k], p_R_vacc_skip[i, j, k])
+n_R_vacc_skip[, , ] <- Binomial(n_R_tmp[i, j, k] - n_R_next_vacc_class[i, j, k],
+                                p_R_vacc_skip[i, j, k])
 
 #### other transitions ####
 
 n_I_C_1_progress[, , , ] <- Binomial(I_C_1[i, j, k, l], p_I_C_1_progress[j])
 n_I_C_2_progress[, , , ] <- Binomial(I_C_2[i, j, k, l], p_I_C_2_progress[j])
 n_G_D_progress[, , , ] <- Binomial(G_D[i, j, k, l], p_G_D_progress[j])
-n_ICU_pre_unconf_progress[, , , ] <- Binomial(ICU_pre_unconf[i, j, k, l], p_ICU_pre_progress[j])
-n_ICU_pre_conf_progress[, , , ] <- Binomial(ICU_pre_conf[i, j, k, l], p_ICU_pre_progress[j])
-n_H_R_unconf_progress[, , , ] <- Binomial(H_R_unconf[i, j, k, l], p_H_R_progress[j])
-n_H_R_conf_progress[, , , ] <- Binomial(H_R_conf[i, j, k, l], p_H_R_progress[j])
-n_H_D_unconf_progress[, , , ] <- Binomial(H_D_unconf[i, j, k, l], p_H_D_progress[j])
-n_H_D_conf_progress[, , , ] <- Binomial(H_D_conf[i, j, k, l], p_H_D_progress[j])
-n_ICU_W_R_unconf_progress[, , , ] <- Binomial(ICU_W_R_unconf[i, j, k, l], p_ICU_W_R_progress[j])
-n_ICU_W_R_conf_progress[, , , ] <- Binomial(ICU_W_R_conf[i, j, k, l], p_ICU_W_R_progress[j])
-n_ICU_W_D_unconf_progress[, , , ] <- Binomial(ICU_W_D_unconf[i, j, k, l], p_ICU_W_D_progress[j])
-n_ICU_W_D_conf_progress[, , , ] <- Binomial(ICU_W_D_conf[i, j, k, l], p_ICU_W_D_progress[j])
-n_ICU_D_unconf_progress[, , , ] <- Binomial(ICU_D_unconf[i, j, k, l], p_ICU_D_progress[j])
-n_ICU_D_conf_progress[, , , ] <- Binomial(ICU_D_conf[i, j, k, l], p_ICU_D_progress[j])
-n_W_R_unconf_progress[, , , ] <- Binomial(W_R_unconf[i, j, k, l], p_W_R_progress[j])
-n_W_R_conf_progress[, , , ] <- Binomial(W_R_conf[i, j, k, l], p_W_R_progress[j])
-n_W_D_unconf_progress[, , , ] <- Binomial(W_D_unconf[i, j, k, l], p_W_D_progress[j])
-n_W_D_conf_progress[, , , ] <- Binomial(W_D_conf[i, j, k, l], p_W_D_progress[j])
-n_T_sero_pre_1_progress[, , , ] <- Binomial(T_sero_pre_1[i, j, k, l], p_T_sero_pre_1_progress)
-n_T_sero_pos_1_progress[, , , ] <- Binomial(T_sero_pos_1[i, j, k, l], p_T_sero_pos_1_progress)
-n_T_sero_pre_2_progress[, , , ] <- Binomial(T_sero_pre_2[i, j, k, l], p_T_sero_pre_2_progress)
-n_T_sero_pos_2_progress[, , , ] <- Binomial(T_sero_pos_2[i, j, k, l], p_T_sero_pos_2_progress)
-n_T_PCR_pre_progress[, , , ] <- Binomial(T_PCR_pre[i, j, k, l], p_T_PCR_pre_progress[j])
-n_T_PCR_pos_progress[, , , ] <- Binomial(T_PCR_pos[i, j, k, l], p_T_PCR_pos_progress[j])
+n_ICU_pre_unconf_progress[, , , ] <-
+  Binomial(ICU_pre_unconf[i, j, k, l], p_ICU_pre_progress[j])
+n_ICU_pre_conf_progress[, , , ] <-
+  Binomial(ICU_pre_conf[i, j, k, l], p_ICU_pre_progress[j])
+n_H_R_unconf_progress[, , , ] <-
+  Binomial(H_R_unconf[i, j, k, l], p_H_R_progress[j])
+n_H_R_conf_progress[, , , ] <-
+  Binomial(H_R_conf[i, j, k, l], p_H_R_progress[j])
+n_H_D_unconf_progress[, , , ] <-
+  Binomial(H_D_unconf[i, j, k, l], p_H_D_progress[j])
+n_H_D_conf_progress[, , , ] <-
+  Binomial(H_D_conf[i, j, k, l], p_H_D_progress[j])
+n_ICU_W_R_unconf_progress[, , , ] <-
+  Binomial(ICU_W_R_unconf[i, j, k, l], p_ICU_W_R_progress[j])
+n_ICU_W_R_conf_progress[, , , ] <-
+  Binomial(ICU_W_R_conf[i, j, k, l], p_ICU_W_R_progress[j])
+n_ICU_W_D_unconf_progress[, , , ] <-
+  Binomial(ICU_W_D_unconf[i, j, k, l], p_ICU_W_D_progress[j])
+n_ICU_W_D_conf_progress[, , , ] <-
+  Binomial(ICU_W_D_conf[i, j, k, l], p_ICU_W_D_progress[j])
+n_ICU_D_unconf_progress[, , , ] <-
+  Binomial(ICU_D_unconf[i, j, k, l], p_ICU_D_progress[j])
+n_ICU_D_conf_progress[, , , ] <-
+  Binomial(ICU_D_conf[i, j, k, l], p_ICU_D_progress[j])
+n_W_R_unconf_progress[, , , ] <-
+  Binomial(W_R_unconf[i, j, k, l], p_W_R_progress[j])
+n_W_R_conf_progress[, , , ] <-
+  Binomial(W_R_conf[i, j, k, l], p_W_R_progress[j])
+n_W_D_unconf_progress[, , , ] <-
+  Binomial(W_D_unconf[i, j, k, l], p_W_D_progress[j])
+n_W_D_conf_progress[, , , ] <-
+  Binomial(W_D_conf[i, j, k, l], p_W_D_progress[j])
+n_T_sero_pre_1_progress[, , , ] <-
+  Binomial(T_sero_pre_1[i, j, k, l], p_T_sero_pre_1_progress)
+n_T_sero_pos_1_progress[, , , ] <-
+  Binomial(T_sero_pos_1[i, j, k, l], p_T_sero_pos_1_progress)
+n_T_sero_pre_2_progress[, , , ] <-
+  Binomial(T_sero_pre_2[i, j, k, l], p_T_sero_pre_2_progress)
+n_T_sero_pos_2_progress[, , , ] <-
+  Binomial(T_sero_pos_2[i, j, k, l], p_T_sero_pos_2_progress)
+n_T_PCR_pre_progress[, , , ] <-
+  Binomial(T_PCR_pre[i, j, k, l], p_T_PCR_pre_progress[j])
+n_T_PCR_pos_progress[, , , ] <-
+  Binomial(T_PCR_pos[i, j, k, l], p_T_PCR_pos_progress[j])
 
 ## Cumulative infections, summed over all age groups
 initial(cum_infections) <- 0
@@ -749,8 +789,10 @@ new_I_C_2[, , , ] <- I_C_2[i, j, k, l] +
     n_I_C_2_progress[i, j, k - 1, l]) - n_I_C_2_progress[i, j, k, l]
 
 ## Work out the flow from I_C_2 -> R, G_D, hosp
-n_I_C_2_to_RS[, , ] <- Binomial(n_I_C_2_progress[i, j, k_C_2, k], 1 - p_H[i, j, k])
-n_I_C_2_to_G_D[, , ] <- Binomial(n_I_C_2_progress[i, j, k_C_2, k] - n_I_C_2_to_RS[i, j, k], p_G_D[i, j, k])
+n_I_C_2_to_RS[, , ] <-
+  Binomial(n_I_C_2_progress[i, j, k_C_2, k], 1 - p_H[i, j, k])
+n_I_C_2_to_G_D[, , ] <- Binomial(n_I_C_2_progress[i, j, k_C_2, k] -
+                                   n_I_C_2_to_RS[i, j, k], p_G_D[i, j, k])
 n_I_C_2_to_hosp[, , ] <- n_I_C_2_progress[i, j, k_C_2, k] -
   n_I_C_2_to_RS[i, j, k] - n_I_C_2_to_G_D[i, j, k]
 
@@ -761,7 +803,8 @@ new_G_D[, , , ] <- G_D[i, j, k, l] +
 
 ## Work out the split in hospitals between H_D, H_R and ICU_pre
 n_I_C_2_to_ICU_pre[, , ] <- Binomial(n_I_C_2_to_hosp[i, j, k], p_ICU[i, j, k])
-n_I_C_2_to_ICU_pre_conf[, , ] <- Binomial(n_I_C_2_to_ICU_pre[i, j, k], p_star[i])
+n_I_C_2_to_ICU_pre_conf[, , ] <-
+  Binomial(n_I_C_2_to_ICU_pre[i, j, k], p_star[i])
 n_hosp_non_ICU[, , ] <- n_I_C_2_to_hosp[i, j, k] - n_I_C_2_to_ICU_pre[i, j, k]
 n_I_C_2_to_H_D[, , ] <- Binomial(n_hosp_non_ICU[i, j, k], p_H_D[i, j, k])
 n_I_C_2_to_H_D_conf[, , ] <- Binomial(n_I_C_2_to_H_D[i, j, k], p_star[i])
@@ -776,7 +819,8 @@ aux_ICU_pre_conf[, , , ] <- ICU_pre_conf[i, j, k, l] +
   (if (k > 1) n_ICU_pre_conf_progress[i, j, k - 1, l] else 0) -
   n_ICU_pre_conf_progress[i, j, k, l]
 
-n_ICU_pre_unconf_to_conf[, , , ] <- Binomial(aux_ICU_pre_unconf[i, j, k, l], p_test)
+n_ICU_pre_unconf_to_conf[, , , ] <-
+  Binomial(aux_ICU_pre_unconf[i, j, k, l], p_test)
 
 new_ICU_pre_unconf[, , , ] <-
   aux_ICU_pre_unconf[i, j, k, l] - n_ICU_pre_unconf_to_conf[i, j, k, l] +
@@ -821,14 +865,20 @@ new_H_D_conf[, , , ] <-
   (if (k == 1) n_I_C_2_to_H_D_conf[i, j, l] else 0)
 
 ## Work out the ICU_pre to ICU_D, ICU_W_R and ICU_W_D splits
-n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <- Binomial(n_ICU_pre_unconf_progress[i, j, k_ICU_pre, k], p_ICU_D[i, j, k])
-n_ICU_pre_conf_to_ICU_D_conf[, , ] <- Binomial(n_ICU_pre_conf_progress[i, j, k_ICU_pre, k], p_ICU_D[i, j, k])
-n_ICU_pre_unconf_to_ICU_W_D_unconf[, , ] <- Binomial(n_ICU_pre_unconf_progress[i, j, k_ICU_pre, k] - n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k], p_W_D[i, j, k])
+n_ICU_pre_unconf_to_ICU_D_unconf[, , ] <-
+  Binomial(n_ICU_pre_unconf_progress[i, j, k_ICU_pre, k], p_ICU_D[i, j, k])
+n_ICU_pre_conf_to_ICU_D_conf[, , ] <-
+  Binomial(n_ICU_pre_conf_progress[i, j, k_ICU_pre, k], p_ICU_D[i, j, k])
+n_ICU_pre_unconf_to_ICU_W_D_unconf[, , ] <-
+  Binomial(n_ICU_pre_unconf_progress[i, j, k_ICU_pre, k] -
+             n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k], p_W_D[i, j, k])
 n_ICU_pre_unconf_to_ICU_W_R_unconf[, , ] <-
   n_ICU_pre_unconf_progress[i, j, k_ICU_pre, k] -
   n_ICU_pre_unconf_to_ICU_D_unconf[i, j, k] -
   n_ICU_pre_unconf_to_ICU_W_D_unconf[i, j, k]
-n_ICU_pre_conf_to_ICU_W_D_conf[, , ] <- Binomial(n_ICU_pre_conf_progress[i, j, k_ICU_pre, k] - n_ICU_pre_conf_to_ICU_D_conf[i, j, k], p_W_D[i, j, k])
+n_ICU_pre_conf_to_ICU_W_D_conf[, , ] <-
+  Binomial(n_ICU_pre_conf_progress[i, j, k_ICU_pre, k] -
+             n_ICU_pre_conf_to_ICU_D_conf[i, j, k], p_W_D[i, j, k])
 n_ICU_pre_conf_to_ICU_W_R_conf[, , ] <-
   n_ICU_pre_conf_progress[i, j, k_ICU_pre, k] -
   n_ICU_pre_conf_to_ICU_D_conf[i, j, k] -
@@ -845,7 +895,8 @@ aux_ICU_W_R_conf[, , , ] <- ICU_W_R_conf[i, j, k, l] +
     n_ICU_W_R_conf_progress[i, j, k - 1, l]) -
   n_ICU_W_R_conf_progress[i, j, k, l]
 
-n_ICU_W_R_unconf_to_conf[, , , ] <- Binomial(aux_ICU_W_R_unconf[i, j, k, l], p_test)
+n_ICU_W_R_unconf_to_conf[, , , ] <-
+  Binomial(aux_ICU_W_R_unconf[i, j, k, l], p_test)
 new_ICU_W_R_unconf[, , , ] <-
   aux_ICU_W_R_unconf[i, j, k, l] - n_ICU_W_R_unconf_to_conf[i, j, k, l]
 new_ICU_W_R_conf[, , , ] <-
@@ -861,7 +912,8 @@ aux_ICU_W_D_conf[, , , ] <- ICU_W_D_conf[i, j, k, l] +
     n_ICU_W_D_conf_progress[i, j, k - 1, l]) -
   n_ICU_W_D_conf_progress[i, j, k, l]
 
-n_ICU_W_D_unconf_to_conf[, , , ] <- Binomial(aux_ICU_W_D_unconf[i, j, k, l], p_test)
+n_ICU_W_D_unconf_to_conf[, , , ] <-
+  Binomial(aux_ICU_W_D_unconf[i, j, k, l], p_test)
 new_ICU_W_D_unconf[, , , ] <-
   aux_ICU_W_D_unconf[i, j, k, l] - n_ICU_W_D_unconf_to_conf[i, j, k, l]
 new_ICU_W_D_conf[, , , ] <-
@@ -952,7 +1004,8 @@ new_T_sero_pre_1[, , , ] <- T_sero_pre_1[i, j, k, l] -
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
-n_T_sero_pre_1_to_T_sero_pos_1[, , ] <- Binomial(n_T_sero_pre_1_progress[i, j, k_sero_pre_1, k], p_sero_pos_1[i])
+n_T_sero_pre_1_to_T_sero_pos_1[, , ] <-
+  Binomial(n_T_sero_pre_1_progress[i, j, k_sero_pre_1, k], p_sero_pos_1[i])
 
 new_T_sero_pos_1[, , , ] <- T_sero_pos_1[i, j, k, l] -
   n_T_sero_pos_1_progress[i, j, k, l] +
@@ -974,7 +1027,8 @@ new_T_sero_pre_2[, , , ] <- T_sero_pre_2[i, j, k, l] -
 
 ## Split the seroconversion flow between people who are going to
 ## seroconvert and people who are not
-n_T_sero_pre_2_to_T_sero_pos_2[, , ] <- Binomial(n_T_sero_pre_2_progress[i, j, k_sero_pre_2, k], p_sero_pos_2[i])
+n_T_sero_pre_2_to_T_sero_pos_2[, , ] <-
+  Binomial(n_T_sero_pre_2_progress[i, j, k_sero_pre_2, k], p_sero_pos_2[i])
 
 new_T_sero_pos_2[, , , ] <- T_sero_pos_2[i, j, k, l] -
   n_T_sero_pos_2_progress[i, j, k, l] +
@@ -2429,36 +2483,52 @@ D_hosp_inc_with_noise <- phi_death_hosp * D_hosp_inc + Exponential(exp_noise)
 deaths_hosp ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_inc_with_noise)
 
 deaths_hosp_0_49 <- data()
-D_hosp_0_49_inc_with_noise <- phi_death_hosp * D_hosp_0_49_inc + Exponential(exp_noise)
-deaths_hosp_0_49 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_0_49_inc_with_noise)
+D_hosp_0_49_inc_with_noise <-
+  phi_death_hosp * D_hosp_0_49_inc + Exponential(exp_noise)
+deaths_hosp_0_49 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_0_49_inc_with_noise)
 
 deaths_hosp_50_54 <- data()
-D_hosp_50_54_inc_with_noise <- phi_death_hosp * D_hosp_50_54_inc + Exponential(exp_noise)
-deaths_hosp_50_54 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_50_54_inc_with_noise)
+D_hosp_50_54_inc_with_noise <-
+  phi_death_hosp * D_hosp_50_54_inc + Exponential(exp_noise)
+deaths_hosp_50_54 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_50_54_inc_with_noise)
 
 deaths_hosp_55_59 <- data()
-D_hosp_55_59_inc_with_noise <- phi_death_hosp * D_hosp_55_59_inc + Exponential(exp_noise)
-deaths_hosp_55_59 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_55_59_inc_with_noise)
+D_hosp_55_59_inc_with_noise <-
+  phi_death_hosp * D_hosp_55_59_inc + Exponential(exp_noise)
+deaths_hosp_55_59 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_55_59_inc_with_noise)
 
 deaths_hosp_60_64 <- data()
-D_hosp_60_64_inc_with_noise <- phi_death_hosp * D_hosp_60_64_inc + Exponential(exp_noise)
-deaths_hosp_60_64 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_60_64_inc_with_noise)
+D_hosp_60_64_inc_with_noise <-
+  phi_death_hosp * D_hosp_60_64_inc + Exponential(exp_noise)
+deaths_hosp_60_64 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_60_64_inc_with_noise)
 
 deaths_hosp_65_69 <- data()
-D_hosp_65_69_inc_with_noise <- phi_death_hosp * D_hosp_65_69_inc + Exponential(exp_noise)
-deaths_hosp_65_69 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_65_69_inc_with_noise)
+D_hosp_65_69_inc_with_noise <-
+  phi_death_hosp * D_hosp_65_69_inc + Exponential(exp_noise)
+deaths_hosp_65_69 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_65_69_inc_with_noise)
 
 deaths_hosp_70_74 <- data()
-D_hosp_70_74_inc_with_noise <- phi_death_hosp * D_hosp_70_74_inc + Exponential(exp_noise)
-deaths_hosp_70_74 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_70_74_inc_with_noise)
+D_hosp_70_74_inc_with_noise <-
+  phi_death_hosp * D_hosp_70_74_inc + Exponential(exp_noise)
+deaths_hosp_70_74 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_70_74_inc_with_noise)
 
 deaths_hosp_75_79 <- data()
-D_hosp_75_79_inc_with_noise <- phi_death_hosp * D_hosp_75_79_inc + Exponential(exp_noise)
-deaths_hosp_75_79 ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_75_79_inc_with_noise)
+D_hosp_75_79_inc_with_noise <-
+  phi_death_hosp * D_hosp_75_79_inc + Exponential(exp_noise)
+deaths_hosp_75_79 ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_75_79_inc_with_noise)
 
 deaths_hosp_80_plus <- data()
-D_hosp_80_plus_inc_with_noise <- phi_death_hosp * D_hosp_80_plus_inc + Exponential(exp_noise)
-deaths_hosp_80_plus ~ NegativeBinomial(kappa_death_hosp, mu = D_hosp_80_plus_inc_with_noise)
+D_hosp_80_plus_inc_with_noise <-
+  phi_death_hosp * D_hosp_80_plus_inc + Exponential(exp_noise)
+deaths_hosp_80_plus ~
+  NegativeBinomial(kappa_death_hosp, mu = D_hosp_80_plus_inc_with_noise)
 
 ## Community deaths
 phi_death_comm <- parameter()
@@ -2469,52 +2539,74 @@ D_comm_inc_with_noise <- phi_death_comm * D_comm_inc + Exponential(exp_noise)
 deaths_comm ~ NegativeBinomial(kappa_death_comm, mu = D_comm_inc_with_noise)
 
 deaths_comm_0_49 <- data()
-D_comm_0_49_inc_with_noise <- phi_death_comm * D_comm_0_49_inc + Exponential(exp_noise)
-deaths_comm_0_49 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_0_49_inc_with_noise)
+D_comm_0_49_inc_with_noise <-
+  phi_death_comm * D_comm_0_49_inc + Exponential(exp_noise)
+deaths_comm_0_49 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_0_49_inc_with_noise)
 
 deaths_comm_50_54 <- data()
-D_comm_50_54_inc_with_noise <- phi_death_comm * D_comm_50_54_inc + Exponential(exp_noise)
-deaths_comm_50_54 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_50_54_inc_with_noise)
+D_comm_50_54_inc_with_noise <-
+  phi_death_comm * D_comm_50_54_inc + Exponential(exp_noise)
+deaths_comm_50_54 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_50_54_inc_with_noise)
 
 deaths_comm_55_59 <- data()
-D_comm_55_59_inc_with_noise <- phi_death_comm * D_comm_55_59_inc + Exponential(exp_noise)
-deaths_comm_55_59 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_55_59_inc_with_noise)
+D_comm_55_59_inc_with_noise <-
+  phi_death_comm * D_comm_55_59_inc + Exponential(exp_noise)
+deaths_comm_55_59 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_55_59_inc_with_noise)
 
 deaths_comm_60_64 <- data()
-D_comm_60_64_inc_with_noise <- phi_death_comm * D_comm_60_64_inc + Exponential(exp_noise)
-deaths_comm_60_64 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_60_64_inc_with_noise)
+D_comm_60_64_inc_with_noise <-
+  phi_death_comm * D_comm_60_64_inc + Exponential(exp_noise)
+deaths_comm_60_64 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_60_64_inc_with_noise)
 
 deaths_comm_65_69 <- data()
-D_comm_65_69_inc_with_noise <- phi_death_comm * D_comm_65_69_inc + Exponential(exp_noise)
-deaths_comm_65_69 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_65_69_inc_with_noise)
+D_comm_65_69_inc_with_noise <-
+  phi_death_comm * D_comm_65_69_inc + Exponential(exp_noise)
+deaths_comm_65_69 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_65_69_inc_with_noise)
 
 deaths_comm_70_74 <- data()
-D_comm_70_74_inc_with_noise <- phi_death_comm * D_comm_70_74_inc + Exponential(exp_noise)
-deaths_comm_70_74 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_70_74_inc_with_noise)
+D_comm_70_74_inc_with_noise <-
+  phi_death_comm * D_comm_70_74_inc + Exponential(exp_noise)
+deaths_comm_70_74 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_70_74_inc_with_noise)
 
 deaths_comm_75_79 <- data()
-D_comm_75_79_inc_with_noise <- phi_death_comm * D_comm_75_79_inc + Exponential(exp_noise)
-deaths_comm_75_79 ~ NegativeBinomial(kappa_death_comm, mu = D_comm_75_79_inc_with_noise)
+D_comm_75_79_inc_with_noise <-
+  phi_death_comm * D_comm_75_79_inc + Exponential(exp_noise)
+deaths_comm_75_79 ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_75_79_inc_with_noise)
 
 deaths_comm_80_plus <- data()
-D_comm_80_plus_inc_with_noise <- phi_death_comm * D_comm_80_plus_inc + Exponential(exp_noise)
-deaths_comm_80_plus ~ NegativeBinomial(kappa_death_comm, mu = D_comm_80_plus_inc_with_noise)
+D_comm_80_plus_inc_with_noise <-
+  phi_death_comm * D_comm_80_plus_inc + Exponential(exp_noise)
+deaths_comm_80_plus ~
+  NegativeBinomial(kappa_death_comm, mu = D_comm_80_plus_inc_with_noise)
 
 ## Other death datastreams
 deaths_carehomes <- data()
 phi_death_carehomes <- parameter()
 kappa_death_carehomes <- parameter()
-D_carehomes_inc_with_noise <- phi_death_carehomes * D_carehomes_inc + Exponential(exp_noise)
-deaths_carehomes ~ NegativeBinomial(kappa_death_carehomes, mu = D_carehomes_inc_with_noise)
+D_carehomes_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+  Exponential(exp_noise)
+deaths_carehomes ~
+  NegativeBinomial(kappa_death_carehomes, mu = D_carehomes_inc_with_noise)
 
 deaths_non_hosp <- data()
 kappa_death_non_hosp <- parameter()
-D_non_hosp_inc_with_noise <- phi_death_carehomes * D_carehomes_inc + phi_death_comm * D_comm_inc + Exponential(exp_noise)
-deaths_non_hosp ~ NegativeBinomial(kappa_death_non_hosp, mu = D_non_hosp_inc_with_noise)
+D_non_hosp_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+  phi_death_comm * D_comm_inc + Exponential(exp_noise)
+deaths_non_hosp ~
+  NegativeBinomial(kappa_death_non_hosp, mu = D_non_hosp_inc_with_noise)
 
 deaths <- data()
 kappa_death <- parameter()
-D_inc_with_noise <- phi_death_carehomes * D_carehomes_inc + phi_death_comm * D_comm_inc + phi_death_hosp * D_hosp_inc + Exponential(exp_noise)
+D_inc_with_noise <- phi_death_carehomes * D_carehomes_inc +
+  phi_death_comm * D_comm_inc + phi_death_hosp * D_hosp_inc +
+  Exponential(exp_noise)
 deaths ~ NegativeBinomial(kappa_death, mu = D_inc_with_noise)
 
 ## Hospital admissions
@@ -2533,44 +2625,64 @@ diagnoses ~ NegativeBinomial(kappa_diagnoses, mu = diagnoses_with_noise)
 all_admission <- data()
 phi_all_admission <- parameter()
 kappa_all_admission <- parameter()
-all_admission_with_noise <- phi_all_admission * (admit_conf_inc + new_conf_inc) + Exponential(exp_noise)
-all_admission ~ NegativeBinomial(kappa_all_admission, mu = all_admission_with_noise)
+all_admission_with_noise <-
+  phi_all_admission * (admit_conf_inc + new_conf_inc) + Exponential(exp_noise)
+all_admission ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_with_noise)
 
 all_admission_0_9 <- data()
-all_admission_0_9_with_noise <- phi_all_admission * all_admission_0_9_conf_inc + Exponential(exp_noise)
-all_admission_0_9 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_0_9_with_noise)
+all_admission_0_9_with_noise <-
+  phi_all_admission * all_admission_0_9_conf_inc + Exponential(exp_noise)
+all_admission_0_9 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_0_9_with_noise)
 
 all_admission_10_19 <- data()
-all_admission_10_19_with_noise <- phi_all_admission * all_admission_10_19_conf_inc + Exponential(exp_noise)
-all_admission_10_19 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_10_19_with_noise)
+all_admission_10_19_with_noise <-
+  phi_all_admission * all_admission_10_19_conf_inc + Exponential(exp_noise)
+all_admission_10_19 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_10_19_with_noise)
 
 all_admission_20_29 <- data()
-all_admission_20_29_with_noise <- phi_all_admission * all_admission_20_29_conf_inc + Exponential(exp_noise)
-all_admission_20_29 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_20_29_with_noise)
+all_admission_20_29_with_noise <-
+  phi_all_admission * all_admission_20_29_conf_inc + Exponential(exp_noise)
+all_admission_20_29 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_20_29_with_noise)
 
 all_admission_30_39 <- data()
-all_admission_30_39_with_noise <- phi_all_admission * all_admission_30_39_conf_inc + Exponential(exp_noise)
-all_admission_30_39 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_30_39_with_noise)
+all_admission_30_39_with_noise <-
+  phi_all_admission * all_admission_30_39_conf_inc + Exponential(exp_noise)
+all_admission_30_39 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_30_39_with_noise)
 
 all_admission_40_49 <- data()
-all_admission_40_49_with_noise <- phi_all_admission * all_admission_40_49_conf_inc + Exponential(exp_noise)
-all_admission_40_49 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_40_49_with_noise)
+all_admission_40_49_with_noise <-
+  phi_all_admission * all_admission_40_49_conf_inc + Exponential(exp_noise)
+all_admission_40_49 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_40_49_with_noise)
 
 all_admission_50_59 <- data()
-all_admission_50_59_with_noise <- phi_all_admission * all_admission_50_59_conf_inc + Exponential(exp_noise)
-all_admission_50_59 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_50_59_with_noise)
+all_admission_50_59_with_noise <-
+  phi_all_admission * all_admission_50_59_conf_inc + Exponential(exp_noise)
+all_admission_50_59 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_50_59_with_noise)
 
 all_admission_60_69 <- data()
-all_admission_60_69_with_noise <- phi_all_admission * all_admission_60_69_conf_inc + Exponential(exp_noise)
-all_admission_60_69 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_60_69_with_noise)
+all_admission_60_69_with_noise <-
+  phi_all_admission * all_admission_60_69_conf_inc + Exponential(exp_noise)
+all_admission_60_69 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_60_69_with_noise)
 
 all_admission_70_79 <- data()
-all_admission_70_79_with_noise <- phi_all_admission * all_admission_70_79_conf_inc + Exponential(exp_noise)
-all_admission_70_79 ~ NegativeBinomial(kappa_all_admission, mu = all_admission_70_79_with_noise)
+all_admission_70_79_with_noise <-
+  phi_all_admission * all_admission_70_79_conf_inc + Exponential(exp_noise)
+all_admission_70_79 ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_70_79_with_noise)
 
 all_admission_80_plus <- data()
-all_admission_80_plus_with_noise <- phi_all_admission * all_admission_80_plus_conf_inc + Exponential(exp_noise)
-all_admission_80_plus ~ NegativeBinomial(kappa_all_admission, mu = all_admission_80_plus_with_noise)
+all_admission_80_plus_with_noise <-
+  phi_all_admission * all_admission_80_plus_conf_inc + Exponential(exp_noise)
+all_admission_80_plus ~
+  NegativeBinomial(kappa_all_admission, mu = all_admission_80_plus_with_noise)
 
 ## Pillar 2 positivity
 pillar2_sensitivity <- parameter()
@@ -2586,12 +2698,16 @@ p_NC_under15 <- parameter()
 p_NC_weekend_under15 <- parameter()
 p_NC_today_under15 <- if (is_weekend) p_NC_weekend_under15 else p_NC_under15
 mod_pillar2_under15_pos <- sympt_cases_under15_inc + Exponential(exp_noise)
-mod_pillar2_under15_neg <- p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) + Exponential(exp_noise)
+mod_pillar2_under15_neg <-
+  p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
+  Exponential(exp_noise)
 mod_pillar2_under15_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_under15_pos +
      (1 - pillar2_specificity) * mod_pillar2_under15_neg) /
   (mod_pillar2_under15_pos + mod_pillar2_under15_neg)
-pillar2_under15_pos ~ BetaBinomial(pillar2_under15_tot, prob = mod_pillar2_under15_prob_pos, rho = rho_pillar2_tests)
+pillar2_under15_pos ~ BetaBinomial(pillar2_under15_tot,
+                                   prob = mod_pillar2_under15_prob_pos,
+                                   rho = rho_pillar2_tests)
 
 pillar2_15_24_pos <- data()
 pillar2_15_24_tot <- data()
@@ -2600,12 +2716,16 @@ p_NC_15_24 <- parameter()
 p_NC_weekend_15_24 <- parameter()
 p_NC_today_15_24 <- if (is_weekend) p_NC_weekend_15_24 else p_NC_15_24
 mod_pillar2_15_24_pos <- sympt_cases_15_24_inc + Exponential(exp_noise)
-mod_pillar2_15_24_neg <- p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + Exponential(exp_noise)
+mod_pillar2_15_24_neg <-
+  p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) +
+  Exponential(exp_noise)
 mod_pillar2_15_24_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_15_24_pos +
      (1 - pillar2_specificity) * mod_pillar2_15_24_neg) /
   (mod_pillar2_15_24_pos + mod_pillar2_15_24_neg)
-pillar2_15_24_pos ~ BetaBinomial(pillar2_15_24_tot, prob = mod_pillar2_15_24_prob_pos, rho = rho_pillar2_tests)
+pillar2_15_24_pos ~ BetaBinomial(pillar2_15_24_tot,
+                                 prob = mod_pillar2_15_24_prob_pos,
+                                 rho = rho_pillar2_tests)
 
 pillar2_25_49_pos <- data()
 pillar2_25_49_tot <- data()
@@ -2614,12 +2734,16 @@ p_NC_25_49 <- parameter()
 p_NC_weekend_25_49 <- parameter()
 p_NC_today_25_49 <- if (is_weekend) p_NC_weekend_25_49 else p_NC_25_49
 mod_pillar2_25_49_pos <- sympt_cases_25_49_inc + Exponential(exp_noise)
-mod_pillar2_25_49_neg <- p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + Exponential(exp_noise)
+mod_pillar2_25_49_neg <-
+  p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+  Exponential(exp_noise)
 mod_pillar2_25_49_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_25_49_pos +
      (1 - pillar2_specificity) * mod_pillar2_25_49_neg) /
   (mod_pillar2_25_49_pos + mod_pillar2_25_49_neg)
-pillar2_25_49_pos ~ BetaBinomial(pillar2_25_49_tot, prob = mod_pillar2_25_49_prob_pos, rho = rho_pillar2_tests)
+pillar2_25_49_pos ~ BetaBinomial(pillar2_25_49_tot,
+                                 prob = mod_pillar2_25_49_prob_pos,
+                                 rho = rho_pillar2_tests)
 
 pillar2_50_64_pos <- data()
 pillar2_50_64_tot <- data()
@@ -2628,12 +2752,16 @@ p_NC_50_64 <- parameter()
 p_NC_weekend_50_64 <- parameter()
 p_NC_today_50_64 <- if (is_weekend) p_NC_weekend_50_64 else p_NC_50_64
 mod_pillar2_50_64_pos <- sympt_cases_50_64_inc + Exponential(exp_noise)
-mod_pillar2_50_64_neg <- p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + Exponential(exp_noise)
+mod_pillar2_50_64_neg <-
+  p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+  Exponential(exp_noise)
 mod_pillar2_50_64_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_50_64_pos +
      (1 - pillar2_specificity) * mod_pillar2_50_64_neg) /
   (mod_pillar2_50_64_pos + mod_pillar2_50_64_neg)
-pillar2_50_64_pos ~ BetaBinomial(pillar2_50_64_tot, prob = mod_pillar2_50_64_prob_pos, rho = rho_pillar2_tests)
+pillar2_50_64_pos ~ BetaBinomial(pillar2_50_64_tot,
+                                 prob = mod_pillar2_50_64_prob_pos,
+                                 rho = rho_pillar2_tests)
 
 pillar2_65_79_pos <- data()
 pillar2_65_79_tot <- data()
@@ -2642,12 +2770,16 @@ p_NC_65_79 <- parameter()
 p_NC_weekend_65_79 <- parameter()
 p_NC_today_65_79 <- if (is_weekend) p_NC_weekend_65_79 else p_NC_65_79
 mod_pillar2_65_79_pos <- sympt_cases_65_79_inc + Exponential(exp_noise)
-mod_pillar2_65_79_neg <- p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + Exponential(exp_noise)
+mod_pillar2_65_79_neg <-
+  p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+  Exponential(exp_noise)
 mod_pillar2_65_79_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_65_79_pos +
      (1 - pillar2_specificity) * mod_pillar2_65_79_neg) /
   (mod_pillar2_65_79_pos + mod_pillar2_65_79_neg)
-pillar2_65_79_pos ~ BetaBinomial(pillar2_65_79_tot, prob = mod_pillar2_65_79_prob_pos, rho = rho_pillar2_tests)
+pillar2_65_79_pos ~ BetaBinomial(pillar2_65_79_tot,
+                                 prob = mod_pillar2_65_79_prob_pos,
+                                 rho = rho_pillar2_tests)
 
 pillar2_80_plus_pos <- data()
 pillar2_80_plus_tot <- data()
@@ -2656,32 +2788,51 @@ p_NC_80_plus <- parameter()
 p_NC_weekend_80_plus <- parameter()
 p_NC_today_80_plus <- if (is_weekend) p_NC_weekend_80_plus else p_NC_80_plus
 mod_pillar2_80_plus_pos <- sympt_cases_80_plus_inc + Exponential(exp_noise)
-mod_pillar2_80_plus_neg <- p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) + Exponential(exp_noise)
+mod_pillar2_80_plus_neg <-
+  p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+  Exponential(exp_noise)
 mod_pillar2_80_plus_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_80_plus_pos +
      (1 - pillar2_specificity) * mod_pillar2_80_plus_neg) /
   (mod_pillar2_80_plus_pos + mod_pillar2_80_plus_neg)
-pillar2_80_plus_pos ~ BetaBinomial(pillar2_80_plus_tot, prob = mod_pillar2_80_plus_prob_pos, rho = rho_pillar2_tests)
+pillar2_80_plus_pos ~ BetaBinomial(pillar2_80_plus_tot,
+                                   prob = mod_pillar2_80_plus_prob_pos,
+                                   rho = rho_pillar2_tests)
 
 pillar2_over25_pos <- data()
 pillar2_over25_tot <- data()
 mod_pillar2_over25_pos <- sympt_cases_over25_inc + Exponential(exp_noise)
-mod_pillar2_over25_neg <- p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) + Exponential(exp_noise)
+mod_pillar2_over25_neg <-
+  p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+  p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+  p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+  p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+  Exponential(exp_noise)
 mod_pillar2_over25_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_over25_pos +
      (1 - pillar2_specificity) * mod_pillar2_over25_neg) /
   (mod_pillar2_over25_pos + mod_pillar2_over25_neg)
-pillar2_over25_pos ~ BetaBinomial(pillar2_over25_tot, prob = mod_pillar2_over25_prob_pos, rho = rho_pillar2_tests)
+pillar2_over25_pos ~ BetaBinomial(pillar2_over25_tot,
+                                  prob = mod_pillar2_over25_prob_pos,
+                                  rho = rho_pillar2_tests)
 
 pillar2_pos <- data()
 pillar2_tot <- data()
 mod_pillar2_pos <- sympt_cases_inc + Exponential(exp_noise)
-mod_pillar2_neg <- p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) + p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) + p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) + p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) + p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) + p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) + Exponential(exp_noise)
+mod_pillar2_neg <-
+  p_NC_today_under15 * (N_tot_under15 - sympt_cases_under15_inc) +
+  p_NC_today_15_24 * (N_tot_15_24 - sympt_cases_15_24_inc) +
+  p_NC_today_25_49 * (N_tot_25_49 - sympt_cases_25_49_inc) +
+  p_NC_today_50_64 * (N_tot_50_64 - sympt_cases_50_64_inc) +
+  p_NC_today_65_79 * (N_tot_65_79 - sympt_cases_65_79_inc) +
+  p_NC_today_80_plus * (N_tot_80_plus - sympt_cases_80_plus_inc) +
+  Exponential(exp_noise)
 mod_pillar2_prob_pos <-
   (pillar2_sensitivity * mod_pillar2_pos +
      (1 - pillar2_specificity) * mod_pillar2_neg) /
   (mod_pillar2_pos + mod_pillar2_neg)
-pillar2_pos ~ BetaBinomial(pillar2_tot, prob = mod_pillar2_prob_pos, rho = rho_pillar2_tests)
+pillar2_pos ~ BetaBinomial(pillar2_tot, prob = mod_pillar2_prob_pos,
+                           rho = rho_pillar2_tests)
 
 ## Pillar 2 cases
 kappa_pillar2_cases <- parameter()
@@ -2692,40 +2843,51 @@ phi_pillar2_cases_weekend_under15 <- parameter()
 phi_pillar2_cases_today_under15 <-
   if (is_weekend) phi_pillar2_cases_weekend_under15 else
     phi_pillar2_cases_under15
-mod_pillar2_cases_under15 <- phi_pillar2_cases_today_under15 * sympt_cases_under15_inc + Exponential(exp_noise)
-pillar2_under15_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_under15)
+mod_pillar2_cases_under15 <-
+  phi_pillar2_cases_today_under15 * sympt_cases_under15_inc +
+  Exponential(exp_noise)
+pillar2_under15_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_under15)
 
 pillar2_15_24_cases <- data()
 phi_pillar2_cases_15_24 <- parameter()
 phi_pillar2_cases_weekend_15_24 <- parameter()
 phi_pillar2_cases_today_15_24 <-
   if (is_weekend) phi_pillar2_cases_weekend_15_24 else phi_pillar2_cases_15_24
-mod_pillar2_cases_15_24 <- phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc + Exponential(exp_noise)
-pillar2_15_24_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_15_24)
+mod_pillar2_cases_15_24 <-
+  phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc + Exponential(exp_noise)
+pillar2_15_24_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_15_24)
 
 pillar2_25_49_cases <- data()
 phi_pillar2_cases_25_49 <- parameter()
 phi_pillar2_cases_weekend_25_49 <- parameter()
 phi_pillar2_cases_today_25_49 <-
   if (is_weekend) phi_pillar2_cases_weekend_25_49 else phi_pillar2_cases_25_49
-mod_pillar2_cases_25_49 <- phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc + Exponential(exp_noise)
-pillar2_25_49_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_25_49)
+mod_pillar2_cases_25_49 <-
+  phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc + Exponential(exp_noise)
+pillar2_25_49_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_25_49)
 
 pillar2_50_64_cases <- data()
 phi_pillar2_cases_50_64 <- parameter()
 phi_pillar2_cases_weekend_50_64 <- parameter()
 phi_pillar2_cases_today_50_64 <-
   if (is_weekend) phi_pillar2_cases_weekend_50_64 else phi_pillar2_cases_50_64
-mod_pillar2_cases_50_64 <- phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc + Exponential(exp_noise)
-pillar2_50_64_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_50_64)
+mod_pillar2_cases_50_64 <-
+  phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc + Exponential(exp_noise)
+pillar2_50_64_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_50_64)
 
 pillar2_65_79_cases <- data()
 phi_pillar2_cases_65_79 <- parameter()
 phi_pillar2_cases_weekend_65_79 <- parameter()
 phi_pillar2_cases_today_65_79 <-
   if (is_weekend) phi_pillar2_cases_weekend_65_79 else phi_pillar2_cases_65_79
-mod_pillar2_cases_65_79 <- phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc + Exponential(exp_noise)
-pillar2_65_79_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_65_79)
+mod_pillar2_cases_65_79 <-
+  phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc + Exponential(exp_noise)
+pillar2_65_79_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_65_79)
 
 pillar2_80_plus_cases <- data()
 phi_pillar2_cases_80_plus <- parameter()
@@ -2733,15 +2895,30 @@ phi_pillar2_cases_weekend_80_plus <- parameter()
 phi_pillar2_cases_today_80_plus <-
   if (is_weekend) phi_pillar2_cases_weekend_80_plus else
     phi_pillar2_cases_80_plus
-mod_pillar2_cases_80_plus <- phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + Exponential(exp_noise)
-pillar2_80_plus_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_80_plus)
+mod_pillar2_cases_80_plus <-
+  phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc +
+  Exponential(exp_noise)
+pillar2_80_plus_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_80_plus)
 
 pillar2_over25_cases <- data()
-mod_pillar2_cases_over25 <- phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc + phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc + phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc + phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + Exponential(exp_noise)
-pillar2_over25_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_over25)
+mod_pillar2_cases_over25 <-
+  phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc +
+  phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc +
+  phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc +
+  phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc +
+  Exponential(exp_noise)
+pillar2_over25_cases ~
+  NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases_over25)
 
 pillar2_cases <- data()
-mod_pillar2_cases <- phi_pillar2_cases_today_under15 * sympt_cases_under15_inc + phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc + phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc + phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc + phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc + phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc + Exponential(exp_noise)
+mod_pillar2_cases <- phi_pillar2_cases_today_under15 * sympt_cases_under15_inc +
+  phi_pillar2_cases_today_15_24 * sympt_cases_15_24_inc +
+  phi_pillar2_cases_today_25_49 * sympt_cases_25_49_inc +
+  phi_pillar2_cases_today_50_64 * sympt_cases_50_64_inc +
+  phi_pillar2_cases_today_65_79 * sympt_cases_65_79_inc +
+  phi_pillar2_cases_today_80_plus * sympt_cases_80_plus_inc +
+  Exponential(exp_noise)
 pillar2_cases ~ NegativeBinomial(kappa_pillar2_cases, mu = mod_pillar2_cases)
 
 ## Seropositivity
@@ -2796,7 +2973,8 @@ react_tot <- data()
 N_tot_react <- parameter()
 react_positives_capped <- min(react_positives, N_tot_react)
 mod_react_pos <- react_positives_capped + Exponential(exp_noise)
-mod_react_neg <- N_tot_react - react_positives_capped + Exponential(exp_noise)
+mod_react_neg <- N_tot_react - react_positives_capped +
+  Exponential(exp_noise)
 mod_react_prob_pos <-
   (react_sensitivity * mod_react_pos +
      (1 - react_specificity) * mod_react_neg) /
@@ -2808,7 +2986,8 @@ react_5_24_tot <- data()
 N_5_24_react <- parameter()
 react_5_24_positives_capped <- min(react_5_24_positives, N_5_24_react)
 mod_react_5_24_pos <- react_5_24_positives_capped + Exponential(exp_noise)
-mod_react_5_24_neg <- N_5_24_react - react_5_24_positives_capped + Exponential(exp_noise)
+mod_react_5_24_neg <- N_5_24_react - react_5_24_positives_capped +
+  Exponential(exp_noise)
 mod_react_5_24_prob_pos <-
   (react_sensitivity * mod_react_5_24_pos +
      (1 - react_specificity) * mod_react_5_24_neg) /
@@ -2820,7 +2999,8 @@ react_25_34_tot <- data()
 N_25_34_react <- parameter()
 react_25_34_positives_capped <- min(react_25_34_positives, N_25_34_react)
 mod_react_25_34_pos <- react_25_34_positives_capped + Exponential(exp_noise)
-mod_react_25_34_neg <- N_25_34_react - react_25_34_positives_capped + Exponential(exp_noise)
+mod_react_25_34_neg <- N_25_34_react - react_25_34_positives_capped +
+  Exponential(exp_noise)
 mod_react_25_34_prob_pos <-
   (react_sensitivity * mod_react_25_34_pos +
      (1 - react_specificity) * mod_react_25_34_neg) /
@@ -2832,7 +3012,8 @@ react_35_44_tot <- data()
 N_35_44_react <- parameter()
 react_35_44_positives_capped <- min(react_35_44_positives, N_35_44_react)
 mod_react_35_44_pos <- react_35_44_positives_capped + Exponential(exp_noise)
-mod_react_35_44_neg <- N_35_44_react - react_35_44_positives_capped + Exponential(exp_noise)
+mod_react_35_44_neg <- N_35_44_react - react_35_44_positives_capped +
+  Exponential(exp_noise)
 mod_react_35_44_prob_pos <-
   (react_sensitivity * mod_react_35_44_pos +
      (1 - react_specificity) * mod_react_35_44_neg) /
@@ -2844,7 +3025,8 @@ react_45_54_tot <- data()
 N_45_54_react <- parameter()
 react_45_54_positives_capped <- min(react_45_54_positives, N_45_54_react)
 mod_react_45_54_pos <- react_45_54_positives_capped + Exponential(exp_noise)
-mod_react_45_54_neg <- N_45_54_react - react_45_54_positives_capped + Exponential(exp_noise)
+mod_react_45_54_neg <- N_45_54_react - react_45_54_positives_capped +
+  Exponential(exp_noise)
 mod_react_45_54_prob_pos <-
   (react_sensitivity * mod_react_45_54_pos +
      (1 - react_specificity) * mod_react_45_54_neg) /
@@ -2856,7 +3038,8 @@ react_55_64_tot <- data()
 N_55_64_react <- parameter()
 react_55_64_positives_capped <- min(react_55_64_positives, N_55_64_react)
 mod_react_55_64_pos <- react_55_64_positives_capped + Exponential(exp_noise)
-mod_react_55_64_neg <- N_55_64_react - react_55_64_positives_capped + Exponential(exp_noise)
+mod_react_55_64_neg <- N_55_64_react - react_55_64_positives_capped +
+  Exponential(exp_noise)
 mod_react_55_64_prob_pos <-
   (react_sensitivity * mod_react_55_64_pos +
      (1 - react_specificity) * mod_react_55_64_neg) /
@@ -2868,7 +3051,8 @@ react_65_plus_tot <- data()
 N_65_plus_react <- parameter()
 react_65_plus_positives_capped <- min(react_65_plus_positives, N_65_plus_react)
 mod_react_65_plus_pos <- react_65_plus_positives_capped + Exponential(exp_noise)
-mod_react_65_plus_neg <- N_65_plus_react - react_65_plus_positives_capped + Exponential(exp_noise)
+mod_react_65_plus_neg <- N_65_plus_react - react_65_plus_positives_capped +
+  Exponential(exp_noise)
 mod_react_65_plus_prob_pos <-
   (react_sensitivity * mod_react_65_plus_pos +
      (1 - react_specificity) * mod_react_65_plus_neg) /
@@ -2879,15 +3063,19 @@ react_65_plus_pos ~ Binomial(react_65_plus_tot, mod_react_65_plus_prob_pos)
 strain_non_variant <- data()
 strain_tot <- data()
 mod_strain_non_variant <- sympt_cases_non_variant_inc + Exponential(exp_noise)
-mod_strain_variant <- sympt_cases_inc - sympt_cases_non_variant_inc + Exponential(exp_noise)
+mod_strain_variant <- sympt_cases_inc - sympt_cases_non_variant_inc +
+  Exponential(exp_noise)
 mod_strain_prob_non_variant <- mod_strain_non_variant /
   (mod_strain_non_variant + mod_strain_variant)
 strain_non_variant ~ Binomial(strain_tot, mod_strain_prob_non_variant)
 
 strain_over25_non_variant <- data()
 strain_over25_tot <- data()
-mod_strain_over25_non_variant <- sympt_cases_non_variant_over25_inc + Exponential(exp_noise)
-mod_strain_over25_variant <- sympt_cases_over25_inc - sympt_cases_non_variant_over25_inc + Exponential(exp_noise)
+mod_strain_over25_non_variant <-
+  sympt_cases_non_variant_over25_inc + Exponential(exp_noise)
+mod_strain_over25_variant <- sympt_cases_over25_inc -
+  sympt_cases_non_variant_over25_inc + Exponential(exp_noise)
 mod_strain_over25_prob_non_variant <- mod_strain_over25_non_variant /
   (mod_strain_over25_non_variant + mod_strain_over25_variant)
-strain_over25_non_variant ~ Binomial(strain_over25_tot, mod_strain_over25_prob_non_variant)
+strain_over25_non_variant ~
+  Binomial(strain_over25_tot, mod_strain_over25_prob_non_variant)
