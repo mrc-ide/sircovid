@@ -358,7 +358,7 @@ p_H[, , ] <- min(p_H_t[i] * rel_p_hosp_if_sympt[i, j, k] *
                    strain_rel_p_hosp_if_sympt[j], as.numeric(1))
 
 p_ICU_t <- interpolate(p_ICU_time, p_ICU_value, "linear")
-p_ICU[, , ] <- min(p_ICU_t[i] * rel_p_ICU[i, j, k] * strain_rel_p_ICU[j],
+p_ICU[, , ] <- min(p_ICU_t[i] * rel_p_ICU[i, j, k] * strain_rel_p_icu[j],
                    as.numeric(1))
 
 p_ICU_D_t <- interpolate(p_ICU_D_time, p_ICU_D_value, "linear")
@@ -384,57 +384,57 @@ p_star <- interpolate(p_star_time, p_star_value, "linear")
 
 ## Work out time-varying gammas
 gamma_E_t <- interpolate(gamma_E_time, gamma_E_value, "linear")
-gamma_E[] <- gamma_E_value * rel_gamma_E[i]
+gamma_E[] <- gamma_E_t * rel_gamma_E[i]
 
 gamma_A_t <- interpolate(gamma_A_time, gamma_A_value, "linear")
-gamma_A[] <- gamma_A_value * rel_gamma_A[i]
+gamma_A[] <- gamma_A_t * rel_gamma_A[i]
 
 gamma_P_t <- interpolate(gamma_P_time, gamma_P_value, "linear")
-gamma_P[] <- gamma_P_value * rel_gamma_P[i]
+gamma_P[] <- gamma_P_t * rel_gamma_P[i]
 
 gamma_C_1_t <- interpolate(gamma_C_1_time, gamma_C_1_value, "linear")
-gamma_C_1[] <- gamma_C_1_value * rel_gamma_C_1[i]
+gamma_C_1[] <- gamma_C_1_t * rel_gamma_C_1[i]
 
 gamma_C_2_t <- interpolate(gamma_C_2_time, gamma_C_2_value, "linear")
-gamma_C_2[] <- gamma_C_2_value * rel_gamma_C_2[i]
+gamma_C_2[] <- gamma_C_2_t * rel_gamma_C_2[i]
 
 gamma_G_D_t <- interpolate(gamma_G_D_time, gamma_G_D_value, "linear")
-gamma_G_D[] <- gamma_G_D_value * rel_gamma_G_D[i]
+gamma_G_D[] <- gamma_G_D_t * rel_gamma_G_D[i]
 
 gamma_ICU_pre_t <-
   interpolate(gamma_ICU_pre_time, gamma_ICU_pre_value, "linear")
-gamma_ICU_pre[] <- gamma_ICU_pre_value * rel_gamma_ICU_pre[i]
+gamma_ICU_pre[] <- gamma_ICU_pre_t * rel_gamma_ICU_pre[i]
 
 gamma_H_R_t <- interpolate(gamma_H_R_time, gamma_H_R_value, "linear")
-gamma_H_R[] <- gamma_H_R_value * rel_gamma_H_R[i]
+gamma_H_R[] <- gamma_H_R_t * rel_gamma_H_R[i]
 
 gamma_H_D_t <- interpolate(gamma_H_D_time, gamma_H_D_value, "linear")
-gamma_H_D[] <- gamma_H_D_value * rel_gamma_H_D[i]
+gamma_H_D[] <- gamma_H_D_t * rel_gamma_H_D[i]
 
 gamma_ICU_W_R_t <-
   interpolate(gamma_ICU_W_R_time, gamma_ICU_W_R_value, "linear")
-gamma_ICU_W_R[] <- gamma_ICU_W_R_value * rel_gamma_ICU_W_R[i]
+gamma_ICU_W_R[] <- gamma_ICU_W_R_t * rel_gamma_ICU_W_R[i]
 
 gamma_ICU_W_D_t <-
   interpolate(gamma_ICU_W_D_time, gamma_ICU_W_D_value, "linear")
-gamma_ICU_W_D[] <- gamma_ICU_W_D_value * rel_gamma_ICU_W_D[i]
+gamma_ICU_W_D[] <- gamma_ICU_W_D_t * rel_gamma_ICU_W_D[i]
 
 gamma_ICU_D_t <- interpolate(gamma_ICU_D_time, gamma_ICU_D_value, "linear")
-gamma_ICU_D[] <- gamma_ICU_D_value * rel_gamma_ICU_D[i]
+gamma_ICU_D[] <- gamma_ICU_D_t * rel_gamma_ICU_D[i]
 
 gamma_W_R_t <- interpolate(gamma_W_R_time, gamma_W_R_value, "linear")
-gamma_W_R[] <- gamma_W_R_value * rel_gamma_W_R[i]
+gamma_W_R[] <- gamma_W_R_t * rel_gamma_W_R[i]
 
 gamma_W_D_t <- interpolate(gamma_W_D_time, gamma_W_D_value, "linear")
-gamma_W_D[] <- gamma_W_D_value * rel_gamma_W_D[i]
+gamma_W_D[] <- gamma_W_D_t * rel_gamma_W_D[i]
 
 gamma_PCR_pre_t <-
   interpolate(gamma_PCR_pre_time, gamma_PCR_pre_value, "linear")
-gamma_PCR_pre[] <- gamma_PCR_pre_value * rel_gamma_PCR_pre[i]
+gamma_PCR_pre[] <- gamma_PCR_pre_t * rel_gamma_PCR_pre[i]
 
 gamma_PCR_pos_t <-
   interpolate(gamma_PCR_pos_time, gamma_PCR_pos_value, "linear")
-gamma_PCR_pos[] <- gamma_PCR_pos_value * rel_gamma_PCR_pos[i]
+gamma_PCR_pos[] <- gamma_PCR_pos_t * rel_gamma_PCR_pos[i]
 
 gamma_U <- interpolate(gamma_U_time, gamma_U_value, "linear")
 
@@ -1431,6 +1431,7 @@ dim(gamma_U_value) <- n_gamma_U_time
 dim(gamma_U_time) <- n_gamma_U_time
 p_star_value <- parameter()
 p_star_time <- parameter()
+n_p_star_time <- parameter()
 dim(p_star_value) <- c(n_groups, n_p_star_time)
 dim(p_star_time) <- n_p_star_time
 dim(p_star) <- n_groups
