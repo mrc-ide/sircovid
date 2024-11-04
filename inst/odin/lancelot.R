@@ -2386,7 +2386,7 @@ new_IHR_disag_weighted_inc[, , ] <- IHR_disag_weighted_inc[i, j, k] +
   IHR_disag[i, j, k] * delta_infections[i, j, k]
 initial(IHR_disag_weighted_inc[, , ], zero_every = 1) <- 0
 update(IHR_disag_weighted_inc[, , ]) <- new_IHR_disag_weighted_inc[i, j, k]
-initial(ihr) <- NA
+initial(ihr) <- 0
 update(ihr) <- sum(new_IHR_disag_weighted_inc) / new_infections_inc
 
 HFR_disag[, , ] <- (1 - p_ICU[i, j, k]) * p_H_D[i, j, k] +
@@ -2396,7 +2396,7 @@ new_HFR_disag_weighted_inc[, , ] <- HFR_disag_weighted_inc[i, j, k] +
   HFR_disag[i, j, k] * n_I_C_2_to_hosp[i, j, k]
 initial(HFR_disag_weighted_inc[, , ], zero_every = 1) <- 0
 update(HFR_disag_weighted_inc[, , ]) <- new_HFR_disag_weighted_inc[i, j, k]
-initial(hfr) <- NA
+initial(hfr) <- 0
 update(hfr) <- sum(new_HFR_disag_weighted_inc) / new_hospitalisations_inc
 
 
@@ -2406,11 +2406,11 @@ new_IFR_disag_weighted_inc[, , ] <- IFR_disag_weighted_inc[i, j, k] +
   IFR_disag[i, j, k] * delta_infections[i, j, k]
 initial(IFR_disag_weighted_inc[, , ], zero_every = 1) <- 0
 update(IFR_disag_weighted_inc[, , ]) <- new_IFR_disag_weighted_inc[i, j, k]
-initial(ifr) <- NA
+initial(ifr) <- 0
 update(ifr) <- sum(new_IFR_disag_weighted_inc) / new_infections_inc
 
 ## By strain
-initial(ifr_strain[]) <- NA
+initial(ifr_strain[]) <- 0
 update(ifr_strain[]) <- if (n_real_strains == 1)
   sum(new_IFR_disag_weighted_inc[, 1, ]) / new_infections_inc_strain[1] else
     (sum(new_IFR_disag_weighted_inc[, i, ]) +
@@ -2418,7 +2418,7 @@ update(ifr_strain[]) <- if (n_real_strains == 1)
   (new_infections_inc_strain[i] + new_infections_inc_strain[5 - i])
 dim(ifr_strain) <- n_real_strains
 
-initial(ihr_strain[]) <- NA
+initial(ihr_strain[]) <- 0
 update(ihr_strain[]) <- if (n_real_strains == 1)
   sum(new_IHR_disag_weighted_inc[, 1, ]) / new_infections_inc_strain[1] else
     (sum(new_IHR_disag_weighted_inc[, i, ]) +
@@ -2426,7 +2426,7 @@ update(ihr_strain[]) <- if (n_real_strains == 1)
   (new_infections_inc_strain[i] + new_infections_inc_strain[5 - i])
 dim(ihr_strain) <- n_real_strains
 
-initial(hfr_strain[]) <- NA
+initial(hfr_strain[]) <- 0
 update(hfr_strain[]) <- if (n_real_strains == 1)
   sum(new_HFR_disag_weighted_inc[, 1, ]) /
   new_hospitalisations_inc_strain[1] else
@@ -2437,17 +2437,17 @@ dim(hfr_strain) <- n_real_strains
 
 ## By age
 dim(ifr_age) <- n_groups
-initial(ifr_age[]) <- NA
+initial(ifr_age[]) <- 0
 update(ifr_age[]) <- sum(new_IFR_disag_weighted_inc[i, , ]) /
   new_infections_inc_age[i]
 
 dim(ihr_age) <- n_groups
-initial(ihr_age[]) <- NA
+initial(ihr_age[]) <- 0
 update(ihr_age[]) <- sum(new_IHR_disag_weighted_inc[i, , ]) /
   new_infections_inc_age[i]
 
 dim(hfr_age) <- n_groups
-initial(hfr_age[]) <- NA
+initial(hfr_age[]) <- 0
 update(hfr_age[]) <- sum(new_HFR_disag_weighted_inc[i, , ]) /
   new_hospitalisations_inc_age[i]
 
