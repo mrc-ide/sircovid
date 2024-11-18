@@ -1491,188 +1491,101 @@ n_real_strains <- if (n_strains == 4) 2 else 1
 ## multi-dimensional arrays
 
 ## Vectors handling the S class
-dim(S) <- c(n_groups, n_vacc_classes)
-dim(new_S) <- c(n_groups, n_vacc_classes)
+dim(S, new_S) <- c(n_groups, n_vacc_classes)
 
 ## Vectors handling the E class
-dim(E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
-dim(new_E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
+dim(E, new_E) <- c(n_groups, n_strains, k_E, n_vacc_classes)
 
 ## Vectors handling the I_A class
-dim(I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(new_I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
+dim(I_A, new_I_A) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 
 ## Vectors handling the I_P class
-dim(I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(new_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
+dim(I_P, new_I_P) <- c(n_groups, n_strains, k_P, n_vacc_classes)
+
+## Vectors handling the I_C_1 class
+dim(I_C_1, new_I_C_1, n_I_C_1_progress) <-
+  c(n_groups, n_strains, k_C_1, n_vacc_classes)
 
 ## Vectors handling the I_C_2 class
-dim(I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-dim(new_I_C_1) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-dim(n_I_C_1_progress) <- c(n_groups, n_strains, k_C_1, n_vacc_classes)
-
-## Vectors handling the I_C_2 class
-dim(I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
-dim(new_I_C_2) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
-dim(n_I_C_2_progress) <- c(n_groups, n_strains, k_C_2, n_vacc_classes)
-
+dim(I_C_2, new_I_C_2, n_I_C_2_progress) <-
+  c(n_groups, n_strains, k_C_2, n_vacc_classes)
 
 ## Vectors handling the G_D class
-dim(G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
-dim(new_G_D) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
-dim(n_G_D_progress) <- c(n_groups, n_strains, k_G_D, n_vacc_classes)
+dim(G_D, new_G_D, n_G_D_progress) <-
+  c(n_groups, n_strains, k_G_D, n_vacc_classes)
 
 ## Vectors handling the ICU_pre class
-dim(ICU_pre_unconf) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(aux_ICU_pre_unconf) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(new_ICU_pre_unconf) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(n_ICU_pre_unconf_progress) <-
-  c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(ICU_pre_conf) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(aux_ICU_pre_conf) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(new_ICU_pre_conf) <- c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(n_ICU_pre_conf_progress) <-
-  c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_conf) <-
+dim(ICU_pre_unconf, aux_ICU_pre_unconf, new_ICU_pre_unconf,
+    n_ICU_pre_unconf_progress, ICU_pre_conf, aux_ICU_pre_conf, new_ICU_pre_conf,
+    n_ICU_pre_conf_progress, n_ICU_pre_unconf_to_conf) <-
   c(n_groups, n_strains, k_ICU_pre, n_vacc_classes)
 
 ## Vectors handling the H_R class
-dim(H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(aux_H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(new_H_R_unconf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(n_H_R_unconf_progress) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(H_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(aux_H_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(new_H_R_conf) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(n_H_R_conf_progress) <- c(n_groups, n_strains, k_H_R, n_vacc_classes)
-dim(n_H_R_unconf_to_conf) <-
+dim(H_R_unconf, aux_H_R_unconf, new_H_R_unconf, n_H_R_unconf_progress, H_R_conf,
+    aux_H_R_conf, new_H_R_conf, n_H_R_conf_progress, n_H_R_unconf_to_conf) <-
   c(n_groups, n_strains, k_H_R, n_vacc_classes)
 
 ## Vectors handling the H_D class
-dim(H_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(aux_H_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(new_H_D_unconf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(n_H_D_unconf_progress) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(H_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(aux_H_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(new_H_D_conf) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(n_H_D_conf_progress) <- c(n_groups, n_strains, k_H_D, n_vacc_classes)
-dim(n_H_D_unconf_to_conf) <-
+dim(H_D_unconf, aux_H_D_unconf, new_H_D_unconf, n_H_D_unconf_progress, H_D_conf,
+    aux_H_D_conf, new_H_D_conf, n_H_D_conf_progress, n_H_D_unconf_to_conf) <-
   c(n_groups, n_strains, k_H_D, n_vacc_classes)
 
 ## Vectors handling the ICU_W_R class
-dim(ICU_W_R_unconf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(aux_ICU_W_R_unconf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(new_ICU_W_R_unconf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(n_ICU_W_R_unconf_progress) <-
-  c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(ICU_W_R_conf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(aux_ICU_W_R_conf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(new_ICU_W_R_conf) <- c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(n_ICU_W_R_conf_progress) <-
-  c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
-dim(n_ICU_W_R_unconf_to_conf) <-
+dim(ICU_W_R_unconf, aux_ICU_W_R_unconf, new_ICU_W_R_unconf,
+    n_ICU_W_R_unconf_progress, ICU_W_R_conf, aux_ICU_W_R_conf, new_ICU_W_R_conf,
+    n_ICU_W_R_conf_progress, n_ICU_W_R_unconf_to_conf) <-
   c(n_groups, n_strains, k_ICU_W_R, n_vacc_classes)
 
 ## Vectors handling the ICU_W_D class
-dim(ICU_W_D_unconf) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(aux_ICU_W_D_unconf) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(new_ICU_W_D_unconf) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(n_ICU_W_D_unconf_progress) <-
-  c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(ICU_W_D_conf) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(aux_ICU_W_D_conf) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(new_ICU_W_D_conf) <- c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(n_ICU_W_D_conf_progress) <-
-  c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
-dim(n_ICU_W_D_unconf_to_conf) <-
+dim(ICU_W_D_unconf, aux_ICU_W_D_unconf, new_ICU_W_D_unconf,
+    n_ICU_W_D_unconf_progress, ICU_W_D_conf, aux_ICU_W_D_conf, new_ICU_W_D_conf,
+    n_ICU_W_D_conf_progress, n_ICU_W_D_unconf_to_conf) <-
   c(n_groups, n_strains, k_ICU_W_D, n_vacc_classes)
 
 ## Vectors handling the ICU_D class
-dim(ICU_D_unconf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(aux_ICU_D_unconf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(new_ICU_D_unconf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(n_ICU_D_unconf_progress) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(ICU_D_conf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(aux_ICU_D_conf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(new_ICU_D_conf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(n_ICU_D_conf_progress) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
-dim(n_ICU_D_unconf_to_conf) <- c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
+dim(ICU_D_unconf, aux_ICU_D_unconf, new_ICU_D_unconf, n_ICU_D_unconf_progress,
+    ICU_D_conf, aux_ICU_D_conf, new_ICU_D_conf, n_ICU_D_conf_progress,
+    n_ICU_D_unconf_to_conf) <-
+  c(n_groups, n_strains, k_ICU_D, n_vacc_classes)
 
 ## Vectors handling the W_R class
-dim(W_R_unconf) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(aux_W_R_unconf) <-
-  c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(new_W_R_unconf) <-
-  c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(n_W_R_unconf_progress) <-
-  c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(W_R_conf) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(aux_W_R_conf) <-
-  c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(new_W_R_conf) <-
-  c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(n_W_R_conf_progress) <- c(n_groups, n_strains, k_W_R, n_vacc_classes)
-dim(n_W_R_unconf_to_conf) <-
+dim(W_R_unconf, aux_W_R_unconf, new_W_R_unconf, n_W_R_unconf_progress, W_R_conf,
+    aux_W_R_conf, new_W_R_conf, n_W_R_conf_progress, n_W_R_unconf_to_conf) <-
   c(n_groups, n_strains, k_W_R, n_vacc_classes)
 
 ## Vectors handling the W_D class
-dim(W_D_unconf) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(aux_W_D_unconf) <-
-  c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(new_W_D_unconf) <-
-  c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(n_W_D_unconf_progress) <-
-  c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(W_D_conf) <-
-  c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(aux_W_D_conf) <-
-  c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(new_W_D_conf) <-
-  c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(n_W_D_conf_progress) <- c(n_groups, n_strains, k_W_D, n_vacc_classes)
-dim(n_W_D_unconf_to_conf) <-
+dim(W_D_unconf, aux_W_D_unconf, new_W_D_unconf, n_W_D_unconf_progress, W_D_conf,
+    aux_W_D_conf, new_W_D_conf, n_W_D_conf_progress, n_W_D_unconf_to_conf) <-
   c(n_groups, n_strains, k_W_D, n_vacc_classes)
 
 ## Vectors handling the R class
-dim(R) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(new_R) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(R, new_R) <- c(n_groups, n_strains_R, n_vacc_classes)
 
 ## Vectors handling the T_sero_pre_1 class and seroconversion
-dim(T_sero_pre_1) <- c(n_groups, n_strains, k_sero_pre_1, n_vacc_classes)
-dim(new_T_sero_pre_1) <- c(n_groups, n_strains, k_sero_pre_1, n_vacc_classes)
-dim(n_T_sero_pre_1_progress) <-
+dim(T_sero_pre_1, new_T_sero_pre_1, n_T_sero_pre_1_progress) <-
   c(n_groups, n_strains, k_sero_pre_1, n_vacc_classes)
 dim(p_sero_pos_1) <- n_groups
 
 ## Vectors handling the T_sero_pos_1 class
-dim(T_sero_pos_1) <- c(n_groups, n_strains, k_sero_pos_1, n_vacc_classes)
-dim(n_T_sero_pos_1_progress) <-
+dim(T_sero_pos_1, n_T_sero_pos_1_progress, new_T_sero_pos_1) <-
   c(n_groups, n_strains, k_sero_pos_1, n_vacc_classes)
-dim(new_T_sero_pos_1) <- c(n_groups, n_strains, k_sero_pos_1, n_vacc_classes)
 dim(n_T_sero_pre_1_to_T_sero_pos_1) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the T_sero_neg_1 class
-dim(T_sero_neg_1) <- c(n_groups, n_strains, n_vacc_classes)
-dim(new_T_sero_neg_1) <- c(n_groups, n_strains, n_vacc_classes)
+dim(T_sero_neg_1, new_T_sero_neg_1) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the T_sero_pre_2 class and seroconversion
-dim(T_sero_pre_2) <- c(n_groups, n_strains, k_sero_pre_2, n_vacc_classes)
-dim(new_T_sero_pre_2) <- c(n_groups, n_strains, k_sero_pre_2, n_vacc_classes)
-dim(n_T_sero_pre_2_progress) <-
+dim(T_sero_pre_2, new_T_sero_pre_2, n_T_sero_pre_2_progress) <-
   c(n_groups, n_strains, k_sero_pre_2, n_vacc_classes)
 dim(p_sero_pos_2) <- n_groups
 
 ## Vectors handling the T_sero_pos_2 class
-dim(T_sero_pos_2) <- c(n_groups, n_strains, k_sero_pos_2, n_vacc_classes)
-dim(n_T_sero_pos_2_progress) <-
+dim(T_sero_pos_2, n_T_sero_pos_2_progress, new_T_sero_pos_2) <-
   c(n_groups, n_strains, k_sero_pos_2, n_vacc_classes)
-dim(new_T_sero_pos_2) <- c(n_groups, n_strains, k_sero_pos_2, n_vacc_classes)
 dim(n_T_sero_pre_2_to_T_sero_pos_2) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the T_sero_neg_2 class
-dim(T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
-dim(new_T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
+dim(T_sero_neg_2, new_T_sero_neg_2) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the D_hosp class
 dim(D_hosp) <- c(n_groups, n_vacc_classes)
@@ -1683,42 +1596,27 @@ dim(D_non_hosp) <- n_groups
 dim(delta_D_non_hosp) <- n_groups
 
 ## Vectors handling the PCR classes
-dim(T_PCR_pre) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
-dim(n_T_PCR_pre_progress) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
-dim(new_T_PCR_pre) <- c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
-dim(T_PCR_pos) <- c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
-dim(n_T_PCR_pos_progress) <- c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
-dim(new_T_PCR_pos) <- c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
-dim(T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
-dim(new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
+dim(T_PCR_pre, n_T_PCR_pre_progress, new_T_PCR_pre) <-
+  c(n_groups, n_strains, k_PCR_pre, n_vacc_classes)
+dim(T_PCR_pos, n_T_PCR_pos_progress, new_T_PCR_pos) <-
+  c(n_groups, n_strains, k_PCR_pos, n_vacc_classes)
+dim(T_PCR_neg, new_T_PCR_neg) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling the S->S transitions i.e. moving between vaccination classes
-dim(p_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
-dim(n_S_next_vacc_class) <- c(n_groups, n_vacc_classes)
-dim(p_S_vacc_skip) <- c(n_groups, n_vacc_classes)
-dim(n_S_vacc_skip) <- c(n_groups, n_vacc_classes)
+dim(p_S_next_vacc_class, n_S_next_vacc_class, p_S_vacc_skip, n_S_vacc_skip) <-
+  c(n_groups, n_vacc_classes)
 
-dim(p_E_next_vacc_class) <- c(n_groups, n_strains, k_E, n_vacc_classes)
-dim(n_E_next_vacc_class) <- c(n_groups, n_strains, k_E, n_vacc_classes)
-dim(p_E_vacc_skip) <- c(n_groups, n_strains, k_E, n_vacc_classes)
-dim(n_E_vacc_skip) <- c(n_groups, n_strains, k_E, n_vacc_classes)
-dim(n_E_progress) <- c(n_groups, n_strains, k_E, n_vacc_classes)
+dim(p_E_next_vacc_class, n_E_next_vacc_class, p_E_vacc_skip, n_E_vacc_skip,
+    n_E_progress) <-
+  c(n_groups, n_strains, k_E, n_vacc_classes)
 
-dim(p_I_A_next_vacc_class) <-
+dim(p_I_A_next_vacc_class, n_I_A_next_vacc_class, p_I_A_vacc_skip,
+    n_I_A_vacc_skip, n_I_A_progress) <-
   c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(n_I_A_next_vacc_class) <-
-  c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(p_I_A_vacc_skip) <- c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(n_I_A_vacc_skip) <- c(n_groups, n_strains, k_A, n_vacc_classes)
-dim(n_I_A_progress) <- c(n_groups, n_strains, k_A, n_vacc_classes)
 
-dim(p_I_P_next_vacc_class) <-
+dim(p_I_P_next_vacc_class, n_I_P_next_vacc_class, p_I_P_vacc_skip,
+    n_I_P_vacc_skip, n_I_P_progress) <-
   c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(n_I_P_next_vacc_class) <-
-  c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(p_I_P_vacc_skip) <- c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(n_I_P_vacc_skip) <- c(n_groups, n_strains, k_P, n_vacc_classes)
-dim(n_I_P_progress) <- c(n_groups, n_strains, k_P, n_vacc_classes)
 
 ## Vectors handling the S->E transition where infected are split
 ## between level of infectivity
@@ -1728,36 +1626,24 @@ dim(n_S_progress_tot) <- c(n_groups, n_vacc_classes)
 
 ## Vectors handling the E->I transition where newly infectious cases
 ## are split between level of severity
-dim(n_EI_A) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_EI_P) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_EI_A, n_EI_P) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling I_C_2 to R, G_D transition
-dim(n_I_C_2_to_G_D) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_RS) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_I_C_2_to_G_D, n_I_C_2_to_RS) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling number of new hospitalisations, ICU admissions and
 ## recoveries in hospital
-dim(n_I_C_2_to_hosp) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_ICU_pre) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_ICU_pre_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_hosp_non_ICU) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_H_D) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_H_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_H_R) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_I_C_2_to_H_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_D_unconf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_conf_to_ICU_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_W_R_unconf) <-
+dim(n_I_C_2_to_hosp, n_I_C_2_to_ICU_pre, n_I_C_2_to_ICU_pre_conf,
+    n_hosp_non_ICU, n_I_C_2_to_H_D, n_I_C_2_to_H_D_conf, n_I_C_2_to_H_R,
+    n_I_C_2_to_H_R_conf, n_ICU_pre_unconf_to_ICU_D_unconf,
+    n_ICU_pre_conf_to_ICU_D_conf, n_ICU_pre_unconf_to_ICU_W_R_unconf,
+    n_ICU_pre_conf_to_ICU_W_R_conf, n_ICU_pre_unconf_to_ICU_W_D_unconf,
+    n_ICU_pre_conf_to_ICU_W_D_conf) <-
   c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_conf_to_ICU_W_R_conf) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_unconf_to_ICU_W_D_unconf) <-
-  c(n_groups, n_strains, n_vacc_classes)
-dim(n_ICU_pre_conf_to_ICU_W_D_conf) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Numbers transitioning from infected compartments to R or S
-dim(n_infection_end) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_infected_to_R) <- c(n_groups, n_strains, n_vacc_classes)
-dim(n_infected_to_S) <- c(n_groups, n_strains, n_vacc_classes)
+dim(n_infection_end, n_infected_to_R, n_infected_to_S) <-
+  c(n_groups, n_strains, n_vacc_classes)
 p_R_value <- parameter()
 n_p_R_time <- parameter()
 p_R_time <- parameter()
@@ -1779,18 +1665,10 @@ dim(m) <- c(n_groups, n_groups)
 dim(I_with_diff_trans) <- c(n_groups, n_strains, n_vacc_classes)
 
 ## Vectors handling progress from R
-dim(p_R_next_vacc_class) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(n_R_next_vacc_class) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(p_R_vacc_skip) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(n_R_vacc_skip) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(n_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
-
-dim(n_R_tmp) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(n_RS) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(p_RS) <- c(n_groups, n_strains_R, n_vacc_classes)
+dim(p_R_next_vacc_class, n_R_next_vacc_class, p_R_vacc_skip, n_R_vacc_skip,
+    n_R_progress, n_R_tmp, n_RS, p_RS, p_R_progress, rate_R_progress) <-
+  c(n_groups, n_strains_R, n_vacc_classes)
 dim(n_RE) <- c(n_groups, n_strains, n_vacc_classes)
-dim(p_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
-dim(rate_R_progress) <- c(n_groups, n_strains_R, n_vacc_classes)
 
 dim(cross_immunity) <- n_real_strains
 cross_immunity <- parameter()
