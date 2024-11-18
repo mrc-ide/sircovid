@@ -25,9 +25,11 @@ sircovid_parameters_shared <- function(start_date, region,
   }
 
   start_step <- start_date * steps_per_day
-  initial_seed_step <- floor(start_step)
   initial_seed_value <-
     seed_over_steps(start_step, initial_seed_pattern) * initial_seed_size
+  seed_time <-
+    c(0, floor(start_step) + seq_len(length(initial_seed_value) + 1) - 1) * dt
+  seed_value <- c(0, initial_seed_value, 0)
 
   list(hosp_transmission = 0,
        ICU_transmission = 0,
@@ -37,8 +39,8 @@ sircovid_parameters_shared <- function(start_date, region,
        n_age_groups = length(sircovid_age_bins()$start),
        beta_step = beta_step,
        population = population,
-       seed_step_start = initial_seed_step,
-       seed_value = initial_seed_value)
+       seed_time = seed_time,
+       seed_value = seed_value)
 }
 
 
