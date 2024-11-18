@@ -67,7 +67,8 @@ aux_p_bin[, 2:(n_trans_classes - 1)] <-
 
 ## Implementation of multinom via nested binomial
 aux_EE[, 1, 1] <- Binomial(n_SE[i], aux_p_bin[i, 1])
-aux_EE[, 1, 2:(n_trans_classes - 1)] <- Binomial(n_SE[i] - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
+aux_EE[, 1, 2:(n_trans_classes - 1)] <-
+  Binomial(n_SE[i] - sum(aux_EE[i, 1, 1:(k - 1)]), aux_p_bin[i, k])
 aux_EE[, 1, n_trans_classes] <-
   n_SE[i] - sum(aux_EE[i, 1, 1:(n_trans_classes - 1)])
 
@@ -99,7 +100,9 @@ delta_I_hosp[, , ] <- aux_II_hosp[i, j, k]
 n_death_hosp[, ] <- Binomial(n_II_hosp[i, k_hosp, j], p_death_hosp[i])
 
 ## Work out the I_ICU -> I_ICU transitions
-n_hosp_to_ICU[, ] <- Binomial(n_II_hosp[i, k_hosp, j] - n_death_hosp[i, j], 1 - p_recov_hosp[i] - p_death_hosp[i])
+n_hosp_to_ICU[, ] <-
+  Binomial(n_II_hosp[i, k_hosp, j] - n_death_hosp[i, j],
+           1 - p_recov_hosp[i] - p_death_hosp[i])
 aux_II_ICU[, 1, ] <- n_hosp_to_ICU[i, k]
 aux_II_ICU[, 2:k_ICU, ] <- n_II_ICU[i, j - 1, k]
 aux_II_ICU[, 1:k_ICU, ] <- aux_II_ICU[i, j, k] - n_II_ICU[i, j, k]
