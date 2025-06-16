@@ -4,8 +4,8 @@
 ## k for the infectivity group
 
 ## Number of age classes & number of transmissibility classes
-n_age_groups <- parameter(type = "integer", constant = TRUE)
-n_trans_classes <- parameter(1, type = "integer", constant = TRUE)
+n_age_groups <- parameter()
+n_trans_classes <- parameter(1)
 
 ## Seeding of first wave; this will happen on the S->E flow
 seed <- interpolate(seed_time, seed_value, "constant")
@@ -170,7 +170,7 @@ update(D_inc) <- D_inc + tot_new_D
 ## User defined parameters - default in parentheses:
 
 ## Parameters of the E classes
-k_E <- parameter(type = "integer", constant = TRUE)
+k_E <- parameter()
 gamma_E <- parameter(0.1)
 
 ## Probability of transitioning from the E to the asymptomatic
@@ -178,27 +178,27 @@ gamma_E <- parameter(0.1)
 p_C <- parameter()
 
 ## Parameters of the I_A classes
-k_A <- parameter(type = "integer", constant = TRUE)
+k_A <- parameter()
 gamma_A <- parameter(0.1)
 
 ## Parameters of the I_C classes
-k_C <- parameter(type = "integer", constant = TRUE)
+k_C <- parameter()
 gamma_C <- parameter(0.1)
 p_recov_sympt <- parameter()
 
 ## Parameters of the I_hosp classes
-k_hosp <- parameter(type = "integer", constant = TRUE)
+k_hosp <- parameter()
 gamma_hosp <- parameter(0.1)
 p_recov_hosp <- parameter()
 p_death_hosp <- parameter()
 
 ## Parameters of the I_ICU classes
-k_ICU <- parameter(type = "integer", constant = TRUE)
+k_ICU <- parameter()
 gamma_ICU <- parameter(0.1)
 p_recov_ICU <- parameter()
 
 ## Parameters of the R_hosp classes
-k_rec <- parameter(type = "integer", constant = TRUE)
+k_rec <- parameter()
 gamma_rec <- parameter(0.1)
 
 ## Parameters of the age stratified transmission
